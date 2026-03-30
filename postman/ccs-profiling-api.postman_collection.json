@@ -64,10 +64,11 @@
                 "exec": [
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
-                  "    if (response.success && response.data.accessToken) {",
-                  "        pm.collectionVariables.set('token', response.data.accessToken);",
-                  "        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "    if (response.success && response.data.tokens) {",
+                  "        pm.collectionVariables.set('token', response.data.tokens.access.token);",
+                  "        pm.collectionVariables.set('refreshToken', response.data.tokens.refresh.token);",
                   "        console.log('Access token saved to collection variables');",
+                  "        console.log('Token expires at:', response.data.tokens.access.expiresAt);",
                   "    }",
                   "}"
                 ]
@@ -99,7 +100,7 @@
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "auth", "login"]
             },
-            "description": "Login with email and password. Returns access token and refresh token. Rate limited to 5 requests per 15 minutes."
+            "description": "Login with email and password. Returns nested token structure with access and refresh tokens including expiration times. Rate limited to 5 requests per 15 minutes.\n\nResponse format:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"user\": { \"id\": \"...\", \"email\": \"...\", \"role\": \"...\" },\n    \"tokens\": {\n      \"access\": { \"token\": \"...\", \"expiresAt\": \"...\" },\n      \"refresh\": { \"token\": \"...\", \"expiresAt\": \"...\" }\n    }\n  }\n}\n```"
           },
           "response": []
         },
@@ -133,10 +134,11 @@
                 "exec": [
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
-                  "    if (response.success && response.data.accessToken) {",
-                  "        pm.collectionVariables.set('token', response.data.accessToken);",
-                  "        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "    if (response.success && response.data.tokens) {",
+                  "        pm.collectionVariables.set('token', response.data.tokens.access.token);",
+                  "        pm.collectionVariables.set('refreshToken', response.data.tokens.refresh.token);",
                   "        console.log('Tokens refreshed and saved to collection variables');",
+                  "        console.log('New token expires at:', response.data.tokens.access.expiresAt);",
                   "    }",
                   "}"
                 ]
@@ -168,7 +170,7 @@
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "auth", "refresh"]
             },
-            "description": "Refresh access token using refresh token. Rate limited to 5 requests per 15 minutes."
+            "description": "Refresh access token using refresh token. Returns new access and refresh tokens with expiration times. Rate limited to 5 requests per 15 minutes.\n\nResponse format:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"tokens\": {\n      \"access\": { \"token\": \"...\", \"expiresAt\": \"...\" },\n      \"refresh\": { \"token\": \"...\", \"expiresAt\": \"...\" }\n    }\n  }\n}\n```"
           },
           "response": []
         },

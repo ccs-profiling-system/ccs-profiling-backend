@@ -1,21 +1,26 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../../../app';
 import { db } from '../../../db';
 import { users } from '../../../db/schema';
 import bcrypt from 'bcrypt';
+import { eq } from 'drizzle-orm';
 
 describe('Auth Controller Integration Tests', () => {
   let testUserId: string;
   let accessToken: string;
+  const testEmail = 'authtest@example.com';
 
   beforeAll(async () => {
+    // Clean up any existing test user first
+    await db.delete(users).where(eq(users.email, testEmail));
+
     // Create a test user
     const passwordHash = await bcrypt.hash('testpassword123', 10);
     const result = await db
       .insert(users)
       .values({
-        email: 'authtest@example.com',
+        email: testEmail,
         password_hash: passwordHash,
         role: 'admin',
         is_active: true,
@@ -25,31 +30,39 @@ describe('Auth Controller Integration Tests', () => {
     testUserId = result[0].id;
   });
 
+  afterAll(async () => {
+    // Clean up test user after all tests
+    await db.delete(users).where(eq(users.email, testEmail));
+  });
+
   describe('POST /api/v1/auth/login', () => {
     it('should login successfully with valid credentials', async () => {
       const response = await request(app)
         .post('/api/v1/auth/login')
         .send({
-          email: 'authtest@example.com',
+          email: testEmail,
           password: 'testpassword123',
         })
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data).toHaveProperty('accessToken');
-      expect(response.body.data).toHaveProperty('refreshToken');
-      expect(response.body.data.user.email).toBe('authtest@example.com');
+      expect(response.body.data).toHaveProperty('tokens');
+      expect(response.body.data.tokens).toHaveProperty('access');
+      expect(response.body.data.tokens).toHaveProperty('refresh');
+      expect(response.body.data.tokens.access).toHaveProperty('token');
+      expect(response.body.data.tokens.refresh).toHaveProperty('token');
+      expect(response.body.data.user.email).toBe(testEmail);
       expect(response.body.data.user.role).toBe('admin');
 
       // Save token for other tests
-      accessToken = response.body.data.accessToken;
+      accessToken = response.body.data.tokens.access.token;
     });
 
     it('should return 401 for invalid credentials', async () => {
       const response = await request(app)
         .post('/api/v1/auth/login')
         .send({
-          email: 'authtest@example.com',
+          email: testEmail,
           password: 'wrongpassword',
         })
         .expect(401);
@@ -67,7 +80,7 @@ describe('Auth Controller Integration Tests', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data.email).toBe('authtest@example.com');
+      expect(response.body.data.email).toBe(testEmail);
       expect(response.body.data.role).toBe('admin');
     });
 
@@ -110,7 +123,7 @@ describe('Auth Controller Integration Tests', () => {
       const loginResponse = await request(app)
         .post('/api/v1/auth/login')
         .send({
-          email: 'authtest@example.com',
+          email: testEmail,
           password: 'newpassword456',
         })
         .expect(200);
