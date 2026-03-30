@@ -4,7 +4,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default {
-  schema: './src/db/schema/*',
+  schema: [
+    './src/db/schema/users.ts',
+    './src/db/schema/students.ts',
+    './src/db/schema/faculty.ts',
+  ],
   out: './drizzle',
   driver: 'pg',
   dbCredentials: {
