@@ -4,7 +4,7 @@
   "description": "CCS Comprehensive Profiling System Backend - Node.js + Express + TypeScript REST API",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "NODE_NO_WARNINGS=1 tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",
