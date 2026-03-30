@@ -1,12 +1,16 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
+import path from 'path';
 
-// Load environment variables
-dotenv.config();
+// Load environment variables - try multiple paths for flexibility
+if (!process.env.DATABASE_URL) {
+  // Try loading from project root
+  dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+}
 
 // Environment variable schema
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
+  NODE_ENV: z.enum(['development', 'staging', 'production', 'test']).default('development'),
   PORT: z.string().default('3000'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   DB_POOL_MAX: z.string().default('10'),
