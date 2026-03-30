@@ -31,15 +31,29 @@ export class AuthController {
       // Get user data
       const user = await this.userRepository.findByEmail(email);
 
+      // Calculate expiration details
+      const accessExpiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
+      const refreshExpiresAt = new Date(Date.now() + tokens.refreshExpiresIn * 1000);
+
       res.json({
         success: true,
         data: {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
           user: {
             id: user!.id,
             email: user!.email,
             role: user!.role,
+          },
+          tokens: {
+            access: {
+              token: tokens.accessToken,
+              expiresIn: tokens.expiresIn,
+              expiresAt: accessExpiresAt.toISOString(),
+            },
+            refresh: {
+              token: tokens.refreshToken,
+              expiresIn: tokens.refreshExpiresIn,
+              expiresAt: refreshExpiresAt.toISOString(),
+            },
           },
         },
       });
@@ -87,11 +101,25 @@ export class AuthController {
       // Generate new tokens
       const tokens = this.authService.generateTokens(payload);
 
+      // Calculate expiration details
+      const accessExpiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
+      const refreshExpiresAt = new Date(Date.now() + tokens.refreshExpiresIn * 1000);
+
       res.json({
         success: true,
         data: {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
+          tokens: {
+            access: {
+              token: tokens.accessToken,
+              expiresIn: tokens.expiresIn,
+              expiresAt: accessExpiresAt.toISOString(),
+            },
+            refresh: {
+              token: tokens.refreshToken,
+              expiresIn: tokens.refreshExpiresIn,
+              expiresAt: refreshExpiresAt.toISOString(),
+            },
+          },
         },
       });
     } catch (error) {

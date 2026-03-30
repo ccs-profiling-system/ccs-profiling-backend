@@ -12,6 +12,8 @@ export interface LoginDTO {
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
+  expiresIn: number; // seconds until access token expires
+  refreshExpiresIn: number; // seconds until refresh token expires
 }
 
 export interface TokenPayload {
@@ -64,18 +66,51 @@ export class AuthService {
    * Generate access and refresh tokens
    */
   generateTokens(payload: TokenPayload): AuthTokens {
+    const accessTokenExpiry = config.jwt.expiresIn;
+    const refreshTokenExpiry = '30d';
+
     const accessToken = jwt.sign(payload, config.jwt.secret, {
-      expiresIn: config.jwt.expiresIn,
+      expiresIn: accessTokenExpiry,
     } as jwt.SignOptions);
 
     const refreshToken = jwt.sign(payload, config.jwt.secret, {
-      expiresIn: '30d', // Refresh token valid for 30 days
+      expiresIn: refreshTokenExpiry,
     } as jwt.SignOptions);
+
+    // Convert expiry strings to seconds
+    const expiresIn = this.parseExpiryToSeconds(accessTokenExpiry);
+    const refreshExpiresIn = this.parseExpiryToSeconds(refreshTokenExpiry);
 
     return {
       accessToken,
       refreshToken,
+      expiresIn,
+      refreshExpiresIn,
     };
+  }
+
+  /**
+   * Parse JWT expiry string to seconds
+   */
+  private parseExpiryToSeconds(expiry: string): number {
+    const match = expiry.match(/^(\d+)([smhd])$/);
+    if (!match) return 0;
+
+    const value = parseInt(match[1], 10);
+    const unit = match[2];
+
+    switch (unit) {
+      case 's':
+        return value;
+      case 'm':
+        return value * 60;
+      case 'h':
+        return value * 60 * 60;
+      case 'd':
+        return value * 60 * 60 * 24;
+      default:
+        return 0;
+    }
   }
 
   /**

@@ -87,7 +87,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}",
+              "raw": "{\n  \"email\": \"admin@ccs.edu\",\n  \"password\": \"pass1234\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -189,7 +189,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"oldPassword\": \"password123\",\n  \"newPassword\": \"newPassword456\"\n}",
+              "raw": "{\n  \"oldPassword\": \"pass1234\",\n  \"newPassword\": \"newPassword456\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
