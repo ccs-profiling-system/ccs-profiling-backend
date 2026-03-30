@@ -31,12 +31,39 @@
   "item": [
     {
       "name": "Auth",
+      "description": "Authentication endpoints - JWT-based authentication with access and refresh tokens",
       "item": [
         {
           "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.accessToken) {",
+                  "        pm.environment.set('token', response.data.accessToken);",
+                  "        pm.environment.set('refreshToken', response.data.refreshToken);",
+                  "        console.log('Access token saved to environment');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}",
@@ -47,20 +74,68 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/auth/login",
+              "raw": "{{base_url}}/api/v1/auth/login",
               "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
-            }
-          }
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login with email and password. Returns access token and refresh token. Rate limited to 5 requests per 15 minutes."
+          },
+          "response": []
         },
         {
-          "name": "Register",
+          "name": "Get Current User (Me)",
           "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            },
+            "description": "Get current authenticated user information. Requires valid access token."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.accessToken) {",
+                  "        pm.environment.set('token', response.data.accessToken);",
+                  "        pm.environment.set('refreshToken', response.data.refreshToken);",
+                  "        console.log('Tokens refreshed and saved to environment');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"student\"\n}",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -68,55 +143,180 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/auth/register",
+              "raw": "{{base_url}}/api/v1/auth/refresh",
               "host": ["{{base_url}}"],
-              "path": ["auth", "register"]
-            }
-          }
+              "path": ["api", "v1", "auth", "refresh"]
+            },
+            "description": "Refresh access token using refresh token. Rate limited to 5 requests per 15 minutes."
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"password123\",\n  \"newPassword\": \"newPassword456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "change-password"]
+            },
+            "description": "Change password for authenticated user. Requires valid access token and correct old password."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            },
+            "description": "Logout endpoint. Currently returns success message. Token invalidation handled client-side."
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Students",
+      "description": "Student management endpoints - Admin only",
       "item": [
         {
           "name": "Get All Students",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/students",
+              "raw": "{{base_url}}/api/v1/admin/students?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["students"]
-            }
-          }
+              "path": ["api", "v1", "admin", "students"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search by name or student_id",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of students. Supports search and filtering."
+          },
+          "response": []
         },
         {
           "name": "Get Student by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/students/:id",
+              "raw": "{{base_url}}/api/v1/admin/students/:id",
               "host": ["{{base_url}}"],
-              "path": ["students", ":id"],
+              "path": ["api", "v1", "admin", "students", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "student-id-here"
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
                 }
               ]
-            }
-          }
+            },
+            "description": "Get student details by UUID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:id/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":id", "profile"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Get complete student profile with skills, violations, affiliations, academic history, and enrollments"
+          },
+          "response": []
         },
         {
           "name": "Create Student",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"studentId\": \"2024-001\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\"\n}",
+              "raw": "{\n  \"student_id\": \"2024-001\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"middle_name\": \"Smith\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+1234567890\",\n  \"date_of_birth\": \"2000-01-15\",\n  \"address\": \"123 Main St\",\n  \"year_level\": 1,\n  \"program\": \"BS Computer Science\",\n  \"create_user_account\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -124,20 +324,32 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/students",
+              "raw": "{{base_url}}/api/v1/admin/students",
               "host": ["{{base_url}}"],
-              "path": ["students"]
-            }
-          }
+              "path": ["api", "v1", "admin", "students"]
+            },
+            "description": "Create new student. Set create_user_account to true to create linked user account."
+          },
+          "response": []
         },
         {
           "name": "Update Student",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\"\n}",
+              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"year_level\": 2,\n  \"status\": \"active\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -145,79 +357,137 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/students/:id",
+              "raw": "{{base_url}}/api/v1/admin/students/:id",
               "host": ["{{base_url}}"],
-              "path": ["students", ":id"],
+              "path": ["api", "v1", "admin", "students", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "student-id-here"
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
                 }
               ]
-            }
-          }
+            },
+            "description": "Update student information. All fields are optional."
+          },
+          "response": []
         },
         {
-          "name": "Delete Student",
+          "name": "Delete Student (Soft Delete)",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/students/:id",
+              "raw": "{{base_url}}/api/v1/admin/students/:id",
               "host": ["{{base_url}}"],
-              "path": ["students", ":id"],
+              "path": ["api", "v1", "admin", "students", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "student-id-here"
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
                 }
               ]
-            }
-          }
+            },
+            "description": "Soft delete student (sets deleted_at timestamp)"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Faculty",
+      "description": "Faculty management endpoints - Admin only",
       "item": [
         {
           "name": "Get All Faculty",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/faculty",
+              "raw": "{{base_url}}/api/v1/admin/faculty?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["faculty"]
-            }
-          }
+              "path": ["api", "v1", "admin", "faculty"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "department",
+                  "value": "",
+                  "description": "Filter by department",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of faculty members. Supports filtering by department."
+          },
+          "response": []
         },
         {
           "name": "Get Faculty by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/faculty/:id",
+              "raw": "{{base_url}}/api/v1/admin/faculty/:id",
               "host": ["{{base_url}}"],
-              "path": ["faculty", ":id"],
+              "path": ["api", "v1", "admin", "faculty", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "faculty-id-here"
+                  "value": "faculty-uuid-here",
+                  "description": "Faculty UUID"
                 }
               ]
-            }
-          }
+            },
+            "description": "Get faculty details by UUID"
+          },
+          "response": []
         },
         {
           "name": "Create Faculty",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"facultyId\": \"FAC-001\",\n  \"firstName\": \"Dr. Jane\",\n  \"lastName\": \"Smith\",\n  \"department\": \"Computer Science\"\n}",
+              "raw": "{\n  \"faculty_id\": \"FAC-001\",\n  \"first_name\": \"Dr. Jane\",\n  \"last_name\": \"Smith\",\n  \"middle_name\": \"Marie\",\n  \"email\": \"jane.smith@example.com\",\n  \"phone\": \"+1234567890\",\n  \"department\": \"Computer Science\",\n  \"position\": \"Professor\",\n  \"specialization\": \"Artificial Intelligence\",\n  \"create_user_account\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -225,37 +495,159 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/faculty",
+              "raw": "{{base_url}}/api/v1/admin/faculty",
               "host": ["{{base_url}}"],
-              "path": ["faculty"]
-            }
-          }
+              "path": ["api", "v1", "admin", "faculty"]
+            },
+            "description": "Create new faculty member. Set create_user_account to true to create linked user account."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Faculty",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"position\": \"Associate Professor\",\n  \"department\": \"Computer Science\",\n  \"status\": \"active\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/faculty/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "faculty", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "faculty-uuid-here",
+                  "description": "Faculty UUID"
+                }
+              ]
+            },
+            "description": "Update faculty information. All fields are optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Faculty (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/faculty/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "faculty", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "faculty-uuid-here",
+                  "description": "Faculty UUID"
+                }
+              ]
+            },
+            "description": "Soft delete faculty member (sets deleted_at timestamp)"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Events",
+      "description": "Event management endpoints - Admin only",
       "item": [
         {
           "name": "Get All Events",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/events",
+              "raw": "{{base_url}}/api/v1/admin/events?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["events"]
+              "path": ["api", "v1", "admin", "events"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
             }
-          }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Event by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "events", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here"
+                }
+              ]
+            }
+          },
+          "response": []
         },
         {
           "name": "Create Event",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Tech Conference\",\n  \"description\": \"Annual tech conference\",\n  \"date\": \"2026-04-15\",\n  \"location\": \"Main Hall\"\n}",
+              "raw": "{\n  \"event_name\": \"Tech Conference 2026\",\n  \"event_type\": \"seminar\",\n  \"description\": \"Annual technology conference\",\n  \"event_date\": \"2026-04-15\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"17:00\",\n  \"location\": \"Main Hall\",\n  \"max_participants\": 100\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -263,37 +655,187 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/events",
+              "raw": "{{base_url}}/api/v1/admin/events",
               "host": ["{{base_url}}"],
-              "path": ["events"]
+              "path": ["api", "v1", "admin", "events"]
             }
-          }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_name\": \"Updated Event Name\",\n  \"max_participants\": 150\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "events", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "events", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here"
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Scheduling",
+      "description": "Schedule management endpoints - Admin only",
       "item": [
         {
           "name": "Get Schedules",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/scheduling",
+              "raw": "{{base_url}}/api/v1/admin/schedules?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["scheduling"]
+              "path": ["api", "v1", "admin", "schedules"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
             }
-          }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Schedule by Room",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/schedules/room/:room",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "schedules", "room", ":room"],
+              "variable": [
+                {
+                  "key": "room",
+                  "value": "Room 301"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Schedule Conflict",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"room\": \"Room 301\",\n  \"day\": \"monday\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:30\",\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/schedules/check-conflict",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "schedules", "check-conflict"]
+            },
+            "description": "Check for scheduling conflicts before creating a schedule"
+          },
+          "response": []
         },
         {
           "name": "Create Schedule",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"courseCode\": \"CS101\",\n  \"section\": \"A\",\n  \"day\": \"Monday\",\n  \"time\": \"09:00-10:30\",\n  \"room\": \"Room 301\"\n}",
+              "raw": "{\n  \"schedule_type\": \"class\",\n  \"instruction_id\": \"instruction-uuid-here\",\n  \"faculty_id\": \"faculty-uuid-here\",\n  \"room\": \"Room 301\",\n  \"day\": \"monday\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:30\",\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -301,37 +843,66 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/scheduling",
+              "raw": "{{base_url}}/api/v1/admin/schedules",
               "host": ["{{base_url}}"],
-              "path": ["scheduling"]
+              "path": ["api", "v1", "admin", "schedules"]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Research",
+      "description": "Research management endpoints - Admin only",
       "item": [
         {
           "name": "Get All Research",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/research",
+              "raw": "{{base_url}}/api/v1/admin/research?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["research"]
+              "path": ["api", "v1", "admin", "research"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Create Research",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"AI Research Project\",\n  \"description\": \"Machine learning research\",\n  \"status\": \"ongoing\"\n}",
+              "raw": "{\n  \"title\": \"AI Research Project\",\n  \"abstract\": \"Machine learning research on neural networks\",\n  \"research_type\": \"thesis\",\n  \"status\": \"ongoing\",\n  \"start_date\": \"2026-01-15\",\n  \"author_ids\": [\"student-uuid-1\", \"student-uuid-2\"],\n  \"adviser_ids\": [\"faculty-uuid-1\"]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -339,37 +910,37 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/research",
+              "raw": "{{base_url}}/api/v1/admin/research",
               "host": ["{{base_url}}"],
-              "path": ["research"]
+              "path": ["api", "v1", "admin", "research"]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Reports",
+      "description": "Report generation endpoints - Admin only",
       "item": [
         {
-          "name": "Get Reports",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/reports",
-              "host": ["{{base_url}}"],
-              "path": ["reports"]
-            }
-          }
-        },
-        {
-          "name": "Generate Report",
+          "name": "Generate Student Profile Report",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"type\": \"student-performance\",\n  \"filters\": {\n    \"semester\": \"Fall 2026\"\n  }\n}",
+              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"format\": \"pdf\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -377,28 +948,107 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/reports/generate",
+              "raw": "{{base_url}}/api/v1/admin/reports/student-profile",
               "host": ["{{base_url}}"],
-              "path": ["reports", "generate"]
+              "path": ["api", "v1", "admin", "reports", "student-profile"]
             }
-          }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Enrollment Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\",\n  \"format\": \"excel\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/reports/enrollments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "reports", "enrollments"]
+            }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Analytics",
+      "description": "Analytics endpoints - Admin only",
       "item": [
         {
           "name": "Get Dashboard Analytics",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/analytics/dashboard",
+              "raw": "{{base_url}}/api/v1/admin/dashboard",
               "host": ["{{base_url}}"],
-              "path": ["analytics", "dashboard"]
+              "path": ["api", "v1", "admin", "dashboard"]
             }
-          }
+          },
+          "response": []
+        },
+        {
+          "name": "Get GPA Distribution",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/gpa",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "analytics", "gpa"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Skill Distribution",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/skills",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "analytics", "skills"]
+            }
+          },
+          "response": []
         }
       ]
     }
