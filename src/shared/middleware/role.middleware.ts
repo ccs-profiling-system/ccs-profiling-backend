@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-export const roleMiddleware = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const roleMiddleware = (_roles: string[]) => {
+  return (_req: Request, _res: Response, next: NextFunction) => {
     next();
   };
 };
