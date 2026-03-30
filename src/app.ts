@@ -3,16 +3,19 @@ import cors from 'cors';
 import { config } from './config';
 import { routes } from './routes';
 import { errorHandler } from './shared/middleware/errorHandler';
+import { helmetConfig, getCorsOptions } from './shared/middleware/security';
+import { apiRateLimiter } from './shared/middleware/rateLimiter';
 
 export const app = express();
 
-// Middleware
-app.use(
-  cors({
-    origin: config.cors.origin,
-    credentials: true,
-  })
-);
+// Security middleware
+app.use(helmetConfig);
+app.use(cors(getCorsOptions()));
+
+// Rate limiting for all API routes
+app.use('/api', apiRateLimiter);
+
+// Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
