@@ -1,9 +1,26 @@
 {
   "info": {
     "name": "CCS Profiling API",
-    "description": "API collection for CCS Profiling System",
+    "description": "Complete API collection for CCS Profiling System with authentication and all modules.\n\n## Quick Start\n1. Set the {{base_url}} variable to your server URL (default: http://localhost:3000)\n2. Run the 'Login' request to authenticate\n3. Access token is automatically saved and used for all subsequent requests\n\n## Environment Variables\n- base_url: http://localhost:3000 (local) or your production URL\n- token: Auto-populated after login\n- refreshToken: Auto-populated after login\n\n## Authentication\nAll admin endpoints require Bearer token authentication. Login first to get your token.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
   "auth": {
     "type": "bearer",
     "bearer": [
@@ -20,10 +37,14 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "pm.request.headers.add({",
-          "  key: 'Authorization',",
-          "  value: `Bearer ${pm.environment.get('token')}`",
-          "});"
+          "// Automatically add Authorization header for authenticated requests",
+          "const token = pm.collectionVariables.get('token');",
+          "if (token) {",
+          "    pm.request.headers.add({",
+          "        key: 'Authorization',",
+          "        value: `Bearer ${token}`",
+          "    });",
+          "}"
         ]
       }
     }
@@ -44,9 +65,9 @@
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
                   "    if (response.success && response.data.accessToken) {",
-                  "        pm.environment.set('token', response.data.accessToken);",
-                  "        pm.environment.set('refreshToken', response.data.refreshToken);",
-                  "        console.log('Access token saved to environment');",
+                  "        pm.collectionVariables.set('token', response.data.accessToken);",
+                  "        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "        console.log('Access token saved to collection variables');",
                   "    }",
                   "}"
                 ]
@@ -113,9 +134,9 @@
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
                   "    if (response.success && response.data.accessToken) {",
-                  "        pm.environment.set('token', response.data.accessToken);",
-                  "        pm.environment.set('refreshToken', response.data.refreshToken);",
-                  "        console.log('Tokens refreshed and saved to environment');",
+                  "        pm.collectionVariables.set('token', response.data.accessToken);",
+                  "        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "        console.log('Tokens refreshed and saved to collection variables');",
                   "    }",
                   "}"
                 ]
