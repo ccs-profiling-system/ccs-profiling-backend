@@ -5,6 +5,7 @@ interface StudentSeed {
   studentId: string;
   firstName: string;
   lastName: string;
+  email: string;
 }
 
 const studentSeeds: StudentSeed[] = [
@@ -12,26 +13,31 @@ const studentSeeds: StudentSeed[] = [
     studentId: '2021-00001',
     firstName: 'Alice',
     lastName: 'Williams',
+    email: 'alice.williams@example.com',
   },
   {
     studentId: '2021-00002',
     firstName: 'Bob',
     lastName: 'Brown',
+    email: 'bob.brown@example.com',
   },
   {
     studentId: '2022-00001',
     firstName: 'Charlie',
     lastName: 'Davis',
+    email: 'charlie.davis@example.com',
   },
   {
     studentId: '2022-00002',
     firstName: 'Diana',
     lastName: 'Miller',
+    email: 'diana.miller@example.com',
   },
   {
     studentId: '2023-00001',
     firstName: 'Edward',
     lastName: 'Wilson',
+    email: 'edward.wilson@example.com',
   },
 ];
 
@@ -48,10 +54,11 @@ export async function seedStudents(
     const [student] = await db
       .insert(students)
       .values({
-        userId,
-        studentId: studentSeed.studentId,
-        firstName: studentSeed.firstName,
-        lastName: studentSeed.lastName,
+        user_id: userId,
+        student_id: studentSeed.studentId,
+        first_name: studentSeed.firstName,
+        last_name: studentSeed.lastName,
+        email: studentSeed.email,
       })
       .returning({ id: students.id });
 
