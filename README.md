@@ -34,73 +34,6 @@ Each module is isolated for scalability and maintainability.
 
 ---
 
-## Tech Stack
-
-* **Runtime**: Node.js 18+
-* **Framework**: Express.js
-* **Language**: TypeScript 5+
-* **Database**: PostgreSQL 14+ with Drizzle ORM
-* **Authentication**: JWT with bcrypt password hashing
-* **Validation**: Zod schemas
-* **Testing**: Vitest
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18 or higher
-- PostgreSQL 14 or higher
-- npm or yarn
-
-### Installation
-
-1. Clone the repository and navigate to the backend directory:
-```bash
-cd ccs-profiling-backend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Set up environment variables:
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and configure your database connection and other settings.
-
-4. Run database migrations (once implemented):
-```bash
-npm run db:push
-```
-
-5. Start the development server:
-```bash
-npm run dev
-```
-
-The server will start on `http://localhost:3000` (or the port specified in your `.env` file).
-
----
-
-## Available Scripts
-
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint errors
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check code formatting
-- `npm test` - Run tests
-- `npm run test:watch` - Run tests in watch mode
-
----
-
 ## Access Control
 
 Currently **Admin-only**, with a **future-ready RBAC structure** for:
@@ -111,28 +44,14 @@ Currently **Admin-only**, with a **future-ready RBAC structure** for:
 
 ---
 
-## API Documentation
+## Tech Stack
 
-All API routes are prefixed with `/api/v1/`
-
-Admin routes: `/api/v1/admin/*`
-
-Health check: `GET /health`
-
----
-
-## Project Structure
-
-```
-src/
-├── config/          # Configuration and environment variables
-├── db/              # Database connection and schemas
-├── modules/         # Domain-driven feature modules
-├── shared/          # Shared utilities, middleware, errors
-├── routes/          # Route definitions
-├── app.ts           # Express app setup
-└── server.ts        # Server entry point
-```
+* Node.js
+* Express.js
+* TypeScript
+* PostgreSQL (or compatible DB)
+* Zod (validation)
+* JWT Authentication
 
 ---
 
