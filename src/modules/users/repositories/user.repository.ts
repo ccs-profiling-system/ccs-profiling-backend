@@ -57,8 +57,9 @@ export class UserRepository {
   /**
    * Update user by ID
    */
-  async update(id: string, data: UpdateUserData) {
-    const result = await this.db
+  async update(id: string, data: UpdateUserData, tx?: Database) {
+    const dbInstance = tx || this.db;
+    const result = await dbInstance
       .update(users)
       .set({
         ...data,
