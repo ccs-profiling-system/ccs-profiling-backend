@@ -1,6 +1,11 @@
 import { Router } from 'express';
 import { userRoutes } from '../modules/users/routes/user.routes';
+import authRoutes from '../modules/auth/routes/auth.routes';
+import { studentRoutes } from '../modules/students';
 
 export const routes = Router();
 
+// API v1 routes
+routes.use('/v1/auth', authRoutes);
 routes.use('/users', userRoutes);
+routes.use('/v1/admin/students', studentRoutes);
