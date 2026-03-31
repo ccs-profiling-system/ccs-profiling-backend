@@ -11,6 +11,7 @@
 import { db } from '../../db';
 import { FacultyRepository } from './repositories/faculty.repository';
 import { UserRepository } from '../users/repositories/user.repository';
+import { EntityCounterRepository } from '../../db/repositories/entityCounter.repository';
 import { FacultyService } from './services/faculty.service';
 import { FacultyController } from './controllers/faculty.controller';
 import { createFacultyRoutes } from './routes/faculty.routes';
@@ -18,9 +19,10 @@ import { createFacultyRoutes } from './routes/faculty.routes';
 // Initialize repositories
 const facultyRepository = new FacultyRepository(db);
 const userRepository = new UserRepository(db);
+const entityCounterRepository = new EntityCounterRepository(db);
 
 // Initialize service
-const facultyService = new FacultyService(facultyRepository, userRepository, db);
+const facultyService = new FacultyService(facultyRepository, userRepository, entityCounterRepository, db);
 
 // Initialize controller
 const facultyController = new FacultyController(facultyService);

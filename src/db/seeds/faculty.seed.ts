@@ -1,31 +1,38 @@
 import { Database } from '../index';
 import { faculty } from '../schema';
+import { generateUUIDv7 } from '../../shared/utils/uuid';
+import { IDGenerator } from '../../shared/utils/idGenerator';
+import { EntityCounterRepository } from '../repositories/entityCounter.repository';
 
 interface FacultySeed {
-  facultyId: string;
   firstName: string;
   lastName: string;
   department: string;
+  position?: string;
+  specialization?: string;
 }
 
 const facultySeeds: FacultySeed[] = [
   {
-    facultyId: 'FAC-001',
     firstName: 'John',
     lastName: 'Doe',
     department: 'Computer Science',
+    position: 'Professor',
+    specialization: 'Artificial Intelligence',
   },
   {
-    facultyId: 'FAC-002',
     firstName: 'Jane',
     lastName: 'Smith',
     department: 'Information Technology',
+    position: 'Associate Professor',
+    specialization: 'Network Security',
   },
   {
-    facultyId: 'FAC-003',
     firstName: 'Robert',
     lastName: 'Johnson',
     department: 'Computer Science',
+    position: 'Assistant Professor',
+    specialization: 'Software Engineering',
   },
 ];
 
@@ -34,26 +41,44 @@ export async function seedFaculty(
   userIds: Array<{ id: string; role: string }>
 ) {
   const createdFaculty: string[] = [];
+  const entityCounterRepo = new EntityCounterRepository(db);
+  const currentYear = IDGenerator.getCurrentYear();
 
-  for (let i = 0; i < facultySeeds.length && i < userIds.length; i++) {
-    const facultySeed = facultySeeds[i];
-    const userId = userIds[i].id;
+  // Use transaction to ensure ID generation is atomic
+  await db.transaction(async (tx) => {
+    // Ensure counter exists for current year
+    await entityCounterRepo.getOrCreateCounter('faculty', currentYear, tx);
 
-    const [facultyMember] = await db
-      .insert(faculty)
-      .values({
-        user_id: userId,
-        faculty_id: facultySeed.facultyId,
-        first_name: facultySeed.firstName,
-        last_name: facultySeed.lastName,
-        email: `${facultySeed.firstName.toLowerCase()}.${facultySeed.lastName.toLowerCase()}@ccs.edu`,
-        department: facultySeed.department,
-      })
-      .returning({ id: faculty.id });
+    for (let i = 0; i < facultySeeds.length && i < userIds.length; i++) {
+      const facultySeed = facultySeeds[i];
+      const userId = userIds[i].id;
 
-    createdFaculty.push(facultyMember.id);
-    console.log(`  - Created faculty: ${facultySeed.firstName} ${facultySeed.lastName} (${facultySeed.department})`);
-  }
+      // Generate UUID v7 for primary key
+      const id = generateUUIDv7();
+
+      // Generate human-readable faculty_id
+      const sequence = await entityCounterRepo.incrementCounter('faculty', currentYear, tx);
+      const facultyId = IDGenerator.generate('faculty', sequence, currentYear);
+
+      const [facultyMember] = await tx
+        .insert(faculty)
+        .values({
+          id,
+          user_id: userId,
+          faculty_id: facultyId,
+          first_name: facultySeed.firstName,
+          last_name: facultySeed.lastName,
+          email: `${facultySeed.firstName.toLowerCase()}.${facultySeed.lastName.toLowerCase()}@ccs.edu`,
+          department: facultySeed.department,
+          position: facultySeed.position,
+          specialization: facultySeed.specialization,
+        })
+        .returning({ id: faculty.id, faculty_id: faculty.faculty_id });
+
+      createdFaculty.push(facultyMember.id);
+      console.log(`  - Created faculty: ${facultySeed.firstName} ${facultySeed.lastName} (${facultyMember.faculty_id})`);
+    }
+  });
 
   return createdFaculty;
 }

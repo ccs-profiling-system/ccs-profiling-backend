@@ -1,20 +1,27 @@
 import { uuid, timestamp } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { generateUUIDv7 } from '../../shared/utils/uuid';
 
 /**
  * Common schema utilities for consistent table patterns
  * 
  * These utilities provide reusable schema patterns across all database tables:
- * - UUID primary keys
+ * - UUID v7 primary keys (time-ordered for better database performance)
  * - Timestamp fields (created_at, updated_at)
  * - Soft delete support (deleted_at)
+ * 
+ * Requirements: 23.1, 23.3
  */
 
 /**
- * UUID primary key field
- * Generates a random UUID by default
+ * UUID v7 primary key field
+ * Generates a time-ordered UUID v7 by default using a custom SQL function
+ * 
+ * Note: UUID v7 provides better database performance than random UUIDs (v4)
+ * due to sequential ordering based on timestamps, which reduces index fragmentation.
  */
 export const uuidPrimaryKey = () => 
-  uuid('id').primaryKey().defaultRandom();
+  uuid('id').primaryKey().$defaultFn(() => generateUUIDv7());
 
 /**
  * Standard timestamp fields for all entities

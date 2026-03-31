@@ -11,6 +11,7 @@
 import { db } from '../../db';
 import { StudentRepository } from './repositories/student.repository';
 import { UserRepository } from '../users/repositories/user.repository';
+import { EntityCounterRepository } from '../../db/repositories/entityCounter.repository';
 import { StudentService } from './services/student.service';
 import { StudentController } from './controllers/student.controller';
 import { createStudentRoutes } from './routes/student.routes';
@@ -18,9 +19,10 @@ import { createStudentRoutes } from './routes/student.routes';
 // Initialize repositories
 const studentRepository = new StudentRepository(db);
 const userRepository = new UserRepository(db);
+const entityCounterRepository = new EntityCounterRepository(db);
 
 // Initialize service
-const studentService = new StudentService(studentRepository, userRepository, db);
+const studentService = new StudentService(studentRepository, userRepository, entityCounterRepository, db);
 
 // Initialize controller
 const studentController = new StudentController(studentService);

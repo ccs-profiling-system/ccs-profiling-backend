@@ -7,6 +7,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { StudentService } from './student.service';
 import { StudentRepository } from '../repositories/student.repository';
 import { UserRepository } from '../../users/repositories/user.repository';
+import { EntityCounterRepository } from '../../../db/repositories/entityCounter.repository';
 import { NotFoundError, ConflictError } from '../../../shared/errors';
 import { CreateStudentDTO, UpdateStudentDTO } from '../types';
 
@@ -30,6 +31,12 @@ const mockUserRepository = {
   softDelete: vi.fn(),
 } as unknown as UserRepository;
 
+const mockEntityCounterRepository = {
+  getOrCreateCounter: vi.fn(),
+  incrementCounter: vi.fn(),
+  getCurrentSequence: vi.fn(),
+} as unknown as EntityCounterRepository;
+
 const mockDb = {
   transaction: vi.fn((callback) => callback(mockDb)),
 } as any;
@@ -39,7 +46,12 @@ describe('StudentService', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    studentService = new StudentService(mockStudentRepository, mockUserRepository, mockDb);
+    studentService = new StudentService(
+      mockStudentRepository,
+      mockUserRepository,
+      mockEntityCounterRepository,
+      mockDb
+    );
   });
 
   describe('getStudent', () => {
@@ -80,7 +92,6 @@ describe('StudentService', () => {
   describe('createStudent', () => {
     it('should create student without user account', async () => {
       const createDTO: CreateStudentDTO = {
-        student_id: '2021-00001',
         first_name: 'John',
         last_name: 'Doe',
         email: 'john@example.com',
@@ -88,20 +99,25 @@ describe('StudentService', () => {
 
       const mockCreatedStudent = {
         id: '123',
-        ...createDTO,
+        student_id: 'S-2026-0001',
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john@example.com',
         status: 'active',
         created_at: new Date(),
         updated_at: new Date(),
       };
 
-      vi.mocked(mockStudentRepository.findByStudentId).mockResolvedValue(null);
       vi.mocked(mockStudentRepository.findByEmail).mockResolvedValue(null);
+      vi.mocked(mockEntityCounterRepository.getOrCreateCounter).mockResolvedValue({} as any);
+      vi.mocked(mockEntityCounterRepository.incrementCounter).mockResolvedValue(1);
       vi.mocked(mockStudentRepository.create).mockResolvedValue(mockCreatedStudent);
 
       const result = await studentService.createStudent(createDTO);
 
-      expect(result.student_id).toBe('2021-00001');
+      expect(result.student_id).toBe('S-2026-0001');
       expect(mockStudentRepository.create).toHaveBeenCalled();
+      expect(mockEntityCounterRepository.incrementCounter).toHaveBeenCalled();
     });
 
     it('should throw ConflictError when student_id already exists', async () => {
@@ -112,6 +128,7 @@ describe('StudentService', () => {
         email: 'john@example.com',
       };
 
+      vi.mocked(mockStudentRepository.findByEmail).mockResolvedValue(null);
       vi.mocked(mockStudentRepository.findByStudentId).mockResolvedValue({
         id: '456',
         student_id: '2021-00001',
@@ -122,13 +139,11 @@ describe('StudentService', () => {
 
     it('should throw ConflictError when email already exists', async () => {
       const createDTO: CreateStudentDTO = {
-        student_id: '2021-00001',
         first_name: 'John',
         last_name: 'Doe',
         email: 'john@example.com',
       };
 
-      vi.mocked(mockStudentRepository.findByStudentId).mockResolvedValue(null);
       vi.mocked(mockStudentRepository.findByEmail).mockResolvedValue({
         id: '456',
         email: 'john@example.com',
@@ -141,7 +156,6 @@ describe('StudentService', () => {
   describe('createStudentWithUser', () => {
     it('should create student with linked user account in transaction', async () => {
       const createDTO: CreateStudentDTO = {
-        student_id: '2021-00001',
         first_name: 'John',
         last_name: 'Doe',
         email: 'john@example.com',
@@ -158,7 +172,7 @@ describe('StudentService', () => {
 
       const mockCreatedStudent = {
         id: '123',
-        student_id: '2021-00001',
+        student_id: 'S-2026-0001',
         user_id: 'user-123',
         first_name: 'John',
         last_name: 'Doe',
@@ -168,15 +182,16 @@ describe('StudentService', () => {
         updated_at: new Date(),
       };
 
-      vi.mocked(mockStudentRepository.findByStudentId).mockResolvedValue(null);
       vi.mocked(mockStudentRepository.findByEmail).mockResolvedValue(null);
       vi.mocked(mockUserRepository.findByEmail).mockResolvedValue(null);
+      vi.mocked(mockEntityCounterRepository.getOrCreateCounter).mockResolvedValue({} as any);
+      vi.mocked(mockEntityCounterRepository.incrementCounter).mockResolvedValue(1);
       vi.mocked(mockUserRepository.create).mockResolvedValue(mockUser);
       vi.mocked(mockStudentRepository.create).mockResolvedValue(mockCreatedStudent);
 
       const result = await studentService.createStudentWithUser(createDTO);
 
-      expect(result.student_id).toBe('2021-00001');
+      expect(result.student_id).toBe('S-2026-0001');
       expect(mockDb.transaction).toHaveBeenCalled();
       expect(mockUserRepository.create).toHaveBeenCalled();
       expect(mockStudentRepository.create).toHaveBeenCalled();
@@ -184,13 +199,11 @@ describe('StudentService', () => {
 
     it('should throw ConflictError when user with email already exists', async () => {
       const createDTO: CreateStudentDTO = {
-        student_id: '2021-00001',
         first_name: 'John',
         last_name: 'Doe',
         email: 'john@example.com',
       };
 
-      vi.mocked(mockStudentRepository.findByStudentId).mockResolvedValue(null);
       vi.mocked(mockStudentRepository.findByEmail).mockResolvedValue(null);
       vi.mocked(mockUserRepository.findByEmail).mockResolvedValue({
         id: 'user-456',

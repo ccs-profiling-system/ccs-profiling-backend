@@ -5,9 +5,9 @@ This directory contains seed files for populating the database with initial data
 ## Structure
 
 - `index.ts` - Main seeder orchestrator that runs all seed files in order
-- `users.seed.ts` - Seeds user accounts (admin, faculty, student)
-- `students.seed.ts` - Seeds student profiles
-- `faculty.seed.ts` - Seeds faculty profiles
+- `users.seed.ts` - Seeds user accounts (admin, faculty, student) with UUID v7
+- `students.seed.ts` - Seeds student profiles with auto-generated IDs
+- `faculty.seed.ts` - Seeds faculty profiles with auto-generated IDs
 - `run-seeds.ts` - Standalone script to execute seeders
 
 ## Available Commands
@@ -42,6 +42,37 @@ The seeding system checks if tables already contain data before seeding:
 
 This prevents duplicate data and allows safe re-running of the seed command.
 
+## ID Generation System
+
+The seeders use the new ID generation system that automatically creates:
+
+### UUID v7 Primary Keys
+- All entities (users, students, faculty) use UUID v7 for primary keys
+- UUID v7 is time-ordered, improving database performance
+- Generated using `generateUUIDv7()` utility
+
+### Human-Readable IDs
+- **Students**: `S-YYYY-0001`, `S-YYYY-0002`, etc.
+- **Faculty**: `F-YYYY-0001`, `F-YYYY-0002`, etc.
+- Format: `{Prefix}-{Year}-{Sequence}`
+- Automatically generated using entity counters
+- Transactionally safe (no duplicate IDs)
+
+Example output:
+```
+📝 Seeding students...
+  - Created student: Alice Williams (S-2026-0001)
+  - Created student: Bob Brown (S-2026-0002)
+  - Created student: Charlie Davis (S-2026-0003)
+✅ Created 5 students
+
+📝 Seeding faculty...
+  - Created faculty: John Doe (F-2026-0001)
+  - Created faculty: Jane Smith (F-2026-0002)
+  - Created faculty: Robert Johnson (F-2026-0003)
+✅ Created 3 faculty members
+```
+
 ## Default Credentials
 
 All users have the same password: `pass1234`
@@ -51,16 +82,16 @@ All users have the same password: `pass1234`
 - Email: `superadmin@ccs.edu`
 
 ### Faculty Users
-- Email: `john.doe@ccs.edu`
-- Email: `jane.smith@ccs.edu`
-- Email: `robert.johnson@ccs.edu`
+- Email: `john.doe@ccs.edu` (F-YYYY-0001)
+- Email: `jane.smith@ccs.edu` (F-YYYY-0002)
+- Email: `robert.johnson@ccs.edu` (F-YYYY-0003)
 
 ### Student Users
-- Email: `student1@ccs.edu`
-- Email: `student2@ccs.edu`
-- Email: `student3@ccs.edu`
-- Email: `student4@ccs.edu`
-- Email: `student5@ccs.edu`
+- Email: `student1@ccs.edu` (S-YYYY-0001)
+- Email: `student2@ccs.edu` (S-YYYY-0002)
+- Email: `student3@ccs.edu` (S-YYYY-0003)
+- Email: `student4@ccs.edu` (S-YYYY-0004)
+- Email: `student5@ccs.edu` (S-YYYY-0005)
 
 ## Adding New Seeders
 
@@ -69,6 +100,23 @@ All users have the same password: `pass1234`
 3. Import and call your seed function in `index.ts`
 4. Add table check logic to prevent duplicate seeding
 5. Ensure proper ordering based on foreign key dependencies
+6. Use UUID v7 for primary keys: `generateUUIDv7()`
+7. Use entity counters for human-readable IDs if applicable
+
+## Transactional Integrity
+
+The seeders use database transactions to ensure:
+- Atomic ID generation (no duplicate IDs)
+- Counter increments are properly locked
+- All-or-nothing seeding (rollback on failure)
+
+Each entity type (students, faculty) is seeded within a single transaction that:
+1. Creates or gets the entity counter for the current year
+2. Increments the counter with row-level locking
+3. Generates the human-readable ID
+4. Inserts the entity record
+
+If any step fails, the entire transaction rolls back.
 
 ## Notes
 
@@ -77,3 +125,5 @@ All users have the same password: `pass1234`
 - All seed data is for development/testing purposes only
 - Make sure your database is migrated before running seeders
 - Smart seeding prevents duplicate data on re-runs
+- IDs are automatically generated - no need to specify them manually
+- Entity counters track sequences per entity type and year
