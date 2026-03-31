@@ -1,8 +1,9 @@
 import { db } from '../index';
-import { users, students, faculty } from '../schema';
+import { users, students, faculty, instructions } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
+import { seedInstructions } from './instructions.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -67,6 +68,21 @@ export async function runSeeders() {
       console.log('📝 Seeding faculty...');
       facultyIds = await seedFaculty(db, userIds.filter(u => u.role === 'faculty'));
       console.log(`✅ Created ${facultyIds.length} faculty members\n`);
+    }
+
+    // Check if instructions table has data
+    const instructionsHasData = await hasData('instructions');
+    let instructionIds: string[] = [];
+
+    if (instructionsHasData) {
+      console.log('ℹ️  Instructions table already has data, skipping instruction seeding...');
+      const existingInstructions = await db.select({ id: instructions.id }).from(instructions);
+      instructionIds = existingInstructions.map(i => i.id);
+      console.log(`📊 Found ${instructionIds.length} existing instructions\n`);
+    } else {
+      console.log('📝 Seeding instructions...');
+      instructionIds = await seedInstructions(db);
+      console.log(`✅ Created ${instructionIds.length} instructions\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

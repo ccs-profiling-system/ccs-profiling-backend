@@ -619,6 +619,183 @@
       ]
     },
     {
+      "name": "Instructions",
+      "description": "Instruction/Subject management endpoints - Admin only",
+      "item": [
+        {
+          "name": "Get All Instructions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "instructions"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search by subject code or name",
+                  "disabled": true
+                },
+                {
+                  "key": "curriculum_year",
+                  "value": "",
+                  "description": "Filter by curriculum year",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of instructions. Supports search and filtering by curriculum year."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instruction by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "instructions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "instruction-uuid-here",
+                  "description": "Instruction UUID"
+                }
+              ]
+            },
+            "description": "Get instruction details by UUID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Instruction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject_code\": \"CS101\",\n  \"subject_name\": \"Introduction to Computer Science\",\n  \"description\": \"Fundamentals of computer science and programming\",\n  \"credits\": 3,\n  \"curriculum_year\": \"2025-2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "instructions"]
+            },
+            "description": "Create new instruction/subject. Subject code must be unique within the curriculum year."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Instruction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject_name\": \"Advanced Computer Science\",\n  \"description\": \"Updated course description\",\n  \"credits\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "instructions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "instruction-uuid-here",
+                  "description": "Instruction UUID"
+                }
+              ]
+            },
+            "description": "Update instruction information. All fields are optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Instruction (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "instructions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "instruction-uuid-here",
+                  "description": "Instruction UUID"
+                }
+              ]
+            },
+            "description": "Soft delete instruction (sets deleted_at timestamp)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Events",
       "description": "Event management endpoints - Admin only",
       "item": [
