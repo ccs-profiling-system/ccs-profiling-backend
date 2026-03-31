@@ -42,10 +42,11 @@ export async function seedFaculty(
     const [facultyMember] = await db
       .insert(faculty)
       .values({
-        userId,
-        facultyId: facultySeed.facultyId,
-        firstName: facultySeed.firstName,
-        lastName: facultySeed.lastName,
+        user_id: userId,
+        faculty_id: facultySeed.facultyId,
+        first_name: facultySeed.firstName,
+        last_name: facultySeed.lastName,
+        email: `${facultySeed.firstName.toLowerCase()}.${facultySeed.lastName.toLowerCase()}@ccs.edu`,
         department: facultySeed.department,
       })
       .returning({ id: faculty.id });

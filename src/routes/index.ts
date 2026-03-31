@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { userRoutes } from '../modules/users/routes/user.routes';
 import authRoutes from '../modules/auth/routes/auth.routes';
 import { studentRoutes } from '../modules/students';
+import { facultyRoutes } from '../modules/faculty';
 
 export const routes = Router();
 
@@ -9,3 +10,4 @@ export const routes = Router();
 routes.use('/v1/auth', authRoutes);
 routes.use('/users', userRoutes);
 routes.use('/v1/admin/students', studentRoutes);
+routes.use('/v1/admin/faculty', facultyRoutes);
