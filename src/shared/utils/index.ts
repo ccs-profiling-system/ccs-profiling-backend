@@ -2,3 +2,4 @@
 
 export * from './apiResponse';
 export * from './uuid';
+export * from './idGenerator';
