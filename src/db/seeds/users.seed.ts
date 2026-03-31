@@ -1,5 +1,6 @@
 import { Database } from '../index';
 import { users } from '../schema';
+import { generateUUIDv7 } from '../../shared/utils/uuid';
 import bcrypt from 'bcrypt';
 
 interface UserSeed {
@@ -79,11 +80,14 @@ export async function seedUsers(db: Database) {
   const createdUsers: Array<{ id: string; role: string }> = [];
 
   for (const userSeed of userSeeds) {
+    // Generate UUID v7 for primary key
+    const id = generateUUIDv7();
     const password_hash = await bcrypt.hash(userSeed.password, 10);
 
     const [user] = await db
       .insert(users)
       .values({
+        id,
         email: userSeed.email,
         password_hash,
         role: userSeed.role,
