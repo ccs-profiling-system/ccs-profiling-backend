@@ -7,8 +7,11 @@
 
 import { StudentRepository } from '../repositories/student.repository';
 import { UserRepository } from '../../users/repositories/user.repository';
+import { EntityCounterRepository } from '../../../db/repositories/entityCounter.repository';
 import { Database } from '../../../db';
 import { NotFoundError, ConflictError } from '../../../shared/errors';
+import { generateUUIDv7 } from '../../../shared/utils/uuid';
+import { IDGenerator } from '../../../shared/utils/idGenerator';
 import {
   CreateStudentDTO,
   UpdateStudentDTO,
@@ -22,6 +25,7 @@ export class StudentService {
   constructor(
     private studentRepository: StudentRepository,
     private userRepository: UserRepository,
+    private entityCounterRepository: EntityCounterRepository,
     private db: Database
   ) {}
 
@@ -52,19 +56,22 @@ export class StudentService {
   /**
    * Create a new student
    * Optionally creates a linked user account
+   * Automatically generates UUID v7 and human-readable student_id
    * Requirements: 2.1, 2.6
    */
   async createStudent(data: CreateStudentDTO): Promise<StudentResponseDTO> {
-    // Check for duplicate student_id
-    const existingStudent = await this.studentRepository.findByStudentId(data.student_id);
-    if (existingStudent) {
-      throw new ConflictError('Student ID already exists');
-    }
-
     // Check for duplicate email
     const existingEmail = await this.studentRepository.findByEmail(data.email);
     if (existingEmail) {
       throw new ConflictError('Email already exists');
+    }
+
+    // If student_id is provided (backward compatibility), check for duplicates
+    if (data.student_id) {
+      const existingStudent = await this.studentRepository.findByStudentId(data.student_id);
+      if (existingStudent) {
+        throw new ConflictError('Student ID already exists');
+      }
     }
 
     // If create_user_account is true, use createStudentWithUser
@@ -72,38 +79,54 @@ export class StudentService {
       return await this.createStudentWithUser(data);
     }
 
-    // Create student without user account
-    const student = await this.studentRepository.create({
-      student_id: data.student_id,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      middle_name: data.middle_name,
-      email: data.email,
-      phone: data.phone,
-      date_of_birth: data.date_of_birth,
-      address: data.address,
-      year_level: data.year_level,
-      program: data.program,
-    });
+    // Generate IDs within a transaction
+    return await this.db.transaction(async (tx) => {
+      // Generate UUID v7 for primary key
+      const id = generateUUIDv7();
 
-    return this.toResponseDTO(student);
+      // Generate human-readable student_id if not provided
+      const studentId = data.student_id || await this.generateStudentId(tx);
+
+      // Create student without user account
+      const student = await this.studentRepository.create(
+        {
+          id,
+          student_id: studentId,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          middle_name: data.middle_name,
+          email: data.email,
+          phone: data.phone,
+          date_of_birth: data.date_of_birth,
+          address: data.address,
+          year_level: data.year_level,
+          program: data.program,
+        },
+        tx
+      );
+
+      return this.toResponseDTO(student);
+    });
   }
 
   /**
    * Create student with linked user account in a single transaction
+   * Automatically generates UUID v7 and human-readable student_id
    * Requirements: 2.2, 26.2, 26.3, 26.4, 26.7
    */
   async createStudentWithUser(data: CreateStudentDTO): Promise<StudentResponseDTO> {
-    // Check for duplicate student_id
-    const existingStudent = await this.studentRepository.findByStudentId(data.student_id);
-    if (existingStudent) {
-      throw new ConflictError('Student ID already exists');
-    }
-
     // Check for duplicate email
     const existingEmail = await this.studentRepository.findByEmail(data.email);
     if (existingEmail) {
       throw new ConflictError('Email already exists');
+    }
+
+    // If student_id is provided (backward compatibility), check for duplicates
+    if (data.student_id) {
+      const existingStudent = await this.studentRepository.findByStudentId(data.student_id);
+      if (existingStudent) {
+        throw new ConflictError('Student ID already exists');
+      }
     }
 
     // Check if user with this email already exists
@@ -114,6 +137,12 @@ export class StudentService {
 
     // Create user account and student profile in single transaction
     return await this.db.transaction(async (tx) => {
+      // Generate UUID v7 for primary key
+      const id = generateUUIDv7();
+
+      // Generate human-readable student_id if not provided
+      const studentId = data.student_id || await this.generateStudentId(tx);
+
       // Generate temporary password
       const tempPassword = await this.generateTemporaryPassword();
 
@@ -130,7 +159,8 @@ export class StudentService {
       // Step 2: Create student profile linked to user
       const student = await this.studentRepository.create(
         {
-          student_id: data.student_id,
+          id,
+          student_id: studentId,
           user_id: user.id,
           first_name: data.first_name,
           last_name: data.last_name,
@@ -234,5 +264,27 @@ export class StudentService {
     const bcrypt = await import('bcrypt');
     const tempPassword = Math.random().toString(36).slice(-8);
     return bcrypt.hash(tempPassword, 10);
+  }
+
+  /**
+   * Generate human-readable student ID
+   * Format: S-YYYY-0001
+   * 
+   * @param tx - Transaction context (required)
+   * @returns Generated student ID
+   */
+  private async generateStudentId(
+    tx: Parameters<Parameters<Database['transaction']>[0]>[0]
+  ): Promise<string> {
+    const currentYear = IDGenerator.getCurrentYear();
+
+    // Ensure counter exists for current year
+    await this.entityCounterRepository.getOrCreateCounter('student', currentYear, tx);
+
+    // Increment counter and get new sequence
+    const sequence = await this.entityCounterRepository.incrementCounter('student', currentYear, tx);
+
+    // Generate human-readable ID
+    return IDGenerator.generate('student', sequence, currentYear);
   }
 }

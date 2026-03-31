@@ -10,9 +10,12 @@ import { z } from 'zod';
 /**
  * Schema for creating a new student
  * Validates all required fields and formats
+ * 
+ * Note: student_id is now optional and system-generated.
+ * If provided, it will be validated but clients should omit it.
  */
 export const createStudentSchema = z.object({
-  student_id: z.string().min(1, 'Student ID is required').max(50, 'Student ID must be at most 50 characters'),
+  student_id: z.string().min(1, 'Student ID cannot be empty').max(50, 'Student ID must be at most 50 characters').optional(),
   first_name: z.string().min(1, 'First name is required').max(100, 'First name must be at most 100 characters'),
   last_name: z.string().min(1, 'Last name is required').max(100, 'Last name must be at most 100 characters'),
   middle_name: z.string().max(100, 'Middle name must be at most 100 characters').optional(),

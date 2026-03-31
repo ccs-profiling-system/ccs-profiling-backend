@@ -7,9 +7,12 @@
 
 /**
  * CreateFacultyDTO - Input for creating new faculty
+ * 
+ * Note: faculty_id is now system-generated and should not be provided by clients.
+ * The system will automatically generate a human-readable ID in the format F-YYYY-0001.
  */
 export interface CreateFacultyDTO {
-  faculty_id: string;
+  faculty_id?: string; // System-generated, optional for backward compatibility
   first_name: string;
   last_name: string;
   middle_name?: string;

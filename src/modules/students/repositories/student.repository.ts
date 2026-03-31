@@ -11,6 +11,7 @@ import { students } from '../../../db/schema';
 import { StudentFilters } from '../types';
 
 export interface CreateStudentData {
+  id?: string; // Optional UUID v7, generated if not provided
   student_id: string;
   user_id?: string;
   first_name: string;

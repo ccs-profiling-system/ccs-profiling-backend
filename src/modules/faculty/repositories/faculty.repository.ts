@@ -11,6 +11,7 @@ import { faculty } from '../../../db/schema';
 import { FacultyFilters } from '../types';
 
 export interface CreateFacultyData {
+  id?: string; // Optional UUID v7, generated if not provided
   faculty_id: string;
   user_id?: string;
   first_name: string;
