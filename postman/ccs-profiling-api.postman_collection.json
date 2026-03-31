@@ -51,6 +51,29 @@
   ],
   "item": [
     {
+      "name": "Health Check",
+      "description": "System health check endpoint - No authentication required",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Check if the API server is running and healthy. Returns server status, timestamp, and environment."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Auth",
       "description": "Authentication endpoints - JWT-based authentication with access and refresh tokens",
       "item": [

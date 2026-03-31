@@ -1,27 +1,73 @@
 import { db } from '../index';
+import { users, students, faculty } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
+import { sql } from 'drizzle-orm';
+
+/**
+ * Check if a table has any data
+ */
+async function hasData(tableName: string): Promise<boolean> {
+  const result = await db.execute(sql`SELECT EXISTS (SELECT 1 FROM ${sql.identifier(tableName)} LIMIT 1) as has_data`);
+  // Handle different result formats from drizzle
+  const rows = Array.isArray(result) ? result : (result as any).rows || [];
+  return rows[0]?.has_data === true;
+}
 
 /**
  * Main seeder function that runs all seed files in order
+ * Skips seeding if tables already have data
  */
 export async function runSeeders() {
   console.log('🌱 Starting database seeding...\n');
 
   try {
-    // Seed in order of dependencies
-    console.log('📝 Seeding users...');
-    const userIds = await seedUsers(db);
-    console.log(`✅ Created ${userIds.length} users\n`);
+    // Check if users table has data
+    const usersHasData = await hasData('users');
+    let userIds: Array<{ id: string; role: string }> = [];
 
-    console.log('📝 Seeding students...');
-    const studentIds = await seedStudents(db, userIds.filter(u => u.role === 'student'));
-    console.log(`✅ Created ${studentIds.length} students\n`);
+    if (usersHasData) {
+      console.log('ℹ️  Users table already has data, skipping user seeding...');
+      // Get existing user IDs for reference
+      const existingUsers = await db.select({ id: users.id, role: users.role }).from(users);
+      userIds = existingUsers;
+      console.log(`📊 Found ${userIds.length} existing users\n`);
+    } else {
+      console.log('📝 Seeding users...');
+      userIds = await seedUsers(db);
+      console.log(`✅ Created ${userIds.length} users\n`);
+    }
 
-    console.log('📝 Seeding faculty...');
-    const facultyIds = await seedFaculty(db, userIds.filter(u => u.role === 'faculty'));
-    console.log(`✅ Created ${facultyIds.length} faculty members\n`);
+    // Check if students table has data
+    const studentsHasData = await hasData('students');
+    let studentIds: string[] = [];
+
+    if (studentsHasData) {
+      console.log('ℹ️  Students table already has data, skipping student seeding...');
+      const existingStudents = await db.select({ id: students.id }).from(students);
+      studentIds = existingStudents.map(s => s.id);
+      console.log(`📊 Found ${studentIds.length} existing students\n`);
+    } else {
+      console.log('📝 Seeding students...');
+      studentIds = await seedStudents(db, userIds.filter(u => u.role === 'student'));
+      console.log(`✅ Created ${studentIds.length} students\n`);
+    }
+
+    // Check if faculty table has data
+    const facultyHasData = await hasData('faculty');
+    let facultyIds: string[] = [];
+
+    if (facultyHasData) {
+      console.log('ℹ️  Faculty table already has data, skipping faculty seeding...');
+      const existingFaculty = await db.select({ id: faculty.id }).from(faculty);
+      facultyIds = existingFaculty.map(f => f.id);
+      console.log(`📊 Found ${facultyIds.length} existing faculty members\n`);
+    } else {
+      console.log('📝 Seeding faculty...');
+      facultyIds = await seedFaculty(db, userIds.filter(u => u.role === 'faculty'));
+      console.log(`✅ Created ${facultyIds.length} faculty members\n`);
+    }
 
     console.log('🎉 Database seeding completed successfully!');
   } catch (error) {
