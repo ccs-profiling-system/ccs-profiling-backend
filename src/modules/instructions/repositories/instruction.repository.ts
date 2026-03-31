@@ -1,0 +1,204 @@
+/**
+ * Instruction Repository
+ * Database access layer for instruction operations
+ * 
+ * Requirements: 14.2, 14.4, 28.4
+ */
+
+import { eq, and, isNull, or, like, sql } from 'drizzle-orm';
+import { Database } from '../../../db';
+import { instructions } from '../../../db/schema';
+import { InstructionFilters } from '../types';
+
+export interface CreateInstructionData {
+  id?: string; // Optional UUID v7, generated if not provided
+  subject_code: string;
+  subject_name: string;
+  description?: string;
+  credits: number;
+  curriculum_year: string;
+}
+
+export interface UpdateInstructionData {
+  subject_code?: string;
+  subject_name?: string;
+  description?: string;
+  credits?: number;
+  curriculum_year?: string;
+}
+
+export class InstructionRepository {
+  constructor(private db: Database) {}
+
+  /**
+   * Find instruction by UUID (excludes soft-deleted)
+   * Requirement: 14.2
+   */
+  async findById(id: string) {
+    const result = await this.db
+      .select()
+      .from(instructions)
+      .where(and(eq(instructions.id, id), isNull(instructions.deleted_at)))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
+   * Find instruction by subject_code (excludes soft-deleted)
+   * Requirement: 14.2
+   */
+  async findBySubjectCode(subjectCode: string, curriculumYear?: string) {
+    const conditions = [
+      eq(instructions.subject_code, subjectCode),
+      isNull(instructions.deleted_at),
+    ];
+
+    if (curriculumYear) {
+      conditions.push(eq(instructions.curriculum_year, curriculumYear));
+    }
+
+    const result = await this.db
+      .select()
+      .from(instructions)
+      .where(and(...conditions))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
+   * Find instructions by curriculum year (excludes soft-deleted)
+   * Requirement: 14.2
+   */
+  async findByCurriculumYear(curriculumYear: string) {
+    return await this.db
+      .select()
+      .from(instructions)
+      .where(and(
+        eq(instructions.curriculum_year, curriculumYear),
+        isNull(instructions.deleted_at)
+      ))
+      .orderBy(instructions.subject_code);
+  }
+
+  /**
+   * Find all instructions with pagination and filters (excludes soft-deleted)
+   * Supports search by subject_code or subject_name
+   * Supports filter by curriculum_year
+   * Requirements: 14.2, 28.4
+   */
+  async findAll(filters?: InstructionFilters) {
+    const page = filters?.page || 1;
+    const limit = Math.min(filters?.limit || 10, 100); // Max 100 items per page
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    const conditions = [isNull(instructions.deleted_at)];
+
+    // Search by subject_code or subject_name
+    if (filters?.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(
+        or(
+          like(instructions.subject_code, searchTerm),
+          like(instructions.subject_name, searchTerm)
+        )!
+      );
+    }
+
+    // Filter by subject_code
+    if (filters?.subject_code) {
+      conditions.push(eq(instructions.subject_code, filters.subject_code));
+    }
+
+    // Filter by curriculum_year
+    if (filters?.curriculum_year) {
+      conditions.push(eq(instructions.curriculum_year, filters.curriculum_year));
+    }
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(instructions)
+      .where(and(...conditions));
+
+    const total = Number(countResult[0]?.count || 0);
+
+    // Get paginated results
+    const results = await this.db
+      .select()
+      .from(instructions)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(instructions.curriculum_year, instructions.subject_code);
+
+    return {
+      data: results,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Create a new instruction
+   * Requirement: 14.2
+   */
+  async create(data: CreateInstructionData, tx?: Database) {
+    const dbInstance = tx || this.db;
+    const result = await dbInstance.insert(instructions).values(data).returning();
+
+    return result[0];
+  }
+
+  /**
+   * Update instruction by ID
+   * Requirement: 14.2
+   */
+  async update(id: string, data: UpdateInstructionData, tx?: Database) {
+    const dbInstance = tx || this.db;
+    const result = await dbInstance
+      .update(instructions)
+      .set({
+        ...data,
+        updated_at: new Date(),
+      })
+      .where(eq(instructions.id, id))
+      .returning();
+
+    return result[0] || null;
+  }
+
+  /**
+   * Soft delete instruction by ID
+   * Requirements: 14.4, 28.4
+   */
+  async softDelete(id: string) {
+    await this.db
+      .update(instructions)
+      .set({
+        deleted_at: new Date(),
+        updated_at: new Date(),
+      })
+      .where(eq(instructions.id, id));
+  }
+
+  /**
+   * Restore soft-deleted instruction
+   * Requirement: 28.4
+   */
+  async restore(id: string) {
+    await this.db
+      .update(instructions)
+      .set({
+        deleted_at: null,
+        updated_at: new Date(),
+      })
+      .where(eq(instructions.id, id));
+  }
+}

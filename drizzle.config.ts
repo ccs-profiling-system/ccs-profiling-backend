@@ -9,6 +9,7 @@ export default {
     './src/db/schema/students.ts',
     './src/db/schema/faculty.ts',
     './src/db/schema/entityCounters.ts',
+    './src/db/schema/instructions.ts',
   ],
   out: './drizzle',
   driver: 'pg',
