@@ -8,6 +8,7 @@ export default {
     './src/db/schema/users.ts',
     './src/db/schema/students.ts',
     './src/db/schema/faculty.ts',
+    './src/db/schema/entityCounters.ts',
   ],
   out: './drizzle',
   driver: 'pg',
