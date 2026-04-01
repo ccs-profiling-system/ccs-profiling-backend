@@ -5,4 +5,5 @@ export * from './entityCounters';
 export * from './instructions';
 export * from './enrollments';
 export * from './academicHistory';
+export * from './schedules';
 export * from './utils';
