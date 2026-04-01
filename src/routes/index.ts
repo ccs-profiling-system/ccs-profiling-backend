@@ -13,6 +13,7 @@ import {
   academicHistoryRoutes,
   studentAcademicHistoryRoutes,
 } from '../modules/academic-history';
+import { scheduleRoutes } from '../modules/scheduling';
 
 export const routes = Router();
 
@@ -27,3 +28,4 @@ routes.use('/v1/admin/instructions', instructionRoutes);
 routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 routes.use('/v1/admin/enrollments', enrollmentRoutes);
 routes.use('/v1/admin/academic-history', academicHistoryRoutes);
+routes.use('/v1/admin/schedules', scheduleRoutes);

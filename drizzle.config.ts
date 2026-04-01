@@ -12,6 +12,7 @@ export default {
     './src/db/schema/instructions.ts',
     './src/db/schema/enrollments.ts',
     './src/db/schema/academicHistory.ts',
+    './src/db/schema/schedules.ts',
   ],
   out: './drizzle',
   driver: 'pg',

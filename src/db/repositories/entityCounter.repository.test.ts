@@ -66,19 +66,18 @@ describe('EntityCounterRepository', () => {
 
   describe('incrementCounter', () => {
     it('should increment counter within a transaction', async () => {
-      // Create counter first
-      await repository.getOrCreateCounter('student', testYear);
-
-      // Increment within transaction
+      // Create counter first within the transaction context
       const newSequence = await db.transaction(async (tx) => {
+        // Ensure counter exists within transaction
+        await repository.getOrCreateCounter('student', testYear, tx);
         return await repository.incrementCounter('student', testYear, tx);
       });
 
       expect(newSequence).toBe(1);
 
-      // Verify the counter was updated
-      const counter = await repository.getOrCreateCounter('student', testYear);
-      expect(counter.last_sequence).toBe(1);
+      // Verify the counter was updated using getCurrentSequence
+      const currentSequence = await repository.getCurrentSequence('student', testYear);
+      expect(currentSequence).toBe(1);
     });
 
     it('should increment counter multiple times sequentially', async () => {
