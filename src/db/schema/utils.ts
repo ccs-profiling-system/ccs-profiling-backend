@@ -1,5 +1,4 @@
 import { uuid, timestamp } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
 import { generateUUIDv7 } from '../../shared/utils/uuid';
 
 /**
