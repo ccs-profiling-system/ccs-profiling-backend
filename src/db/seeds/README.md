@@ -8,6 +8,9 @@ This directory contains seed files for populating the database with initial data
 - `users.seed.ts` - Seeds user accounts (admin, faculty, student) with UUID v7
 - `students.seed.ts` - Seeds student profiles with auto-generated IDs
 - `faculty.seed.ts` - Seeds faculty profiles with auto-generated IDs
+- `instructions.seed.ts` - Seeds course/subject instructions
+- `enrollments.seed.ts` - Seeds student enrollments in courses
+- `academicHistory.seed.ts` - Seeds academic history records with grades
 - `run-seeds.ts` - Standalone script to execute seeders
 
 ## Available Commands
@@ -87,11 +90,35 @@ All users have the same password: `pass1234`
 - Email: `robert.johnson@ccs.edu` (F-YYYY-0003)
 
 ### Student Users
-- Email: `student1@ccs.edu` (S-YYYY-0001)
-- Email: `student2@ccs.edu` (S-YYYY-0002)
-- Email: `student3@ccs.edu` (S-YYYY-0003)
-- Email: `student4@ccs.edu` (S-YYYY-0004)
-- Email: `student5@ccs.edu` (S-YYYY-0005)
+- Email: `student1@ccs.edu` (S-YYYY-0001) - Year 4, has 3 years of academic history
+- Email: `student2@ccs.edu` (S-YYYY-0002) - Year 3, has 2 years of academic history
+- Email: `student3@ccs.edu` (S-YYYY-0003) - Year 2, has 1 year of academic history
+- Email: `student4@ccs.edu` (S-YYYY-0004) - Year 1, no academic history yet
+- Email: `student5@ccs.edu` (S-YYYY-0005) - Year 4, has 3 years of academic history
+
+## Seeded Data Overview
+
+### Instructions (Courses)
+- 15 courses across 4 year levels
+- First Year: CS101, CS102, MATH101, ENG101
+- Second Year: CS201, CS202, CS203, MATH201
+- Third Year: CS301, CS302, CS303, CS304
+- Fourth Year: CS401, CS402, CS403
+
+### Enrollments
+- 23 enrollment records
+- Current semester enrollments (1st semester 2025-2026)
+- Historical enrollments (2nd semester 2024-2025)
+- Mix of enrolled, completed, and dropped statuses
+
+### Academic History
+- 44 academic history records
+- Covers 3 academic years (2022-2023 to 2024-2025)
+- Realistic grade distribution (1.0 to 2.5)
+- Year 4 students have complete 3-year history
+- Year 3 students have 2-year history
+- Year 2 students have 1-year history
+- Year 1 students have no history (just started)
 
 ## Adding New Seeders
 
