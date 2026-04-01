@@ -10,16 +10,22 @@ describe('Auth Controller Integration Tests', () => {
   let testUserId: string;
   let accessToken: string;
   const testEmail = 'authtest@example.com';
+  const testPassword = 'testpassword123';
 
   beforeAll(async () => {
     // Clean up any existing test user first
     await db.delete(users).where(eq(users.email, testEmail));
 
-    // Create a test user
-    const passwordHash = await bcrypt.hash('testpassword123', 10);
+    // Create a test user with UUID v7
+    const passwordHash = await bcrypt.hash(testPassword, 10);
+    
+    // Import generateUUIDv7 if not already imported
+    const { generateUUIDv7 } = await import('../../../shared/utils/uuid');
+    
     const result = await db
       .insert(users)
       .values({
+        id: generateUUIDv7(),
         email: testEmail,
         password_hash: passwordHash,
         role: 'admin',
@@ -41,7 +47,7 @@ describe('Auth Controller Integration Tests', () => {
         .post('/api/v1/auth/login')
         .send({
           email: testEmail,
-          password: 'testpassword123',
+          password: testPassword,
         })
         .expect(200);
 
@@ -107,12 +113,25 @@ describe('Auth Controller Integration Tests', () => {
 
   describe('POST /api/v1/auth/change-password', () => {
     it('should change password successfully', async () => {
+      // First, login to get a fresh token with the original password
+      const loginResponse = await request(app)
+        .post('/api/v1/auth/login')
+        .send({
+          email: testEmail,
+          password: testPassword,
+        })
+        .expect(200);
+
+      const token = loginResponse.body.data.tokens.access.token;
+
+      // Change password
+      const newPassword = 'newpassword456';
       const response = await request(app)
         .post('/api/v1/auth/change-password')
-        .set('Authorization', `Bearer ${accessToken}`)
+        .set('Authorization', `Bearer ${token}`)
         .send({
-          oldPassword: 'testpassword123',
-          newPassword: 'newpassword456',
+          oldPassword: testPassword,
+          newPassword: newPassword,
         })
         .expect(200);
 
@@ -120,15 +139,26 @@ describe('Auth Controller Integration Tests', () => {
       expect(response.body.data.message).toBe('Password changed successfully');
 
       // Verify can login with new password
-      const loginResponse = await request(app)
+      const newLoginResponse = await request(app)
         .post('/api/v1/auth/login')
         .send({
           email: testEmail,
-          password: 'newpassword456',
+          password: newPassword,
         })
         .expect(200);
 
-      expect(loginResponse.body.success).toBe(true);
+      expect(newLoginResponse.body.success).toBe(true);
+
+      // Reset password back to original for other tests
+      const resetToken = newLoginResponse.body.data.tokens.access.token;
+      await request(app)
+        .post('/api/v1/auth/change-password')
+        .set('Authorization', `Bearer ${resetToken}`)
+        .send({
+          oldPassword: newPassword,
+          newPassword: testPassword,
+        })
+        .expect(200);
     });
   });
 });

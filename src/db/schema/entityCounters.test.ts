@@ -1,43 +1,53 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { db } from '../index';
 import { entityCounters } from './entityCounters';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { generateUUIDv7 } from '../../shared/utils/uuid';
 
 describe('Entity Counters Schema', () => {
   const testYear = new Date().getFullYear();
 
   afterAll(async () => {
-    // Clean up test data
-    await db.delete(entityCounters).where(eq(entityCounters.year, testYear));
+    // Clean up test data - clean up a range of years used in tests
+    await db.delete(entityCounters).where(
+      sql`${entityCounters.year} >= ${testYear} AND ${entityCounters.year} <= ${testYear + 10}`
+    );
   });
 
   it('should create entity counter for student', async () => {
+    const uniqueYear = testYear + Math.floor(Math.random() * 1000);
     const counter = await db.insert(entityCounters).values({
       id: generateUUIDv7(),
       entity_type: 'student',
-      year: testYear,
+      year: uniqueYear,
       last_sequence: 1,
     }).returning();
 
     expect(counter).toHaveLength(1);
     expect(counter[0].entity_type).toBe('student');
-    expect(counter[0].year).toBe(testYear);
+    expect(counter[0].year).toBe(uniqueYear);
     expect(counter[0].last_sequence).toBe(1);
+
+    // Clean up
+    await db.delete(entityCounters).where(eq(entityCounters.year, uniqueYear));
   });
 
   it('should create entity counter for faculty', async () => {
+    const uniqueYear = testYear + Math.floor(Math.random() * 1000);
     const counter = await db.insert(entityCounters).values({
       id: generateUUIDv7(),
       entity_type: 'faculty',
-      year: testYear,
+      year: uniqueYear,
       last_sequence: 1,
     }).returning();
 
     expect(counter).toHaveLength(1);
     expect(counter[0].entity_type).toBe('faculty');
-    expect(counter[0].year).toBe(testYear);
+    expect(counter[0].year).toBe(uniqueYear);
     expect(counter[0].last_sequence).toBe(1);
+
+    // Clean up
+    await db.delete(entityCounters).where(eq(entityCounters.year, uniqueYear));
   });
 
   it('should enforce unique constraint on (entity_type, year)', async () => {
