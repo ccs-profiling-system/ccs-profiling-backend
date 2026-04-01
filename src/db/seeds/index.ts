@@ -1,9 +1,10 @@
 import { db } from '../index';
-import { users, students, faculty, instructions } from '../schema';
+import { users, students, faculty, instructions, enrollments } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
 import { seedInstructions } from './instructions.seed';
+import { seedEnrollments } from './enrollments.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -83,6 +84,21 @@ export async function runSeeders() {
       console.log('📝 Seeding instructions...');
       instructionIds = await seedInstructions(db);
       console.log(`✅ Created ${instructionIds.length} instructions\n`);
+    }
+
+    // Check if enrollments table has data
+    const enrollmentsHasData = await hasData('enrollments');
+    let enrollmentIds: string[] = [];
+
+    if (enrollmentsHasData) {
+      console.log('ℹ️  Enrollments table already has data, skipping enrollment seeding...');
+      const existingEnrollments = await db.select({ id: enrollments.id }).from(enrollments);
+      enrollmentIds = existingEnrollments.map(e => e.id);
+      console.log(`📊 Found ${enrollmentIds.length} existing enrollments\n`);
+    } else {
+      console.log('📝 Seeding enrollments...');
+      enrollmentIds = await seedEnrollments(db, studentIds, instructionIds);
+      console.log(`✅ Created ${enrollmentIds.length} enrollments\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');
