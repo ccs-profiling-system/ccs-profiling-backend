@@ -404,7 +404,7 @@ export async function seedAcademicHistory(
           student_id: studentId,
           subject_code: seed.subjectCode,
           subject_name: seed.subjectName,
-          grade: seed.grade,
+          grade: seed.grade.toString(),
           semester: seed.semester,
           academic_year: seed.academicYear,
           credits: seed.credits,
