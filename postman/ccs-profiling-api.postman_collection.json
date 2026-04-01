@@ -1006,6 +1006,173 @@
       ]
     },
     {
+      "name": "Academic History",
+      "description": "Academic history management endpoints - Admin only",
+      "item": [
+        {
+          "name": "Get Academic History by Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/academic-history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "academic-history"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Get all academic history records for a specific student"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student GPA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/gpa",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "gpa"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Calculate and get GPA for a specific student based on their academic history"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Academic History Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject_code\": \"CS101\",\n  \"subject_name\": \"Introduction to Computer Science\",\n  \"grade\": 1.5,\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\",\n  \"credits\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/academic-history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "academic-history"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Create new academic history record for a student. Grade should be numeric (e.g., 1.0, 1.5, 2.0)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Academic History Record",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grade\": 1.25,\n  \"remarks\": \"Grade updated after re-evaluation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/academic-history/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "academic-history", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "academic-history-uuid-here",
+                  "description": "Academic History UUID"
+                }
+              ]
+            },
+            "description": "Update academic history record. All fields are optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Academic History Record",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/academic-history/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "academic-history", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "academic-history-uuid-here",
+                  "description": "Academic History UUID"
+                }
+              ]
+            },
+            "description": "Delete academic history record"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Events",
       "description": "Event management endpoints - Admin only",
       "item": [
