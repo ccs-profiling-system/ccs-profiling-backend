@@ -796,6 +796,216 @@
       ]
     },
     {
+      "name": "Enrollments",
+      "description": "Enrollment management endpoints - Admin only",
+      "item": [
+        {
+          "name": "Get All Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/enrollments?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "enrollments"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "semester",
+                  "value": "",
+                  "description": "Filter by semester (1st, 2nd, summer)",
+                  "disabled": true
+                },
+                {
+                  "key": "academic_year",
+                  "value": "",
+                  "description": "Filter by academic year (e.g., 2025-2026)",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by enrollment status",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of enrollments. Supports filtering by semester, academic year, and status."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Enrollments by Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/enrollments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "enrollments"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Get all enrollments for a specific student"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Enrollments by Instruction",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions/:instructionId/enrollments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "instructions", ":instructionId", "enrollments"],
+              "variable": [
+                {
+                  "key": "instructionId",
+                  "value": "instruction-uuid-here",
+                  "description": "Instruction UUID"
+                }
+              ]
+            },
+            "description": "Get all enrollments for a specific instruction/subject"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Enrollment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"instruction_id\": \"instruction-uuid-here\",\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/enrollments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "enrollments"]
+            },
+            "description": "Create new enrollment. Prevents duplicate enrollments for the same student, instruction, semester, and academic year."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Enrollment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enrollment_status\": \"completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/enrollments/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "enrollments", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "enrollment-uuid-here",
+                  "description": "Enrollment UUID"
+                }
+              ]
+            },
+            "description": "Update enrollment status. Valid statuses: enrolled, dropped, completed"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Enrollment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/enrollments/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "enrollments", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "enrollment-uuid-here",
+                  "description": "Enrollment UUID"
+                }
+              ]
+            },
+            "description": "Delete enrollment record"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Events",
       "description": "Event management endpoints - Admin only",
       "item": [

@@ -4,6 +4,11 @@ import authRoutes from '../modules/auth/routes/auth.routes';
 import { studentRoutes } from '../modules/students';
 import { facultyRoutes } from '../modules/faculty';
 import { instructionRoutes } from '../modules/instructions';
+import { 
+  enrollmentRoutes,
+  studentEnrollmentRoutes,
+  instructionEnrollmentRoutes,
+} from '../modules/enrollments';
 
 export const routes = Router();
 
@@ -11,5 +16,8 @@ export const routes = Router();
 routes.use('/v1/auth', authRoutes);
 routes.use('/users', userRoutes);
 routes.use('/v1/admin/students', studentRoutes);
+routes.use('/v1/admin/students', studentEnrollmentRoutes);
 routes.use('/v1/admin/faculty', facultyRoutes);
 routes.use('/v1/admin/instructions', instructionRoutes);
+routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
+routes.use('/v1/admin/enrollments', enrollmentRoutes);
