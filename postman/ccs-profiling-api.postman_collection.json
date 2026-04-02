@@ -1581,6 +1581,230 @@
       ]
     },
     {
+      "name": "Affiliations",
+      "description": "Student affiliations management endpoints - Admin only",
+      "item": [
+        {
+          "name": "Get All Affiliations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/affiliations?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "affiliations"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "student_id",
+                  "value": "",
+                  "description": "Filter by student UUID",
+                  "disabled": true
+                },
+                {
+                  "key": "is_active",
+                  "value": "",
+                  "description": "Filter by active status (true/false)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of affiliation records. Supports filtering by student and active status."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Affiliations by Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/affiliations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "affiliations"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Get all affiliation records for a specific student"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Affiliation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organization_name\": \"Computer Science Society\",\n  \"role\": \"President\",\n  \"start_date\": \"2026-01-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/affiliations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "affiliations"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Create new affiliation record for a student. Date format: YYYY-MM-DD. Role is optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Affiliation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"Vice President\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/affiliations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "affiliations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "affiliation-uuid-here",
+                  "description": "Affiliation UUID"
+                }
+              ]
+            },
+            "description": "Update affiliation record. All fields are optional."
+          },
+          "response": []
+        },
+        {
+          "name": "End Affiliation",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"end_date\": \"2026-05-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/affiliations/:id/end",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "affiliations", ":id", "end"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "affiliation-uuid-here",
+                  "description": "Affiliation UUID"
+                }
+              ]
+            },
+            "description": "End an affiliation. Sets is_active to false and updates end_date. Date format: YYYY-MM-DD."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Affiliation",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/affiliations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "affiliations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "affiliation-uuid-here",
+                  "description": "Affiliation UUID"
+                }
+              ]
+            },
+            "description": "Delete affiliation record. Cascade deletes when student is deleted."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Events",
       "description": "Event management endpoints - Admin only",
       "item": [
