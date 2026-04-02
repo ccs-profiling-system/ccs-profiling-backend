@@ -50,6 +50,20 @@
       "when": 1775141281694,
       "tag": "0006_special_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1775149591951,
+      "tag": "0007_unique_phantom_reporter",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1775149772888,
+      "tag": "0008_misty_blockbuster",
+      "breakpoints": true
     }
   ]
 }
