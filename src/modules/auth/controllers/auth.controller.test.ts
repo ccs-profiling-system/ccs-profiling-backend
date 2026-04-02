@@ -9,7 +9,7 @@ import { eq } from 'drizzle-orm';
 describe('Auth Controller Integration Tests', () => {
   let testUserId: string;
   let accessToken: string;
-  const testEmail = 'authtest@example.com';
+  const testEmail = `authtest.${Date.now()}@example.com`;
   const testPassword = 'testpassword123';
 
   beforeAll(async () => {

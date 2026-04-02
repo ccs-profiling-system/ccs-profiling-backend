@@ -26,48 +26,64 @@ describe('Scheduling Module', () => {
   );
 
   const testYear = new Date().getFullYear();
+  const testEmail = `test.faculty.${Date.now()}@ccs.edu`;
   let testInstructionId: string;
   let testFacultyId: string;
   let testUserId: string;
+  let testSubjectCode: string;
 
   beforeEach(async () => {
-    // Clean up test data - only delete test-specific data
-    await db.delete(schedules);
-    await db.delete(instructions);
-    await db.delete(faculty);
-    // Only delete test users, not all users
-    await db.delete(users).where(eq(users.email, 'test.faculty@ccs.edu'));
+    // Clean up ALL test schedules in room A101 to avoid conflicts from previous test runs
+    await db.delete(schedules).where(eq(schedules.room, 'A101'));
+    await db.delete(schedules).where(eq(schedules.room, 'B202'));
+    
+    // Clean up test data in correct order (respecting foreign key constraints)
+    // Only delete test-specific data to avoid interfering with other tests
+    
+    // Delete test faculty
+    if (testFacultyId) {
+      await db.delete(faculty).where(eq(faculty.id, testFacultyId));
+    }
+    
+    // Delete test instruction
+    if (testInstructionId) {
+      await db.delete(instructions).where(eq(instructions.id, testInstructionId));
+    }
+    
+    // Delete test user
+    await db.delete(users).where(eq(users.email, testEmail));
 
     // Create test user for faculty
-    const user = await db.insert(users).values({
-      id: generateUUIDv7(),
-      email: 'test.faculty@ccs.edu',
+    testUserId = generateUUIDv7();
+    await db.insert(users).values({
+      id: testUserId,
+      email: testEmail,
       password_hash: 'hashed_password',
       role: 'faculty',
-    }).returning();
-    testUserId = user[0].id;
+    });
 
     // Create test instruction
-    const instruction = await db.insert(instructions).values({
-      id: generateUUIDv7(),
-      subject_code: 'CS101',
+    testInstructionId = generateUUIDv7();
+    testSubjectCode = `CS${Date.now().toString().slice(-6)}`;
+    await db.insert(instructions).values({
+      id: testInstructionId,
+      subject_code: testSubjectCode,
       subject_name: 'Introduction to Computer Science',
       credits: 3,
-      curriculum_year: '2024',
-    }).returning();
-    testInstructionId = instruction[0].id;
+      curriculum_year: testYear.toString(),
+    });
 
     // Create test faculty
-    const facultyMember = await db.insert(faculty).values({
-      id: generateUUIDv7(),
-      faculty_id: 'F-2024-0001',
+    testFacultyId = generateUUIDv7();
+    await db.insert(faculty).values({
+      id: testFacultyId,
+      faculty_id: `F-${testYear}-${Date.now()}`,
       user_id: testUserId,
       first_name: 'John',
       last_name: 'Doe',
-      email: 'test.faculty@ccs.edu',
+      email: testEmail,
       department: 'Computer Science',
-    }).returning();
-    testFacultyId = facultyMember[0].id;
+    });
   });
 
   describe('Schedule Creation', () => {
@@ -92,7 +108,7 @@ describe('Scheduling Module', () => {
       expect(result.day).toBe('monday');
       expect(result.start_time).toBe('08:00:00');
       expect(result.end_time).toBe('10:00:00');
-      expect(result.subject_code).toBe('CS101');
+      expect(result.subject_code).toBe(testSubjectCode);
       expect(result.faculty_name).toBe('John Doe');
     });
 
@@ -170,7 +186,7 @@ describe('Scheduling Module', () => {
 
       expect(result).toBeDefined();
       expect(result.id).toBe(created.id);
-      expect(result.subject_code).toBe('CS101');
+      expect(result.subject_code).toBe(testSubjectCode);
     });
 
     it('should get schedules by room', async () => {
