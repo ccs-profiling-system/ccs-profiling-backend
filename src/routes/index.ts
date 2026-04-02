@@ -18,6 +18,10 @@ import {
   skillRoutes,
   studentSkillRoutes,
 } from '../modules/skills';
+import {
+  violationRoutes,
+  studentViolationRoutes,
+} from '../modules/violations';
 
 export const routes = Router();
 
@@ -28,6 +32,7 @@ routes.use('/v1/admin/students', studentRoutes);
 routes.use('/v1/admin/students', studentEnrollmentRoutes);
 routes.use('/v1/admin/students', studentAcademicHistoryRoutes);
 routes.use('/v1/admin/students', studentSkillRoutes);
+routes.use('/v1/admin/students', studentViolationRoutes);
 routes.use('/v1/admin/faculty', facultyRoutes);
 routes.use('/v1/admin/instructions', instructionRoutes);
 routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
@@ -35,3 +40,4 @@ routes.use('/v1/admin/enrollments', enrollmentRoutes);
 routes.use('/v1/admin/academic-history', academicHistoryRoutes);
 routes.use('/v1/admin/schedules', scheduleRoutes);
 routes.use('/v1/admin/skills', skillRoutes);
+routes.use('/v1/admin/violations', violationRoutes);
