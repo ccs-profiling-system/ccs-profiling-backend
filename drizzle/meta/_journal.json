@@ -43,6 +43,13 @@
       "when": 1775066627227,
       "tag": "0005_messy_the_enforcers",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1775141281694,
+      "tag": "0006_special_nextwave",
+      "breakpoints": true
     }
   ]
 }

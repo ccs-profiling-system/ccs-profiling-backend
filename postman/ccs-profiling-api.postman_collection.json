@@ -1173,6 +1173,190 @@
       ]
     },
     {
+      "name": "Skills",
+      "description": "Student skills management endpoints - Admin only",
+      "item": [
+        {
+          "name": "Get All Skills",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/skills?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "skills"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "student_id",
+                  "value": "",
+                  "description": "Filter by student UUID",
+                  "disabled": true
+                },
+                {
+                  "key": "proficiency_level",
+                  "value": "",
+                  "description": "Filter by proficiency level (beginner, intermediate, advanced, expert)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of skill records. Supports filtering by student and proficiency level."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Skills by Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/skills",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "skills"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Get all skill records for a specific student"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skill_name\": \"JavaScript\",\n  \"proficiency_level\": \"advanced\",\n  \"years_of_experience\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/skills",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "skills"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Create new skill record for a student. Proficiency levels: beginner, intermediate, advanced, expert"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Skill",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proficiency_level\": \"expert\",\n  \"years_of_experience\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/skills/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "skills", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "skill-uuid-here",
+                  "description": "Skill UUID"
+                }
+              ]
+            },
+            "description": "Update skill record. All fields are optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Skill",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/skills/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "skills", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "skill-uuid-here",
+                  "description": "Skill UUID"
+                }
+              ]
+            },
+            "description": "Delete skill record. Cascade deletes when student is deleted."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Events",
       "description": "Event management endpoints - Admin only",
       "item": [

@@ -6,4 +6,5 @@ export * from './instructions';
 export * from './enrollments';
 export * from './academicHistory';
 export * from './schedules';
+export * from './skills';
 export * from './utils';
