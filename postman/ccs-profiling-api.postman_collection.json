@@ -1357,6 +1357,230 @@
       ]
     },
     {
+      "name": "Violations",
+      "description": "Student violations management endpoints - Admin only",
+      "item": [
+        {
+          "name": "Get All Violations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/violations?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "violations"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "student_id",
+                  "value": "",
+                  "description": "Filter by student UUID",
+                  "disabled": true
+                },
+                {
+                  "key": "resolution_status",
+                  "value": "",
+                  "description": "Filter by resolution status (pending, resolved, dismissed)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of violation records. Supports filtering by student and resolution status."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Violations by Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/violations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "violations"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Get all violation records for a specific student"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Violation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"violation_type\": \"Academic Dishonesty\",\n  \"description\": \"Caught cheating during final exam\",\n  \"violation_date\": \"2026-04-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:studentId/violations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "students", ":studentId", "violations"],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Create new violation record for a student. Date format: YYYY-MM-DD"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Violation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"violation_type\": \"Academic Dishonesty\",\n  \"description\": \"Updated description\",\n  \"resolution_status\": \"pending\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/violations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "violations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "violation-uuid-here",
+                  "description": "Violation UUID"
+                }
+              ]
+            },
+            "description": "Update violation record. All fields are optional. Valid resolution statuses: pending, resolved, dismissed"
+          },
+          "response": []
+        },
+        {
+          "name": "Resolve Violation",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resolution_notes\": \"Student completed community service and attended counseling sessions\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/violations/:id/resolve",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "violations", ":id", "resolve"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "violation-uuid-here",
+                  "description": "Violation UUID"
+                }
+              ]
+            },
+            "description": "Resolve a violation record. Sets resolution_status to 'resolved' and updates resolved_at timestamp. Resolution notes are optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Violation",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/violations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "violations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "violation-uuid-here",
+                  "description": "Violation UUID"
+                }
+              ]
+            },
+            "description": "Delete violation record. Cascade deletes when student is deleted."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Events",
       "description": "Event management endpoints - Admin only",
       "item": [
