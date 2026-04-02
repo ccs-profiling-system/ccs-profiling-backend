@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -7,6 +7,7 @@ import { seedInstructions } from './instructions.seed';
 import { seedEnrollments } from './enrollments.seed';
 import { seedAcademicHistory } from './academicHistory.seed';
 import { seedSkills } from './skills.seed';
+import { seedViolations } from './violations.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -131,6 +132,21 @@ export async function runSeeders() {
       console.log('📝 Seeding skills...');
       skillIds = await seedSkills(db, studentIds);
       console.log(`✅ Created ${skillIds.length} skill records\n`);
+    }
+
+    // Check if violations table has data
+    const violationsHasData = await hasData('violations');
+    let violationIds: string[] = [];
+
+    if (violationsHasData) {
+      console.log('ℹ️  Violations table already has data, skipping violations seeding...');
+      const existingViolations = await db.select({ id: violations.id }).from(violations);
+      violationIds = existingViolations.map(v => v.id);
+      console.log(`📊 Found ${violationIds.length} existing violation records\n`);
+    } else {
+      console.log('📝 Seeding violations...');
+      violationIds = await seedViolations(db, studentIds);
+      console.log(`✅ Created ${violationIds.length} violation records\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');
