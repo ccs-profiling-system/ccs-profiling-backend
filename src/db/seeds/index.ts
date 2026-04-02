@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -8,6 +8,7 @@ import { seedEnrollments } from './enrollments.seed';
 import { seedAcademicHistory } from './academicHistory.seed';
 import { seedSkills } from './skills.seed';
 import { seedViolations } from './violations.seed';
+import { seedAffiliations } from './affiliations.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -147,6 +148,21 @@ export async function runSeeders() {
       console.log('📝 Seeding violations...');
       violationIds = await seedViolations(db, studentIds);
       console.log(`✅ Created ${violationIds.length} violation records\n`);
+    }
+
+    // Check if affiliations table has data
+    const affiliationsHasData = await hasData('affiliations');
+    let affiliationIds: string[] = [];
+
+    if (affiliationsHasData) {
+      console.log('ℹ️  Affiliations table already has data, skipping affiliations seeding...');
+      const existingAffiliations = await db.select({ id: affiliations.id }).from(affiliations);
+      affiliationIds = existingAffiliations.map(a => a.id);
+      console.log(`📊 Found ${affiliationIds.length} existing affiliation records\n`);
+    } else {
+      console.log('📝 Seeding affiliations...');
+      affiliationIds = await seedAffiliations(db, studentIds);
+      console.log(`✅ Created ${affiliationIds.length} affiliation records\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

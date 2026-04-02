@@ -30,6 +30,9 @@ export class AuthController {
 
       // Get user data
       const user = await this.userRepository.findByEmail(email);
+      if (!user) {
+        throw new ValidationError('User not found after login');
+      }
 
       // Calculate expiration details
       const accessExpiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
@@ -39,9 +42,9 @@ export class AuthController {
         success: true,
         data: {
           user: {
-            id: user!.id,
-            email: user!.email,
-            role: user!.role,
+            id: user.id,
+            email: user.email,
+            role: user.role,
           },
           tokens: {
             access: {
