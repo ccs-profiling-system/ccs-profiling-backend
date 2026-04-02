@@ -1,11 +1,12 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
 import { seedInstructions } from './instructions.seed';
 import { seedEnrollments } from './enrollments.seed';
 import { seedAcademicHistory } from './academicHistory.seed';
+import { seedSkills } from './skills.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -115,6 +116,21 @@ export async function runSeeders() {
       console.log('📝 Seeding academic history...');
       academicHistoryIds = await seedAcademicHistory(db, studentIds);
       console.log(`✅ Created ${academicHistoryIds.length} academic history records\n`);
+    }
+
+    // Check if skills table has data
+    const skillsHasData = await hasData('skills');
+    let skillIds: string[] = [];
+
+    if (skillsHasData) {
+      console.log('ℹ️  Skills table already has data, skipping skills seeding...');
+      const existingSkills = await db.select({ id: skills.id }).from(skills);
+      skillIds = existingSkills.map(s => s.id);
+      console.log(`📊 Found ${skillIds.length} existing skill records\n`);
+    } else {
+      console.log('📝 Seeding skills...');
+      skillIds = await seedSkills(db, studentIds);
+      console.log(`✅ Created ${skillIds.length} skill records\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');
