@@ -24,16 +24,17 @@ export function createStudentRoutes(studentController: StudentController): Route
   router.get('/', studentController.listStudents);
 
   /**
+   * GET /api/v1/admin/students/:id/profile
+   * Get complete student profile with aggregated data
+   * IMPORTANT: This route must come BEFORE /:id to avoid route conflicts
+   */
+  router.get('/:id/profile', studentController.getStudentProfile);
+
+  /**
    * GET /api/v1/admin/students/:id
    * Get student by ID
    */
   router.get('/:id', studentController.getStudent);
-
-  /**
-   * GET /api/v1/admin/students/:id/profile
-   * Get complete student profile with aggregated data
-   */
-  router.get('/:id/profile', studentController.getStudentProfile);
 
   /**
    * POST /api/v1/admin/students
