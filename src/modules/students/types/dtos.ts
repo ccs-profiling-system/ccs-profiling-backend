@@ -77,10 +77,62 @@ export interface StudentListResponseDTO {
 /**
  * StudentProfileDTO - Aggregated profile with related data
  * Used for complete student profile view
+ * Requirements: 10.1, 10.2, 10.3, 10.4
  */
 export interface StudentProfileDTO extends StudentResponseDTO {
-  // Note: Related data (skills, violations, affiliations, etc.) 
-  // will be added when those modules are implemented
+  skills: Array<{
+    id: string;
+    skill_name: string;
+    proficiency_level?: string;
+    years_of_experience?: number;
+    created_at: string;
+    updated_at: string;
+  }>;
+  violations: Array<{
+    id: string;
+    violation_type: string;
+    description: string;
+    violation_date: string;
+    resolution_status: string;
+    resolution_notes?: string;
+    resolved_at?: string;
+    created_at: string;
+    updated_at: string;
+  }>;
+  affiliations: Array<{
+    id: string;
+    organization_name: string;
+    role?: string;
+    start_date: string;
+    end_date?: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  }>;
+  academic_history: Array<{
+    id: string;
+    subject_code: string;
+    subject_name: string;
+    grade: number;
+    semester: string;
+    academic_year: string;
+    credits: number;
+    remarks?: string;
+    created_at: string;
+    updated_at: string;
+  }>;
+  enrollments: Array<{
+    id: string;
+    instruction_id: string;
+    subject_code: string;
+    subject_name: string;
+    enrollment_status: string;
+    semester: string;
+    academic_year: string;
+    enrolled_at: string;
+    created_at: string;
+    updated_at: string;
+  }>;
 }
 
 /**

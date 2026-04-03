@@ -161,7 +161,8 @@ export class StudentController {
   /**
    * GET /api/v1/admin/students/:id/profile
    * Get complete student profile with aggregated data
-   * Requirements: 2.5, 10.1, 30.2
+   * Returns aggregated profile within 500ms
+   * Requirements: 10.1, 10.4, 30.2
    */
   getStudentProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {

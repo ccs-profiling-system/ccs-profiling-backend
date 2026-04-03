@@ -341,7 +341,7 @@
                 }
               ]
             },
-            "description": "Get complete student profile with skills, violations, affiliations, academic history, and enrollments"
+            "description": "Get complete student profile with all aggregated data. Returns student information along with skills, violations, affiliations, academic history, and enrollments in a single response.\n\nFeatures:\n- Aggregates data from 5 different modules\n- Uses batch queries to prevent N+1 query problems\n- Parallel data fetching for optimal performance\n- Target response time: <500ms\n\nResponse includes:\n- Student basic information\n- Skills array with proficiency levels\n- Violations array with resolution status\n- Affiliations array with organization memberships\n- Academic history array with grades and GPA data\n- Enrollments array with current course registrations\n\nExample response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"uuid\",\n    \"student_id\": \"S-2026-0001\",\n    \"first_name\": \"Alice\",\n    \"last_name\": \"Williams\",\n    \"email\": \"alice@example.com\",\n    \"skills\": [...],\n    \"violations\": [...],\n    \"affiliations\": [...],\n    \"academic_history\": [...],\n    \"enrollments\": [...]\n  }\n}\n```"
           },
           "response": []
         },

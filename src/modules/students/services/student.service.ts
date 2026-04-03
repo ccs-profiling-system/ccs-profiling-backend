@@ -2,12 +2,17 @@
  * Student Service
  * Business logic layer for student operations
  * 
- * Requirements: 2.1, 2.5, 2.6, 2.7
+ * Requirements: 2.1, 2.5, 2.6, 2.7, 10.1, 10.2, 10.3, 10.4
  */
 
 import { StudentRepository } from '../repositories/student.repository';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { EntityCounterRepository } from '../../../db/repositories/entityCounter.repository';
+import { SkillRepository } from '../../skills/repositories/skill.repository';
+import { ViolationRepository } from '../../violations/repositories/violation.repository';
+import { AffiliationRepository } from '../../affiliations/repositories/affiliation.repository';
+import { AcademicHistoryRepository } from '../../academic-history/repositories/academicHistory.repository';
+import { EnrollmentRepository } from '../../enrollments/repositories/enrollment.repository';
 import { Database } from '../../../db';
 import { NotFoundError, ConflictError } from '../../../shared/errors';
 import { generateUUIDv7 } from '../../../shared/utils/uuid';
@@ -26,6 +31,11 @@ export class StudentService {
     private studentRepository: StudentRepository,
     private userRepository: UserRepository,
     private entityCounterRepository: EntityCounterRepository,
+    private skillRepository: SkillRepository,
+    private violationRepository: ViolationRepository,
+    private affiliationRepository: AffiliationRepository,
+    private academicHistoryRepository: AcademicHistoryRepository,
+    private enrollmentRepository: EnrollmentRepository,
     private db: Database
   ) {}
 
@@ -222,7 +232,9 @@ export class StudentService {
 
   /**
    * Get complete student profile with aggregated data
-   * Requirement: 10.1
+   * Fetches student, skills, violations, affiliations, academic history, and enrollments
+   * Uses batch queries to prevent N+1 query problems
+   * Requirements: 10.1, 10.2, 10.3, 10.4
    */
   async getStudentProfile(id: string): Promise<StudentProfileDTO> {
     const student = await this.studentRepository.findById(id);
@@ -230,9 +242,73 @@ export class StudentService {
       throw new NotFoundError('Student not found');
     }
 
-    // For now, return basic profile
-    // Related data (skills, violations, etc.) will be added when those modules are implemented
-    return this.toResponseDTO(student);
+    // Fetch all related data in parallel using Promise.all for optimal performance
+    // Each repository uses batch query methods (findByStudentIds) to prevent N+1 queries
+    const [skills, violations, affiliations, academicHistory, enrollments] = await Promise.all([
+      this.skillRepository.findByStudentIds([id]),
+      this.violationRepository.findByStudentIds([id]),
+      this.affiliationRepository.findByStudentIds([id]),
+      this.academicHistoryRepository.findByStudentIds([id]),
+      this.enrollmentRepository.findByStudentIds([id]),
+    ]);
+
+    // Transform aggregated data to StudentProfileDTO
+    return {
+      ...this.toResponseDTO(student),
+      skills: skills.map((skill) => ({
+        id: skill.id,
+        skill_name: skill.skill_name,
+        proficiency_level: skill.proficiency_level || undefined,
+        years_of_experience: skill.years_of_experience || undefined,
+        created_at: skill.created_at.toISOString(),
+        updated_at: skill.updated_at.toISOString(),
+      })),
+      violations: violations.map((violation) => ({
+        id: violation.id,
+        violation_type: violation.violation_type,
+        description: violation.description,
+        violation_date: violation.violation_date,
+        resolution_status: violation.resolution_status,
+        resolution_notes: violation.resolution_notes || undefined,
+        resolved_at: violation.resolved_at ? violation.resolved_at.toISOString() : undefined,
+        created_at: violation.created_at.toISOString(),
+        updated_at: violation.updated_at.toISOString(),
+      })),
+      affiliations: affiliations.map((affiliation) => ({
+        id: affiliation.id,
+        organization_name: affiliation.organization_name,
+        role: affiliation.role || undefined,
+        start_date: affiliation.start_date,
+        end_date: affiliation.end_date || undefined,
+        is_active: affiliation.is_active,
+        created_at: affiliation.created_at.toISOString(),
+        updated_at: affiliation.updated_at.toISOString(),
+      })),
+      academic_history: academicHistory.map((record) => ({
+        id: record.id,
+        subject_code: record.subject_code,
+        subject_name: record.subject_name,
+        grade: parseFloat(record.grade),
+        semester: record.semester,
+        academic_year: record.academic_year,
+        credits: record.credits,
+        remarks: record.remarks || undefined,
+        created_at: record.created_at.toISOString(),
+        updated_at: record.updated_at.toISOString(),
+      })),
+      enrollments: enrollments.map((item) => ({
+        id: item.enrollment.id,
+        instruction_id: item.enrollment.instruction_id,
+        subject_code: item.instruction?.subject_code || '',
+        subject_name: item.instruction?.subject_name || '',
+        enrollment_status: item.enrollment.enrollment_status,
+        semester: item.enrollment.semester,
+        academic_year: item.enrollment.academic_year,
+        enrolled_at: item.enrollment.enrolled_at.toISOString(),
+        created_at: item.enrollment.created_at.toISOString(),
+        updated_at: item.enrollment.updated_at.toISOString(),
+      })),
+    };
   }
 
   /**
