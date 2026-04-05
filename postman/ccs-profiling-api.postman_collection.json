@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "CCS Profiling API",
-    "description": "Complete API collection for CCS Profiling System with authentication and all modules.\n\n## Quick Start\n1. Set the {{base_url}} variable to your server URL (default: http://localhost:3000)\n2. Run the 'Login' request to authenticate\n3. Access token is automatically saved and used for all subsequent requests\n\n## Environment Variables\n- base_url: http://localhost:3000 (local) or your production URL\n- token: Auto-populated after login\n- refreshToken: Auto-populated after login\n\n## Authentication\nAll admin endpoints require Bearer token authentication. Login first to get your token.",
+    "name": "CCS Profiling API - Complete",
+    "description": "Complete API collection for CCS Profiling System including Research module",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -14,2212 +14,12 @@
       "key": "token",
       "value": "",
       "type": "string"
-    },
-    {
-      "key": "refreshToken",
-      "value": "",
-      "type": "string"
-    }
-  ],
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{token}}",
-        "type": "string"
-      }
-    ]
-  },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "// Automatically add Authorization header for authenticated requests",
-          "const token = pm.collectionVariables.get('token');",
-          "if (token) {",
-          "    pm.request.headers.add({",
-          "        key: 'Authorization',",
-          "        value: `Bearer ${token}`",
-          "    });",
-          "}"
-        ]
-      }
     }
   ],
   "item": [
     {
-      "name": "Health Check",
-      "description": "System health check endpoint - No authentication required",
-      "item": [
-        {
-          "name": "Health Check",
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/health",
-              "host": ["{{base_url}}"],
-              "path": ["health"]
-            },
-            "description": "Check if the API server is running and healthy. Returns server status, timestamp, and environment."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Auth",
-      "description": "Authentication endpoints - JWT-based authentication with access and refresh tokens",
-      "item": [
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const response = pm.response.json();",
-                  "    if (response.success && response.data.tokens) {",
-                  "        pm.collectionVariables.set('token', response.data.tokens.access.token);",
-                  "        pm.collectionVariables.set('refreshToken', response.data.tokens.refresh.token);",
-                  "        console.log('Access token saved to collection variables');",
-                  "        console.log('Token expires at:', response.data.tokens.access.expiresAt);",
-                  "    }",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@ccs.edu\",\n  \"password\": \"pass1234\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "login"]
-            },
-            "description": "Login with email and password. Returns nested token structure with access and refresh tokens including expiration times. Rate limited to 5 requests per 15 minutes.\n\nResponse format:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"user\": { \"id\": \"...\", \"email\": \"...\", \"role\": \"...\" },\n    \"tokens\": {\n      \"access\": { \"token\": \"...\", \"expiresAt\": \"...\" },\n      \"refresh\": { \"token\": \"...\", \"expiresAt\": \"...\" }\n    }\n  }\n}\n```"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Current User (Me)",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/auth/me",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "me"]
-            },
-            "description": "Get current authenticated user information. Requires valid access token."
-          },
-          "response": []
-        },
-        {
-          "name": "Refresh Token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const response = pm.response.json();",
-                  "    if (response.success && response.data.tokens) {",
-                  "        pm.collectionVariables.set('token', response.data.tokens.access.token);",
-                  "        pm.collectionVariables.set('refreshToken', response.data.tokens.refresh.token);",
-                  "        console.log('Tokens refreshed and saved to collection variables');",
-                  "        console.log('New token expires at:', response.data.tokens.access.expiresAt);",
-                  "    }",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/auth/refresh",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "refresh"]
-            },
-            "description": "Refresh access token using refresh token. Returns new access and refresh tokens with expiration times. Rate limited to 5 requests per 15 minutes.\n\nResponse format:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"tokens\": {\n      \"access\": { \"token\": \"...\", \"expiresAt\": \"...\" },\n      \"refresh\": { \"token\": \"...\", \"expiresAt\": \"...\" }\n    }\n  }\n}\n```"
-          },
-          "response": []
-        },
-        {
-          "name": "Change Password",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"oldPassword\": \"pass1234\",\n  \"newPassword\": \"newPassword456\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/auth/change-password",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "change-password"]
-            },
-            "description": "Change password for authenticated user. Requires valid access token and correct old password."
-          },
-          "response": []
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/v1/auth/logout",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "logout"]
-            },
-            "description": "Logout endpoint. Currently returns success message. Token invalidation handled client-side."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Students",
-      "description": "Student management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get All Students",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "description": "Search by name or student_id",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of students. Supports search and filtering."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Student by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Get student details by UUID"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Student Profile",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:id/profile",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":id", "profile"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Get complete student profile with all aggregated data. Returns student information along with skills, violations, affiliations, academic history, and enrollments in a single response.\n\nFeatures:\n- Aggregates data from 5 different modules\n- Uses batch queries to prevent N+1 query problems\n- Parallel data fetching for optimal performance\n- Target response time: <500ms\n\nResponse includes:\n- Student basic information\n- Skills array with proficiency levels\n- Violations array with resolution status\n- Affiliations array with organization memberships\n- Academic history array with grades and GPA data\n- Enrollments array with current course registrations\n\nExample response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"uuid\",\n    \"student_id\": \"S-2026-0001\",\n    \"first_name\": \"Alice\",\n    \"last_name\": \"Williams\",\n    \"email\": \"alice@example.com\",\n    \"skills\": [...],\n    \"violations\": [...],\n    \"affiliations\": [...],\n    \"academic_history\": [...],\n    \"enrollments\": [...]\n  }\n}\n```"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Student",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"student_id\": \"2024-001\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"middle_name\": \"Smith\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+1234567890\",\n  \"date_of_birth\": \"2000-01-15\",\n  \"address\": \"123 Main St\",\n  \"year_level\": 1,\n  \"program\": \"BS Computer Science\",\n  \"create_user_account\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students"]
-            },
-            "description": "Create new student. Set create_user_account to true to create linked user account."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Student",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"year_level\": 2,\n  \"status\": \"active\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Update student information. All fields are optional."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Student (Soft Delete)",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Soft delete student (sets deleted_at timestamp)"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Faculty",
-      "description": "Faculty management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get All Faculty",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/faculty?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "faculty"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "department",
-                  "value": "",
-                  "description": "Filter by department",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of faculty members. Supports filtering by department."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Faculty by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/faculty/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "faculty", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "faculty-uuid-here",
-                  "description": "Faculty UUID"
-                }
-              ]
-            },
-            "description": "Get faculty details by UUID"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Faculty",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"faculty_id\": \"FAC-001\",\n  \"first_name\": \"Dr. Jane\",\n  \"last_name\": \"Smith\",\n  \"middle_name\": \"Marie\",\n  \"email\": \"jane.smith@example.com\",\n  \"phone\": \"+1234567890\",\n  \"department\": \"Computer Science\",\n  \"position\": \"Professor\",\n  \"specialization\": \"Artificial Intelligence\",\n  \"create_user_account\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/faculty",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "faculty"]
-            },
-            "description": "Create new faculty member. Set create_user_account to true to create linked user account."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Faculty",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"position\": \"Associate Professor\",\n  \"department\": \"Computer Science\",\n  \"status\": \"active\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/faculty/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "faculty", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "faculty-uuid-here",
-                  "description": "Faculty UUID"
-                }
-              ]
-            },
-            "description": "Update faculty information. All fields are optional."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Faculty (Soft Delete)",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/faculty/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "faculty", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "faculty-uuid-here",
-                  "description": "Faculty UUID"
-                }
-              ]
-            },
-            "description": "Soft delete faculty member (sets deleted_at timestamp)"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Instructions",
-      "description": "Instruction/Subject management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get All Instructions",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/instructions?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "instructions"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "description": "Search by subject code or name",
-                  "disabled": true
-                },
-                {
-                  "key": "curriculum_year",
-                  "value": "",
-                  "description": "Filter by curriculum year",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of instructions. Supports search and filtering by curriculum year."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Instruction by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/instructions/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "instructions", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "instruction-uuid-here",
-                  "description": "Instruction UUID"
-                }
-              ]
-            },
-            "description": "Get instruction details by UUID"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Instruction",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"subject_code\": \"CS101\",\n  \"subject_name\": \"Introduction to Computer Science\",\n  \"description\": \"Fundamentals of computer science and programming\",\n  \"credits\": 3,\n  \"curriculum_year\": \"2025-2026\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/instructions",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "instructions"]
-            },
-            "description": "Create new instruction/subject. Subject code must be unique within the curriculum year."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Instruction",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"subject_name\": \"Advanced Computer Science\",\n  \"description\": \"Updated course description\",\n  \"credits\": 4\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/instructions/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "instructions", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "instruction-uuid-here",
-                  "description": "Instruction UUID"
-                }
-              ]
-            },
-            "description": "Update instruction information. All fields are optional."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Instruction (Soft Delete)",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/instructions/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "instructions", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "instruction-uuid-here",
-                  "description": "Instruction UUID"
-                }
-              ]
-            },
-            "description": "Soft delete instruction (sets deleted_at timestamp)"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Enrollments",
-      "description": "Enrollment management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get All Enrollments",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/enrollments?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "enrollments"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "semester",
-                  "value": "",
-                  "description": "Filter by semester (1st, 2nd, summer)",
-                  "disabled": true
-                },
-                {
-                  "key": "academic_year",
-                  "value": "",
-                  "description": "Filter by academic year (e.g., 2025-2026)",
-                  "disabled": true
-                },
-                {
-                  "key": "status",
-                  "value": "",
-                  "description": "Filter by enrollment status",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of enrollments. Supports filtering by semester, academic year, and status."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Enrollments by Student",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/enrollments",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "enrollments"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Get all enrollments for a specific student"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Enrollments by Instruction",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/instructions/:instructionId/enrollments",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "instructions", ":instructionId", "enrollments"],
-              "variable": [
-                {
-                  "key": "instructionId",
-                  "value": "instruction-uuid-here",
-                  "description": "Instruction UUID"
-                }
-              ]
-            },
-            "description": "Get all enrollments for a specific instruction/subject"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Enrollment",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"instruction_id\": \"instruction-uuid-here\",\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/enrollments",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "enrollments"]
-            },
-            "description": "Create new enrollment. Prevents duplicate enrollments for the same student, instruction, semester, and academic year."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Enrollment",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"enrollment_status\": \"completed\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/enrollments/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "enrollments", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "enrollment-uuid-here",
-                  "description": "Enrollment UUID"
-                }
-              ]
-            },
-            "description": "Update enrollment status. Valid statuses: enrolled, dropped, completed"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Enrollment",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/enrollments/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "enrollments", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "enrollment-uuid-here",
-                  "description": "Enrollment UUID"
-                }
-              ]
-            },
-            "description": "Delete enrollment record"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Academic History",
-      "description": "Academic history management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get Academic History by Student",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/academic-history",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "academic-history"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Get all academic history records for a specific student"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Student GPA",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/gpa",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "gpa"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Calculate and get GPA for a specific student based on their academic history"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Academic History Record",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"subject_code\": \"CS101\",\n  \"subject_name\": \"Introduction to Computer Science\",\n  \"grade\": 1.5,\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\",\n  \"credits\": 3\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/academic-history",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "academic-history"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Create new academic history record for a student. Grade should be numeric (e.g., 1.0, 1.5, 2.0)"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Academic History Record",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"grade\": 1.25,\n  \"remarks\": \"Grade updated after re-evaluation\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/academic-history/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "academic-history", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "academic-history-uuid-here",
-                  "description": "Academic History UUID"
-                }
-              ]
-            },
-            "description": "Update academic history record. All fields are optional."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Academic History Record",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/academic-history/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "academic-history", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "academic-history-uuid-here",
-                  "description": "Academic History UUID"
-                }
-              ]
-            },
-            "description": "Delete academic history record"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Skills",
-      "description": "Student skills management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get All Skills",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/skills?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "skills"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "student_id",
-                  "value": "",
-                  "description": "Filter by student UUID",
-                  "disabled": true
-                },
-                {
-                  "key": "proficiency_level",
-                  "value": "",
-                  "description": "Filter by proficiency level (beginner, intermediate, advanced, expert)",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of skill records. Supports filtering by student and proficiency level."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Skills by Student",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/skills",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "skills"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Get all skill records for a specific student"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Skill",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"skill_name\": \"JavaScript\",\n  \"proficiency_level\": \"advanced\",\n  \"years_of_experience\": 3\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/skills",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "skills"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Create new skill record for a student. Proficiency levels: beginner, intermediate, advanced, expert"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Skill",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"proficiency_level\": \"expert\",\n  \"years_of_experience\": 5\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/skills/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "skills", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "skill-uuid-here",
-                  "description": "Skill UUID"
-                }
-              ]
-            },
-            "description": "Update skill record. All fields are optional."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Skill",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/skills/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "skills", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "skill-uuid-here",
-                  "description": "Skill UUID"
-                }
-              ]
-            },
-            "description": "Delete skill record. Cascade deletes when student is deleted."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Violations",
-      "description": "Student violations management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get All Violations",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/violations?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "violations"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "student_id",
-                  "value": "",
-                  "description": "Filter by student UUID",
-                  "disabled": true
-                },
-                {
-                  "key": "resolution_status",
-                  "value": "",
-                  "description": "Filter by resolution status (pending, resolved, dismissed)",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of violation records. Supports filtering by student and resolution status."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Violations by Student",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/violations",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "violations"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Get all violation records for a specific student"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Violation",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"violation_type\": \"Academic Dishonesty\",\n  \"description\": \"Caught cheating during final exam\",\n  \"violation_date\": \"2026-04-01\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/violations",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "violations"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Create new violation record for a student. Date format: YYYY-MM-DD"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Violation",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"violation_type\": \"Academic Dishonesty\",\n  \"description\": \"Updated description\",\n  \"resolution_status\": \"pending\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/violations/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "violations", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "violation-uuid-here",
-                  "description": "Violation UUID"
-                }
-              ]
-            },
-            "description": "Update violation record. All fields are optional. Valid resolution statuses: pending, resolved, dismissed"
-          },
-          "response": []
-        },
-        {
-          "name": "Resolve Violation",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"resolution_notes\": \"Student completed community service and attended counseling sessions\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/violations/:id/resolve",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "violations", ":id", "resolve"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "violation-uuid-here",
-                  "description": "Violation UUID"
-                }
-              ]
-            },
-            "description": "Resolve a violation record. Sets resolution_status to 'resolved' and updates resolved_at timestamp. Resolution notes are optional."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Violation",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/violations/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "violations", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "violation-uuid-here",
-                  "description": "Violation UUID"
-                }
-              ]
-            },
-            "description": "Delete violation record. Cascade deletes when student is deleted."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Affiliations",
-      "description": "Student affiliations management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get All Affiliations",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/affiliations?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "affiliations"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "student_id",
-                  "value": "",
-                  "description": "Filter by student UUID",
-                  "disabled": true
-                },
-                {
-                  "key": "is_active",
-                  "value": "",
-                  "description": "Filter by active status (true/false)",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of affiliation records. Supports filtering by student and active status."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Affiliations by Student",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/affiliations",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "affiliations"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Get all affiliation records for a specific student"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Affiliation",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"organization_name\": \"Computer Science Society\",\n  \"role\": \"President\",\n  \"start_date\": \"2026-01-15\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/students/:studentId/affiliations",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "students", ":studentId", "affiliations"],
-              "variable": [
-                {
-                  "key": "studentId",
-                  "value": "student-uuid-here",
-                  "description": "Student UUID"
-                }
-              ]
-            },
-            "description": "Create new affiliation record for a student. Date format: YYYY-MM-DD. Role is optional."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Affiliation",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"role\": \"Vice President\",\n  \"is_active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/affiliations/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "affiliations", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "affiliation-uuid-here",
-                  "description": "Affiliation UUID"
-                }
-              ]
-            },
-            "description": "Update affiliation record. All fields are optional."
-          },
-          "response": []
-        },
-        {
-          "name": "End Affiliation",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"end_date\": \"2026-05-31\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/affiliations/:id/end",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "affiliations", ":id", "end"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "affiliation-uuid-here",
-                  "description": "Affiliation UUID"
-                }
-              ]
-            },
-            "description": "End an affiliation. Sets is_active to false and updates end_date. Date format: YYYY-MM-DD."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Affiliation",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/affiliations/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "affiliations", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "affiliation-uuid-here",
-                  "description": "Affiliation UUID"
-                }
-              ]
-            },
-            "description": "Delete affiliation record. Cascade deletes when student is deleted."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Events",
-      "description": "Event management endpoints with participant tracking - Admin only",
-      "item": [
-        {
-          "name": "Get All Events",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Items per page"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "description": "Search by event name",
-                  "disabled": true
-                },
-                {
-                  "key": "event_type",
-                  "value": "",
-                  "description": "Filter by event type (seminar, workshop, defense, competition)",
-                  "disabled": true
-                },
-                {
-                  "key": "start_date",
-                  "value": "",
-                  "description": "Filter events from this date (YYYY-MM-DD)",
-                  "disabled": true
-                },
-                {
-                  "key": "end_date",
-                  "value": "",
-                  "description": "Filter events until this date (YYYY-MM-DD)",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Get paginated list of events. Supports search by name and filtering by type and date range. Each event includes participant count.\n\nEvent Types:\n- seminar: Academic seminars and talks\n- workshop: Hands-on workshops\n- defense: Thesis/capstone defense presentations\n- competition: Coding competitions and contests\n\nResponse includes participant_count for each event."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Event by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "event-uuid-here",
-                  "description": "Event UUID"
-                }
-              ]
-            },
-            "description": "Get event details by UUID. Returns event information including participant count."
-          },
-          "response": []
-        },
-        {
-          "name": "Create Event",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"event_name\": \"Tech Conference 2026\",\n  \"event_type\": \"seminar\",\n  \"description\": \"Annual technology conference featuring industry experts\",\n  \"event_date\": \"2026-04-15\",\n  \"start_time\": \"09:00:00\",\n  \"end_time\": \"17:00:00\",\n  \"location\": \"Main Auditorium\",\n  \"max_participants\": 100\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events"]
-            },
-            "description": "Create new event. All fields except event_name, event_type, and event_date are optional.\n\nRequired fields:\n- event_name: Name of the event (max 255 characters)\n- event_type: One of: seminar, workshop, defense, competition\n- event_date: Date in YYYY-MM-DD format\n\nOptional fields:\n- description: Event description\n- start_time: Start time in HH:MM or HH:MM:SS format\n- end_time: End time in HH:MM or HH:MM:SS format\n- location: Event location (max 255 characters)\n- max_participants: Maximum number of participants (positive integer)\n\nThe system will automatically track participant count and enforce max_participants limit when adding participants."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Event",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"event_name\": \"Updated Tech Conference 2026\",\n  \"location\": \"Grand Hall\",\n  \"max_participants\": 150\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "event-uuid-here",
-                  "description": "Event UUID"
-                }
-              ]
-            },
-            "description": "Update event information. All fields are optional. Only provided fields will be updated."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Event (Soft Delete)",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "event-uuid-here",
-                  "description": "Event UUID"
-                }
-              ]
-            },
-            "description": "Soft delete event (sets deleted_at timestamp). The event will no longer appear in queries but data is preserved for audit purposes."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Event Participants",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events/:id/participants",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events", ":id", "participants"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "event-uuid-here",
-                  "description": "Event UUID"
-                }
-              ]
-            },
-            "description": "Get all participants for an event. Returns list of participants with their details.\n\nEach participant includes:\n- id: Participant record UUID\n- event_id: Event UUID\n- student_id or faculty_id: Participant identifier\n- participant_name: Full name of participant\n- participant_type: Either 'student' or 'faculty'\n- participation_role: Role in the event (e.g., 'attendee', 'speaker', 'organizer')\n- attendance_status: One of: registered, attended, absent, cancelled\n- created_at: Registration timestamp"
-          },
-          "response": []
-        },
-        {
-          "name": "Add Participant to Event",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"participation_role\": \"attendee\",\n  \"attendance_status\": \"registered\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events/:id/participants",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events", ":id", "participants"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "event-uuid-here",
-                  "description": "Event UUID"
-                }
-              ]
-            },
-            "description": "Add a participant to an event. Can add either a student or faculty member.\n\nRequired (one of):\n- student_id: Student UUID (for student participants)\n- faculty_id: Faculty UUID (for faculty participants)\n\nNote: You must provide either student_id OR faculty_id, but not both.\n\nOptional fields:\n- participation_role: Role in the event (e.g., 'attendee', 'speaker', 'organizer', 'panelist')\n- attendance_status: One of: registered (default), attended, absent, cancelled\n\nValidation:\n- Prevents duplicate registrations (same participant cannot register twice)\n- Enforces max_participants limit if set on the event\n- Returns 409 Conflict if participant already registered or capacity reached\n\nExample for faculty participant:\n```json\n{\n  \"faculty_id\": \"faculty-uuid-here\",\n  \"participation_role\": \"speaker\",\n  \"attendance_status\": \"registered\"\n}\n```"
-          },
-          "response": []
-        },
-        {
-          "name": "Remove Participant from Event",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/events/:id/participants/:participantId",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "events", ":id", "participants", ":participantId"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "event-uuid-here",
-                  "description": "Event UUID"
-                },
-                {
-                  "key": "participantId",
-                  "value": "participant-uuid-here",
-                  "description": "Participant record UUID (not student/faculty UUID)"
-                }
-              ]
-            },
-            "description": "Remove a participant from an event. Permanently deletes the participant record.\n\nNote: Use the participant record UUID (returned from GET participants or POST add participant), not the student_id or faculty_id.\n\nValidation:\n- Verifies participant belongs to the specified event\n- Returns 404 if participant not found\n- Returns 400 if participant doesn't belong to this event"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Scheduling",
-      "description": "Schedule management endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get Schedules",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/schedules?page=1&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "schedules"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "limit",
-                  "value": "10"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Schedule by Room",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/schedules/room/:room",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "schedules", "room", ":room"],
-              "variable": [
-                {
-                  "key": "room",
-                  "value": "Room 301"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Check Schedule Conflict",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"room\": \"Room 301\",\n  \"day\": \"monday\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:30\",\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/schedules/check-conflict",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "schedules", "check-conflict"]
-            },
-            "description": "Check for scheduling conflicts before creating a schedule"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Schedule",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"schedule_type\": \"class\",\n  \"instruction_id\": \"instruction-uuid-here\",\n  \"faculty_id\": \"faculty-uuid-here\",\n  \"room\": \"Room 301\",\n  \"day\": \"monday\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:30\",\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/schedules",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "schedules"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "Research",
-      "description": "Research management endpoints - Admin only",
+      "description": "Research management endpoints with authors and advisers - Admin only",
       "item": [
         {
           "name": "Get All Research",
@@ -2239,14 +39,62 @@
               "query": [
                 {
                   "key": "page",
-                  "value": "1"
+                  "value": "1",
+                  "description": "Page number"
                 },
                 {
                   "key": "limit",
-                  "value": "10"
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search by title",
+                  "disabled": true
+                },
+                {
+                  "key": "research_type",
+                  "value": "",
+                  "description": "Filter by type (thesis, capstone, publication)",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status (ongoing, completed, published)",
+                  "disabled": true
                 }
               ]
-            }
+            },
+            "description": "Get paginated list of research projects. Supports search and filtering.\n\nResearch Types:\n- thesis: Graduate thesis research\n- capstone: Undergraduate capstone projects\n- publication: Published research papers\n\nStatus Values:\n- ongoing: Research in progress\n- completed: Research completed but not published\n- published: Research completed and published\n\nEach research includes:\n- Basic research information\n- Authors array with student details and author order\n- Advisers array with faculty details and adviser roles\n- Timestamps"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Research by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/research/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "research", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                }
+              ]
+            },
+            "description": "Get research details by UUID. Returns complete research information including all authors and advisers."
           },
           "response": []
         },
@@ -2267,7 +115,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"AI Research Project\",\n  \"abstract\": \"Machine learning research on neural networks\",\n  \"research_type\": \"thesis\",\n  \"status\": \"ongoing\",\n  \"start_date\": \"2026-01-15\",\n  \"author_ids\": [\"student-uuid-1\", \"student-uuid-2\"],\n  \"adviser_ids\": [\"faculty-uuid-1\"]\n}",
+              "raw": "{\n  \"title\": \"Machine Learning Applications in Healthcare\",\n  \"abstract\": \"A comprehensive study on applying machine learning techniques to healthcare diagnostics and patient care optimization.\",\n  \"research_type\": \"thesis\",\n  \"status\": \"ongoing\",\n  \"start_date\": \"2026-01-15\",\n  \"author_ids\": [\"student-uuid-1\", \"student-uuid-2\"],\n  \"adviser_ids\": [\"faculty-uuid-1\"]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2278,18 +126,80 @@
               "raw": "{{base_url}}/api/v1/admin/research",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "admin", "research"]
-            }
+            },
+            "description": "Create new research project with authors and advisers in a single transaction.\n\nRequired fields:\n- title: Research title (max 500 characters)\n- research_type: One of: thesis, capstone, publication\n- author_ids: Array of student UUIDs (at least one required)\n- adviser_ids: Array of faculty UUIDs (at least one required)\n\nOptional fields:\n- abstract: Research abstract/summary\n- status: One of: ongoing (default), completed, published\n- start_date: Start date in YYYY-MM-DD format\n- completion_date: Completion date in YYYY-MM-DD format\n- publication_url: URL to published paper\n\nTransaction Safety:\n- All authors and advisers are added in a single database transaction\n- If any step fails, the entire operation is rolled back\n- Ensures data consistency"
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Reports",
-      "description": "Report generation endpoints - Admin only",
-      "item": [
+        },
         {
-          "name": "Generate Student Profile Report",
+          "name": "Update Research",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Research Title\",\n  \"status\": \"completed\",\n  \"completion_date\": \"2026-12-31\",\n  \"publication_url\": \"https://doi.org/10.1234/example\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/research/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "research", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                }
+              ]
+            },
+            "description": "Update research information. All fields are optional. Only provided fields will be updated.\n\nNote: To update authors or advisers, use the dedicated endpoints:\n- POST /:id/authors to add authors\n- DELETE /:id/authors/:studentId to remove authors\n- POST /:id/advisers to add advisers\n- DELETE /:id/advisers/:facultyId to remove advisers"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Research (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/research/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "research", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                }
+              ]
+            },
+            "description": "Soft delete research (sets deleted_at timestamp). The research will no longer appear in queries but data is preserved for audit purposes.\n\nNote: This does not delete the author and adviser relationships, but they won't be accessible through the API after soft delete."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Author to Research",
           "request": {
             "method": "POST",
             "header": [
@@ -2305,7 +215,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"format\": \"pdf\"\n}",
+              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"author_order\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2313,15 +223,55 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/admin/reports/student-profile",
+              "raw": "{{base_url}}/api/v1/admin/research/:id/authors",
               "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "reports", "student-profile"]
-            }
+              "path": ["api", "v1", "admin", "research", ":id", "authors"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                }
+              ]
+            },
+            "description": "Add an author to existing research.\n\nRequired fields:\n- student_id: Student UUID\n- author_order: Order of authorship (1 = first author, 2 = second author, etc.)\n\nValidation:\n- Prevents duplicate authors (same student cannot be added twice)\n- Returns 409 Conflict if author already exists\n- Verifies student exists before adding"
           },
           "response": []
         },
         {
-          "name": "Generate Enrollment Report",
+          "name": "Remove Author from Research",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/research/:id/authors/:studentId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "research", ":id", "authors", ":studentId"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                },
+                {
+                  "key": "studentId",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID to remove"
+                }
+              ]
+            },
+            "description": "Remove an author from research. Permanently deletes the author relationship.\n\nValidation:\n- Verifies author belongs to the specified research\n- Returns 404 if author not found\n- Returns 400 if author doesn't belong to this research"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Adviser to Research",
           "request": {
             "method": "POST",
             "header": [
@@ -2337,7 +287,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\",\n  \"format\": \"excel\"\n}",
+              "raw": "{\n  \"faculty_id\": \"faculty-uuid-here\",\n  \"adviser_role\": \"co-adviser\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2345,42 +295,25 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/admin/reports/enrollments",
+              "raw": "{{base_url}}/api/v1/admin/research/:id/advisers",
               "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "reports", "enrollments"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Analytics",
-      "description": "Analytics endpoints - Admin only",
-      "item": [
-        {
-          "name": "Get Dashboard Analytics",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/dashboard",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "dashboard"]
-            }
+              "path": ["api", "v1", "admin", "research", ":id", "advisers"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                }
+              ]
+            },
+            "description": "Add an adviser to existing research.\n\nRequired fields:\n- faculty_id: Faculty UUID\n\nOptional fields:\n- adviser_role: Role description (e.g., 'primary adviser', 'co-adviser', 'panel member')\n\nValidation:\n- Prevents duplicate advisers (same faculty cannot be added twice)\n- Returns 409 Conflict if adviser already exists\n- Verifies faculty exists before adding"
           },
           "response": []
         },
         {
-          "name": "Get GPA Distribution",
+          "name": "Remove Adviser from Research",
           "request": {
-            "method": "GET",
+            "method": "DELETE",
             "header": [
               {
                 "key": "Authorization",
@@ -2389,29 +322,23 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/admin/analytics/gpa",
+              "raw": "{{base_url}}/api/v1/admin/research/:id/advisers/:facultyId",
               "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "analytics", "gpa"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Skill Distribution",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/admin/analytics/skills",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "admin", "analytics", "skills"]
-            }
+              "path": ["api", "v1", "admin", "research", ":id", "advisers", ":facultyId"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                },
+                {
+                  "key": "facultyId",
+                  "value": "faculty-uuid-here",
+                  "description": "Faculty UUID to remove"
+                }
+              ]
+            },
+            "description": "Remove an adviser from research. Permanently deletes the adviser relationship.\n\nValidation:\n- Verifies adviser belongs to the specified research\n- Returns 404 if adviser not found\n- Returns 400 if adviser doesn't belong to this research"
           },
           "response": []
         }
