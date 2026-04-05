@@ -304,7 +304,7 @@ export class StudentService {
         enrollment_status: item.enrollment.enrollment_status,
         semester: item.enrollment.semester,
         academic_year: item.enrollment.academic_year,
-        enrolled_at: item.enrollment.enrolled_at.toISOString(),
+        enrolled_at: item.enrollment.enrolled_at?.toISOString() || new Date().toISOString(),
         created_at: item.enrollment.created_at.toISOString(),
         updated_at: item.enrollment.updated_at.toISOString(),
       })),
