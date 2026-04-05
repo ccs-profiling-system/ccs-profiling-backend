@@ -341,6 +341,36 @@ export class ResearchRepository {
   }
 
   /**
+   * Find student by ID
+   * Used for validation before adding as author
+   * Requirement: 12.6
+   */
+  async findStudentById(studentId: string) {
+    const result = await this.db
+      .select()
+      .from(students)
+      .where(and(eq(students.id, studentId), isNull(students.deleted_at)))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
+   * Find faculty by ID
+   * Used for validation before adding as adviser
+   * Requirement: 12.7
+   */
+  async findFacultyById(facultyId: string) {
+    const result = await this.db
+      .select()
+      .from(faculty)
+      .where(and(eq(faculty.id, facultyId), isNull(faculty.deleted_at)))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
    * Get authors and advisers for multiple research records (batch query)
    * Prevents N+1 query problem
    * Requirements: 12.6, 12.7

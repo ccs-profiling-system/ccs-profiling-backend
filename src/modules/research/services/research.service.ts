@@ -191,6 +191,12 @@ export class ResearchService {
       throw new NotFoundError('Research not found');
     }
 
+    // Verify student exists
+    const student = await this.researchRepository.findStudentById(data.student_id);
+    if (!student) {
+      throw new NotFoundError('Student not found');
+    }
+
     // Check if author already exists
     const existingAuthor = await this.researchRepository.findExistingAuthor(
       researchId,
@@ -246,6 +252,12 @@ export class ResearchService {
     const research = await this.researchRepository.findById(researchId);
     if (!research) {
       throw new NotFoundError('Research not found');
+    }
+
+    // Verify faculty exists
+    const facultyMember = await this.researchRepository.findFacultyById(data.faculty_id);
+    if (!facultyMember) {
+      throw new NotFoundError('Faculty not found');
     }
 
     // Check if adviser already exists
