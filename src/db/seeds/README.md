@@ -11,6 +11,12 @@ This directory contains seed files for populating the database with initial data
 - `instructions.seed.ts` - Seeds course/subject instructions
 - `enrollments.seed.ts` - Seeds student enrollments in courses
 - `academicHistory.seed.ts` - Seeds academic history records with grades
+- `skills.seed.ts` - Seeds student skills and competencies
+- `violations.seed.ts` - Seeds student violation records
+- `affiliations.seed.ts` - Seeds student organization affiliations
+- `events.seed.ts` - Seeds academic events with participants
+- `schedules.seed.ts` - Seeds class, exam, and consultation schedules
+- `research.seed.ts` - Seeds research projects with authors and advisers
 - `run-seeds.ts` - Standalone script to execute seeders
 
 ## Available Commands
@@ -119,6 +125,29 @@ All users have the same password: `pass1234`
 - Year 3 students have 2-year history
 - Year 2 students have 1-year history
 - Year 1 students have no history (just started)
+
+### Events
+- 10 academic events (seminars, workshops, competitions, defenses)
+- Events scheduled from April to June 2026
+- Each event has 5-15 participants (mix of students and faculty)
+- Participation roles: participant, organizer, speaker, facilitator
+- Attendance statuses: registered, attended, absent
+
+### Schedules
+- Class schedules for all instructions
+- Exam schedules (10 exams)
+- Faculty consultation schedules (1-3 per faculty member)
+- Covers 1st and 2nd semesters of 2025-2026 academic year
+- Various time slots from 7:00 AM to 5:30 PM
+- Multiple rooms and days of the week
+
+### Research
+- 12 research projects (thesis, capstone, publications)
+- Mix of ongoing, completed, and published research
+- Research types: thesis (individual), capstone (group), publication (collaborative)
+- Each research has 1-5 student authors with proper author ordering
+- Each research has 1-2 faculty advisers (adviser, co-adviser, panel-member)
+- Includes abstracts, start dates, completion dates, and publication URLs
 
 ## Adding New Seeders
 

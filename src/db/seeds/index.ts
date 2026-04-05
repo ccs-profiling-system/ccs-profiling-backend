@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -9,6 +9,9 @@ import { seedAcademicHistory } from './academicHistory.seed';
 import { seedSkills } from './skills.seed';
 import { seedViolations } from './violations.seed';
 import { seedAffiliations } from './affiliations.seed';
+import { seedEvents } from './events.seed';
+import { seedSchedules } from './schedules.seed';
+import { seedResearch } from './research.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -163,6 +166,51 @@ export async function runSeeders() {
       console.log('📝 Seeding affiliations...');
       affiliationIds = await seedAffiliations(db, studentIds);
       console.log(`✅ Created ${affiliationIds.length} affiliation records\n`);
+    }
+
+    // Check if events table has data
+    const eventsHasData = await hasData('events');
+    let eventIds: string[] = [];
+
+    if (eventsHasData) {
+      console.log('ℹ️  Events table already has data, skipping events seeding...');
+      const existingEvents = await db.select({ id: events.id }).from(events);
+      eventIds = existingEvents.map(e => e.id);
+      console.log(`📊 Found ${eventIds.length} existing event records\n`);
+    } else {
+      console.log('📝 Seeding events...');
+      eventIds = await seedEvents(db, studentIds, facultyIds);
+      console.log(`✅ Created ${eventIds.length} event records\n`);
+    }
+
+    // Check if schedules table has data
+    const schedulesHasData = await hasData('schedules');
+    let scheduleIds: string[] = [];
+
+    if (schedulesHasData) {
+      console.log('ℹ️  Schedules table already has data, skipping schedules seeding...');
+      const existingSchedules = await db.select({ id: schedules.id }).from(schedules);
+      scheduleIds = existingSchedules.map(s => s.id);
+      console.log(`📊 Found ${scheduleIds.length} existing schedule records\n`);
+    } else {
+      console.log('📝 Seeding schedules...');
+      scheduleIds = await seedSchedules(db, instructionIds, facultyIds);
+      console.log(`✅ Created ${scheduleIds.length} schedule records\n`);
+    }
+
+    // Check if research table has data
+    const researchHasData = await hasData('research');
+    let researchIds: string[] = [];
+
+    if (researchHasData) {
+      console.log('ℹ️  Research table already has data, skipping research seeding...');
+      const existingResearch = await db.select({ id: research.id }).from(research);
+      researchIds = existingResearch.map(r => r.id);
+      console.log(`📊 Found ${researchIds.length} existing research records\n`);
+    } else {
+      console.log('📝 Seeding research...');
+      researchIds = await seedResearch(db, studentIds, facultyIds);
+      console.log(`✅ Created ${researchIds.length} research records\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');
