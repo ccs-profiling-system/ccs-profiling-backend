@@ -10,4 +10,5 @@ export * from './skills';
 export * from './violations';
 export * from './affiliations';
 export * from './events';
+export * from './research';
 export * from './utils';

@@ -71,6 +71,13 @@
       "when": 1775203497957,
       "tag": "0009_smooth_vance_astro",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1775402760601,
+      "tag": "0010_faulty_rogue",
+      "breakpoints": true
     }
   ]
 }
