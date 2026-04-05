@@ -1806,7 +1806,7 @@
     },
     {
       "name": "Events",
-      "description": "Event management endpoints - Admin only",
+      "description": "Event management endpoints with participant tracking - Admin only",
       "item": [
         {
           "name": "Get All Events",
@@ -1826,14 +1826,41 @@
               "query": [
                 {
                   "key": "page",
-                  "value": "1"
+                  "value": "1",
+                  "description": "Page number"
                 },
                 {
                   "key": "limit",
-                  "value": "10"
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search by event name",
+                  "disabled": true
+                },
+                {
+                  "key": "event_type",
+                  "value": "",
+                  "description": "Filter by event type (seminar, workshop, defense, competition)",
+                  "disabled": true
+                },
+                {
+                  "key": "start_date",
+                  "value": "",
+                  "description": "Filter events from this date (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "",
+                  "description": "Filter events until this date (YYYY-MM-DD)",
+                  "disabled": true
                 }
               ]
-            }
+            },
+            "description": "Get paginated list of events. Supports search by name and filtering by type and date range. Each event includes participant count.\n\nEvent Types:\n- seminar: Academic seminars and talks\n- workshop: Hands-on workshops\n- defense: Thesis/capstone defense presentations\n- competition: Coding competitions and contests\n\nResponse includes participant_count for each event."
           },
           "response": []
         },
@@ -1855,10 +1882,12 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "event-uuid-here"
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
                 }
               ]
-            }
+            },
+            "description": "Get event details by UUID. Returns event information including participant count."
           },
           "response": []
         },
@@ -1879,7 +1908,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"event_name\": \"Tech Conference 2026\",\n  \"event_type\": \"seminar\",\n  \"description\": \"Annual technology conference\",\n  \"event_date\": \"2026-04-15\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"17:00\",\n  \"location\": \"Main Hall\",\n  \"max_participants\": 100\n}",
+              "raw": "{\n  \"event_name\": \"Tech Conference 2026\",\n  \"event_type\": \"seminar\",\n  \"description\": \"Annual technology conference featuring industry experts\",\n  \"event_date\": \"2026-04-15\",\n  \"start_time\": \"09:00:00\",\n  \"end_time\": \"17:00:00\",\n  \"location\": \"Main Auditorium\",\n  \"max_participants\": 100\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1890,7 +1919,8 @@
               "raw": "{{base_url}}/api/v1/admin/events",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "admin", "events"]
-            }
+            },
+            "description": "Create new event. All fields except event_name, event_type, and event_date are optional.\n\nRequired fields:\n- event_name: Name of the event (max 255 characters)\n- event_type: One of: seminar, workshop, defense, competition\n- event_date: Date in YYYY-MM-DD format\n\nOptional fields:\n- description: Event description\n- start_time: Start time in HH:MM or HH:MM:SS format\n- end_time: End time in HH:MM or HH:MM:SS format\n- location: Event location (max 255 characters)\n- max_participants: Maximum number of participants (positive integer)\n\nThe system will automatically track participant count and enforce max_participants limit when adding participants."
           },
           "response": []
         },
@@ -1911,7 +1941,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"event_name\": \"Updated Event Name\",\n  \"max_participants\": 150\n}",
+              "raw": "{\n  \"event_name\": \"Updated Tech Conference 2026\",\n  \"location\": \"Grand Hall\",\n  \"max_participants\": 150\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1925,15 +1955,17 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "event-uuid-here"
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
                 }
               ]
-            }
+            },
+            "description": "Update event information. All fields are optional. Only provided fields will be updated."
           },
           "response": []
         },
         {
-          "name": "Delete Event",
+          "name": "Delete Event (Soft Delete)",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1950,10 +1982,111 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "event-uuid-here"
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
                 }
               ]
-            }
+            },
+            "description": "Soft delete event (sets deleted_at timestamp). The event will no longer appear in queries but data is preserved for audit purposes."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Event Participants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id/participants",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "events", ":id", "participants"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
+                }
+              ]
+            },
+            "description": "Get all participants for an event. Returns list of participants with their details.\n\nEach participant includes:\n- id: Participant record UUID\n- event_id: Event UUID\n- student_id or faculty_id: Participant identifier\n- participant_name: Full name of participant\n- participant_type: Either 'student' or 'faculty'\n- participation_role: Role in the event (e.g., 'attendee', 'speaker', 'organizer')\n- attendance_status: One of: registered, attended, absent, cancelled\n- created_at: Registration timestamp"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Participant to Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"participation_role\": \"attendee\",\n  \"attendance_status\": \"registered\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id/participants",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "events", ":id", "participants"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
+                }
+              ]
+            },
+            "description": "Add a participant to an event. Can add either a student or faculty member.\n\nRequired (one of):\n- student_id: Student UUID (for student participants)\n- faculty_id: Faculty UUID (for faculty participants)\n\nNote: You must provide either student_id OR faculty_id, but not both.\n\nOptional fields:\n- participation_role: Role in the event (e.g., 'attendee', 'speaker', 'organizer', 'panelist')\n- attendance_status: One of: registered (default), attended, absent, cancelled\n\nValidation:\n- Prevents duplicate registrations (same participant cannot register twice)\n- Enforces max_participants limit if set on the event\n- Returns 409 Conflict if participant already registered or capacity reached\n\nExample for faculty participant:\n```json\n{\n  \"faculty_id\": \"faculty-uuid-here\",\n  \"participation_role\": \"speaker\",\n  \"attendance_status\": \"registered\"\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Participant from Event",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id/participants/:participantId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "events", ":id", "participants", ":participantId"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
+                },
+                {
+                  "key": "participantId",
+                  "value": "participant-uuid-here",
+                  "description": "Participant record UUID (not student/faculty UUID)"
+                }
+              ]
+            },
+            "description": "Remove a participant from an event. Permanently deletes the participant record.\n\nNote: Use the participant record UUID (returned from GET participants or POST add participant), not the student_id or faculty_id.\n\nValidation:\n- Verifies participant belongs to the specified event\n- Returns 404 if participant not found\n- Returns 400 if participant doesn't belong to this event"
           },
           "response": []
         }
