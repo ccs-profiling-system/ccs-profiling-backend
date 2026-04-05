@@ -26,6 +26,7 @@ import {
   affiliationRoutes,
   studentAffiliationRoutes,
 } from '../modules/affiliations';
+import { eventRoutes } from '../modules/events';
 
 export const routes = Router();
 
@@ -47,3 +48,4 @@ routes.use('/v1/admin/schedules', scheduleRoutes);
 routes.use('/v1/admin/skills', skillRoutes);
 routes.use('/v1/admin/violations', violationRoutes);
 routes.use('/v1/admin/affiliations', affiliationRoutes);
+routes.use('/v1/admin/events', eventRoutes);
