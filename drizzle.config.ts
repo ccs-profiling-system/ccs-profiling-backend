@@ -16,6 +16,7 @@ export default {
     './src/db/schema/skills.ts',
     './src/db/schema/violations.ts',
     './src/db/schema/affiliations.ts',
+    './src/db/schema/events.ts',
   ],
   out: './drizzle',
   driver: 'pg',
