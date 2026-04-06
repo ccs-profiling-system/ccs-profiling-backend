@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -13,6 +13,7 @@ import { seedEvents } from './events.seed';
 import { seedSchedules } from './schedules.seed';
 import { seedResearch } from './research.seed';
 import { seedUploads } from './uploads.seed';
+import { seedAuditLogs } from './auditLogs.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -227,6 +228,23 @@ export async function runSeeders() {
       console.log('📝 Seeding uploads...');
       uploadIds = await seedUploads(db, studentIds, facultyIds, researchIds, eventIds, userIds);
       console.log(`✅ Created ${uploadIds.length} upload records\n`);
+    }
+
+    // Check if audit_logs table has data
+    const auditLogsHasData = await hasData('audit_logs');
+    let auditLogIds: string[] = [];
+
+    if (auditLogsHasData) {
+      console.log('ℹ️  Audit logs table already has data, skipping audit logs seeding...');
+      const existingAuditLogs = await db.select({ id: auditLogs.id }).from(auditLogs);
+      auditLogIds = existingAuditLogs.map(a => a.id);
+      console.log(`📊 Found ${auditLogIds.length} existing audit log records\n`);
+    } else {
+      console.log('📝 Seeding audit logs...');
+      await seedAuditLogs();
+      const createdAuditLogs = await db.select({ id: auditLogs.id }).from(auditLogs);
+      auditLogIds = createdAuditLogs.map(a => a.id);
+      console.log(`✅ Created ${auditLogIds.length} audit log records\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

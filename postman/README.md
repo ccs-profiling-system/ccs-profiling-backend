@@ -64,10 +64,17 @@ All users have the password: `pass1234`
 - **Auth**: Login, logout, refresh, change password, get current user
 - **Students**: CRUD operations, profile aggregation
 - **Faculty**: CRUD operations, department filtering
+- **Instructions**: Subject/course management
+- **Enrollments**: Student course enrollment management
+- **Academic History**: Student grade records, GPA calculation
+- **Skills**: Student skills management
+- **Violations**: Student violation records
+- **Affiliations**: Student organization memberships
 - **Events**: Event management, participant tracking
 - **Scheduling**: Schedule creation, conflict detection
-- **Research**: Research project management
-- **Reports**: PDF/Excel report generation
+- **Research**: Research project management, author/adviser tracking
+- **Uploads**: File upload management with entity association
+- **Audit Logs**: Complete audit trail for all system operations (NEW)
 - **Analytics**: Dashboard metrics, GPA/skill distribution
 
 ## 💡 Tips
@@ -76,6 +83,28 @@ All users have the password: `pass1234`
 - Admin endpoints use `/api/v1/admin/` prefix
 - List endpoints support pagination (`?page=1&limit=10`)
 - Auth endpoints are rate limited (5 req/15min)
+- Audit logs track all create, update, and delete operations
+- Audit logs include before/after states for compliance tracking
+- Use audit logs to investigate changes and track user activity
+
+## 🔍 Audit Logs Features
+
+The Audit Logs module provides comprehensive tracking:
+
+- **Track all mutations**: Create, update, and delete operations
+- **Before/after states**: JSONB capture of state changes
+- **User tracking**: See who made each change
+- **Entity history**: View complete timeline for any entity
+- **Compliance ready**: IP address and user agent tracking
+- **Date range filtering**: Query logs by time period
+- **Retention**: Logs retained for at least 1 year
+
+### Audit Log Endpoints
+
+1. `GET /api/v1/admin/audit-logs` - List all audit logs with filters
+2. `GET /api/v1/admin/audit-logs/:id` - Get specific audit log
+3. `GET /api/v1/admin/audit-logs/user/:userId` - User activity tracking
+4. `GET /api/v1/admin/audit-logs/entity/:entityType/:entityId` - Entity history
 
 ## 🔗 Documentation
 
