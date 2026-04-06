@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { config } from './config';
 import { routes } from './routes';
 import { errorHandler } from './shared/middleware/errorHandler';
@@ -18,6 +19,10 @@ app.use('/api', apiRateLimiter);
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from uploads directory (for local storage)
+const uploadsPath = process.env.LOCAL_STORAGE_PATH || './uploads';
+app.use('/uploads', express.static(path.resolve(uploadsPath)));
 
 // Health check endpoint
 app.get('/health', (_req, res) => {

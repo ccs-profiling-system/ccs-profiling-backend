@@ -78,6 +78,13 @@
       "when": 1775402760601,
       "tag": "0010_faulty_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1775462865172,
+      "tag": "0011_lush_nightcrawler",
+      "breakpoints": true
     }
   ]
 }

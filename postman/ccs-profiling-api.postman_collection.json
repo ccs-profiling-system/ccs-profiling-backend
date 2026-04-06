@@ -3198,6 +3198,174 @@
       ]
     },
     {
+      "name": "Uploads",
+      "description": "File upload management endpoints - Admin only",
+      "item": [
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "File to upload (max 10MB)"
+                },
+                {
+                  "key": "entity_type",
+                  "value": "student",
+                  "type": "text",
+                  "description": "Entity type: student, faculty, research, event"
+                },
+                {
+                  "key": "entity_id",
+                  "value": "entity-uuid-here",
+                  "type": "text",
+                  "description": "UUID of the associated entity"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/uploads",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "uploads"
+              ]
+            },
+            "description": "Upload a file with metadata. Supports multipart/form-data.\n\nFile Validation:\n- Maximum file size: 10MB (10485760 bytes)\n- Allowed file types:\n  - Documents: PDF, Word (.doc, .docx), Excel (.xls, .xlsx), PowerPoint (.ppt, .pptx), Text (.txt), CSV\n  - Images: JPEG, PNG, GIF, WebP, SVG\n\nRequired fields:\n- file: The file to upload (multipart file)\n- entity_type: One of: student, faculty, research, event\n- entity_id: UUID of the entity this file belongs to\n\nFile Storage:\n- Files are organized by entity type, year, and month\n- Naming convention: {timestamp}_{uuid}_{original_filename}\n- Storage path is automatically generated and stored in database\n- Supports both local filesystem and AWS S3 storage\n\nResponse includes:\n- Upload metadata (id, file_name, original_name, file_type, file_size)\n- Storage path for file retrieval\n- Entity association details\n- Timestamps"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upload by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/uploads/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "uploads",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "upload-uuid-here",
+                  "description": "Upload UUID"
+                }
+              ]
+            },
+            "description": "Get upload metadata by UUID. Returns file information including storage path, file type, size, and entity association.\n\nResponse includes:\n- id: Upload UUID\n- file_name: Stored filename with timestamp and UUID\n- original_name: Original uploaded filename\n- file_type: MIME type (e.g., 'application/pdf', 'image/jpeg')\n- file_size: File size in bytes\n- storage_path: Full path to file in storage\n- entity_type: Associated entity type (student, faculty, research, event)\n- entity_id: Associated entity UUID\n- uploaded_by: User who uploaded the file (optional)\n- created_at: Upload timestamp\n- updated_at: Last update timestamp"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Files by Entity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/uploads/entity/:entityType/:entityId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "uploads",
+                "entity",
+                ":entityType",
+                ":entityId"
+              ],
+              "variable": [
+                {
+                  "key": "entityType",
+                  "value": "student",
+                  "description": "Entity type: student, faculty, research, event"
+                },
+                {
+                  "key": "entityId",
+                  "value": "entity-uuid-here",
+                  "description": "Entity UUID"
+                }
+              ]
+            },
+            "description": "Get all files associated with a specific entity. Returns array of upload metadata.\n\nUse cases:\n- Get all documents uploaded for a student (transcripts, certificates, etc.)\n- Get all files for a research project (papers, presentations, etc.)\n- Get all attachments for an event (posters, schedules, etc.)\n- Get all documents for a faculty member (CV, publications, etc.)\n\nPath parameters:\n- entityType: One of: student, faculty, research, event\n- entityId: UUID of the entity\n\nResponse:\n- Array of upload metadata objects\n- Ordered by creation date (oldest first)\n- Empty array if no files found"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Upload",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/uploads/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "uploads",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "upload-uuid-here",
+                  "description": "Upload UUID"
+                }
+              ]
+            },
+            "description": "Delete a file and its database record. This is a permanent deletion.\n\nOperation:\n1. Deletes the physical file from storage (local or S3)\n2. Deletes the database record\n3. Both operations must succeed for the deletion to complete\n\nValidation:\n- Verifies upload exists before deletion\n- Returns 404 if upload not found\n- Returns error if file deletion fails\n\nNote: This is a hard delete, not a soft delete. The file and metadata are permanently removed."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Analytics",
       "description": "Analytics endpoints - Admin only",
       "item": [
