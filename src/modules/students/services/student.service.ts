@@ -408,4 +408,83 @@ export class StudentService {
     // Generate human-readable ID
     return IDGenerator.generate('student', sequence, currentYear);
   }
+
+  /**
+   * Get soft-deleted students (admin only)
+   * Requirements: 28.5
+   */
+  async getDeletedStudents(filters?: StudentFilters): Promise<StudentListResponseDTO> {
+    const result = await this.studentRepository.findDeleted(filters);
+
+    return {
+      data: result.data.map((student) => this.toResponseDTO(student)),
+      meta: result.meta,
+    };
+  }
+
+  /**
+   * Restore soft-deleted student
+   * Requirements: 28.7
+   */
+  async restoreStudent(id: string, auditContext?: AuditContext): Promise<StudentResponseDTO> {
+    // Find student including deleted
+    const student = await this.studentRepository.findByIdIncludingDeleted(id);
+    if (!student) {
+      throw new NotFoundError('Student not found');
+    }
+
+    if (!student.deleted_at) {
+      throw new ConflictError('Student is not deleted');
+    }
+
+    // Restore student
+    await this.studentRepository.restore(id);
+
+    // Log audit
+    if (auditContext) {
+      await this.auditLogger.log({
+        user_id: auditContext.user_id,
+        action_type: 'restore',
+        entity_type: 'student',
+        entity_id: id,
+        before_state: { deleted_at: student.deleted_at },
+        after_state: { deleted_at: null },
+        ip_address: auditContext.ip_address,
+        user_agent: auditContext.user_agent,
+      });
+    }
+
+    // Fetch and return restored student
+    const restored = await this.studentRepository.findById(id);
+    return this.toResponseDTO(restored!);
+  }
+
+  /**
+   * Permanently delete student (hard delete)
+   * Requirements: 28.6
+   */
+  async permanentDeleteStudent(id: string, auditContext?: AuditContext): Promise<void> {
+    // Find student including deleted
+    const student = await this.studentRepository.findByIdIncludingDeleted(id);
+    if (!student) {
+      throw new NotFoundError('Student not found');
+    }
+
+    // Log audit before deletion
+    if (auditContext) {
+      await this.auditLogger.log({
+        user_id: auditContext.user_id,
+        action_type: 'permanent_delete',
+        entity_type: 'student',
+        entity_id: id,
+        before_state: student,
+        after_state: null,
+        ip_address: auditContext.ip_address,
+        user_agent: auditContext.user_agent,
+      });
+    }
+
+    // Permanently delete
+    await this.studentRepository.permanentDelete(id);
+  }
 }

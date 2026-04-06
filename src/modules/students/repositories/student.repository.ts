@@ -197,6 +197,91 @@ export class StudentRepository {
   }
 
   /**
+   * Find soft-deleted students (admin only)
+   * Requirement: 28.5
+   */
+  async findDeleted(filters?: StudentFilters) {
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
+
+    // Build where conditions - only include deleted records
+    const conditions = [sql`${students.deleted_at} IS NOT NULL`];
+
+    // Search by name or student_id
+    if (filters?.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(
+        or(
+          ilike(students.first_name, searchTerm),
+          ilike(students.last_name, searchTerm),
+          ilike(students.student_id, searchTerm)
+        )!
+      );
+    }
+
+    // Filter by program
+    if (filters?.program) {
+      conditions.push(eq(students.program, filters.program));
+    }
+
+    // Filter by year_level
+    if (filters?.year_level) {
+      conditions.push(eq(students.year_level, filters.year_level));
+    }
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(students)
+      .where(and(...conditions));
+
+    const total = Number(countResult[0]?.count || 0);
+
+    // Get paginated results
+    const results = await this.db
+      .select()
+      .from(students)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(students.deleted_at);
+
+    return {
+      data: results,
+      meta: createPaginationMeta(page, limit, total),
+    };
+  }
+
+  /**
+   * Permanently delete student by ID (hard delete)
+   * Requirement: 28.6
+   */
+  async permanentDelete(id: string) {
+    await this.db
+      .delete(students)
+      .where(eq(students.id, id));
+  }
+
+  /**
+   * Find student by ID including soft-deleted (for restore/permanent delete operations)
+   * Requirement: 28.5
+   */
+  async findByIdIncludingDeleted(id: string) {
+    const result = await this.db
+      .select()
+      .from(students)
+      .where(eq(students.id, id))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
    * Find student by email (excludes soft-deleted)
    */
   async findByEmail(email: string) {
@@ -204,6 +289,30 @@ export class StudentRepository {
       .select()
       .from(students)
       .where(and(eq(students.email, email), isNull(students.deleted_at)))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
+   * Permanently delete student by ID (hard delete)
+   * Requirement: 28.6
+   */
+  async permanentDelete(id: string) {
+    await this.db
+      .delete(students)
+      .where(eq(students.id, id));
+  }
+
+  /**
+   * Find student by ID including soft-deleted (for restore/permanent delete operations)
+   * Requirement: 28.5
+   */
+  async findByIdIncludingDeleted(id: string) {
+    const result = await this.db
+      .select()
+      .from(students)
+      .where(eq(students.id, id))
       .limit(1);
 
     return result[0] || null;

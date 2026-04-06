@@ -213,6 +213,99 @@ export class ResearchRepository {
   }
 
   /**
+   * Restore soft-deleted research
+   * Requirement: 28.7
+   */
+  async restore(id: string) {
+    await this.db
+      .update(research)
+      .set({
+        deleted_at: null,
+        updated_at: new Date(),
+      })
+      .where(eq(research.id, id));
+  }
+
+  /**
+   * Find soft-deleted research (admin only)
+   * Requirement: 28.5
+   */
+  async findDeleted(filters?: ResearchFilters) {
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
+
+    // Build where conditions - only include deleted records
+    const conditions = [sql`${research.deleted_at} IS NOT NULL`];
+
+    // Search by title
+    if (filters?.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(ilike(research.title, searchTerm));
+    }
+
+    // Filter by research type
+    if (filters?.research_type) {
+      conditions.push(eq(research.research_type, filters.research_type));
+    }
+
+    // Filter by status
+    if (filters?.status) {
+      conditions.push(eq(research.status, filters.status));
+    }
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(research)
+      .where(and(...conditions));
+
+    const total = Number(countResult[0]?.count || 0);
+
+    // Get paginated results
+    const results = await this.db
+      .select()
+      .from(research)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(research.deleted_at);
+
+    return {
+      data: results,
+      meta: createPaginationMeta(page, limit, total),
+    };
+  }
+
+  /**
+   * Permanently delete research by ID (hard delete)
+   * Requirement: 28.6
+   */
+  async permanentDelete(id: string) {
+    await this.db
+      .delete(research)
+      .where(eq(research.id, id));
+  }
+
+  /**
+   * Find research by ID including soft-deleted (for restore/permanent delete operations)
+   * Requirement: 28.5
+   */
+  async findByIdIncludingDeleted(id: string) {
+    const result = await this.db
+      .select()
+      .from(research)
+      .where(eq(research.id, id))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
    * Get all authors for a research
    * Requirement: 12.6
    */

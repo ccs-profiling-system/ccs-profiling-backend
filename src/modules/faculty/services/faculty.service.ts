@@ -268,4 +268,55 @@ export class FacultyService {
     // Generate human-readable ID
     return IDGenerator.generate('faculty', sequence, currentYear);
   }
+
+  /**
+   * Get soft-deleted faculty (admin only)
+   * Requirements: 28.5
+   */
+  async getDeletedFaculty(filters?: FacultyFilters): Promise<FacultyListResponseDTO> {
+    const result = await this.facultyRepository.findDeleted(filters);
+
+    return {
+      data: result.data.map((faculty) => this.toResponseDTO(faculty)),
+      meta: result.meta,
+    };
+  }
+
+  /**
+   * Restore soft-deleted faculty
+   * Requirements: 28.7
+   */
+  async restoreFaculty(id: string): Promise<FacultyResponseDTO> {
+    // Find faculty including deleted
+    const faculty = await this.facultyRepository.findByIdIncludingDeleted(id);
+    if (!faculty) {
+      throw new NotFoundError('Faculty not found');
+    }
+
+    if (!faculty.deleted_at) {
+      throw new ConflictError('Faculty is not deleted');
+    }
+
+    // Restore faculty
+    await this.facultyRepository.restore(id);
+
+    // Fetch and return restored faculty
+    const restored = await this.facultyRepository.findById(id);
+    return this.toResponseDTO(restored!);
+  }
+
+  /**
+   * Permanently delete faculty (hard delete)
+   * Requirements: 28.6
+   */
+  async permanentDeleteFaculty(id: string): Promise<void> {
+    // Find faculty including deleted
+    const faculty = await this.facultyRepository.findByIdIncludingDeleted(id);
+    if (!faculty) {
+      throw new NotFoundError('Faculty not found');
+    }
+
+    // Permanently delete
+    await this.facultyRepository.permanentDelete(id);
+  }
 }
