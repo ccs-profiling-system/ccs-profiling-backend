@@ -6,8 +6,12 @@ import { routes } from './routes';
 import { errorHandler } from './shared/middleware/errorHandler';
 import { helmetConfig, getCorsOptions } from './shared/middleware/security';
 import { apiRateLimiter } from './shared/middleware/rateLimiter';
+import { apiVersionMiddleware } from './shared/middleware/apiVersion.middleware';
 
 export const app = express();
+
+// API version header (applied to all responses)
+app.use(apiVersionMiddleware);
 
 // Security middleware
 app.use(helmetConfig);
