@@ -11,6 +11,8 @@ import { research, researchAuthors, researchAdvisers } from '../../../db/schema/
 import { students } from '../../../db/schema/students';
 import { faculty } from '../../../db/schema/faculty';
 import { ResearchFilters } from '../types';
+import { calculateOffset, normalizePaginationParams } from '../../../shared/utils/pagination';
+import { createPaginationMeta } from '../../../shared/utils/apiResponse';
 
 export interface CreateResearchData {
   id: string;
@@ -110,10 +112,19 @@ export class ResearchRepository {
    * Find all research with pagination and filters (excludes soft-deleted)
    * Requirements: 12.1, 28.4
    */
+  /**
+   * Find all research with pagination and filters (excludes soft-deleted)
+   * Supports search by title and filtering by type and status
+   * Requirements: 12.1, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
+   */
   async findAll(filters?: ResearchFilters) {
-    const page = filters?.page || 1;
-    const limit = Math.min(filters?.limit || 10, 100); // Max 100 items per page
-    const offset = (page - 1) * limit;
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
 
     // Build where conditions
     const conditions = [isNull(research.deleted_at)];
@@ -151,14 +162,10 @@ export class ResearchRepository {
       .offset(offset)
       .orderBy(research.created_at);
 
+    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      meta: createPaginationMeta(page, limit, total),
     };
   }
 

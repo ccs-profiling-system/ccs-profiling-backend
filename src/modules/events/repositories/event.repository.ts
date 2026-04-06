@@ -11,6 +11,8 @@ import { events, eventParticipants } from '../../../db/schema';
 import { students } from '../../../db/schema/students';
 import { faculty } from '../../../db/schema/faculty';
 import { EventFilters } from '../types';
+import { calculateOffset, normalizePaginationParams } from '../../../shared/utils/pagination';
+import { createPaginationMeta } from '../../../shared/utils/apiResponse';
 
 export interface CreateEventData {
   id: string;
@@ -64,12 +66,16 @@ export class EventRepository {
   /**
    * Find all events with pagination and filters (excludes soft-deleted)
    * Supports search by name and filtering by type and date range
-   * Requirements: 11.1, 28.4
+   * Requirements: 11.1, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: EventFilters) {
-    const page = filters?.page || 1;
-    const limit = Math.min(filters?.limit || 10, 100); // Max 100 items per page
-    const offset = (page - 1) * limit;
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
 
     // Build where conditions
     const conditions = [isNull(events.deleted_at)];
@@ -111,14 +117,10 @@ export class EventRepository {
       .offset(offset)
       .orderBy(events.event_date);
 
+    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      meta: createPaginationMeta(page, limit, total),
     };
   }
 

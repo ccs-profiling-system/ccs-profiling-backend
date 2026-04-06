@@ -9,6 +9,8 @@ import { eq, and, isNull, or, ilike, sql } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { faculty } from '../../../db/schema';
 import { FacultyFilters } from '../types';
+import { calculateOffset, normalizePaginationParams } from '../../../shared/utils/pagination';
+import { createPaginationMeta } from '../../../shared/utils/apiResponse';
 
 export interface CreateFacultyData {
   id?: string; // Optional UUID v7, generated if not provided
@@ -71,12 +73,16 @@ export class FacultyRepository {
    * Find all faculty with pagination and filters (excludes soft-deleted)
    * Supports search by name or faculty_id
    * Supports filter by department
-   * Requirements: 3.4, 28.4
+   * Requirements: 3.4, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: FacultyFilters) {
-    const page = filters?.page || 1;
-    const limit = Math.min(filters?.limit || 10, 100); // Max 100 items per page
-    const offset = (page - 1) * limit;
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
 
     // Build where conditions
     const conditions = [isNull(faculty.deleted_at)];
@@ -120,14 +126,10 @@ export class FacultyRepository {
       .offset(offset)
       .orderBy(faculty.created_at);
 
+    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      meta: createPaginationMeta(page, limit, total),
     };
   }
 

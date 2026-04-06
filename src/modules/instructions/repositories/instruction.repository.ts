@@ -9,6 +9,8 @@ import { eq, and, isNull, or, like, sql } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { instructions } from '../../../db/schema';
 import { InstructionFilters } from '../types';
+import { calculateOffset, normalizePaginationParams } from '../../../shared/utils/pagination';
+import { createPaginationMeta } from '../../../shared/utils/apiResponse';
 
 export interface CreateInstructionData {
   id?: string; // Optional UUID v7, generated if not provided
@@ -86,12 +88,16 @@ export class InstructionRepository {
    * Find all instructions with pagination and filters (excludes soft-deleted)
    * Supports search by subject_code or subject_name
    * Supports filter by curriculum_year
-   * Requirements: 14.2, 28.4
+   * Requirements: 14.2, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: InstructionFilters) {
-    const page = filters?.page || 1;
-    const limit = Math.min(filters?.limit || 10, 100); // Max 100 items per page
-    const offset = (page - 1) * limit;
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
 
     // Build where conditions
     const conditions = [isNull(instructions.deleted_at)];
@@ -134,14 +140,10 @@ export class InstructionRepository {
       .offset(offset)
       .orderBy(instructions.curriculum_year, instructions.subject_code);
 
+    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      meta: createPaginationMeta(page, limit, total),
     };
   }
 

@@ -9,6 +9,8 @@ import { eq, and, inArray, sql } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { enrollments, instructions } from '../../../db/schema';
 import { EnrollmentFilters } from '../types';
+import { calculateOffset, normalizePaginationParams } from '../../../shared/utils/pagination';
+import { createPaginationMeta } from '../../../shared/utils/apiResponse';
 
 export interface CreateEnrollmentData {
   id?: string; // Optional UUID v7, generated if not provided
@@ -99,12 +101,16 @@ export class EnrollmentRepository {
 
   /**
    * Find all enrollments with pagination and filters
-   * Requirements: 9.1, 9.3, 9.4
+   * Requirements: 9.1, 9.3, 9.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: EnrollmentFilters) {
-    const page = filters?.page || 1;
-    const limit = Math.min(filters?.limit || 10, 100); // Max 100 items per page
-    const offset = (page - 1) * limit;
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
 
     // Build where conditions
     const conditions = [];
@@ -155,14 +161,10 @@ export class EnrollmentRepository {
       .offset(offset)
       .orderBy(enrollments.academic_year, enrollments.semester);
 
+    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      meta: createPaginationMeta(page, limit, total),
     };
   }
 
