@@ -2,7 +2,7 @@
  * Student Service
  * Business logic layer for student operations
  * 
- * Requirements: 2.1, 2.5, 2.6, 2.7, 10.1, 10.2, 10.3, 10.4
+ * Requirements: 2.1, 2.5, 2.6, 2.7, 10.1, 10.2, 10.3, 10.4, 19.1, 19.2, 19.3
  */
 
 import { StudentRepository } from '../repositories/student.repository';
@@ -13,6 +13,7 @@ import { ViolationRepository } from '../../violations/repositories/violation.rep
 import { AffiliationRepository } from '../../affiliations/repositories/affiliation.repository';
 import { AcademicHistoryRepository } from '../../academic-history/repositories/academicHistory.repository';
 import { EnrollmentRepository } from '../../enrollments/repositories/enrollment.repository';
+import { AuditLogger, AuditContext } from '../../../shared/utils/auditLogger';
 import { Database } from '../../../db';
 import { NotFoundError, ConflictError } from '../../../shared/errors';
 import { generateUUIDv7 } from '../../../shared/utils/uuid';
@@ -36,6 +37,7 @@ export class StudentService {
     private affiliationRepository: AffiliationRepository,
     private academicHistoryRepository: AcademicHistoryRepository,
     private enrollmentRepository: EnrollmentRepository,
+    private auditLogger: AuditLogger,
     private db: Database
   ) {}
 
@@ -67,9 +69,9 @@ export class StudentService {
    * Create a new student
    * Optionally creates a linked user account
    * Automatically generates UUID v7 and human-readable student_id
-   * Requirements: 2.1, 2.6
+   * Requirements: 2.1, 2.6, 19.1
    */
-  async createStudent(data: CreateStudentDTO): Promise<StudentResponseDTO> {
+  async createStudent(data: CreateStudentDTO, auditContext?: AuditContext): Promise<StudentResponseDTO> {
     // Check for duplicate email
     const existingEmail = await this.studentRepository.findByEmail(data.email);
     if (existingEmail) {
@@ -86,7 +88,7 @@ export class StudentService {
 
     // If create_user_account is true, use createStudentWithUser
     if (data.create_user_account) {
-      return await this.createStudentWithUser(data);
+      return await this.createStudentWithUser(data, auditContext);
     }
 
     // Generate IDs within a transaction
@@ -115,6 +117,17 @@ export class StudentService {
         tx
       );
 
+      // Log audit event (Requirement: 19.1)
+      if (auditContext) {
+        await this.auditLogger.logCreate(
+          'student',
+          student.id,
+          this.toResponseDTO(student),
+          auditContext,
+          tx
+        );
+      }
+
       return this.toResponseDTO(student);
     });
   }
@@ -122,9 +135,9 @@ export class StudentService {
   /**
    * Create student with linked user account in a single transaction
    * Automatically generates UUID v7 and human-readable student_id
-   * Requirements: 2.2, 26.2, 26.3, 26.4, 26.7
+   * Requirements: 2.2, 26.2, 26.3, 26.4, 26.7, 19.1
    */
-  async createStudentWithUser(data: CreateStudentDTO): Promise<StudentResponseDTO> {
+  async createStudentWithUser(data: CreateStudentDTO, auditContext?: AuditContext): Promise<StudentResponseDTO> {
     // Check for duplicate email
     const existingEmail = await this.studentRepository.findByEmail(data.email);
     if (existingEmail) {
@@ -185,6 +198,17 @@ export class StudentService {
         tx
       );
 
+      // Log audit event (Requirement: 19.1)
+      if (auditContext) {
+        await this.auditLogger.logCreate(
+          'student',
+          student.id,
+          this.toResponseDTO(student),
+          auditContext,
+          tx
+        );
+      }
+
       // If any step fails, entire transaction rolls back automatically
       return this.toResponseDTO(student);
     });
@@ -192,10 +216,10 @@ export class StudentService {
 
   /**
    * Update student by ID
-   * Requirement: 2.6
+   * Requirement: 2.6, 19.2
    */
-  async updateStudent(id: string, data: UpdateStudentDTO): Promise<StudentResponseDTO> {
-    // Check if student exists
+  async updateStudent(id: string, data: UpdateStudentDTO, auditContext?: AuditContext): Promise<StudentResponseDTO> {
+    // Check if student exists and capture before state
     const existing = await this.studentRepository.findById(id);
     if (!existing) {
       throw new NotFoundError('Student not found');
@@ -214,20 +238,41 @@ export class StudentService {
       throw new NotFoundError('Student not found');
     }
 
+    // Log audit event (Requirement: 19.2)
+    if (auditContext) {
+      await this.auditLogger.logUpdate(
+        'student',
+        id,
+        this.toResponseDTO(existing),
+        this.toResponseDTO(updated),
+        auditContext
+      );
+    }
+
     return this.toResponseDTO(updated);
   }
 
   /**
    * Delete student by ID (soft delete)
-   * Requirement: 2.7
+   * Requirement: 2.7, 19.3
    */
-  async deleteStudent(id: string): Promise<void> {
+  async deleteStudent(id: string, auditContext?: AuditContext): Promise<void> {
     const existing = await this.studentRepository.findById(id);
     if (!existing) {
       throw new NotFoundError('Student not found');
     }
 
     await this.studentRepository.softDelete(id);
+
+    // Log audit event (Requirement: 19.3)
+    if (auditContext) {
+      await this.auditLogger.logDelete(
+        'student',
+        id,
+        this.toResponseDTO(existing),
+        auditContext
+      );
+    }
   }
 
   /**

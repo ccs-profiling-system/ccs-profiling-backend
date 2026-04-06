@@ -29,6 +29,7 @@ import {
 import { eventRoutes } from '../modules/events';
 import { researchRoutes } from '../modules/research';
 import { uploadRoutes } from '../modules/uploads';
+import { auditLogRoutes } from '../modules/audit-logs';
 
 export const routes = Router();
 
@@ -53,3 +54,4 @@ routes.use('/v1/admin/affiliations', affiliationRoutes);
 routes.use('/v1/admin/events', eventRoutes);
 routes.use('/v1/admin/research', researchRoutes);
 routes.use('/v1/admin/uploads', uploadRoutes);
+routes.use('/v1/admin/audit-logs', auditLogRoutes);
