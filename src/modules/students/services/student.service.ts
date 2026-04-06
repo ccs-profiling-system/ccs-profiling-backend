@@ -475,7 +475,7 @@ export class StudentService {
         entity_type: 'student',
         entity_id: id,
         before_state: student,
-        after_state: null,
+        after_state: undefined,
         context: auditContext,
       });
     }

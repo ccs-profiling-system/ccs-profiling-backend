@@ -293,28 +293,4 @@ export class StudentRepository {
 
     return result[0] || null;
   }
-
-  /**
-   * Permanently delete student by ID (hard delete)
-   * Requirement: 28.6
-   */
-  async permanentDelete(id: string) {
-    await this.db
-      .delete(students)
-      .where(eq(students.id, id));
-  }
-
-  /**
-   * Find student by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
-   */
-  async findByIdIncludingDeleted(id: string) {
-    const result = await this.db
-      .select()
-      .from(students)
-      .where(eq(students.id, id))
-      .limit(1);
-
-    return result[0] || null;
-  }
 }

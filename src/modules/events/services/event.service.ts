@@ -270,7 +270,7 @@ export class EventService {
     const result = await this.eventRepository.findDeleted(filters);
 
     return {
-      data: result.data.map((event) => this.toResponseDTO(event)),
+      data: result.data.map((event) => this.toResponseDTO(event, 0)),
       meta: result.meta,
     };
   }
@@ -295,7 +295,7 @@ export class EventService {
 
     // Fetch and return restored event
     const restored = await this.eventRepository.findById(id);
-    return this.toResponseDTO(restored!);
+    return this.toResponseDTO(restored!, 0);
   }
 
   /**

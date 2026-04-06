@@ -362,16 +362,16 @@ export class ResearchService {
         title: research.title,
         abstract: research.abstract || undefined,
         research_type: research.research_type,
-        status: research.status,
+        status: research.status || 'ongoing',
         start_date: research.start_date
-          ? (research.start_date instanceof Date
-              ? research.start_date.toISOString().split('T')[0]
-              : research.start_date)
+          ? (typeof research.start_date === 'string'
+              ? research.start_date
+              : (research.start_date as Date).toISOString().split('T')[0])
           : undefined,
         completion_date: research.completion_date
-          ? (research.completion_date instanceof Date
-              ? research.completion_date.toISOString().split('T')[0]
-              : research.completion_date)
+          ? (typeof research.completion_date === 'string'
+              ? research.completion_date
+              : (research.completion_date as Date).toISOString().split('T')[0])
           : undefined,
         publication_url: research.publication_url || undefined,
         authors: [],
