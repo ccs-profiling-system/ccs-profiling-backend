@@ -11,7 +11,6 @@ import { users } from '../schema/users';
 import { students } from '../schema/students';
 import { faculty } from '../schema/faculty';
 import { generateUUIDv7 } from '../../shared/utils/uuid';
-import { eq } from 'drizzle-orm';
 
 export async function seedAuditLogs() {
   console.log('🌱 Seeding audit logs...');

@@ -3596,11 +3596,11 @@
       ]
     },
     {
-      "name": "Analytics",
-      "description": "Analytics endpoints - Admin only",
+      "name": "Dashboard",
+      "description": "Dashboard metrics endpoints - Admin only. All metrics computed on-demand without database storage.",
       "item": [
         {
-          "name": "Get Dashboard Analytics",
+          "name": "Get Complete Dashboard Metrics",
           "request": {
             "method": "GET",
             "header": [
@@ -3621,10 +3621,129 @@
                 "admin",
                 "dashboard"
               ]
-            }
+            },
+            "description": "Get complete dashboard metrics aggregating all statistics. Returns metrics within 1000ms.\n\nIncludes:\n- Student statistics (total, by status, by program, by year level)\n- Faculty statistics (total, by status, by department)\n- Enrollment statistics (total, by status, by semester)\n- Event statistics (total, by type, upcoming vs past)\n\nAll metrics are computed on-demand from existing database records. No metrics are stored in the database.\n\nResponse format:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"students\": { ... },\n    \"faculty\": { ... },\n    \"enrollments\": { ... },\n    \"events\": { ... },\n    \"generated_at\": \"2026-04-06T...\"\n  }\n}\n```\n\nRequirements: 15.1, 15.2, 15.7"
           },
           "response": []
         },
+        {
+          "name": "Get Student Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/dashboard/students",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "dashboard",
+                "students"
+              ]
+            },
+            "description": "Get student statistics only. Calculates total student count from students table.\n\nIncludes:\n- total_students: Total count of students (excluding soft-deleted)\n- active_students: Count of active students\n- inactive_students: Count of inactive students\n- graduated_students: Count of graduated students\n- students_by_program: Distribution by program (e.g., {\"BS Computer Science\": 50, \"BS Information Technology\": 30})\n- students_by_year_level: Distribution by year level (e.g., {\"1\": 25, \"2\": 20, \"3\": 15, \"4\": 10})\n\nAll counts exclude soft-deleted records (deleted_at IS NULL).\n\nRequirement: 15.3"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Faculty Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/dashboard/faculty",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "dashboard",
+                "faculty"
+              ]
+            },
+            "description": "Get faculty statistics only. Calculates total faculty count from faculty table.\n\nIncludes:\n- total_faculty: Total count of faculty members (excluding soft-deleted)\n- active_faculty: Count of active faculty\n- inactive_faculty: Count of inactive faculty\n- faculty_by_department: Distribution by department (e.g., {\"Computer Science\": 15, \"Information Technology\": 10})\n\nAll counts exclude soft-deleted records (deleted_at IS NULL).\n\nRequirement: 15.4"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Enrollment Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/dashboard/enrollments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "dashboard",
+                "enrollments"
+              ]
+            },
+            "description": "Get enrollment statistics only. Calculates enrollment statistics from enrollments table.\n\nIncludes:\n- total_enrollments: Total count of all enrollments\n- enrollments_by_status: Distribution by status (e.g., {\"enrolled\": 100, \"completed\": 50, \"dropped\": 5})\n- enrollments_by_semester: Distribution by semester and academic year (e.g., {\"1st 2025-2026\": 80, \"2nd 2025-2026\": 75})\n- current_semester_enrollments: Count of enrollments in the most recent semester\n\nEnrollments are not soft-deleted, so all records are included.\n\nRequirement: 15.6"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Event Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/dashboard/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "dashboard",
+                "events"
+              ]
+            },
+            "description": "Get event statistics only. Calculates total event count from events table.\n\nIncludes:\n- total_events: Total count of events (excluding soft-deleted)\n- events_by_type: Distribution by event type (e.g., {\"seminar\": 20, \"workshop\": 15, \"defense\": 10, \"competition\": 5})\n- upcoming_events: Count of events with event_date >= today\n- past_events: Count of events with event_date < today\n\nAll counts exclude soft-deleted records (deleted_at IS NULL).\nUpcoming/past classification based on event_date compared to current date.\n\nRequirement: 15.5"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "description": "Analytics endpoints - Admin only",
+      "item": [
         {
           "name": "Get GPA Distribution",
           "request": {
