@@ -32,6 +32,7 @@ import { uploadRoutes } from '../modules/uploads';
 import { auditLogRoutes } from '../modules/audit-logs';
 import { dashboardRoutes } from '../modules/dashboard';
 import { analyticsRoutes } from '../modules/analytics';
+import { reportRoutes } from '../modules/reports';
 
 export const routes = Router();
 
@@ -59,3 +60,4 @@ routes.use('/v1/admin/uploads', uploadRoutes);
 routes.use('/v1/admin/audit-logs', auditLogRoutes);
 routes.use('/v1/admin/dashboard', dashboardRoutes);
 routes.use('/v1/admin/analytics', analyticsRoutes);
+routes.use('/v1/admin/reports', reportRoutes);

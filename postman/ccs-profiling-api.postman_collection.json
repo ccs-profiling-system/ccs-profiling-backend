@@ -3132,7 +3132,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"student_id\": \"student-uuid-here\",\n  \"format\": \"pdf\"\n}",
+              "raw": "{\n  \"student_id\": \"student-uuid-here\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3151,7 +3151,49 @@
                 "reports",
                 "student-profile"
               ]
-            }
+            },
+            "description": "Generate comprehensive student profile report in PDF format.\n\nRequired fields:\n- student_id: Student UUID\n\nReport includes:\n- Student personal information (name, email, student ID, program)\n- Skills with proficiency levels\n- Academic history with grades and GPA\n- Current enrollments\n- Affiliations and organization memberships\n- Violations and resolution status\n- Generated timestamp\n\nResponse:\n- Content-Type: application/pdf\n- Content-Disposition: attachment with filename\n- Binary PDF file for download\n\nPerformance: Returns within 5000ms as per requirement 17.7"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Faculty Profile Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"faculty_id\": \"faculty-uuid-here\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/reports/faculty-profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reports",
+                "faculty-profile"
+              ]
+            },
+            "description": "Generate comprehensive faculty profile report in PDF format.\n\nRequired fields:\n- faculty_id: Faculty UUID\n\nReport includes:\n- Faculty personal information (name, email, department, position)\n- Specialization and contact details\n- Professional status\n- Generated timestamp\n\nResponse:\n- Content-Type: application/pdf\n- Content-Disposition: attachment with filename\n- Binary PDF file for download\n\nPerformance: Returns within 5000ms as per requirement 17.7"
           },
           "response": []
         },
@@ -3172,7 +3214,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\",\n  \"format\": \"excel\"\n}",
+              "raw": "{\n  \"semester\": \"1st\",\n  \"academic_year\": \"2025-2026\",\n  \"program\": \"BS Computer Science\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3191,7 +3233,49 @@
                 "reports",
                 "enrollments"
               ]
-            }
+            },
+            "description": "Generate enrollment report in Excel format with filtering capabilities.\n\nOptional filters:\n- semester: Filter by semester (1st, 2nd, summer)\n- academic_year: Filter by academic year (e.g., 2025-2026)\n- program: Filter by program (e.g., BS Computer Science)\n\nReport includes:\n- Student ID and name\n- Subject code and name\n- Enrollment status\n- Semester and academic year\n- Enrollment date\n\nResponse:\n- Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\n- Content-Disposition: attachment with filename\n- Binary Excel file (.xlsx) for download\n\nPerformance: Returns within 5000ms as per requirement 17.7"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Analytics Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_type\": \"gpa\",\n  \"start_date\": \"2026-01-01\",\n  \"end_date\": \"2026-12-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/reports/analytics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reports",
+                "analytics"
+              ]
+            },
+            "description": "Generate analytics report in PDF format with system-wide metrics.\n\nRequired fields:\n- report_type: Type of analytics report\n  * gpa: GPA distribution and statistics\n  * skills: Skills distribution across students\n  * violations: Violation trends and statistics\n  * research: Research output metrics\n  * enrollments: Enrollment trends and statistics\n\nOptional fields:\n- start_date: Start date for data range (YYYY-MM-DD)\n- end_date: End date for data range (YYYY-MM-DD)\n\nReport includes (varies by type):\n- Summary statistics\n- Distribution charts and graphs\n- Trend analysis\n- Key insights and metrics\n- Generated timestamp\n\nResponse:\n- Content-Type: application/pdf\n- Content-Disposition: attachment with filename\n- Binary PDF file for download\n\nPerformance: Returns within 5000ms as per requirement 17.7\n\nExamples:\n```json\n// GPA Report\n{\n  \"report_type\": \"gpa\",\n  \"start_date\": \"2026-01-01\",\n  \"end_date\": \"2026-12-31\"\n}\n\n// Skills Report\n{\n  \"report_type\": \"skills\"\n}\n\n// Violations Report\n{\n  \"report_type\": \"violations\",\n  \"start_date\": \"2026-01-01\",\n  \"end_date\": \"2026-06-30\"\n}\n```"
           },
           "response": []
         }
