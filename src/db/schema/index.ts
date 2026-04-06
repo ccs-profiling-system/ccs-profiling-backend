@@ -11,4 +11,5 @@ export * from './violations';
 export * from './affiliations';
 export * from './events';
 export * from './research';
+export * from './uploads';
 export * from './utils';
