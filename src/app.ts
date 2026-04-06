@@ -42,6 +42,7 @@ import cors from 'cors';
 import path from 'path';
 import { config } from './config';
 import { routes } from './routes';
+import { swaggerRoutes } from './routes/swagger.routes';
 import { errorHandler } from './shared/middleware/errorHandler';
 import { helmetConfig, getCorsOptions } from './shared/middleware/security';
 import { apiRateLimiter } from './shared/middleware/rateLimiter';
@@ -89,6 +90,11 @@ app.get('/health', (_req, res) => {
     environment: config.nodeEnv,
   });
 });
+
+// API Documentation - Swagger UI
+// Access at /api-docs for interactive documentation
+// Access at /api-docs/json for raw OpenAPI specification
+app.use('/api-docs', swaggerRoutes);
 
 // API Routes - All module routes are registered here
 // Routes are defined in src/routes/index.ts
