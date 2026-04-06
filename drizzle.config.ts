@@ -19,6 +19,7 @@ export default {
     './src/db/schema/events.ts',
     './src/db/schema/research.ts',
     './src/db/schema/uploads.ts',
+    './src/db/schema/auditLogs.ts',
   ],
   out: './drizzle',
   driver: 'pg',
