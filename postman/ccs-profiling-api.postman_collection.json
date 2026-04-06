@@ -3366,6 +3366,236 @@
       ]
     },
     {
+      "name": "Audit Logs",
+      "description": "Audit log endpoints for tracking system activities - Admin only",
+      "item": [
+        {
+          "name": "Get All Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit-logs?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-01-01T00:00:00.000Z",
+                  "description": "Filter from this datetime (ISO 8601 format)",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-12-31T23:59:59.999Z",
+                  "description": "Filter until this datetime (ISO 8601 format)",
+                  "disabled": true
+                },
+                {
+                  "key": "action_type",
+                  "value": "",
+                  "description": "Filter by action type (create, update, delete)",
+                  "disabled": true
+                },
+                {
+                  "key": "entity_type",
+                  "value": "",
+                  "description": "Filter by entity type (student, faculty, research, etc.)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of audit logs with date range filtering. Supports filtering by action type and entity type.\n\nAudit logs track all system mutations including:\n- Create operations: New records created\n- Update operations: Record modifications with before/after states\n- Delete operations: Record deletions with final state\n\nEach audit log includes:\n- id: Audit log UUID\n- user_id: User who performed the action (optional)\n- action_type: One of: create, update, delete\n- entity_type: Type of entity affected (student, faculty, research, event, etc.)\n- entity_id: UUID of the affected entity (optional)\n- before_state: State before the operation (JSONB, null for create)\n- after_state: State after the operation (JSONB, null for delete)\n- ip_address: IP address of the request (optional)\n- user_agent: Browser/client user agent (optional)\n- created_at: Timestamp of the operation\n\nDate Range Filtering:\n- start_date: Include logs from this datetime onwards (ISO 8601 format: YYYY-MM-DDTHH:mm:ss.sssZ)\n- end_date: Include logs up to this datetime (ISO 8601 format: YYYY-MM-DDTHH:mm:ss.sssZ)\n- Both dates are optional\n- Logs are ordered by created_at descending (newest first)\n\nRequirement: 19.5 - Audit log retention for at least 1 year"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Audit Log by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit-logs/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit-logs",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "audit-log-uuid-here",
+                  "description": "Audit Log UUID"
+                }
+              ]
+            },
+            "description": "Get audit log details by UUID. Returns complete audit log information including before/after states.\n\nUse cases:\n- Investigate specific system changes\n- Review detailed state changes for compliance\n- Track down when and how a record was modified\n- Audit trail for security investigations\n\nResponse includes:\n- Complete audit log record\n- Full before_state and after_state JSONB objects\n- User information (if available)\n- Request metadata (IP address, user agent)\n- Precise timestamp\n\nRequirement: 19.5"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Audit Logs by User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit-logs/user/:userId?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit-logs",
+                "user",
+                ":userId"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-01-01T00:00:00.000Z",
+                  "description": "Filter from this datetime (ISO 8601 format)",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-12-31T23:59:59.999Z",
+                  "description": "Filter until this datetime (ISO 8601 format)",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "user-uuid-here",
+                  "description": "User UUID"
+                }
+              ]
+            },
+            "description": "Get all audit logs for a specific user. Returns paginated list of all actions performed by the user.\n\nUse cases:\n- Track all changes made by a specific admin\n- User activity monitoring\n- Compliance audits for specific users\n- Investigate suspicious user activity\n\nSupports:\n- Pagination (page, limit)\n- Date range filtering (start_date, end_date)\n- Ordered by created_at descending (newest first)\n\nRequirement: 19.5"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Audit Logs by Entity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit-logs/entity/:entityType/:entityId?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit-logs",
+                "entity",
+                ":entityType",
+                ":entityId"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-01-01T00:00:00.000Z",
+                  "description": "Filter from this datetime (ISO 8601 format)",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-12-31T23:59:59.999Z",
+                  "description": "Filter until this datetime (ISO 8601 format)",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "entityType",
+                  "value": "student",
+                  "description": "Entity type: student, faculty, research, event, instruction, enrollment, etc."
+                },
+                {
+                  "key": "entityId",
+                  "value": "entity-uuid-here",
+                  "description": "Entity UUID"
+                }
+              ]
+            },
+            "description": "Get complete audit trail for a specific entity. Returns all create, update, and delete operations for the entity.\n\nUse cases:\n- View complete history of changes to a student record\n- Track all modifications to a research project\n- Investigate when and how an entity was created/modified/deleted\n- Compliance audits for specific records\n- Data lineage tracking\n\nPath parameters:\n- entityType: Type of entity (student, faculty, research, event, instruction, enrollment, etc.)\n- entityId: UUID of the entity\n\nSupports:\n- Pagination (page, limit)\n- Date range filtering (start_date, end_date)\n- Ordered by created_at ascending (oldest first) to show chronological history\n\nResponse shows:\n- Creation event (action_type: create, before_state: null)\n- All update events (action_type: update, both before_state and after_state)\n- Deletion event if applicable (action_type: delete, after_state: null)\n\nRequirement: 19.5"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Analytics",
       "description": "Analytics endpoints - Admin only",
       "item": [

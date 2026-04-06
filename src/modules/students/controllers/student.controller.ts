@@ -86,7 +86,7 @@ export class StudentController {
 
       const data = validationResult.data;
 
-      const student = await this.studentService.createStudent(data);
+      const student = await this.studentService.createStudent(data, req.auditContext);
 
       res.status(201).json({
         success: true,
@@ -119,7 +119,7 @@ export class StudentController {
       const { id } = paramValidation.data;
       const data = bodyValidation.data;
 
-      const student = await this.studentService.updateStudent(id, data);
+      const student = await this.studentService.updateStudent(id, data, req.auditContext);
 
       res.json({
         success: true,
@@ -145,7 +145,7 @@ export class StudentController {
 
       const { id } = validationResult.data;
 
-      await this.studentService.deleteStudent(id);
+      await this.studentService.deleteStudent(id, req.auditContext);
 
       res.json({
         success: true,
