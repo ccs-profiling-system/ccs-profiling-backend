@@ -28,6 +28,7 @@ import {
 } from '../modules/affiliations';
 import { eventRoutes } from '../modules/events';
 import { researchRoutes } from '../modules/research';
+import { uploadRoutes } from '../modules/uploads';
 
 export const routes = Router();
 
@@ -51,3 +52,4 @@ routes.use('/v1/admin/violations', violationRoutes);
 routes.use('/v1/admin/affiliations', affiliationRoutes);
 routes.use('/v1/admin/events', eventRoutes);
 routes.use('/v1/admin/research', researchRoutes);
+routes.use('/v1/admin/uploads', uploadRoutes);
