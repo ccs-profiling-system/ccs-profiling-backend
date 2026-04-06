@@ -443,14 +443,12 @@ export class StudentService {
     // Log audit
     if (auditContext) {
       await this.auditLogger.log({
-        user_id: auditContext.user_id,
-        action_type: 'restore',
+        action_type: 'update',
         entity_type: 'student',
         entity_id: id,
         before_state: { deleted_at: student.deleted_at },
         after_state: { deleted_at: null },
-        ip_address: auditContext.ip_address,
-        user_agent: auditContext.user_agent,
+        context: auditContext,
       });
     }
 
@@ -473,14 +471,12 @@ export class StudentService {
     // Log audit before deletion
     if (auditContext) {
       await this.auditLogger.log({
-        user_id: auditContext.user_id,
-        action_type: 'permanent_delete',
+        action_type: 'delete',
         entity_type: 'student',
         entity_id: id,
         before_state: student,
         after_state: null,
-        ip_address: auditContext.ip_address,
-        user_agent: auditContext.user_agent,
+        context: auditContext,
       });
     }
 

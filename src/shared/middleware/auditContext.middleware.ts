@@ -39,7 +39,7 @@ export const auditContextMiddleware = (
   const user_agent = req.headers['user-agent'] || undefined;
 
   // Extract user ID from authenticated user (set by auth middleware)
-  const user_id = (req as any).user?.id || undefined;
+  const user_id = (req as any).user?.userId || undefined;
 
   // Attach audit context to request
   req.auditContext = {
