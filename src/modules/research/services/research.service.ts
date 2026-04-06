@@ -347,4 +347,77 @@ export class ResearchService {
       updated_at: research.updated_at.toISOString(),
     };
   }
+
+  /**
+   * Get soft-deleted research (admin only)
+   * Requirements: 28.5
+   */
+  async getDeletedResearch(filters?: ResearchFilters): Promise<ResearchListResponseDTO> {
+    const result = await this.researchRepository.findDeleted(filters);
+
+    // For deleted research, we don't fetch authors/advisers to keep it simple
+    return {
+      data: result.data.map((research) => ({
+        id: research.id,
+        title: research.title,
+        abstract: research.abstract || undefined,
+        research_type: research.research_type,
+        status: research.status,
+        start_date: research.start_date
+          ? (research.start_date instanceof Date
+              ? research.start_date.toISOString().split('T')[0]
+              : research.start_date)
+          : undefined,
+        completion_date: research.completion_date
+          ? (research.completion_date instanceof Date
+              ? research.completion_date.toISOString().split('T')[0]
+              : research.completion_date)
+          : undefined,
+        publication_url: research.publication_url || undefined,
+        authors: [],
+        advisers: [],
+        created_at: research.created_at.toISOString(),
+        updated_at: research.updated_at.toISOString(),
+      })),
+      meta: result.meta,
+    };
+  }
+
+  /**
+   * Restore soft-deleted research
+   * Requirements: 28.7
+   */
+  async restoreResearch(id: string): Promise<ResearchResponseDTO> {
+    // Find research including deleted
+    const research = await this.researchRepository.findByIdIncludingDeleted(id);
+    if (!research) {
+      throw new NotFoundError('Research not found');
+    }
+
+    if (!research.deleted_at) {
+      throw new ConflictError('Research is not deleted');
+    }
+
+    // Restore research
+    await this.researchRepository.restore(id);
+
+    // Fetch and return restored research with full details
+    const restored = await this.getResearch(id);
+    return restored;
+  }
+
+  /**
+   * Permanently delete research (hard delete)
+   * Requirements: 28.6
+   */
+  async permanentDeleteResearch(id: string): Promise<void> {
+    // Find research including deleted
+    const research = await this.researchRepository.findByIdIncludingDeleted(id);
+    if (!research) {
+      throw new NotFoundError('Research not found');
+    }
+
+    // Permanently delete
+    await this.researchRepository.permanentDelete(id);
+  }
 }

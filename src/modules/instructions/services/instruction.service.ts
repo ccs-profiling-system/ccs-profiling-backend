@@ -154,4 +154,55 @@ export class InstructionService {
       updated_at: instruction.updated_at.toISOString(),
     };
   }
+
+  /**
+   * Get soft-deleted instructions (admin only)
+   * Requirements: 28.5
+   */
+  async getDeletedInstructions(filters?: InstructionFilters): Promise<InstructionListResponseDTO> {
+    const result = await this.instructionRepository.findDeleted(filters);
+
+    return {
+      data: result.data.map((instruction) => this.toResponseDTO(instruction)),
+      meta: result.meta,
+    };
+  }
+
+  /**
+   * Restore soft-deleted instruction
+   * Requirements: 28.7
+   */
+  async restoreInstruction(id: string): Promise<InstructionResponseDTO> {
+    // Find instruction including deleted
+    const instruction = await this.instructionRepository.findByIdIncludingDeleted(id);
+    if (!instruction) {
+      throw new NotFoundError('Instruction not found');
+    }
+
+    if (!instruction.deleted_at) {
+      throw new ConflictError('Instruction is not deleted');
+    }
+
+    // Restore instruction
+    await this.instructionRepository.restore(id);
+
+    // Fetch and return restored instruction
+    const restored = await this.instructionRepository.findById(id);
+    return this.toResponseDTO(restored!);
+  }
+
+  /**
+   * Permanently delete instruction (hard delete)
+   * Requirements: 28.6
+   */
+  async permanentDeleteInstruction(id: string): Promise<void> {
+    // Find instruction including deleted
+    const instruction = await this.instructionRepository.findByIdIncludingDeleted(id);
+    if (!instruction) {
+      throw new NotFoundError('Instruction not found');
+    }
+
+    // Permanently delete
+    await this.instructionRepository.permanentDelete(id);
+  }
 }

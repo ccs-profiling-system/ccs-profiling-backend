@@ -261,4 +261,55 @@ export class EventService {
       created_at: participant.created_at.toISOString(),
     };
   }
+
+  /**
+   * Get soft-deleted events (admin only)
+   * Requirements: 28.5
+   */
+  async getDeletedEvents(filters?: EventFilters): Promise<EventListResponseDTO> {
+    const result = await this.eventRepository.findDeleted(filters);
+
+    return {
+      data: result.data.map((event) => this.toResponseDTO(event)),
+      meta: result.meta,
+    };
+  }
+
+  /**
+   * Restore soft-deleted event
+   * Requirements: 28.7
+   */
+  async restoreEvent(id: string): Promise<EventResponseDTO> {
+    // Find event including deleted
+    const event = await this.eventRepository.findByIdIncludingDeleted(id);
+    if (!event) {
+      throw new NotFoundError('Event not found');
+    }
+
+    if (!event.deleted_at) {
+      throw new ConflictError('Event is not deleted');
+    }
+
+    // Restore event
+    await this.eventRepository.restore(id);
+
+    // Fetch and return restored event
+    const restored = await this.eventRepository.findById(id);
+    return this.toResponseDTO(restored!);
+  }
+
+  /**
+   * Permanently delete event (hard delete)
+   * Requirements: 28.6
+   */
+  async permanentDeleteEvent(id: string): Promise<void> {
+    // Find event including deleted
+    const event = await this.eventRepository.findByIdIncludingDeleted(id);
+    if (!event) {
+      throw new NotFoundError('Event not found');
+    }
+
+    // Permanently delete
+    await this.eventRepository.permanentDelete(id);
+  }
 }

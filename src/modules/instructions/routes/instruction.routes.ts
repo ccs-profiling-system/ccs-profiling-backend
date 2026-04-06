@@ -18,6 +18,13 @@ export function createInstructionRoutes(instructionController: InstructionContro
   router.use(adminOnly);
 
   /**
+   * GET /api/v1/admin/instructions/deleted
+   * Get soft-deleted instructions (admin only)
+   * IMPORTANT: This route must come BEFORE /:id to avoid route conflicts
+   */
+  router.get('/deleted', instructionController.getDeletedInstructions);
+
+  /**
    * GET /api/v1/admin/instructions
    * List instructions with pagination, search, and filters
    */
@@ -40,6 +47,18 @@ export function createInstructionRoutes(instructionController: InstructionContro
    * Update instruction by ID
    */
   router.put('/:id', instructionController.updateInstruction);
+
+  /**
+   * PATCH /api/v1/admin/instructions/:id/restore
+   * Restore soft-deleted instruction
+   */
+  router.patch('/:id/restore', instructionController.restoreInstruction);
+
+  /**
+   * DELETE /api/v1/admin/instructions/:id/permanent
+   * Permanently delete instruction (hard delete)
+   */
+  router.delete('/:id/permanent', instructionController.permanentDeleteInstruction);
 
   /**
    * DELETE /api/v1/admin/instructions/:id

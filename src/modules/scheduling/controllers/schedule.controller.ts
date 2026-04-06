@@ -241,4 +241,85 @@ export class ScheduleController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/schedules/deleted
+   * Get soft-deleted schedules (admin only)
+   * Requirements: 28.5, 30.2
+   */
+  getDeletedSchedules = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate query parameters
+      const validationResult = scheduleListQuerySchema.safeParse(req.query);
+      if (!validationResult.success) {
+        throw new ValidationError('Validation failed', validationResult.error.errors);
+      }
+
+      const filters = validationResult.data;
+
+      const result = await this.scheduleService.getDeletedSchedules(filters);
+
+      res.json({
+        success: true,
+        data: result.data,
+        meta: result.meta,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * PATCH /api/v1/admin/schedules/:id/restore
+   * Restore soft-deleted schedule
+   * Requirements: 28.7, 30.2
+   */
+  restoreSchedule = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = scheduleIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid schedule ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      const schedule = await this.scheduleService.restoreSchedule(id);
+
+      res.json({
+        success: true,
+        data: schedule,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * DELETE /api/v1/admin/schedules/:id/permanent
+   * Permanently delete schedule (hard delete)
+   * Requirements: 28.6, 30.2
+   */
+  permanentDeleteSchedule = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = scheduleIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid schedule ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      await this.scheduleService.permanentDeleteSchedule(id);
+
+      res.json({
+        success: true,
+        data: {
+          message: 'Schedule permanently deleted',
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
