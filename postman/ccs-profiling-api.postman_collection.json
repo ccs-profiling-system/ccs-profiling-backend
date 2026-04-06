@@ -3742,7 +3742,7 @@
     },
     {
       "name": "Analytics",
-      "description": "Analytics endpoints - Admin only",
+      "description": "Analytics insights endpoints - Admin only. All analytics are computed on-demand from existing records without database storage.",
       "item": [
         {
           "name": "Get GPA Distribution",
@@ -3767,7 +3767,8 @@
                 "analytics",
                 "gpa"
               ]
-            }
+            },
+            "description": "Get GPA distribution analytics. Computes average GPA from Academic_History_Record entries.\n\nReturns:\n- average_gpa: Average GPA across all students\n- median_gpa: Median GPA value\n- highest_gpa: Highest GPA recorded\n- lowest_gpa: Lowest GPA recorded\n- gpa_ranges: Distribution of GPAs in ranges (1.00-1.50, 1.51-2.00, etc.) with count and percentage\n- total_students_with_grades: Number of students with academic history records\n\nAll analytics computed on-demand (no database storage).\nTarget response time: <2000ms\n\nRequirements: 16.1, 16.2, 16.3, 16.7"
           },
           "response": []
         },
@@ -3794,7 +3795,92 @@
                 "analytics",
                 "skills"
               ]
-            }
+            },
+            "description": "Get skill distribution analytics. Calculates skill distribution from Skill_Record entries.\n\nReturns:\n- total_skills: Total count of all skill records\n- unique_skills: Count of unique skill names\n- top_skills: Top 10 most common skills with count and percentage\n- proficiency_distribution: Distribution by proficiency level (beginner, intermediate, advanced, expert) with count and percentage\n- students_with_skills: Number of students who have at least one skill\n\nAll analytics computed on-demand (no database storage).\nTarget response time: <2000ms\n\nRequirements: 16.1, 16.2, 16.4, 16.7"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Violation Trends",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/violations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "analytics",
+                "violations"
+              ]
+            },
+            "description": "Get violation trends analytics. Calculates violation trends from Violation_Record entries.\n\nReturns:\n- total_violations: Total count of all violations\n- violations_by_type: Distribution by violation type with count and percentage\n- violations_by_status: Distribution by resolution status (pending, resolved, dismissed) with count and percentage\n- violations_by_month: Violation count by month for the last 12 months (format: YYYY-MM)\n- students_with_violations: Number of students who have at least one violation\n- average_violations_per_student: Average number of violations per student\n\nAll analytics computed on-demand (no database storage).\nTarget response time: <2000ms\n\nRequirements: 16.1, 16.2, 16.5, 16.7"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Research Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/research",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "analytics",
+                "research"
+              ]
+            },
+            "description": "Get research output metrics. Calculates research output metrics from Research_Record entries.\n\nReturns:\n- total_research: Total count of research projects (excluding soft-deleted)\n- research_by_type: Distribution by research type (thesis, capstone, publication) with count and percentage\n- research_by_status: Distribution by status (ongoing, completed, published) with count and percentage\n- completed_research: Count of completed research projects\n- ongoing_research: Count of ongoing research projects\n- published_research: Count of published research projects\n- total_authors: Total count of all author relationships\n- average_authors_per_research: Average number of authors per research project\n\nAll analytics computed on-demand (no database storage).\nExcludes soft-deleted research records.\nTarget response time: <2000ms\n\nRequirements: 16.1, 16.2, 16.6, 16.7"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Enrollment Trends",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/enrollments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "analytics",
+                "enrollments"
+              ]
+            },
+            "description": "Get enrollment trends analytics. Calculates enrollment trends from Enrollment_Record entries.\n\nReturns:\n- total_enrollments: Total count of all enrollments\n- enrollments_by_semester: Distribution by semester and academic year with count\n- enrollments_by_status: Distribution by enrollment status (enrolled, dropped, completed) with count and percentage\n- current_semester_enrollments: Count of enrollments in the most recent semester\n- enrollment_growth_rate: Percentage growth rate compared to previous semester\n\nAll analytics computed on-demand (no database storage).\nTarget response time: <2000ms\n\nRequirements: 16.1, 16.2, 16.7"
           },
           "response": []
         }
