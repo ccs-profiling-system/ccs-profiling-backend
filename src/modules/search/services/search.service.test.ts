@@ -14,6 +14,7 @@ import { ResearchRepository } from '../../research/repositories/research.reposit
 import { SearchService } from './search.service';
 import { students, faculty, events, research } from '../../../db/schema';
 import { generateUUIDv7 } from '../../../shared/utils/uuid';
+import { eq } from 'drizzle-orm';
 
 describe('SearchService', () => {
   let searchService: SearchService;
@@ -23,6 +24,12 @@ describe('SearchService', () => {
   let testResearchId: string;
 
   beforeAll(async () => {
+    // Clean up any existing test data first
+    await db.delete(students).where(eq(students.student_id, 'TEST-SEARCH-001'));
+    await db.delete(faculty).where(eq(faculty.faculty_id, 'TEST-FACULTY-001'));
+    await db.delete(events).where(eq(events.event_name, 'SearchTest Event'));
+    await db.delete(research).where(eq(research.title, 'SearchTest Research Project'));
+
     // Initialize repositories
     const studentRepository = new StudentRepository(db);
     const facultyRepository = new FacultyRepository(db);
@@ -78,10 +85,18 @@ describe('SearchService', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await db.delete(students).where({ id: testStudentId });
-    await db.delete(faculty).where({ id: testFacultyId });
-    await db.delete(events).where({ id: testEventId });
-    await db.delete(research).where({ id: testResearchId });
+    if (testStudentId) {
+      await db.delete(students).where(eq(students.id, testStudentId));
+    }
+    if (testFacultyId) {
+      await db.delete(faculty).where(eq(faculty.id, testFacultyId));
+    }
+    if (testEventId) {
+      await db.delete(events).where(eq(events.id, testEventId));
+    }
+    if (testResearchId) {
+      await db.delete(research).where(eq(research.id, testResearchId));
+    }
   });
 
   describe('searchStudents', () => {
