@@ -33,6 +33,7 @@ import { auditLogRoutes } from '../modules/audit-logs';
 import { dashboardRoutes } from '../modules/dashboard';
 import { analyticsRoutes } from '../modules/analytics';
 import { reportRoutes } from '../modules/reports';
+import { searchRoutes } from '../modules/search';
 
 export const routes = Router();
 
@@ -61,3 +62,4 @@ routes.use('/v1/admin/audit-logs', auditLogRoutes);
 routes.use('/v1/admin/dashboard', dashboardRoutes);
 routes.use('/v1/admin/analytics', analyticsRoutes);
 routes.use('/v1/admin/reports', reportRoutes);
+routes.use('/v1/admin/search', searchRoutes);

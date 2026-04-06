@@ -5,7 +5,7 @@
  * Requirements: 11.1, 11.3, 11.4, 11.6, 28.4
  */
 
-import { eq, and, isNull, like, sql, gte, lte } from 'drizzle-orm';
+import { eq, and, isNull, ilike, sql, gte, lte } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { events, eventParticipants } from '../../../db/schema';
 import { students } from '../../../db/schema/students';
@@ -77,7 +77,7 @@ export class EventRepository {
     // Search by event name
     if (filters?.search) {
       const searchTerm = `%${filters.search}%`;
-      conditions.push(like(events.event_name, searchTerm));
+      conditions.push(ilike(events.event_name, searchTerm));
     }
 
     // Filter by event type

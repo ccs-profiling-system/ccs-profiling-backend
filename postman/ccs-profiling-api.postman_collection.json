@@ -3969,6 +3969,217 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Search",
+      "description": "Search endpoints with partial text matching across entities - Admin only",
+      "item": [
+        {
+          "name": "Global Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/search?q=john&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "john",
+                  "description": "Search query string (required)"
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "description": "Optional entity type filter: students, faculty, events, research",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Max results per entity (default 10, max 50)"
+                }
+              ]
+            },
+            "description": "Global search across all entities or filter by specific type. Uses partial text matching (case-insensitive).\n\nSearches across:\n- Students: first_name, last_name, student_id, email\n- Faculty: first_name, last_name, faculty_id, email, department\n- Events: event_name, event_type, description, location\n- Research: title, abstract, research_type\n\nQuery Parameters:\n- q (required): Search query string\n- type (optional): Filter by entity type (students, faculty, events, research)\n- limit (optional): Max results per entity (default 10, max 50)\n\nResponse format (without type filter):\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"students\": [...],\n    \"faculty\": [...],\n    \"events\": [...],\n    \"research\": [...],\n    \"meta\": {\n      \"query\": \"john\",\n      \"total\": 15,\n      \"type\": null,\n      \"limit\": 10\n    }\n  }\n}\n```\n\nResponse format (with type filter):\n```json\n{\n  \"success\": true,\n  \"data\": [...],\n  \"meta\": {\n    \"query\": \"john\",\n    \"total\": 5,\n    \"type\": \"students\",\n    \"limit\": 10\n  }\n}\n```\n\nFeatures:\n- Partial text matching (case-insensitive)\n- Parallel execution for optimal performance\n- Automatic soft delete filtering\n- Target response time: <500ms\n\nRequirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/search/students?q=john&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "search",
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "john",
+                  "description": "Search query string (required)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Max results (default 10, max 50)"
+                }
+              ]
+            },
+            "description": "Search students only. Uses partial text matching (case-insensitive).\n\nSearches across fields:\n- first_name\n- last_name\n- student_id\n- email\n\nReturns:\n- id: Student UUID\n- student_id: Student ID (e.g., S-2025-0001)\n- first_name: First name\n- last_name: Last name\n- email: Email address\n- program: Academic program\n- year_level: Year level (1-4)\n- status: Student status (active, inactive, graduated)\n\nFeatures:\n- Partial text matching (e.g., 'john' matches 'John Doe', 'Johnny')\n- Case-insensitive search\n- Excludes soft-deleted records\n- Ordered by relevance\n- Target response time: <500ms\n\nRequirements: 18.1, 18.5, 18.6"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Faculty",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/search/faculty?q=smith&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "search",
+                "faculty"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "smith",
+                  "description": "Search query string (required)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Max results (default 10, max 50)"
+                }
+              ]
+            },
+            "description": "Search faculty only. Uses partial text matching (case-insensitive).\n\nSearches across fields:\n- first_name\n- last_name\n- faculty_id\n- email\n- department\n\nReturns:\n- id: Faculty UUID\n- faculty_id: Faculty ID (e.g., F-2025-0001)\n- first_name: First name\n- last_name: Last name\n- email: Email address\n- department: Department name\n- position: Position/title\n- status: Faculty status (active, inactive)\n\nFeatures:\n- Partial text matching (e.g., 'smith' matches 'Smith', 'Smithson')\n- Case-insensitive search\n- Excludes soft-deleted records\n- Ordered by relevance\n- Target response time: <500ms\n\nRequirements: 18.2, 18.5, 18.6"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/search/events?q=seminar&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "search",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "seminar",
+                  "description": "Search query string (required)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Max results (default 10, max 50)"
+                }
+              ]
+            },
+            "description": "Search events only. Uses partial text matching (case-insensitive).\n\nSearches across fields:\n- event_name\n- event_type\n- description\n- location\n\nReturns:\n- id: Event UUID\n- event_name: Event name\n- event_type: Event type (seminar, workshop, defense, competition)\n- event_date: Event date (YYYY-MM-DD)\n- location: Event location\n- description: Event description\n\nFeatures:\n- Partial text matching (e.g., 'tech' matches 'Tech Conference', 'Technology')\n- Case-insensitive search\n- Excludes soft-deleted records\n- Ordered by event_date (upcoming events first)\n- Target response time: <500ms\n\nRequirements: 18.3, 18.5, 18.6"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Research",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/search/research?q=machine%20learning&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "search",
+                "research"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "machine learning",
+                  "description": "Search query string (required)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Max results (default 10, max 50)"
+                }
+              ]
+            },
+            "description": "Search research only. Uses partial text matching (case-insensitive).\n\nSearches across fields:\n- title\n- abstract\n- research_type\n\nReturns:\n- id: Research UUID\n- title: Research title\n- research_type: Research type (thesis, capstone, publication)\n- status: Research status (ongoing, completed, published)\n- authors: Array of authors with student details\n  - id: Student UUID\n  - student_id: Student ID\n  - name: Full name\n- advisers: Array of advisers with faculty details\n  - id: Faculty UUID\n  - faculty_id: Faculty ID\n  - name: Full name\n\nFeatures:\n- Partial text matching (e.g., 'machine' matches 'Machine Learning', 'machinery')\n- Case-insensitive search\n- Includes author and adviser information via joins\n- Excludes soft-deleted records\n- Ordered by relevance\n- Target response time: <500ms\n\nRequirements: 18.4, 18.5, 18.6"
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }

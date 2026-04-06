@@ -5,7 +5,7 @@
  * Requirements: 12.1, 12.6, 12.7, 28.4
  */
 
-import { eq, and, isNull, like, sql } from 'drizzle-orm';
+import { eq, and, isNull, ilike, sql } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { research, researchAuthors, researchAdvisers } from '../../../db/schema/research';
 import { students } from '../../../db/schema/students';
@@ -121,7 +121,7 @@ export class ResearchRepository {
     // Search by title
     if (filters?.search) {
       const searchTerm = `%${filters.search}%`;
-      conditions.push(like(research.title, searchTerm));
+      conditions.push(ilike(research.title, searchTerm));
     }
 
     // Filter by research type
