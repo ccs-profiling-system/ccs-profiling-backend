@@ -48,10 +48,23 @@ describe('Transactional Integrity - Student Creation', () => {
       transaction: transactionSpy,
     } as any;
 
+    const mockAuditLogger = {
+      logCreate: vi.fn(),
+      logUpdate: vi.fn(),
+      logDelete: vi.fn(),
+      log: vi.fn(),
+    } as any;
+
     studentService = new StudentService(
       mockStudentRepository,
       mockUserRepository,
       mockEntityCounterRepository,
+      {} as any, // skillRepository
+      {} as any, // violationRepository
+      {} as any, // affiliationRepository
+      {} as any, // academicHistoryRepository
+      {} as any, // enrollmentRepository
+      mockAuditLogger,
       mockDb
     );
   });

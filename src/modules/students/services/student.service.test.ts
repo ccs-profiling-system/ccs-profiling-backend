@@ -82,6 +82,13 @@ const mockEnrollmentRepository = {
   delete: vi.fn(),
 } as unknown as EnrollmentRepository;
 
+const mockAuditLogger = {
+  logCreate: vi.fn(),
+  logUpdate: vi.fn(),
+  logDelete: vi.fn(),
+  log: vi.fn(),
+} as any;
+
 const mockDb = {
   transaction: vi.fn((callback) => callback(mockDb)),
 } as any;
@@ -100,6 +107,7 @@ describe('StudentService', () => {
       mockAffiliationRepository,
       mockAcademicHistoryRepository,
       mockEnrollmentRepository,
+      mockAuditLogger,
       mockDb
     );
   });
