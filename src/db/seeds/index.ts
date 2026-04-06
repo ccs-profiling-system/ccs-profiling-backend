@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -12,6 +12,7 @@ import { seedAffiliations } from './affiliations.seed';
 import { seedEvents } from './events.seed';
 import { seedSchedules } from './schedules.seed';
 import { seedResearch } from './research.seed';
+import { seedUploads } from './uploads.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -211,6 +212,21 @@ export async function runSeeders() {
       console.log('📝 Seeding research...');
       researchIds = await seedResearch(db, studentIds, facultyIds);
       console.log(`✅ Created ${researchIds.length} research records\n`);
+    }
+
+    // Check if uploads table has data
+    const uploadsHasData = await hasData('uploads');
+    let uploadIds: string[] = [];
+
+    if (uploadsHasData) {
+      console.log('ℹ️  Uploads table already has data, skipping uploads seeding...');
+      const existingUploads = await db.select({ id: uploads.id }).from(uploads);
+      uploadIds = existingUploads.map(u => u.id);
+      console.log(`📊 Found ${uploadIds.length} existing upload records\n`);
+    } else {
+      console.log('📝 Seeding uploads...');
+      uploadIds = await seedUploads(db, studentIds, facultyIds, researchIds, eventIds, userIds);
+      console.log(`✅ Created ${uploadIds.length} upload records\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

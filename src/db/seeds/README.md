@@ -17,6 +17,7 @@ This directory contains seed files for populating the database with initial data
 - `events.seed.ts` - Seeds academic events with participants
 - `schedules.seed.ts` - Seeds class, exam, and consultation schedules
 - `research.seed.ts` - Seeds research projects with authors and advisers
+- `uploads.seed.ts` - Seeds file upload records for various entities
 - `run-seeds.ts` - Standalone script to execute seeders
 
 ## Available Commands
@@ -148,6 +149,16 @@ All users have the same password: `pass1234`
 - Each research has 1-5 student authors with proper author ordering
 - Each research has 1-2 faculty advisers (adviser, co-adviser, panel-member)
 - Includes abstracts, start dates, completion dates, and publication URLs
+
+### Uploads
+- 12 file upload records across different entity types
+- Student documents: transcripts, resumes, ID cards, certificates
+- Faculty documents: CVs, research papers, credentials
+- Research documents: proposals, methodology papers, results spreadsheets
+- Event documents: posters, programs
+- File types: PDF, DOCX, XLSX, JPG, PNG
+- File sizes range from 123KB to 1.5MB
+- Organized by entity type with realistic storage paths
 
 ## Adding New Seeders
 
