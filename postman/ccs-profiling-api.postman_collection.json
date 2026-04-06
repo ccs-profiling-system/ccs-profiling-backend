@@ -530,6 +530,106 @@
             "description": "Soft delete student (sets deleted_at timestamp)"
           },
           "response": []
+        },
+        {
+          "name": "Get Deleted Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "students",
+                "deleted"
+              ]
+            },
+            "description": "Get all soft-deleted students. Returns students where deleted_at is not null."
+          },
+          "response": []
+        },
+        {
+          "name": "Restore Student",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:id/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "students",
+                ":id",
+                "restore"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Restore a soft-deleted student. Sets deleted_at to null."
+          },
+          "response": []
+        },
+        {
+          "name": "Permanent Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/students/:id/permanent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "students",
+                ":id",
+                "permanent"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "student-uuid-here",
+                  "description": "Student UUID"
+                }
+              ]
+            },
+            "description": "Permanently delete a student record. This action cannot be undone."
+          },
+          "response": []
         }
       ]
     },
@@ -737,6 +837,106 @@
               ]
             },
             "description": "Soft delete faculty member (sets deleted_at timestamp)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Deleted Faculty",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/faculty/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "faculty",
+                "deleted"
+              ]
+            },
+            "description": "Get all soft-deleted faculty members. Returns faculty where deleted_at is not null."
+          },
+          "response": []
+        },
+        {
+          "name": "Restore Faculty",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/faculty/:id/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "faculty",
+                ":id",
+                "restore"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "faculty-uuid-here",
+                  "description": "Faculty UUID"
+                }
+              ]
+            },
+            "description": "Restore a soft-deleted faculty member. Sets deleted_at to null."
+          },
+          "response": []
+        },
+        {
+          "name": "Permanent Delete Faculty",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/faculty/:id/permanent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "faculty",
+                ":id",
+                "permanent"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "faculty-uuid-here",
+                  "description": "Faculty UUID"
+                }
+              ]
+            },
+            "description": "Permanently delete a faculty record. This action cannot be undone."
           },
           "response": []
         }
@@ -952,6 +1152,106 @@
               ]
             },
             "description": "Soft delete instruction (sets deleted_at timestamp)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Deleted Instructions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "instructions",
+                "deleted"
+              ]
+            },
+            "description": "Get all soft-deleted instructions. Returns instructions where deleted_at is not null."
+          },
+          "response": []
+        },
+        {
+          "name": "Restore Instruction",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions/:id/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "instructions",
+                ":id",
+                "restore"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "instruction-uuid-here",
+                  "description": "Instruction UUID"
+                }
+              ]
+            },
+            "description": "Restore a soft-deleted instruction. Sets deleted_at to null."
+          },
+          "response": []
+        },
+        {
+          "name": "Permanent Delete Instruction",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/instructions/:id/permanent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "instructions",
+                ":id",
+                "permanent"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "instruction-uuid-here",
+                  "description": "Instruction UUID"
+                }
+              ]
+            },
+            "description": "Permanently delete an instruction record. This action cannot be undone."
           },
           "response": []
         }
@@ -2424,6 +2724,106 @@
           "response": []
         },
         {
+          "name": "Get Deleted Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "events",
+                "deleted"
+              ]
+            },
+            "description": "Get all soft-deleted events. Returns events where deleted_at is not null."
+          },
+          "response": []
+        },
+        {
+          "name": "Restore Event",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "events",
+                ":id",
+                "restore"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
+                }
+              ]
+            },
+            "description": "Restore a soft-deleted event. Sets deleted_at to null."
+          },
+          "response": []
+        },
+        {
+          "name": "Permanent Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/events/:id/permanent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "events",
+                ":id",
+                "permanent"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "event-uuid-here",
+                  "description": "Event UUID"
+                }
+              ]
+            },
+            "description": "Permanently delete an event record. This action cannot be undone."
+          },
+          "response": []
+        },
+        {
           "name": "Get Event Participants",
           "request": {
             "method": "GET",
@@ -2705,6 +3105,141 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Delete Schedule (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/schedules/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "schedules",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "schedule-uuid-here",
+                  "description": "Schedule UUID"
+                }
+              ]
+            },
+            "description": "Soft delete schedule (sets deleted_at timestamp)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Deleted Schedules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/schedules/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "schedules",
+                "deleted"
+              ]
+            },
+            "description": "Get all soft-deleted schedules. Returns schedules where deleted_at is not null."
+          },
+          "response": []
+        },
+        {
+          "name": "Restore Schedule",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/schedules/:id/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "schedules",
+                ":id",
+                "restore"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "schedule-uuid-here",
+                  "description": "Schedule UUID"
+                }
+              ]
+            },
+            "description": "Restore a soft-deleted schedule. Sets deleted_at to null."
+          },
+          "response": []
+        },
+        {
+          "name": "Permanent Delete Schedule",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/schedules/:id/permanent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "schedules",
+                ":id",
+                "permanent"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "schedule-uuid-here",
+                  "description": "Schedule UUID"
+                }
+              ]
+            },
+            "description": "Permanently delete a schedule record. This action cannot be undone."
+          },
+          "response": []
         }
       ]
     },
@@ -2924,6 +3459,106 @@
               ]
             },
             "description": "Soft delete research (sets deleted_at timestamp). The research will no longer appear in queries but data is preserved for audit purposes.\n\nNote: This does not delete the author and adviser relationships, but they won't be accessible through the API after soft delete."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Deleted Research",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/research/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "research",
+                "deleted"
+              ]
+            },
+            "description": "Get all soft-deleted research projects. Returns research where deleted_at is not null."
+          },
+          "response": []
+        },
+        {
+          "name": "Restore Research",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/research/:id/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "research",
+                ":id",
+                "restore"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                }
+              ]
+            },
+            "description": "Restore a soft-deleted research project. Sets deleted_at to null."
+          },
+          "response": []
+        },
+        {
+          "name": "Permanent Delete Research",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/research/:id/permanent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "research",
+                ":id",
+                "permanent"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "research-uuid-here",
+                  "description": "Research UUID"
+                }
+              ]
+            },
+            "description": "Permanently delete a research record. This action cannot be undone."
           },
           "response": []
         },
