@@ -5,7 +5,7 @@
  * Requirements: 3.1, 3.4, 3.5, 28.2, 28.4
  */
 
-import { eq, and, isNull, or, like, sql } from 'drizzle-orm';
+import { eq, and, isNull, or, ilike, sql } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { faculty } from '../../../db/schema';
 import { FacultyFilters } from '../types';
@@ -86,9 +86,9 @@ export class FacultyRepository {
       const searchTerm = `%${filters.search}%`;
       conditions.push(
         or(
-          like(faculty.first_name, searchTerm),
-          like(faculty.last_name, searchTerm),
-          like(faculty.faculty_id, searchTerm)
+          ilike(faculty.first_name, searchTerm),
+          ilike(faculty.last_name, searchTerm),
+          ilike(faculty.faculty_id, searchTerm)
         )!
       );
     }
