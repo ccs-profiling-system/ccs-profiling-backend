@@ -255,4 +255,112 @@ export class ScheduleRepository {
       })
       .where(eq(schedules.id, id));
   }
+
+  /**
+   * Restore soft-deleted schedule
+   * Requirement: 28.7
+   */
+  async restore(id: string) {
+    await this.db
+      .update(schedules)
+      .set({
+        deleted_at: null,
+        updated_at: new Date(),
+      })
+      .where(eq(schedules.id, id));
+  }
+
+  /**
+   * Find soft-deleted schedules (admin only)
+   * Requirement: 28.5
+   */
+  async findDeleted(filters?: ScheduleFilters) {
+    const page = filters?.page || 1;
+    const limit = Math.min(filters?.limit || 10, 100);
+    const offset = (page - 1) * limit;
+
+    // Build where conditions - only include deleted records
+    const conditions = [sql`${schedules.deleted_at} IS NOT NULL`];
+
+    if (filters?.room) {
+      conditions.push(eq(schedules.room, filters.room));
+    }
+
+    if (filters?.day) {
+      conditions.push(eq(schedules.day, filters.day));
+    }
+
+    if (filters?.schedule_type) {
+      conditions.push(eq(schedules.schedule_type, filters.schedule_type));
+    }
+
+    if (filters?.faculty_id) {
+      conditions.push(eq(schedules.faculty_id, filters.faculty_id));
+    }
+
+    if (filters?.semester) {
+      conditions.push(eq(schedules.semester, filters.semester));
+    }
+
+    if (filters?.academic_year) {
+      conditions.push(eq(schedules.academic_year, filters.academic_year));
+    }
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(schedules)
+      .where(and(...conditions));
+
+    const total = Number(countResult[0]?.count || 0);
+
+    // Get paginated results with instruction and faculty details
+    const results = await this.db
+      .select({
+        schedule: schedules,
+        instruction: instructions,
+        faculty: faculty,
+      })
+      .from(schedules)
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(schedules.deleted_at);
+
+    return {
+      data: results,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Permanently delete schedule by ID (hard delete)
+   * Requirement: 28.6
+   */
+  async permanentDelete(id: string) {
+    await this.db
+      .delete(schedules)
+      .where(eq(schedules.id, id));
+  }
+
+  /**
+   * Find schedule by ID including soft-deleted (for restore/permanent delete operations)
+   * Requirement: 28.5
+   */
+  async findByIdIncludingDeleted(id: string) {
+    const result = await this.db
+      .select()
+      .from(schedules)
+      .where(eq(schedules.id, id))
+      .limit(1);
+
+    return result[0] || null;
+  }
 }

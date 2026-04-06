@@ -253,4 +253,85 @@ export class EventController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/events/deleted
+   * Get soft-deleted events (admin only)
+   * Requirements: 28.5, 30.2
+   */
+  getDeletedEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate query parameters
+      const validationResult = eventListQuerySchema.safeParse(req.query);
+      if (!validationResult.success) {
+        throw new ValidationError('Validation failed', validationResult.error.errors);
+      }
+
+      const filters = validationResult.data;
+
+      const result = await this.eventService.getDeletedEvents(filters);
+
+      res.json({
+        success: true,
+        data: result.data,
+        meta: result.meta,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * PATCH /api/v1/admin/events/:id/restore
+   * Restore soft-deleted event
+   * Requirements: 28.7, 30.2
+   */
+  restoreEvent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = eventIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid event ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      const event = await this.eventService.restoreEvent(id);
+
+      res.json({
+        success: true,
+        data: event,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * DELETE /api/v1/admin/events/:id/permanent
+   * Permanently delete event (hard delete)
+   * Requirements: 28.6, 30.2
+   */
+  permanentDeleteEvent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = eventIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid event ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      await this.eventService.permanentDeleteEvent(id);
+
+      res.json({
+        success: true,
+        data: {
+          message: 'Event permanently deleted',
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

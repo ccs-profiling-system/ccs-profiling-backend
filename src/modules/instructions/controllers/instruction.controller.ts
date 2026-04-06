@@ -157,4 +157,85 @@ export class InstructionController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/instructions/deleted
+   * Get soft-deleted instructions (admin only)
+   * Requirements: 28.5, 30.2
+   */
+  getDeletedInstructions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate query parameters
+      const validationResult = instructionListQuerySchema.safeParse(req.query);
+      if (!validationResult.success) {
+        throw new ValidationError('Validation failed', validationResult.error.errors);
+      }
+
+      const filters = validationResult.data;
+
+      const result = await this.instructionService.getDeletedInstructions(filters);
+
+      res.json({
+        success: true,
+        data: result.data,
+        meta: result.meta,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * PATCH /api/v1/admin/instructions/:id/restore
+   * Restore soft-deleted instruction
+   * Requirements: 28.7, 30.2
+   */
+  restoreInstruction = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = instructionIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid instruction ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      const instruction = await this.instructionService.restoreInstruction(id);
+
+      res.json({
+        success: true,
+        data: instruction,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * DELETE /api/v1/admin/instructions/:id/permanent
+   * Permanently delete instruction (hard delete)
+   * Requirements: 28.6, 30.2
+   */
+  permanentDeleteInstruction = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = instructionIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid instruction ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      await this.instructionService.permanentDeleteInstruction(id);
+
+      res.json({
+        success: true,
+        data: {
+          message: 'Instruction permanently deleted',
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

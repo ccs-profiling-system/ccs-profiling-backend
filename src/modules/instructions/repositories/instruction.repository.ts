@@ -203,4 +203,88 @@ export class InstructionRepository {
       })
       .where(eq(instructions.id, id));
   }
+
+  /**
+   * Find soft-deleted instructions (admin only)
+   * Requirement: 28.5
+   */
+  async findDeleted(filters?: InstructionFilters) {
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
+
+    // Build where conditions - only include deleted records
+    const conditions = [sql`${instructions.deleted_at} IS NOT NULL`];
+
+    // Search by subject_code or subject_name
+    if (filters?.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(
+        or(
+          like(instructions.subject_code, searchTerm),
+          like(instructions.subject_name, searchTerm)
+        )!
+      );
+    }
+
+    // Filter by subject_code
+    if (filters?.subject_code) {
+      conditions.push(eq(instructions.subject_code, filters.subject_code));
+    }
+
+    // Filter by curriculum_year
+    if (filters?.curriculum_year) {
+      conditions.push(eq(instructions.curriculum_year, filters.curriculum_year));
+    }
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(instructions)
+      .where(and(...conditions));
+
+    const total = Number(countResult[0]?.count || 0);
+
+    // Get paginated results
+    const results = await this.db
+      .select()
+      .from(instructions)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(instructions.deleted_at);
+
+    return {
+      data: results,
+      meta: createPaginationMeta(page, limit, total),
+    };
+  }
+
+  /**
+   * Permanently delete instruction by ID (hard delete)
+   * Requirement: 28.6
+   */
+  async permanentDelete(id: string) {
+    await this.db
+      .delete(instructions)
+      .where(eq(instructions.id, id));
+  }
+
+  /**
+   * Find instruction by ID including soft-deleted (for restore/permanent delete operations)
+   * Requirement: 28.5
+   */
+  async findByIdIncludingDeleted(id: string) {
+    const result = await this.db
+      .select()
+      .from(instructions)
+      .where(eq(instructions.id, id))
+      .limit(1);
+
+    return result[0] || null;
+  }
 }

@@ -18,6 +18,13 @@ export function createFacultyRoutes(facultyController: FacultyController): Route
   router.use(adminOnly);
 
   /**
+   * GET /api/v1/admin/faculty/deleted
+   * Get soft-deleted faculty (admin only)
+   * IMPORTANT: This route must come BEFORE /:id to avoid route conflicts
+   */
+  router.get('/deleted', facultyController.getDeletedFaculty);
+
+  /**
    * GET /api/v1/admin/faculty
    * List faculty with pagination, search, and filters
    */
@@ -40,6 +47,18 @@ export function createFacultyRoutes(facultyController: FacultyController): Route
    * Update faculty by ID
    */
   router.put('/:id', facultyController.updateFaculty);
+
+  /**
+   * PATCH /api/v1/admin/faculty/:id/restore
+   * Restore soft-deleted faculty
+   */
+  router.patch('/:id/restore', facultyController.restoreFaculty);
+
+  /**
+   * DELETE /api/v1/admin/faculty/:id/permanent
+   * Permanently delete faculty (hard delete)
+   */
+  router.delete('/:id/permanent', facultyController.permanentDeleteFaculty);
 
   /**
    * DELETE /api/v1/admin/faculty/:id

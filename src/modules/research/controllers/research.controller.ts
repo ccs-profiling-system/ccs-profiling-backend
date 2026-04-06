@@ -301,4 +301,85 @@ export class ResearchController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/research/deleted
+   * Get soft-deleted research (admin only)
+   * Requirements: 28.5, 30.2
+   */
+  getDeletedResearch = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate query parameters
+      const validationResult = researchListQuerySchema.safeParse(req.query);
+      if (!validationResult.success) {
+        throw new ValidationError('Validation failed', validationResult.error.errors);
+      }
+
+      const filters = validationResult.data;
+
+      const result = await this.researchService.getDeletedResearch(filters);
+
+      res.json({
+        success: true,
+        data: result.data,
+        meta: result.meta,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * PATCH /api/v1/admin/research/:id/restore
+   * Restore soft-deleted research
+   * Requirements: 28.7, 30.2
+   */
+  restoreResearch = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = researchIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid research ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      const research = await this.researchService.restoreResearch(id);
+
+      res.json({
+        success: true,
+        data: research,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * DELETE /api/v1/admin/research/:id/permanent
+   * Permanently delete research (hard delete)
+   * Requirements: 28.6, 30.2
+   */
+  permanentDeleteResearch = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = researchIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid research ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      await this.researchService.permanentDeleteResearch(id);
+
+      res.json({
+        success: true,
+        data: {
+          message: 'Research permanently deleted',
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

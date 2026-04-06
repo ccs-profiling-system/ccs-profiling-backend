@@ -18,6 +18,13 @@ export function createScheduleRoutes(scheduleController: ScheduleController): Ro
   router.use(adminOnly);
 
   /**
+   * GET /api/v1/admin/schedules/deleted
+   * Get soft-deleted schedules (admin only)
+   * IMPORTANT: This route must come BEFORE other routes to avoid conflicts
+   */
+  router.get('/deleted', scheduleController.getDeletedSchedules);
+
+  /**
    * POST /api/v1/admin/schedules/check-conflict
    * Check for schedule conflicts
    * Note: This must be defined before /:id to avoid route conflicts
@@ -61,8 +68,20 @@ export function createScheduleRoutes(scheduleController: ScheduleController): Ro
   router.put('/:id', scheduleController.updateSchedule);
 
   /**
+   * PATCH /api/v1/admin/schedules/:id/restore
+   * Restore soft-deleted schedule
+   */
+  router.patch('/:id/restore', scheduleController.restoreSchedule);
+
+  /**
+   * DELETE /api/v1/admin/schedules/:id/permanent
+   * Permanently delete schedule (hard delete)
+   */
+  router.delete('/:id/permanent', scheduleController.permanentDeleteSchedule);
+
+  /**
    * DELETE /api/v1/admin/schedules/:id
-   * Delete schedule by ID
+   * Delete schedule by ID (soft delete)
    */
   router.delete('/:id', scheduleController.deleteSchedule);
 

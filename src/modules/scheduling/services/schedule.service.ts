@@ -263,4 +263,55 @@ export class ScheduleService {
       updated_at: schedule.updated_at.toISOString(),
     };
   }
+
+  /**
+   * Get soft-deleted schedules (admin only)
+   * Requirements: 28.5
+   */
+  async getDeletedSchedules(filters?: ScheduleFilters): Promise<ScheduleListResponseDTO> {
+    const result = await this.scheduleRepository.findDeleted(filters);
+
+    return {
+      data: result.data.map((item) => this.toResponseDTO(item)),
+      meta: result.meta,
+    };
+  }
+
+  /**
+   * Restore soft-deleted schedule
+   * Requirements: 28.7
+   */
+  async restoreSchedule(id: string): Promise<ScheduleResponseDTO> {
+    // Find schedule including deleted
+    const schedule = await this.scheduleRepository.findByIdIncludingDeleted(id);
+    if (!schedule) {
+      throw new NotFoundError('Schedule not found');
+    }
+
+    if (!schedule.deleted_at) {
+      throw new ConflictError('Schedule is not deleted');
+    }
+
+    // Restore schedule
+    await this.scheduleRepository.restore(id);
+
+    // Fetch and return restored schedule
+    const restored = await this.scheduleRepository.findById(id);
+    return this.toResponseDTO(restored!);
+  }
+
+  /**
+   * Permanently delete schedule (hard delete)
+   * Requirements: 28.6
+   */
+  async permanentDeleteSchedule(id: string): Promise<void> {
+    // Find schedule including deleted
+    const schedule = await this.scheduleRepository.findByIdIncludingDeleted(id);
+    if (!schedule) {
+      throw new NotFoundError('Schedule not found');
+    }
+
+    // Permanently delete
+    await this.scheduleRepository.permanentDelete(id);
+  }
 }

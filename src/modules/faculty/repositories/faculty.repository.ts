@@ -202,4 +202,89 @@ export class FacultyRepository {
 
     return result[0] || null;
   }
+
+  /**
+   * Find soft-deleted faculty (admin only)
+   * Requirement: 28.5
+   */
+  async findDeleted(filters?: FacultyFilters) {
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
+
+    // Build where conditions - only include deleted records
+    const conditions = [sql`${faculty.deleted_at} IS NOT NULL`];
+
+    // Search by name or faculty_id
+    if (filters?.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(
+        or(
+          ilike(faculty.first_name, searchTerm),
+          ilike(faculty.last_name, searchTerm),
+          ilike(faculty.faculty_id, searchTerm)
+        )!
+      );
+    }
+
+    // Filter by department
+    if (filters?.department) {
+      conditions.push(eq(faculty.department, filters.department));
+    }
+
+    // Filter by status
+    if (filters?.status) {
+      conditions.push(eq(faculty.status, filters.status));
+    }
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(faculty)
+      .where(and(...conditions));
+
+    const total = Number(countResult[0]?.count || 0);
+
+    // Get paginated results
+    const results = await this.db
+      .select()
+      .from(faculty)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(faculty.deleted_at);
+
+    return {
+      data: results,
+      meta: createPaginationMeta(page, limit, total),
+    };
+  }
+
+  /**
+   * Permanently delete faculty by ID (hard delete)
+   * Requirement: 28.6
+   */
+  async permanentDelete(id: string) {
+    await this.db
+      .delete(faculty)
+      .where(eq(faculty.id, id));
+  }
+
+  /**
+   * Find faculty by ID including soft-deleted (for restore/permanent delete operations)
+   * Requirement: 28.5
+   */
+  async findByIdIncludingDeleted(id: string) {
+    const result = await this.db
+      .select()
+      .from(faculty)
+      .where(eq(faculty.id, id))
+      .limit(1);
+
+    return result[0] || null;
+  }
 }

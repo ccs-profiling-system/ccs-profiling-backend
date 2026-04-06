@@ -20,6 +20,13 @@ export function createStudentRoutes(studentController: StudentController): Route
   router.use(auditContextMiddleware);
 
   /**
+   * GET /api/v1/admin/students/deleted
+   * Get soft-deleted students (admin only)
+   * IMPORTANT: This route must come BEFORE /:id to avoid route conflicts
+   */
+  router.get('/deleted', studentController.getDeletedStudents);
+
+  /**
    * GET /api/v1/admin/students
    * List students with pagination, search, and filters
    */
@@ -49,6 +56,18 @@ export function createStudentRoutes(studentController: StudentController): Route
    * Update student by ID
    */
   router.put('/:id', studentController.updateStudent);
+
+  /**
+   * PATCH /api/v1/admin/students/:id/restore
+   * Restore soft-deleted student
+   */
+  router.patch('/:id/restore', studentController.restoreStudent);
+
+  /**
+   * DELETE /api/v1/admin/students/:id/permanent
+   * Permanently delete student (hard delete)
+   */
+  router.delete('/:id/permanent', studentController.permanentDeleteStudent);
 
   /**
    * DELETE /api/v1/admin/students/:id

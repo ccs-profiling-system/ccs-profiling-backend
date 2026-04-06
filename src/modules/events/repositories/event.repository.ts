@@ -168,6 +168,94 @@ export class EventRepository {
   }
 
   /**
+   * Restore soft-deleted event
+   * Requirement: 28.7
+   */
+  async restore(id: string) {
+    await this.db
+      .update(events)
+      .set({
+        deleted_at: null,
+        updated_at: new Date(),
+      })
+      .where(eq(events.id, id));
+  }
+
+  /**
+   * Find soft-deleted events (admin only)
+   * Requirement: 28.5
+   */
+  async findDeleted(filters?: EventFilters) {
+    // Normalize pagination parameters
+    const { page, limit } = normalizePaginationParams(
+      { page: filters?.page, limit: filters?.limit },
+      10,
+      100
+    );
+    const offset = calculateOffset(page, limit);
+
+    // Build where conditions - only include deleted records
+    const conditions = [sql`${events.deleted_at} IS NOT NULL`];
+
+    // Search by event name
+    if (filters?.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(ilike(events.event_name, searchTerm));
+    }
+
+    // Filter by event type
+    if (filters?.event_type) {
+      conditions.push(eq(events.event_type, filters.event_type));
+    }
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(events)
+      .where(and(...conditions));
+
+    const total = Number(countResult[0]?.count || 0);
+
+    // Get paginated results
+    const results = await this.db
+      .select()
+      .from(events)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(events.deleted_at);
+
+    return {
+      data: results,
+      meta: createPaginationMeta(page, limit, total),
+    };
+  }
+
+  /**
+   * Permanently delete event by ID (hard delete)
+   * Requirement: 28.6
+   */
+  async permanentDelete(id: string) {
+    await this.db
+      .delete(events)
+      .where(eq(events.id, id));
+  }
+
+  /**
+   * Find event by ID including soft-deleted (for restore/permanent delete operations)
+   * Requirement: 28.5
+   */
+  async findByIdIncludingDeleted(id: string) {
+    const result = await this.db
+      .select()
+      .from(events)
+      .where(eq(events.id, id))
+      .limit(1);
+
+    return result[0] || null;
+  }
+
+  /**
    * Get participant count for an event
    * Requirement: 11.6
    */

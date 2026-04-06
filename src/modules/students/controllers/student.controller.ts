@@ -184,4 +184,91 @@ export class StudentController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/students/deleted
+   * Get soft-deleted students (admin only)
+   * Requirements: 28.5, 30.2
+   */
+  getDeletedStudents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate query parameters
+      const validationResult = studentListQuerySchema.safeParse(req.query);
+      if (!validationResult.success) {
+        throw new ValidationError('Validation failed', validationResult.error.errors);
+      }
+
+      const filters = validationResult.data;
+
+      const result = await this.studentService.getDeletedStudents(filters);
+
+      res.json({
+        success: true,
+        data: result.data,
+        meta: result.meta,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * PATCH /api/v1/admin/students/:id/restore
+   * Restore soft-deleted student
+   * Requirements: 28.7, 30.2
+   */
+  restoreStudent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = studentIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid student ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      // Get audit context from request
+      const auditContext = (req as any).auditContext;
+
+      const student = await this.studentService.restoreStudent(id, auditContext);
+
+      res.json({
+        success: true,
+        data: student,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * DELETE /api/v1/admin/students/:id/permanent
+   * Permanently delete student (hard delete)
+   * Requirements: 28.6, 30.2
+   */
+  permanentDeleteStudent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = studentIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid student ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      // Get audit context from request
+      const auditContext = (req as any).auditContext;
+
+      await this.studentService.permanentDeleteStudent(id, auditContext);
+
+      res.json({
+        success: true,
+        data: {
+          message: 'Student permanently deleted',
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
