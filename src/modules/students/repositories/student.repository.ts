@@ -112,23 +112,29 @@ export class StudentRepository {
       conditions.push(eq(students.status, filters.status));
     }
 
-    // Filter by skill - requires subquery to find students with the specified skill
+    // Filter by skill(s) - supports comma-separated skills for multiple selection
     if (filters?.skill) {
-      const studentsWithSkill = await this.db
-        .select({ student_id: skills.student_id })
-        .from(skills)
-        .where(eq(skills.skill_name, filters.skill));
+      const skillNames = filters.skill.includes(',') 
+        ? filters.skill.split(',').map(s => s.trim()).filter(Boolean)
+        : [filters.skill];
       
-      const studentIds = studentsWithSkill.map(s => s.student_id);
-      
-      if (studentIds.length > 0) {
-        conditions.push(inArray(students.id, studentIds));
-      } else {
-        // No students have this skill, return empty result
-        return {
-          data: [],
-          meta: createPaginationMeta(page, limit, 0),
-        };
+      if (skillNames.length > 0) {
+        const studentsWithSkills = await this.db
+          .select({ student_id: skills.student_id })
+          .from(skills)
+          .where(inArray(skills.skill_name, skillNames));
+        
+        const studentIds = studentsWithSkills.map(s => s.student_id);
+        
+        if (studentIds.length > 0) {
+          conditions.push(inArray(students.id, studentIds));
+        } else {
+          // No students have these skills, return empty result
+          return {
+            data: [],
+            meta: createPaginationMeta(page, limit, 0),
+          };
+        }
       }
     }
 
