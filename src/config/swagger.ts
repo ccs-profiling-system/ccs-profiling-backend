@@ -110,6 +110,10 @@ Paginated responses include a \`meta\` object:
       description: 'Development server',
     },
     {
+      url: 'https://ccs-profiling-backend-oqve.onrender.com/api',
+      description: 'Production server (Render)',
+    },
+    {
       url: 'https://api.ccs.edu/api',
       description: 'Production server',
     },
