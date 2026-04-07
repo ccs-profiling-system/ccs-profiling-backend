@@ -52,10 +52,7 @@ const startServer = async () => {
     // Step 1: Initialize database connection
     await initializeDatabase();
     
-    // Step 2: Run migrations
-    await runMigrations();
-    
-    // Step 3: Start Express server
+    // Step 2: Start Express server (migrations removed - run manually with npm run db:migrate)
     app.listen(config.port, () => {
       console.log('');
       console.log('═════════════════════════════════════════════════════');
