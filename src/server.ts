@@ -59,14 +59,14 @@ const startServer = async () => {
     // Step 3: Start Express server
     app.listen(config.port, () => {
       console.log('');
-      console.log('═══════════════════════════════════════════════════════');
-      console.log('🚀 CCS Profiling Backend Server Started Successfully!');
-      console.log('═══════════════════════════════════════════════════════');
-      console.log(`📝 Environment: ${config.nodeEnv}`);
-      console.log(`🔗 Server URL: http://localhost:${config.port}`);
-      console.log(`💚 Health check: http://localhost:${config.port}/health`);
-      console.log(`📚 API Base: http://localhost:${config.port}/api/v1`);
-      console.log('═══════════════════════════════════════════════════════');
+      console.log('═════════════════════════════════════════════════════');
+      console.log('CCS Profiling Backend Server Started Successfully!');
+      console.log('═════════════════════════════════════════════════════');
+      console.log(`Environment: ${config.nodeEnv}`);
+      console.log(`Server URL: http://localhost:${config.port}`);
+      console.log(`Health check: http://localhost:${config.port}/health`);
+      console.log(`API Base: http://localhost:${config.port}/api/v1`);
+      console.log('═════════════════════════════════════════════════════');
       console.log('');
     });
   } catch (error) {

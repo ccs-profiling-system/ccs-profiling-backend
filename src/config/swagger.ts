@@ -7,6 +7,7 @@
  */
 
 import swaggerJsdoc from 'swagger-jsdoc';
+import path from 'path';
 import { config } from './index';
 
 const swaggerDefinition = {
@@ -892,10 +893,10 @@ const options: swaggerJsdoc.Options = {
   definition: swaggerDefinition,
   // Path to the API routes files where JSDoc comments are located
   apis: [
-    './src/modules/*/routes/*.ts',
-    './src/modules/*/controllers/*.ts',
-    './src/routes/*.ts',
-    './docs/openapi-annotations.ts',
+    path.join(__dirname, '../modules/*/routes/*.ts'),
+    path.join(__dirname, '../modules/*/controllers/*.ts'),
+    path.join(__dirname, '../routes/*.ts'),
+    path.join(__dirname, '../../docs/openapi-annotations.ts'),
   ],
 };
 
