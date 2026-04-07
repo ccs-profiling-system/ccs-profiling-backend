@@ -40,6 +40,8 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { config } from './config';
+import { db } from './db';
+import { sql } from 'drizzle-orm';
 import { routes } from './routes';
 import { swaggerRoutes } from './routes/swagger.routes';
 import { errorHandler } from './shared/middleware/errorHandler';
@@ -82,12 +84,26 @@ app.use('/uploads', express.static(path.resolve(uploadsPath)));
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Health Check Endpoint - Used for monitoring and load balancer health checks
-app.get('/health', (_req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: config.nodeEnv,
-  });
+app.get('/health', async (_req, res) => {
+  try {
+    // Test database connection
+    await db.execute(sql`SELECT 1`);
+    
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: config.nodeEnv,
+      database: 'connected',
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+      environment: config.nodeEnv,
+      database: 'disconnected',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 });
 
 // API Documentation - Swagger UI
