@@ -69,6 +69,16 @@ export class AuditLogger {
     context: AuditContext,
     tx?: Database
   ): Promise<void> {
+    // If user_id doesn't exist, skip audit logging to avoid FK constraint errors
+    // This can happen with dev tokens or deleted users
+    if (context.user_id && (
+      context.user_id === '00000000-0000-0000-0000-000000000000' || 
+      context.user_id === 'dev-user-id'
+    )) {
+      console.warn('Skipping audit log for dev/invalid user');
+      return;
+    }
+
     await this.log(
       {
         action_type: 'create',

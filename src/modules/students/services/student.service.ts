@@ -115,13 +115,18 @@ export class StudentService {
       );
 
       if (auditContext) {
-        await this.auditLogger.logCreate(
-          'student',
-          student.id,
-          this.toResponseDTO(student),
-          auditContext,
-          tx
-        );
+        try {
+          await this.auditLogger.logCreate(
+            'student',
+            student.id,
+            this.toResponseDTO(student),
+            auditContext,
+            tx
+          );
+        } catch (error) {
+          // Log error but don't fail the transaction
+          console.error('Audit log failed, continuing with student creation:', error);
+        }
       }
 
       return this.toResponseDTO(student);
@@ -194,13 +199,18 @@ export class StudentService {
       );
 
       if (auditContext) {
-        await this.auditLogger.logCreate(
-          'student',
-          student.id,
-          this.toResponseDTO(student),
-          auditContext,
-          tx
-        );
+        try {
+          await this.auditLogger.logCreate(
+            'student',
+            student.id,
+            this.toResponseDTO(student),
+            auditContext,
+            tx
+          );
+        } catch (error) {
+          // Log error but don't fail the transaction
+          console.error('Audit log failed, continuing with student creation:', error);
+        }
       }
 
       // If any step fails, entire transaction rolls back automatically
@@ -232,13 +242,17 @@ export class StudentService {
     }
 
     if (auditContext) {
-      await this.auditLogger.logUpdate(
-        'student',
-        id,
-        this.toResponseDTO(existing),
-        this.toResponseDTO(updated),
-        auditContext
-      );
+      try {
+        await this.auditLogger.logUpdate(
+          'student',
+          id,
+          this.toResponseDTO(existing),
+          this.toResponseDTO(updated),
+          auditContext
+        );
+      } catch (error) {
+        console.error('Audit log failed, continuing with student update:', error);
+      }
     }
 
     return this.toResponseDTO(updated);
@@ -256,12 +270,16 @@ export class StudentService {
     await this.studentRepository.softDelete(id);
 
     if (auditContext) {
-      await this.auditLogger.logDelete(
-        'student',
-        id,
-        this.toResponseDTO(existing),
-        auditContext
-      );
+      try {
+        await this.auditLogger.logDelete(
+          'student',
+          id,
+          this.toResponseDTO(existing),
+          auditContext
+        );
+      } catch (error) {
+        console.error('Audit log failed, continuing with student deletion:', error);
+      }
     }
   }
 
@@ -429,14 +447,18 @@ export class StudentService {
 
     // Log audit
     if (auditContext) {
-      await this.auditLogger.log({
-        action_type: 'update',
-        entity_type: 'student',
-        entity_id: id,
-        before_state: { deleted_at: student.deleted_at },
-        after_state: { deleted_at: null },
-        context: auditContext,
-      });
+      try {
+        await this.auditLogger.log({
+          action_type: 'update',
+          entity_type: 'student',
+          entity_id: id,
+          before_state: { deleted_at: student.deleted_at },
+          after_state: { deleted_at: null },
+          context: auditContext,
+        });
+      } catch (error) {
+        console.error('Audit log failed, continuing with student restore:', error);
+      }
     }
 
     // Fetch and return restored student
@@ -456,14 +478,18 @@ export class StudentService {
 
     // Log audit before deletion
     if (auditContext) {
-      await this.auditLogger.log({
-        action_type: 'delete',
-        entity_type: 'student',
-        entity_id: id,
-        before_state: student,
-        after_state: undefined,
-        context: auditContext,
-      });
+      try {
+        await this.auditLogger.log({
+          action_type: 'delete',
+          entity_type: 'student',
+          entity_id: id,
+          before_state: student,
+          after_state: undefined,
+          context: auditContext,
+        });
+      } catch (error) {
+        console.error('Audit log failed, continuing with permanent deletion:', error);
+      }
     }
 
     // Permanently delete
