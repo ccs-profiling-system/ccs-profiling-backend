@@ -789,3 +789,1368 @@
  *                       items:
  *                         type: object
  */
+ * @swagger
+ * /v1/auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     description: Refresh access token using refresh token
+ *     tags: [Authentication]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [refreshToken]
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 description: Refresh token obtained from login
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *       401:
+ *         description: Invalid refresh token
+ */
+
+/**
+ * @swagger
+ * /v1/auth/change-password:
+ *   post:
+ *     summary: Change password
+ *     description: Change password for authenticated user
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [oldPassword, newPassword]
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 format: password
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Invalid old password
+ */
+
+/**
+ * @swagger
+ * /v1/auth/logout:
+ *   post:
+ *     summary: Logout
+ *     description: Logout endpoint
+ *     tags: [Authentication]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/deleted:
+ *   get:
+ *     summary: Get deleted students
+ *     description: Get all soft-deleted students
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Deleted students retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/StudentListResponse'
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{id}/restore:
+ *   patch:
+ *     summary: Restore student
+ *     description: Restore a soft-deleted student
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Student UUID
+ *     responses:
+ *       200:
+ *         description: Student restored successfully
+ *       404:
+ *         description: Student not found
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{id}/permanent:
+ *   delete:
+ *     summary: Permanently delete student
+ *     description: Permanently delete a student record (cannot be undone)
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Student UUID
+ *     responses:
+ *       200:
+ *         description: Student permanently deleted
+ *       404:
+ *         description: Student not found
+ */
+
+/**
+ * @swagger
+ * /v1/admin/faculty/deleted:
+ *   get:
+ *     summary: Get deleted faculty
+ *     description: Get all soft-deleted faculty members
+ *     tags: [Faculty]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Deleted faculty retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/faculty/{id}/restore:
+ *   patch:
+ *     summary: Restore faculty
+ *     description: Restore a soft-deleted faculty member
+ *     tags: [Faculty]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Faculty restored successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/faculty/{id}/permanent:
+ *   delete:
+ *     summary: Permanently delete faculty
+ *     description: Permanently delete a faculty record
+ *     tags: [Faculty]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Faculty permanently deleted
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions:
+ *   get:
+ *     summary: List instructions
+ *     description: Get paginated list of instructions/subjects
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by subject code or name
+ *       - in: query
+ *         name: curriculum_year
+ *         schema:
+ *           type: string
+ *         description: Filter by curriculum year
+ *     responses:
+ *       200:
+ *         description: Instructions retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions:
+ *   post:
+ *     summary: Create instruction
+ *     description: Create new instruction/subject
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [subject_code, subject_name, credits, curriculum_year]
+ *             properties:
+ *               subject_code:
+ *                 type: string
+ *               subject_name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               credits:
+ *                 type: integer
+ *               curriculum_year:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Instruction created successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions/{id}:
+ *   get:
+ *     summary: Get instruction by ID
+ *     description: Get instruction details
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Instruction retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions/{id}:
+ *   put:
+ *     summary: Update instruction
+ *     description: Update instruction information
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               subject_name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               credits:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Instruction updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions/{id}:
+ *   delete:
+ *     summary: Delete instruction (soft delete)
+ *     description: Soft delete instruction
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Instruction deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions/deleted:
+ *   get:
+ *     summary: Get deleted instructions
+ *     description: Get all soft-deleted instructions
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Deleted instructions retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions/{id}/restore:
+ *   patch:
+ *     summary: Restore instruction
+ *     description: Restore a soft-deleted instruction
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Instruction restored successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions/{id}/permanent:
+ *   delete:
+ *     summary: Permanently delete instruction
+ *     description: Permanently delete an instruction record
+ *     tags: [Instructions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Instruction permanently deleted
+ */
+
+/**
+ * @swagger
+ * /v1/admin/enrollments:
+ *   get:
+ *     summary: List enrollments
+ *     description: Get paginated list of enrollments
+ *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: semester
+ *         schema:
+ *           type: string
+ *           enum: [1st, 2nd, summer]
+ *       - in: query
+ *         name: academic_year
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [enrolled, dropped, completed]
+ *     responses:
+ *       200:
+ *         description: Enrollments retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{studentId}/enrollments:
+ *   get:
+ *     summary: Get enrollments by student
+ *     description: Get all enrollments for a specific student
+ *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Student enrollments retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/instructions/{instructionId}/enrollments:
+ *   get:
+ *     summary: Get enrollments by instruction
+ *     description: Get all enrollments for a specific instruction
+ *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: instructionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Instruction enrollments retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/enrollments/{id}:
+ *   put:
+ *     summary: Update enrollment
+ *     description: Update enrollment status
+ *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               enrollment_status:
+ *                 type: string
+ *                 enum: [enrolled, dropped, completed]
+ *     responses:
+ *       200:
+ *         description: Enrollment updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/enrollments/{id}:
+ *   delete:
+ *     summary: Delete enrollment
+ *     description: Delete enrollment record
+ *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Enrollment deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{studentId}/academic-history:
+ *   get:
+ *     summary: Get academic history by student
+ *     description: Get all academic history records for a student
+ *     tags: [Academic History]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Academic history retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{studentId}/academic-history:
+ *   post:
+ *     summary: Create academic history record
+ *     description: Create new academic history record for a student
+ *     tags: [Academic History]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [subject_code, subject_name, grade, semester, academic_year, credits]
+ *             properties:
+ *               subject_code:
+ *                 type: string
+ *               subject_name:
+ *                 type: string
+ *               grade:
+ *                 type: number
+ *                 format: float
+ *               semester:
+ *                 type: string
+ *                 enum: [1st, 2nd, summer]
+ *               academic_year:
+ *                 type: string
+ *               credits:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Academic history record created successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{studentId}/gpa:
+ *   get:
+ *     summary: Get student GPA
+ *     description: Calculate and get GPA for a student
+ *     tags: [Academic History]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: GPA calculated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     gpa:
+ *                       type: number
+ *                       format: float
+ *                     total_credits:
+ *                       type: integer
+ */
+
+/**
+ * @swagger
+ * /v1/admin/academic-history/{id}:
+ *   put:
+ *     summary: Update academic history record
+ *     description: Update academic history record
+ *     tags: [Academic History]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               grade:
+ *                 type: number
+ *               remarks:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Academic history updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/academic-history/{id}:
+ *   delete:
+ *     summary: Delete academic history record
+ *     description: Delete academic history record
+ *     tags: [Academic History]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Academic history deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/skills:
+ *   get:
+ *     summary: List skills
+ *     description: Get paginated list of skill records
+ *     tags: [Skills]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: student_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: proficiency_level
+ *         schema:
+ *           type: string
+ *           enum: [beginner, intermediate, advanced, expert]
+ *     responses:
+ *       200:
+ *         description: Skills retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/skills/{id}:
+ *   put:
+ *     summary: Update skill
+ *     description: Update skill record
+ *     tags: [Skills]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               proficiency_level:
+ *                 type: string
+ *                 enum: [beginner, intermediate, advanced, expert]
+ *               years_of_experience:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Skill updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/skills/{id}:
+ *   delete:
+ *     summary: Delete skill
+ *     description: Delete skill record
+ *     tags: [Skills]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Skill deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/violations:
+ *   get:
+ *     summary: List violations
+ *     description: Get paginated list of violation records
+ *     tags: [Violations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: student_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: resolution_status
+ *         schema:
+ *           type: string
+ *           enum: [pending, resolved, dismissed]
+ *     responses:
+ *       200:
+ *         description: Violations retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/violations/{id}:
+ *   put:
+ *     summary: Update violation
+ *     description: Update violation record
+ *     tags: [Violations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               violation_type:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               resolution_status:
+ *                 type: string
+ *                 enum: [pending, resolved, dismissed]
+ *     responses:
+ *       200:
+ *         description: Violation updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/violations/{id}/resolve:
+ *   patch:
+ *     summary: Resolve violation
+ *     description: Resolve a violation record
+ *     tags: [Violations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               resolution_notes:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Violation resolved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/violations/{id}:
+ *   delete:
+ *     summary: Delete violation
+ *     description: Delete violation record
+ *     tags: [Violations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Violation deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/affiliations:
+ *   get:
+ *     summary: List affiliations
+ *     description: Get paginated list of affiliation records
+ *     tags: [Affiliations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: student_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: is_active
+ *         schema:
+ *           type: boolean
+ *     responses:
+ *       200:
+ *         description: Affiliations retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{studentId}/affiliations:
+ *   get:
+ *     summary: Get affiliations by student
+ *     description: Get all affiliations for a student
+ *     tags: [Affiliations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Student affiliations retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/students/{studentId}/affiliations:
+ *   post:
+ *     summary: Create affiliation
+ *     description: Create new affiliation for a student
+ *     tags: [Affiliations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [organization_name, start_date]
+ *             properties:
+ *               organization_name:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *               start_date:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       201:
+ *         description: Affiliation created successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/affiliations/{id}:
+ *   put:
+ *     summary: Update affiliation
+ *     description: Update affiliation record
+ *     tags: [Affiliations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *               is_active:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Affiliation updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/affiliations/{id}/end:
+ *   patch:
+ *     summary: End affiliation
+ *     description: End an affiliation
+ *     tags: [Affiliations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [end_date]
+ *             properties:
+ *               end_date:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Affiliation ended successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/affiliations/{id}:
+ *   delete:
+ *     summary: Delete affiliation
+ *     description: Delete affiliation record
+ *     tags: [Affiliations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Affiliation deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events:
+ *   get:
+ *     summary: List events
+ *     description: Get paginated list of events
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: event_type
+ *         schema:
+ *           type: string
+ *           enum: [seminar, workshop, defense, competition]
+ *       - in: query
+ *         name: start_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: end_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: Events retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events:
+ *   post:
+ *     summary: Create event
+ *     description: Create new event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [event_name, event_type, event_date]
+ *             properties:
+ *               event_name:
+ *                 type: string
+ *               event_type:
+ *                 type: string
+ *                 enum: [seminar, workshop, defense, competition]
+ *               description:
+ *                 type: string
+ *               event_date:
+ *                 type: string
+ *                 format: date
+ *               start_time:
+ *                 type: string
+ *                 format: time
+ *               end_time:
+ *                 type: string
+ *                 format: time
+ *               location:
+ *                 type: string
+ *               max_participants:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Event created successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}:
+ *   get:
+ *     summary: Get event by ID
+ *     description: Get event details
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Event retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}:
+ *   put:
+ *     summary: Update event
+ *     description: Update event information
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               event_name:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               max_participants:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}:
+ *   delete:
+ *     summary: Delete event (soft delete)
+ *     description: Soft delete event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/deleted:
+ *   get:
+ *     summary: Get deleted events
+ *     description: Get all soft-deleted events
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Deleted events retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}/restore:
+ *   patch:
+ *     summary: Restore event
+ *     description: Restore a soft-deleted event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Event restored successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}/permanent:
+ *   delete:
+ *     summary: Permanently delete event
+ *     description: Permanently delete an event record
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Event permanently deleted
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}/participants:
+ *   get:
+ *     summary: Get event participants
+ *     description: Get all participants for an event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Participants retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}/participants:
+ *   post:
+ *     summary: Add participant to event
+ *     description: Add a student or faculty participant to an event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               student_id:
+ *                 type: string
+ *                 format: uuid
+ *               faculty_id:
+ *                 type: string
+ *                 format: uuid
+ *               participation_role:
+ *                 type: string
+ *               attendance_status:
+ *                 type: string
+ *                 enum: [registered, attended, absent, cancelled]
+ *     responses:
+ *       201:
+ *         description: Participant added successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/events/{id}/participants/{participantId}:
+ *   delete:
+ *     summary: Remove participant from event
+ *     description: Remove a participant from an event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: path
+ *         name: participantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Participant removed successfully
+ */
