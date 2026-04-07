@@ -52,7 +52,7 @@ export class ReportController {
    * GET /api/v1/admin/reports/statistics
    */
   getReportStatistics = async (
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {

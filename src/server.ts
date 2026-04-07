@@ -2,9 +2,6 @@ import { app } from './app';
 import { config } from './config';
 import { db } from './db';
 import { sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import { migrate } from 'drizzle-orm/postgres-js/migrator';
-import postgres from 'postgres';
 
 /**
  * Server Startup Script
@@ -26,24 +23,6 @@ const initializeDatabase = async () => {
   } catch (error) {
     console.error('❌ Failed to connect to database:', error);
     throw error;
-  }
-};
-
-const runMigrations = async () => {
-  console.log('🔄 Running database migrations...');
-  
-  const connectionString = config.database.url;
-  const migrationClient = postgres(connectionString, { max: 1 });
-  const migrationDb = drizzle(migrationClient);
-
-  try {
-    await migrate(migrationDb, { migrationsFolder: './drizzle' });
-    console.log('✅ Migrations completed successfully');
-  } catch (error) {
-    console.error('❌ Migration failed:', error);
-    throw error;
-  } finally {
-    await migrationClient.end();
   }
 };
 
