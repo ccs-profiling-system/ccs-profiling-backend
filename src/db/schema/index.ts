@@ -8,6 +8,7 @@ export * from './academicHistory';
 export * from './schedules';
 export * from './skills';
 export * from './violations';
+export * from './reports';
 export * from './affiliations';
 export * from './events';
 export * from './research';
