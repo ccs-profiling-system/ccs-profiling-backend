@@ -17,6 +17,7 @@ import {
   FacultyResponseDTO,
   FacultyListResponseDTO,
   FacultyFilters,
+  FacultyStatsDTO,
 } from '../types';
 
 export class FacultyService {
@@ -308,5 +309,104 @@ export class FacultyService {
 
     // Permanently delete
     await this.facultyRepository.permanentDelete(id);
+  }
+
+  /**
+   * Get faculty statistics
+   * Computes comprehensive stats from faculty table
+   */
+  async getFacultyStats(): Promise<FacultyStatsDTO> {
+    const { faculty } = await import('../../../db/schema/faculty');
+    const { isNull, count, sql } = await import('drizzle-orm');
+
+    // Count total faculty (excluding soft-deleted)
+    const totalResult = await this.db
+      .select({ count: count() })
+      .from(faculty)
+      .where(isNull(faculty.deleted_at));
+
+    const total = totalResult[0]?.count || 0;
+
+    // Count faculty by status
+    const statusCounts = await this.db
+      .select({
+        status: faculty.status,
+        count: count(),
+      })
+      .from(faculty)
+      .where(isNull(faculty.deleted_at))
+      .groupBy(faculty.status);
+
+    // Count faculty by department
+    const departmentCounts = await this.db
+      .select({
+        department: faculty.department,
+        count: count(),
+      })
+      .from(faculty)
+      .where(isNull(faculty.deleted_at))
+      .groupBy(faculty.department);
+
+    // Count faculty by position
+    const positionCounts = await this.db
+      .select({
+        position: faculty.position,
+        count: count(),
+      })
+      .from(faculty)
+      .where(isNull(faculty.deleted_at))
+      .groupBy(faculty.position);
+
+    // Count recent additions (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const recentResult = await this.db
+      .select({ count: count() })
+      .from(faculty)
+      .where(
+        sql`${faculty.created_at} >= ${thirtyDaysAgo.toISOString()} AND ${faculty.deleted_at} IS NULL`
+      );
+
+    const recentAdditions = recentResult[0]?.count || 0;
+
+    // Build status counts
+    const activeCount = statusCounts.find((s) => s.status === 'active')?.count || 0;
+    const inactiveCount = statusCounts.find((s) => s.status === 'inactive')?.count || 0;
+
+    // Build department distribution
+    const facultyByDepartment: Record<string, number> = {};
+    departmentCounts.forEach((d) => {
+      if (d.department) {
+        facultyByDepartment[d.department] = d.count;
+      }
+    });
+
+    // Build position distribution
+    const facultyByPosition: Record<string, number> = {};
+    positionCounts.forEach((p) => {
+      if (p.position) {
+        facultyByPosition[p.position] = p.count;
+      }
+    });
+
+    // Build status distribution
+    const facultyByStatus: Record<string, number> = {};
+    statusCounts.forEach((s) => {
+      if (s.status) {
+        facultyByStatus[s.status] = s.count;
+      }
+    });
+
+    return {
+      total_faculty: total,
+      active_faculty: activeCount,
+      inactive_faculty: inactiveCount,
+      faculty_by_department: facultyByDepartment,
+      faculty_by_position: facultyByPosition,
+      faculty_by_status: facultyByStatus,
+      recent_additions: recentAdditions,
+      generated_at: new Date().toISOString(),
+    };
   }
 }

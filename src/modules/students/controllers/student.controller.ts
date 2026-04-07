@@ -261,4 +261,21 @@ export class StudentController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/students/stats
+   * Get student statistics
+   */
+  getStudentStats = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await this.studentService.getStudentStats();
+
+      res.json({
+        success: true,
+        data: stats,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

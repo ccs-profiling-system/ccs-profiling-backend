@@ -144,3 +144,19 @@ export interface StudentFilters {
   page?: number;
   limit?: number;
 }
+
+/**
+ * StudentStatsDTO - Student statistics
+ */
+export interface StudentStatsDTO {
+  total_students: number;
+  active_students: number;
+  inactive_students: number;
+  graduated_students: number;
+  students_by_program: Record<string, number>;
+  students_by_year_level: Record<string, number>;
+  students_by_status: Record<string, number>;
+  recent_enrollments: number; // Last 30 days
+  average_gpa?: number;
+  generated_at: string;
+}

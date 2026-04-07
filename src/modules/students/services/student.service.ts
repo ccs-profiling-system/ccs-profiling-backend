@@ -24,6 +24,7 @@ import {
   StudentListResponseDTO,
   StudentProfileDTO,
   StudentFilters,
+  StudentStatsDTO,
 } from '../types';
 
 export class StudentService {
@@ -467,5 +468,125 @@ export class StudentService {
 
     // Permanently delete
     await this.studentRepository.permanentDelete(id);
+  }
+
+  /**
+   * Get student statistics
+   * Computes comprehensive stats from students table
+   */
+  async getStudentStats(): Promise<StudentStatsDTO> {
+    const { students } = await import('../../../db/schema/students');
+    const { academicHistory } = await import('../../../db/schema/academicHistory');
+    const { isNull, count, sql } = await import('drizzle-orm');
+
+    // Count total students (excluding soft-deleted)
+    const totalResult = await this.db
+      .select({ count: count() })
+      .from(students)
+      .where(isNull(students.deleted_at));
+
+    const total = totalResult[0]?.count || 0;
+
+    // Count students by status
+    const statusCounts = await this.db
+      .select({
+        status: students.status,
+        count: count(),
+      })
+      .from(students)
+      .where(isNull(students.deleted_at))
+      .groupBy(students.status);
+
+    // Count students by program
+    const programCounts = await this.db
+      .select({
+        program: students.program,
+        count: count(),
+      })
+      .from(students)
+      .where(isNull(students.deleted_at))
+      .groupBy(students.program);
+
+    // Count students by year level
+    const yearLevelCounts = await this.db
+      .select({
+        year_level: students.year_level,
+        count: count(),
+      })
+      .from(students)
+      .where(isNull(students.deleted_at))
+      .groupBy(students.year_level);
+
+    // Count recent enrollments (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const recentResult = await this.db
+      .select({ count: count() })
+      .from(students)
+      .where(
+        sql`${students.created_at} >= ${thirtyDaysAgo.toISOString()} AND ${students.deleted_at} IS NULL`
+      );
+
+    const recentEnrollments = recentResult[0]?.count || 0;
+
+    // Calculate average GPA
+    const gpaResult = await this.db
+      .select({
+        avg_gpa: sql<number>`
+          AVG(
+            (SELECT SUM(CAST(${academicHistory.grade} AS DECIMAL) * ${academicHistory.credits}) / 
+             NULLIF(SUM(${academicHistory.credits}), 0)
+             FROM ${academicHistory}
+             WHERE ${academicHistory.student_id} = ${students.id})
+          )
+        `.as('avg_gpa'),
+      })
+      .from(students)
+      .where(isNull(students.deleted_at));
+
+    const averageGPA = gpaResult[0]?.avg_gpa || 0;
+
+    // Build status counts
+    const activeCount = statusCounts.find((s) => s.status === 'active')?.count || 0;
+    const inactiveCount = statusCounts.find((s) => s.status === 'inactive')?.count || 0;
+    const graduatedCount = statusCounts.find((s) => s.status === 'graduated')?.count || 0;
+
+    // Build program distribution
+    const studentsByProgram: Record<string, number> = {};
+    programCounts.forEach((p) => {
+      if (p.program) {
+        studentsByProgram[p.program] = p.count;
+      }
+    });
+
+    // Build year level distribution
+    const studentsByYearLevel: Record<string, number> = {};
+    yearLevelCounts.forEach((y) => {
+      if (y.year_level !== null) {
+        studentsByYearLevel[`Year ${y.year_level}`] = y.count;
+      }
+    });
+
+    // Build status distribution
+    const studentsByStatus: Record<string, number> = {};
+    statusCounts.forEach((s) => {
+      if (s.status) {
+        studentsByStatus[s.status] = s.count;
+      }
+    });
+
+    return {
+      total_students: total,
+      active_students: activeCount,
+      inactive_students: inactiveCount,
+      graduated_students: graduatedCount,
+      students_by_program: studentsByProgram,
+      students_by_year_level: studentsByYearLevel,
+      students_by_status: studentsByStatus,
+      recent_enrollments: recentEnrollments,
+      average_gpa: Math.round(averageGPA * 100) / 100,
+      generated_at: new Date().toISOString(),
+    };
   }
 }

@@ -26,6 +26,13 @@ export function createStudentRoutes(studentController: StudentController): Route
   router.get('/deleted', studentController.getDeletedStudents);
 
   /**
+   * GET /api/v1/admin/students/stats
+   * Get student statistics
+   * IMPORTANT: This route must come BEFORE /:id to avoid route conflicts
+   */
+  router.get('/stats', studentController.getStudentStats);
+
+  /**
    * GET /api/v1/admin/students
    * List students with pagination, search, and filters
    */

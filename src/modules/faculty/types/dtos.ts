@@ -80,3 +80,17 @@ export interface FacultyFilters {
   page?: number;
   limit?: number;
 }
+
+/**
+ * FacultyStatsDTO - Faculty statistics
+ */
+export interface FacultyStatsDTO {
+  total_faculty: number;
+  active_faculty: number;
+  inactive_faculty: number;
+  faculty_by_department: Record<string, number>;
+  faculty_by_position: Record<string, number>;
+  faculty_by_status: Record<string, number>;
+  recent_additions: number; // Last 30 days
+  generated_at: string;
+}

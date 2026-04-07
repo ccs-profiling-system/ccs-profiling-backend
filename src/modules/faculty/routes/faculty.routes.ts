@@ -24,6 +24,13 @@ export function createFacultyRoutes(facultyController: FacultyController): Route
   router.get('/deleted', facultyController.getDeletedFaculty);
 
   /**
+   * GET /api/v1/admin/faculty/stats
+   * Get faculty statistics
+   * IMPORTANT: This route must come BEFORE /:id to avoid route conflicts
+   */
+  router.get('/stats', facultyController.getFacultyStats);
+
+  /**
    * GET /api/v1/admin/faculty
    * List faculty with pagination, search, and filters
    */
