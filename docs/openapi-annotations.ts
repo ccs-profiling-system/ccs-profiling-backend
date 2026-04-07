@@ -789,6 +789,8 @@
  *                       items:
  *                         type: object
  */
+
+/**
  * @swagger
  * /v1/auth/refresh:
  *   post:
@@ -2153,4 +2155,816 @@
  *     responses:
  *       200:
  *         description: Participant removed successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research:
+ *   get:
+ *     summary: List research projects
+ *     description: Get paginated list of research projects
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by title
+ *       - in: query
+ *         name: research_type
+ *         schema:
+ *           type: string
+ *           enum: [thesis, capstone, research_paper]
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [ongoing, completed, published]
+ *     responses:
+ *       200:
+ *         description: Research projects retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research:
+ *   post:
+ *     summary: Create research project
+ *     description: Create new research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title, research_type]
+ *             properties:
+ *               title:
+ *                 type: string
+ *               research_type:
+ *                 type: string
+ *                 enum: [thesis, capstone, research_paper]
+ *               description:
+ *                 type: string
+ *               start_date:
+ *                 type: string
+ *                 format: date
+ *               end_date:
+ *                 type: string
+ *                 format: date
+ *               status:
+ *                 type: string
+ *                 enum: [ongoing, completed, published]
+ *     responses:
+ *       201:
+ *         description: Research project created successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}:
+ *   get:
+ *     summary: Get research project by ID
+ *     description: Get research project details
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Research project retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}:
+ *   put:
+ *     summary: Update research project
+ *     description: Update research project information
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [ongoing, completed, published]
+ *     responses:
+ *       200:
+ *         description: Research project updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}:
+ *   delete:
+ *     summary: Delete research project (soft delete)
+ *     description: Soft delete research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Research project deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/deleted:
+ *   get:
+ *     summary: Get deleted research projects
+ *     description: Get all soft-deleted research projects
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Deleted research projects retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/restore:
+ *   patch:
+ *     summary: Restore research project
+ *     description: Restore a soft-deleted research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Research project restored successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/permanent:
+ *   delete:
+ *     summary: Permanently delete research project
+ *     description: Permanently delete a research project record
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Research project permanently deleted
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/authors:
+ *   get:
+ *     summary: Get research authors
+ *     description: Get all authors for a research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Research authors retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/authors:
+ *   post:
+ *     summary: Add research author
+ *     description: Add an author to a research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [student_id]
+ *             properties:
+ *               student_id:
+ *                 type: string
+ *                 format: uuid
+ *               role:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Author added successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/authors/{authorId}:
+ *   delete:
+ *     summary: Remove research author
+ *     description: Remove an author from a research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: path
+ *         name: authorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Author removed successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/advisers:
+ *   get:
+ *     summary: Get research advisers
+ *     description: Get all advisers for a research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Research advisers retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/advisers:
+ *   post:
+ *     summary: Add research adviser
+ *     description: Add an adviser to a research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [faculty_id]
+ *             properties:
+ *               faculty_id:
+ *                 type: string
+ *                 format: uuid
+ *               role:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Adviser added successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/research/{id}/advisers/{adviserId}:
+ *   delete:
+ *     summary: Remove research adviser
+ *     description: Remove an adviser from a research project
+ *     tags: [Research]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: path
+ *         name: adviserId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Adviser removed successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/schedules/{id}:
+ *   get:
+ *     summary: Get schedule by ID
+ *     description: Get schedule details
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Schedule retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/schedules/{id}:
+ *   put:
+ *     summary: Update schedule
+ *     description: Update schedule information
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               room:
+ *                 type: string
+ *               day:
+ *                 type: string
+ *               start_time:
+ *                 type: string
+ *               end_time:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Schedule updated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/uploads:
+ *   post:
+ *     summary: Upload file
+ *     description: Upload a file to the server
+ *     tags: [Uploads]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [file]
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *               entity_type:
+ *                 type: string
+ *               entity_id:
+ *                 type: string
+ *                 format: uuid
+ *     responses:
+ *       201:
+ *         description: File uploaded successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/uploads:
+ *   get:
+ *     summary: List uploads
+ *     description: Get paginated list of uploaded files
+ *     tags: [Uploads]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: entity_type
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: entity_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Uploads retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/uploads/{id}:
+ *   get:
+ *     summary: Get upload by ID
+ *     description: Get upload details
+ *     tags: [Uploads]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Upload retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/uploads/{id}:
+ *   delete:
+ *     summary: Delete upload
+ *     description: Delete an uploaded file
+ *     tags: [Uploads]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Upload deleted successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/audit-logs:
+ *   get:
+ *     summary: List audit logs
+ *     description: Get paginated list of audit logs
+ *     tags: [Audit Logs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: entity_type
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: action
+ *         schema:
+ *           type: string
+ *           enum: [create, update, delete, restore]
+ *       - in: query
+ *         name: user_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: start_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: end_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: Audit logs retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/audit-logs/{id}:
+ *   get:
+ *     summary: Get audit log by ID
+ *     description: Get audit log details
+ *     tags: [Audit Logs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Audit log retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/analytics/overview:
+ *   get:
+ *     summary: Get analytics overview
+ *     description: Get system-wide analytics overview
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Analytics overview retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/analytics/students:
+ *   get:
+ *     summary: Get student analytics
+ *     description: Get analytics data for students
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: program
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: year_level
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Student analytics retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/analytics/enrollments:
+ *   get:
+ *     summary: Get enrollment analytics
+ *     description: Get analytics data for enrollments
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: semester
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: academic_year
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Enrollment analytics retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/analytics/performance:
+ *   get:
+ *     summary: Get performance analytics
+ *     description: Get academic performance analytics
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: program
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: academic_year
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Performance analytics retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/reports/students:
+ *   get:
+ *     summary: Generate student report
+ *     description: Generate and download student report (PDF/Excel)
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: format
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [pdf, excel]
+ *       - in: query
+ *         name: program
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: year_level
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Report generated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/reports/enrollments:
+ *   get:
+ *     summary: Generate enrollment report
+ *     description: Generate and download enrollment report (PDF/Excel)
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: format
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [pdf, excel]
+ *       - in: query
+ *         name: semester
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: academic_year
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Report generated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/reports/grades:
+ *   get:
+ *     summary: Generate grades report
+ *     description: Generate and download grades report (PDF/Excel)
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: format
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [pdf, excel]
+ *       - in: query
+ *         name: student_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: semester
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: academic_year
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Report generated successfully
+ */
+
+/**
+ * @swagger
+ * /v1/admin/reports/research:
+ *   get:
+ *     summary: Generate research report
+ *     description: Generate and download research report (PDF/Excel)
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: format
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [pdf, excel]
+ *       - in: query
+ *         name: research_type
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Report generated successfully
  */
