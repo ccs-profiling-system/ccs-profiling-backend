@@ -2,7 +2,6 @@
  * Enrollment Controller
  * HTTP request/response handling for enrollment operations
  * 
- * Requirements: 9.1, 9.3, 9.4, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -23,7 +22,6 @@ export class EnrollmentController {
   /**
    * GET /api/v1/admin/enrollments
    * List enrollments with pagination and filters
-   * Requirements: 9.1, 30.2
    */
   listEnrollments = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -50,7 +48,6 @@ export class EnrollmentController {
   /**
    * GET /api/v1/admin/students/:studentId/enrollments
    * Get enrollments by student ID
-   * Requirements: 9.3, 30.2
    */
   getEnrollmentsByStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -76,7 +73,6 @@ export class EnrollmentController {
   /**
    * GET /api/v1/admin/instructions/:instructionId/enrollments
    * Get enrollments by instruction ID
-   * Requirements: 9.4, 30.2
    */
   getEnrollmentsByInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -102,7 +98,6 @@ export class EnrollmentController {
   /**
    * POST /api/v1/admin/enrollments
    * Create a new enrollment
-   * Requirements: 9.1, 30.2
    */
   createEnrollment = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -128,7 +123,6 @@ export class EnrollmentController {
   /**
    * PUT /api/v1/admin/enrollments/:id
    * Update enrollment by ID
-   * Requirements: 9.1, 30.2
    */
   updateEnrollment = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -161,7 +155,6 @@ export class EnrollmentController {
   /**
    * DELETE /api/v1/admin/enrollments/:id
    * Delete enrollment by ID
-   * Requirements: 9.1, 30.2
    */
   deleteEnrollment = async (req: Request, res: Response, next: NextFunction) => {
     try {

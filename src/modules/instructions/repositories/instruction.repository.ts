@@ -2,7 +2,6 @@
  * Instruction Repository
  * Database access layer for instruction operations
  * 
- * Requirements: 14.2, 14.4, 28.4
  */
 
 import { eq, and, isNull, or, like, sql } from 'drizzle-orm';
@@ -34,7 +33,6 @@ export class InstructionRepository {
 
   /**
    * Find instruction by UUID (excludes soft-deleted)
-   * Requirement: 14.2
    */
   async findById(id: string) {
     const result = await this.db
@@ -48,7 +46,6 @@ export class InstructionRepository {
 
   /**
    * Find instruction by subject_code (excludes soft-deleted)
-   * Requirement: 14.2
    */
   async findBySubjectCode(subjectCode: string, curriculumYear?: string) {
     const conditions = [
@@ -71,7 +68,6 @@ export class InstructionRepository {
 
   /**
    * Find instructions by curriculum year (excludes soft-deleted)
-   * Requirement: 14.2
    */
   async findByCurriculumYear(curriculumYear: string) {
     return await this.db
@@ -88,7 +84,6 @@ export class InstructionRepository {
    * Find all instructions with pagination and filters (excludes soft-deleted)
    * Supports search by subject_code or subject_name
    * Supports filter by curriculum_year
-   * Requirements: 14.2, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: InstructionFilters) {
     // Normalize pagination parameters
@@ -140,7 +135,6 @@ export class InstructionRepository {
       .offset(offset)
       .orderBy(instructions.curriculum_year, instructions.subject_code);
 
-    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
       meta: createPaginationMeta(page, limit, total),
@@ -149,7 +143,6 @@ export class InstructionRepository {
 
   /**
    * Create a new instruction
-   * Requirement: 14.2
    */
   async create(data: CreateInstructionData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -160,7 +153,6 @@ export class InstructionRepository {
 
   /**
    * Update instruction by ID
-   * Requirement: 14.2
    */
   async update(id: string, data: UpdateInstructionData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -178,7 +170,6 @@ export class InstructionRepository {
 
   /**
    * Soft delete instruction by ID
-   * Requirements: 14.4, 28.4
    */
   async softDelete(id: string) {
     await this.db
@@ -192,7 +183,6 @@ export class InstructionRepository {
 
   /**
    * Restore soft-deleted instruction
-   * Requirement: 28.4
    */
   async restore(id: string) {
     await this.db
@@ -206,7 +196,6 @@ export class InstructionRepository {
 
   /**
    * Find soft-deleted instructions (admin only)
-   * Requirement: 28.5
    */
   async findDeleted(filters?: InstructionFilters) {
     // Normalize pagination parameters
@@ -266,7 +255,6 @@ export class InstructionRepository {
 
   /**
    * Permanently delete instruction by ID (hard delete)
-   * Requirement: 28.6
    */
   async permanentDelete(id: string) {
     await this.db
@@ -276,7 +264,6 @@ export class InstructionRepository {
 
   /**
    * Find instruction by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
    */
   async findByIdIncludingDeleted(id: string) {
     const result = await this.db

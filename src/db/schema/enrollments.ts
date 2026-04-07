@@ -9,7 +9,6 @@ import { instructions } from './instructions';
  * Stores student course enrollment records linking students to instructions.
  * Tracks enrollment status and academic period information.
  * 
- * Requirements: 9.2, 23.2, 23.4, 29.4, 29.9
  */
 export const enrollments = pgTable('enrollments', {
   id: uuidPrimaryKey(),
@@ -27,10 +26,10 @@ export const enrollments = pgTable('enrollments', {
   enrolled_at: timestamp('enrolled_at').defaultNow(),
   ...timestamps,
 }, (table) => ({
-  // Unique constraint to prevent duplicate enrollments (Requirement 9.5)
+  // Unique constraint to prevent duplicate enrollments 
   studentInstructionSemesterYearUnique: uniqueIndex('enrollments_student_instruction_semester_year_unique')
     .on(table.student_id, table.instruction_id, table.semester, table.academic_year),
-  // Indexes for query optimization (Requirements 23.2, 29.4, 29.9)
+    // Indexes for query optimization 
   studentIdIdx: index('enrollments_student_id_idx').on(table.student_id),
   instructionIdIdx: index('enrollments_instruction_id_idx').on(table.instruction_id),
   semesterAcademicYearIdx: index('enrollments_semester_academic_year_idx')

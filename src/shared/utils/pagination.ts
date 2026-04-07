@@ -2,7 +2,6 @@
  * Pagination Utilities
  * Provides helper functions for pagination calculations and types
  * 
- * Requirements: 27.1, 27.2
  */
 
 /**
@@ -26,7 +25,6 @@ export interface PaginationParams {
  * calculateOffset(2, 10) // Returns 10
  * calculateOffset(3, 25) // Returns 50
  * 
- * Requirement: 27.1
  */
 export function calculateOffset(page: number, limit: number): number {
   return (page - 1) * limit;
@@ -45,7 +43,6 @@ export function calculateOffset(page: number, limit: number): number {
  * calculateTotalPages(0, 10)  // Returns 0
  * calculateTotalPages(1, 10)  // Returns 1
  * 
- * Requirement: 27.2
  */
 export function calculateTotalPages(total: number, limit: number): number {
   if (total === 0) {

@@ -10,7 +10,6 @@
  * - YYYY: Current year
  * - 0001: Incremental counter (4 digits, zero-padded)
  * 
- * Requirements: 2.3, 3.2
  */
 
 export type EntityType = 'student' | 'faculty';

@@ -2,7 +2,6 @@
  * Upload Routes
  * Route definitions for file upload endpoints
  * 
- * Requirements: 20.1, 20.5, 20.6, 30.2
  */
 
 import { Router } from 'express';

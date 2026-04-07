@@ -2,7 +2,6 @@
  * Research Validation Schemas
  * Zod schemas for validating research input
  * 
- * Requirements: 21.2
  */
 
 import { z } from 'zod';

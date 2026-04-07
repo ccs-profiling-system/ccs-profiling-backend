@@ -2,7 +2,6 @@
  * Reports Module DTOs
  * Data Transfer Objects for report generation
  * 
- * Requirements: 17.1, 17.2
  */
 
 /**

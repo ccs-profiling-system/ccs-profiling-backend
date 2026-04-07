@@ -2,7 +2,6 @@
  * Research Module Tests
  * Integration tests for research operations
  * 
- * Requirements: 12.1, 12.6, 12.7, 26.6, 26.7
  */
 
 import { describe, it, expect } from 'vitest';

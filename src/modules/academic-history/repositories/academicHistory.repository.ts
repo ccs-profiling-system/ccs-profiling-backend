@@ -2,7 +2,6 @@
  * Academic History Repository
  * Database access layer for academic history operations
  * 
- * Requirements: 8.1, 8.2, 8.3
  */
 
 import { eq, and, inArray, sql } from 'drizzle-orm';
@@ -37,7 +36,6 @@ export class AcademicHistoryRepository {
 
   /**
    * Find academic history record by UUID
-   * Requirement: 8.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -51,7 +49,6 @@ export class AcademicHistoryRepository {
 
   /**
    * Find academic history records by student ID
-   * Requirement: 8.3
    */
   async findByStudentId(studentId: string) {
     return await this.db
@@ -64,7 +61,6 @@ export class AcademicHistoryRepository {
   /**
    * Batch query to find academic history by multiple student IDs
    * Prevents N+1 query problem
-   * Requirement: 8.3
    */
   async findByStudentIds(studentIds: string[]) {
     if (studentIds.length === 0) {
@@ -80,7 +76,6 @@ export class AcademicHistoryRepository {
 
   /**
    * Find all academic history records with pagination and filters
-   * Requirements: 8.1, 8.3
    */
   async findAll(filters?: AcademicHistoryFilters) {
     const page = filters?.page || 1;
@@ -135,7 +130,6 @@ export class AcademicHistoryRepository {
 
   /**
    * Create a new academic history record
-   * Requirement: 8.1
    */
   async create(data: CreateAcademicHistoryData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -146,7 +140,6 @@ export class AcademicHistoryRepository {
 
   /**
    * Update academic history record by ID
-   * Requirement: 8.1
    */
   async update(id: string, data: UpdateAcademicHistoryData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -164,7 +157,6 @@ export class AcademicHistoryRepository {
 
   /**
    * Delete academic history record by ID
-   * Requirement: 8.1
    */
   async delete(id: string) {
     await this.db.delete(academicHistory).where(eq(academicHistory.id, id));
@@ -172,7 +164,6 @@ export class AcademicHistoryRepository {
 
   /**
    * Calculate GPA for a student
-   * Requirement: 8.4
    */
   async calculateGPA(studentId: string) {
     const records = await this.findByStudentId(studentId);

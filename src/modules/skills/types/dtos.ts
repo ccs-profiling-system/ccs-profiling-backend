@@ -2,7 +2,6 @@
  * Skills Module DTOs
  * Data Transfer Objects for skills management
  * 
- * Requirements: 5.2
  */
 
 /**

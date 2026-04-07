@@ -4,7 +4,6 @@
  * Defines the contract for file storage implementations.
  * Supports multiple storage backends (local filesystem, S3, etc.)
  * 
- * Requirements: 31.1
  */
 
 export interface UploadOptions {

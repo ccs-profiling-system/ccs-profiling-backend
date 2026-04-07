@@ -2,7 +2,6 @@
  * Schedule Routes
  * Route definitions for schedule endpoints
  * 
- * Requirements: 13.1, 13.5, 13.6, 30.2
  */
 
 import { Router } from 'express';

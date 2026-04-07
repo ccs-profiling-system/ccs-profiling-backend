@@ -9,7 +9,6 @@ import { generateUUIDv7 } from '../../shared/utils/uuid';
  * - Timestamp fields (created_at, updated_at)
  * - Soft delete support (deleted_at)
  * 
- * Requirements: 23.1, 23.3
  */
 
 /**

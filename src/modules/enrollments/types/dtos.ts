@@ -2,7 +2,6 @@
  * Enrollment Module DTOs
  * Data Transfer Objects for enrollment management
  * 
- * Requirements: 9.2
  */
 
 /**

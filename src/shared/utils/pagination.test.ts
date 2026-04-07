@@ -2,7 +2,6 @@
  * Pagination Utilities Tests
  * Tests for pagination helper functions
  * 
- * Requirements: 27.1, 27.2
  */
 
 import { describe, it, expect } from 'vitest';
@@ -17,14 +16,12 @@ import { createPaginationMeta, type PaginationMeta } from './apiResponse';
 describe('Pagination Utilities', () => {
   describe('calculateOffset', () => {
     it('should calculate offset for page 1', () => {
-      // Requirement 27.1 - Calculate offset for first page
       expect(calculateOffset(1, 10)).toBe(0);
       expect(calculateOffset(1, 25)).toBe(0);
       expect(calculateOffset(1, 100)).toBe(0);
     });
 
     it('should calculate offset for subsequent pages', () => {
-      // Requirement 27.1 - Calculate offset for pagination
       expect(calculateOffset(2, 10)).toBe(10);
       expect(calculateOffset(3, 10)).toBe(20);
       expect(calculateOffset(5, 25)).toBe(100);
@@ -40,14 +37,12 @@ describe('Pagination Utilities', () => {
 
   describe('calculateTotalPages', () => {
     it('should calculate total pages for evenly divisible totals', () => {
-      // Requirement 27.2 - Calculate total pages
       expect(calculateTotalPages(100, 10)).toBe(10);
       expect(calculateTotalPages(50, 10)).toBe(5);
       expect(calculateTotalPages(25, 25)).toBe(1);
     });
 
     it('should round up for non-evenly divisible totals', () => {
-      // Requirement 27.2 - Round up partial pages
       expect(calculateTotalPages(51, 10)).toBe(6);
       expect(calculateTotalPages(101, 10)).toBe(11);
       expect(calculateTotalPages(26, 25)).toBe(2);
@@ -55,7 +50,6 @@ describe('Pagination Utilities', () => {
     });
 
     it('should return 0 for empty results', () => {
-      // Requirement 27.6 - Handle empty results
       expect(calculateTotalPages(0, 10)).toBe(0);
       expect(calculateTotalPages(0, 25)).toBe(0);
     });
@@ -71,7 +65,6 @@ describe('Pagination Utilities', () => {
 
   describe('createPaginationMeta', () => {
     it('should create complete pagination metadata', () => {
-      // Requirements 27.1, 27.2, 27.3, 27.4, 27.5
       const meta = createPaginationMeta(1, 10, 50);
 
       expect(meta).toEqual({
@@ -83,28 +76,24 @@ describe('Pagination Utilities', () => {
     });
 
     it('should include correct page number', () => {
-      // Requirement 27.3 - Include current page number
       expect(createPaginationMeta(1, 10, 50).page).toBe(1);
       expect(createPaginationMeta(2, 10, 50).page).toBe(2);
       expect(createPaginationMeta(5, 10, 50).page).toBe(5);
     });
 
     it('should include correct limit', () => {
-      // Requirement 27.4 - Include page size limit
       expect(createPaginationMeta(1, 10, 50).limit).toBe(10);
       expect(createPaginationMeta(1, 25, 50).limit).toBe(25);
       expect(createPaginationMeta(1, 100, 50).limit).toBe(100);
     });
 
     it('should include correct total', () => {
-      // Requirement 27.5 - Include total record count
       expect(createPaginationMeta(1, 10, 50).total).toBe(50);
       expect(createPaginationMeta(1, 10, 100).total).toBe(100);
       expect(createPaginationMeta(1, 10, 0).total).toBe(0);
     });
 
     it('should calculate totalPages correctly', () => {
-      // Requirement 27.2 - Calculate total pages
       expect(createPaginationMeta(1, 10, 50).totalPages).toBe(5);
       expect(createPaginationMeta(1, 10, 51).totalPages).toBe(6);
       expect(createPaginationMeta(1, 10, 0).totalPages).toBe(0);
@@ -112,7 +101,6 @@ describe('Pagination Utilities', () => {
     });
 
     it('should handle empty results', () => {
-      // Requirement 27.6 - Handle empty results
       const meta = createPaginationMeta(1, 10, 0);
 
       expect(meta).toEqual({

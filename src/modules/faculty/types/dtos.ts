@@ -2,7 +2,6 @@
  * Faculty Module DTOs
  * Data Transfer Objects for faculty management
  * 
- * Requirements: 3.2, 3.4
  */
 
 /**

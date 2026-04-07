@@ -17,7 +17,6 @@ import {
 describe('API Response Utilities', () => {
   describe('formatSuccessResponse', () => {
     it('should format a simple success response with data', () => {
-      // Requirement 24.1 - success field set to true
       const data = { id: '123', name: 'John Doe' };
       const response = formatSuccessResponse(data);
 
@@ -29,7 +28,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should include data field in success response', () => {
-      // Requirement 24.2 - data field containing response payload
       const data = { message: 'Operation successful' };
       const response = formatSuccessResponse(data);
 
@@ -64,7 +62,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should include meta field when provided', () => {
-      // Requirement 24.11 - meta object with pagination fields
       const data = [{ id: '1' }];
       const meta: PaginationMeta = {
         page: 1,
@@ -113,14 +110,12 @@ describe('API Response Utilities', () => {
     });
 
     it('should format error response with success false', () => {
-      // Requirement 24.3 - success field set to false
       const response = formatErrorResponse('Error occurred', 'INTERNAL_ERROR');
 
       expect(response.success).toBe(false);
     });
 
     it('should include error object with message, code, and timestamp', () => {
-      // Requirement 24.4 - error object with message, code, timestamp
       const response = formatErrorResponse('Not found', 'NOT_FOUND');
 
       expect(response.error).toBeDefined();
@@ -130,7 +125,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should format validation error response', () => {
-      // Requirement 24.5 - VALIDATION_ERROR code
       const response = formatErrorResponse(
         'Validation failed',
         'VALIDATION_ERROR',
@@ -146,7 +140,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should format not found error response', () => {
-      // Requirement 24.6 - NOT_FOUND code
       const response = formatErrorResponse('Student not found', 'NOT_FOUND');
 
       expect(response.error.code).toBe('NOT_FOUND');
@@ -154,7 +147,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should format unauthorized error response', () => {
-      // Requirement 24.7 - UNAUTHORIZED code
       const response = formatErrorResponse(
         'Invalid credentials',
         'UNAUTHORIZED'
@@ -165,7 +157,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should format forbidden error response', () => {
-      // Requirement 24.8 - FORBIDDEN code
       const response = formatErrorResponse(
         'Insufficient permissions',
         'FORBIDDEN'
@@ -176,7 +167,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should format internal error response', () => {
-      // Requirement 24.9 - INTERNAL_ERROR code
       const response = formatErrorResponse(
         'Internal server error',
         'INTERNAL_ERROR'
@@ -187,7 +177,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should format conflict error response', () => {
-      // Requirement 24.10 - CONFLICT code
       const response = formatErrorResponse(
         'Resource already exists',
         'CONFLICT'
@@ -198,7 +187,6 @@ describe('API Response Utilities', () => {
     });
 
     it('should format timestamp in ISO 8601 format', () => {
-      // Requirement 24.12 - ISO 8601 timestamp format
       const response = formatErrorResponse('Error', 'INTERNAL_ERROR');
 
       expect(response.error.timestamp).toBe('2024-01-01T00:00:00.000Z');
@@ -250,7 +238,6 @@ describe('API Response Utilities', () => {
 
   describe('formatPaginatedResponse', () => {
     it('should format paginated response with data and meta', () => {
-      // Requirement 24.11 - paginated results with meta object
       const data = [
         { id: '1', name: 'Item 1' },
         { id: '2', name: 'Item 2' },

@@ -2,7 +2,6 @@
  * Audit Logger Utility
  * Centralized utility for logging audit events
  * 
- * Requirements: 19.1, 19.2, 19.3, 19.4
  */
 
 import { AuditLogRepository } from '../../modules/audit-logs/repositories/auditLog.repository';
@@ -31,7 +30,6 @@ export class AuditLogger {
   /**
    * Log an audit event
    * Captures before and after states as JSONB
-   * Requirements: 19.1, 19.2, 19.3, 19.4
    */
   async log(options: AuditLogOptions, tx?: Database): Promise<void> {
     try {
@@ -56,7 +54,6 @@ export class AuditLogger {
 
   /**
    * Log a create operation
-   * Requirement: 19.1
    */
   async logCreate(
     entity_type: string,
@@ -79,7 +76,6 @@ export class AuditLogger {
 
   /**
    * Log an update operation
-   * Requirement: 19.2
    */
   async logUpdate(
     entity_type: string,
@@ -104,7 +100,6 @@ export class AuditLogger {
 
   /**
    * Log a delete operation
-   * Requirement: 19.3
    */
   async logDelete(
     entity_type: string,

@@ -2,7 +2,6 @@
  * Upload Service
  * Business logic layer for file upload operations
  * 
- * Requirements: 20.1, 20.3, 20.4, 20.5, 20.6, 31.4, 31.5, 31.6, 31.7
  */
 
 import { UploadRepository } from '../repositories/upload.repository';
@@ -20,21 +19,18 @@ export class UploadService {
   /**
    * Upload a file with metadata tracking
    * Validates file type and size, stores file, and creates database record
-   * Requirements: 20.1, 20.3, 20.4, 20.5, 31.4, 31.5, 31.6, 31.7
    */
   async uploadFile(
     file: Express.Multer.File,
     metadata: UploadMetadataDTO,
     uploadedBy?: string
   ): Promise<UploadResponseDTO> {
-    // Validate file type (Requirement 20.3)
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype as any)) {
       throw new ValidationError(
         `File type ${file.mimetype} is not allowed. Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}`
       );
     }
 
-    // Validate file size (Requirement 20.4 - 10MB limit)
     if (file.size > MAX_FILE_SIZE) {
       throw new ValidationError(
         `File size ${file.size} bytes exceeds maximum allowed size of ${MAX_FILE_SIZE} bytes (10MB)`
@@ -44,7 +40,6 @@ export class UploadService {
     // Get storage provider
     const storage = StorageFactory.getProvider();
 
-    // Upload file to storage (Requirements 31.4, 31.5, 31.6, 31.7)
     const uploadResult = await storage.upload({
       entityType: metadata.entity_type,
       originalFilename: file.originalname,
@@ -52,7 +47,6 @@ export class UploadService {
       buffer: file.buffer,
     });
 
-    // Create database record with full storage path (Requirement 31.7)
     const id = generateUUIDv7();
     const upload = await this.uploadRepository.create({
       id,
@@ -71,7 +65,6 @@ export class UploadService {
 
   /**
    * Get upload by ID
-   * Requirement: 20.1
    */
   async getUpload(id: string): Promise<UploadResponseDTO> {
     const upload = await this.uploadRepository.findById(id);
@@ -83,7 +76,6 @@ export class UploadService {
 
   /**
    * Delete file and database record
-   * Requirements: 20.5, 20.6
    */
   async deleteFile(id: string): Promise<void> {
     const upload = await this.uploadRepository.findById(id);
@@ -101,7 +93,6 @@ export class UploadService {
 
   /**
    * Get all files for a specific entity
-   * Requirement: 20.1
    */
   async getEntityFiles(entityType: string, entityId: string): Promise<UploadResponseDTO[]> {
     const uploads = await this.uploadRepository.findByEntityId(entityType, entityId);

@@ -34,7 +34,6 @@
  * - Reports (reports)
  * - Search (search)
  * 
- * Requirements: 1.1, 1.2
  */
 
 import express from 'express';

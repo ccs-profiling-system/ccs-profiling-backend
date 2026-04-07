@@ -2,7 +2,6 @@
  * Research Controller
  * HTTP request/response handling for research operations
  * 
- * Requirements: 12.1, 12.6, 12.7, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -25,7 +24,6 @@ export class ResearchController {
   /**
    * GET /api/v1/admin/research
    * List research with pagination and filters
-   * Requirements: 12.1, 30.2
    */
   listResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,7 +50,6 @@ export class ResearchController {
   /**
    * GET /api/v1/admin/research/:id
    * Get research by ID
-   * Requirements: 12.1, 30.2
    */
   getResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -78,7 +75,6 @@ export class ResearchController {
   /**
    * POST /api/v1/admin/research
    * Create a new research
-   * Requirements: 12.1, 30.2
    */
   createResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -104,7 +100,6 @@ export class ResearchController {
   /**
    * PUT /api/v1/admin/research/:id
    * Update research by ID
-   * Requirements: 12.1, 30.2
    */
   updateResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -137,7 +132,6 @@ export class ResearchController {
   /**
    * DELETE /api/v1/admin/research/:id
    * Delete research by ID (soft delete)
-   * Requirements: 12.1, 30.2
    */
   deleteResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -165,7 +159,6 @@ export class ResearchController {
   /**
    * POST /api/v1/admin/research/:id/authors
    * Add author to research
-   * Requirements: 12.6, 30.2
    */
   addAuthor = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -200,7 +193,6 @@ export class ResearchController {
   /**
    * DELETE /api/v1/admin/research/:id/authors/:studentId
    * Remove author from research
-   * Requirements: 12.6, 30.2
    */
   removeAuthor = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -235,7 +227,6 @@ export class ResearchController {
   /**
    * POST /api/v1/admin/research/:id/advisers
    * Add adviser to research
-   * Requirements: 12.7, 30.2
    */
   addAdviser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -270,7 +261,6 @@ export class ResearchController {
   /**
    * DELETE /api/v1/admin/research/:id/advisers/:facultyId
    * Remove adviser from research
-   * Requirements: 12.7, 30.2
    */
   removeAdviser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -305,7 +295,6 @@ export class ResearchController {
   /**
    * GET /api/v1/admin/research/deleted
    * Get soft-deleted research (admin only)
-   * Requirements: 28.5, 30.2
    */
   getDeletedResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -332,7 +321,6 @@ export class ResearchController {
   /**
    * PATCH /api/v1/admin/research/:id/restore
    * Restore soft-deleted research
-   * Requirements: 28.7, 30.2
    */
   restoreResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -358,7 +346,6 @@ export class ResearchController {
   /**
    * DELETE /api/v1/admin/research/:id/permanent
    * Permanently delete research (hard delete)
-   * Requirements: 28.6, 30.2
    */
   permanentDeleteResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {

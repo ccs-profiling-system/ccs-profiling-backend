@@ -14,7 +14,6 @@ import postgres from 'postgres';
  * 2. Run database migrations
  * 3. Start Express server
  * 
- * Requirements: 25.3
  */
 
 const initializeDatabase = async () => {

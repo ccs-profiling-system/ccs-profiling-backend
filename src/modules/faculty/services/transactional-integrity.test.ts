@@ -5,7 +5,6 @@
  * for faculty creation by wrapping counter increment, user creation, and faculty
  * creation in a single database transaction.
  * 
- * Requirements: 26.3, 26.4
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

@@ -2,7 +2,6 @@
  * Enrollment Service
  * Business logic layer for enrollment operations
  * 
- * Requirements: 9.1, 9.3, 9.4, 9.5
  */
 
 import { EnrollmentRepository } from '../repositories/enrollment.repository';
@@ -27,7 +26,6 @@ export class EnrollmentService {
 
   /**
    * Get enrollment by ID
-   * Requirement: 9.1
    */
   async getEnrollment(id: string): Promise<EnrollmentResponseDTO> {
     const result = await this.enrollmentRepository.findById(id);
@@ -39,7 +37,6 @@ export class EnrollmentService {
 
   /**
    * List enrollments with pagination and filters
-   * Requirements: 9.1, 9.3, 9.4
    */
   async listEnrollments(filters?: EnrollmentFilters): Promise<EnrollmentListResponseDTO> {
     const result = await this.enrollmentRepository.findAll(filters);
@@ -51,7 +48,6 @@ export class EnrollmentService {
 
   /**
    * Get enrollments by student ID
-   * Requirement: 9.3
    */
   async getEnrollmentsByStudent(studentId: string): Promise<EnrollmentResponseDTO[]> {
     // Verify student exists
@@ -66,7 +62,6 @@ export class EnrollmentService {
 
   /**
    * Get enrollments by instruction ID
-   * Requirement: 9.4
    */
   async getEnrollmentsByInstruction(instructionId: string): Promise<EnrollmentResponseDTO[]> {
     // Verify instruction exists
@@ -82,7 +77,6 @@ export class EnrollmentService {
   /**
    * Create a new enrollment
    * Validates duplicate enrollment prevention
-   * Requirements: 9.1, 9.5
    */
   async createEnrollment(data: CreateEnrollmentDTO): Promise<EnrollmentResponseDTO> {
     // Verify student exists
@@ -97,7 +91,6 @@ export class EnrollmentService {
       throw new NotFoundError('Instruction not found');
     }
 
-    // Check for duplicate enrollment (Requirement 9.5)
     const duplicate = await this.enrollmentRepository.findDuplicate(
       data.student_id,
       data.instruction_id,
@@ -135,7 +128,6 @@ export class EnrollmentService {
 
   /**
    * Update enrollment by ID
-   * Requirement: 9.1
    */
   async updateEnrollment(id: string, data: UpdateEnrollmentDTO): Promise<EnrollmentResponseDTO> {
     // Check if enrollment exists
@@ -158,7 +150,6 @@ export class EnrollmentService {
 
   /**
    * Delete enrollment by ID
-   * Requirement: 9.1
    */
   async deleteEnrollment(id: string): Promise<void> {
     const existing = await this.enrollmentRepository.findById(id);

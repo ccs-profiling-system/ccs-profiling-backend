@@ -2,7 +2,6 @@
  * Academic History Module Integration Tests
  * Tests the complete academic history module functionality
  * 
- * Requirements: 8.1, 8.2, 8.3, 8.4
  */
 
 import { describe, it, expect } from 'vitest';

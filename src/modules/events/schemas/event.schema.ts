@@ -2,7 +2,6 @@
  * Event Validation Schemas
  * Zod schemas for validating event input
  * 
- * Requirements: 21.2
  */
 
 import { z } from 'zod';

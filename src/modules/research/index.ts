@@ -2,7 +2,6 @@
  * Research Module
  * Exports research module components and initializes dependencies
  * 
- * Requirements: 12.1, 12.6, 12.7
  */
 
 import { db } from '../../db';

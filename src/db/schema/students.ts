@@ -8,7 +8,6 @@ import { users } from './users';
  * Stores student profile data linked to user accounts.
  * Supports soft delete for audit trail preservation.
  * 
- * Requirements: 2.3, 23.1, 23.2, 23.3, 23.5, 28.1, 29.1, 29.5
  */
 export const students = pgTable('students', {
   id: uuidPrimaryKey(),
@@ -26,7 +25,7 @@ export const students = pgTable('students', {
   status: varchar('status', { length: 50 }).default('active'), // 'active', 'inactive', 'graduated'
   ...timestampsWithSoftDelete,
 }, (table) => ({
-  // Indexes for query optimization (Requirement 29.1, 29.5)
+  // Indexes for query optimization
   studentIdIdx: index('students_student_id_idx').on(table.student_id),
   firstNameIdx: index('students_first_name_idx').on(table.first_name),
   lastNameIdx: index('students_last_name_idx').on(table.last_name),

@@ -2,7 +2,6 @@
  * Enrollment Repository
  * Database access layer for enrollment operations
  * 
- * Requirements: 9.1, 9.3, 9.4
  */
 
 import { eq, and, inArray, sql } from 'drizzle-orm';
@@ -30,7 +29,6 @@ export class EnrollmentRepository {
 
   /**
    * Find enrollment by UUID
-   * Requirement: 9.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -48,7 +46,6 @@ export class EnrollmentRepository {
 
   /**
    * Find enrollments by student ID
-   * Requirement: 9.3
    */
   async findByStudentId(studentId: string) {
     return await this.db
@@ -64,7 +61,6 @@ export class EnrollmentRepository {
 
   /**
    * Find enrollments by instruction ID
-   * Requirement: 9.4
    */
   async findByInstructionId(instructionId: string) {
     return await this.db
@@ -81,7 +77,6 @@ export class EnrollmentRepository {
   /**
    * Batch query to find enrollments by multiple student IDs
    * Prevents N+1 query problem
-   * Requirement: 9.3
    */
   async findByStudentIds(studentIds: string[]) {
     if (studentIds.length === 0) {
@@ -101,7 +96,6 @@ export class EnrollmentRepository {
 
   /**
    * Find all enrollments with pagination and filters
-   * Requirements: 9.1, 9.3, 9.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: EnrollmentFilters) {
     // Normalize pagination parameters
@@ -161,7 +155,6 @@ export class EnrollmentRepository {
       .offset(offset)
       .orderBy(enrollments.academic_year, enrollments.semester);
 
-    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
       meta: createPaginationMeta(page, limit, total),
@@ -171,7 +164,6 @@ export class EnrollmentRepository {
   /**
    * Check if enrollment already exists
    * Used for duplicate prevention
-   * Requirement: 9.5
    */
   async findDuplicate(
     studentId: string,
@@ -197,7 +189,6 @@ export class EnrollmentRepository {
 
   /**
    * Create a new enrollment
-   * Requirement: 9.1
    */
   async create(data: CreateEnrollmentData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -208,7 +199,6 @@ export class EnrollmentRepository {
 
   /**
    * Update enrollment by ID
-   * Requirement: 9.1
    */
   async update(id: string, data: UpdateEnrollmentData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -226,7 +216,6 @@ export class EnrollmentRepository {
 
   /**
    * Delete enrollment by ID
-   * Requirement: 9.1
    */
   async delete(id: string) {
     await this.db.delete(enrollments).where(eq(enrollments.id, id));

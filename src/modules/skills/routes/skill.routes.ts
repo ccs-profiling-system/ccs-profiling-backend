@@ -2,7 +2,6 @@
  * Skill Routes
  * Route definitions for skill endpoints
  * 
- * Requirements: 5.1, 5.3, 30.2
  */
 
 import { Router } from 'express';

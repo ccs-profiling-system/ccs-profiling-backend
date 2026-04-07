@@ -2,7 +2,6 @@
  * Audit Log Validation Schemas
  * Zod schemas for audit log request validation
  * 
- * Requirements: 19.5, 21.2
  */
 
 import { z } from 'zod';

@@ -2,7 +2,6 @@
  * Upload Validation Schemas
  * Zod schemas for validating upload input
  * 
- * Requirements: 20.3, 20.4, 21.2, 21.4
  */
 
 import { z } from 'zod';
@@ -59,6 +58,5 @@ export const ALLOWED_MIME_TYPES = [
 
 /**
  * Maximum file size: 10MB (10485760 bytes)
- * Requirement: 20.4
  */
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes

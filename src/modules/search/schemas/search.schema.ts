@@ -2,7 +2,6 @@
  * Search Validation Schemas
  * Zod schemas for search request validation
  * 
- * Requirements: 21.2
  */
 
 import { z } from 'zod';

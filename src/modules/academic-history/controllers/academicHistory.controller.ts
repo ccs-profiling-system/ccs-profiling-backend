@@ -2,7 +2,6 @@
  * Academic History Controller
  * HTTP request/response handling for academic history operations
  * 
- * Requirements: 8.1, 8.2, 8.3, 8.4, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -22,7 +21,6 @@ export class AcademicHistoryController {
   /**
    * GET /api/v1/admin/academic-history
    * List academic history records with pagination and filters
-   * Requirements: 8.1, 30.2
    */
   listAcademicHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -49,7 +47,6 @@ export class AcademicHistoryController {
   /**
    * GET /api/v1/admin/students/:studentId/academic-history
    * Get academic history records by student ID
-   * Requirements: 8.3, 30.2
    */
   getAcademicHistoryByStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -75,7 +72,6 @@ export class AcademicHistoryController {
   /**
    * POST /api/v1/admin/students/:studentId/academic-history
    * Create a new academic history record
-   * Requirements: 8.1, 8.2, 30.2
    */
   createAcademicHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -112,7 +108,6 @@ export class AcademicHistoryController {
   /**
    * PUT /api/v1/admin/academic-history/:id
    * Update academic history record by ID
-   * Requirements: 8.1, 30.2
    */
   updateAcademicHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -145,7 +140,6 @@ export class AcademicHistoryController {
   /**
    * DELETE /api/v1/admin/academic-history/:id
    * Delete academic history record by ID
-   * Requirements: 8.1, 30.2
    */
   deleteAcademicHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -173,7 +167,6 @@ export class AcademicHistoryController {
   /**
    * GET /api/v1/admin/students/:studentId/gpa
    * Calculate GPA for a student
-   * Requirements: 8.4, 30.2
    */
   calculateGPA = async (req: Request, res: Response, next: NextFunction) => {
     try {

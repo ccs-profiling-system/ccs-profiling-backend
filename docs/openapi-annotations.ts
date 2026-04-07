@@ -3,8 +3,6 @@
  * 
  * This file contains JSDoc annotations for all API endpoints.
  * These annotations are parsed by swagger-jsdoc to generate the OpenAPI specification.
- * 
- * Requirements: 24.1, 24.2, 24.3, 24.4
  */
 
 /**

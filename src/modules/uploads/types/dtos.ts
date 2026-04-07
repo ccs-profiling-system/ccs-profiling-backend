@@ -2,7 +2,6 @@
  * Upload Module DTOs
  * Data Transfer Objects for file upload management
  * 
- * Requirements: 20.2
  */
 
 /**

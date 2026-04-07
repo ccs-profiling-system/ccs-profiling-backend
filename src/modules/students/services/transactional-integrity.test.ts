@@ -5,7 +5,6 @@
  * by wrapping counter increment, user creation, and student/faculty creation in a
  * single database transaction.
  * 
- * Requirements: 26.3, 26.4
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -265,7 +264,6 @@ describe('Transactional Integrity - Student Creation', () => {
 
 describe('Transactional Integrity - Counter Increment', () => {
   it('should use SELECT FOR UPDATE to lock counter row during increment', async () => {
-    // This test documents the critical requirement:
     // The incrementCounter method MUST use SELECT FOR UPDATE to lock the counter row
     // during the transaction, preventing race conditions.
 

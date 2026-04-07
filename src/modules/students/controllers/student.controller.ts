@@ -2,7 +2,6 @@
  * Student Controller
  * HTTP request/response handling for student operations
  * 
- * Requirements: 2.1, 2.5, 2.6, 2.7, 4.7, 4.8, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -21,7 +20,6 @@ export class StudentController {
   /**
    * GET /api/v1/admin/students
    * List students with pagination, search, and filters
-   * Requirements: 2.5, 30.2
    */
   listStudents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -48,7 +46,6 @@ export class StudentController {
   /**
    * GET /api/v1/admin/students/:id
    * Get student by ID
-   * Requirements: 2.5, 30.2
    */
   getStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,7 +71,6 @@ export class StudentController {
   /**
    * POST /api/v1/admin/students
    * Create a new student
-   * Requirements: 2.1, 4.7, 30.2
    */
   createStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,7 +96,6 @@ export class StudentController {
   /**
    * PUT /api/v1/admin/students/:id
    * Update student by ID
-   * Requirements: 2.6, 4.7, 30.2
    */
   updateStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -133,7 +128,6 @@ export class StudentController {
   /**
    * DELETE /api/v1/admin/students/:id
    * Soft delete student by ID
-   * Requirements: 2.7, 4.7, 30.2
    */
   deleteStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -162,7 +156,6 @@ export class StudentController {
    * GET /api/v1/admin/students/:id/profile
    * Get complete student profile with aggregated data
    * Returns aggregated profile within 500ms
-   * Requirements: 10.1, 10.4, 30.2
    */
   getStudentProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -188,7 +181,6 @@ export class StudentController {
   /**
    * GET /api/v1/admin/students/deleted
    * Get soft-deleted students (admin only)
-   * Requirements: 28.5, 30.2
    */
   getDeletedStudents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -215,7 +207,6 @@ export class StudentController {
   /**
    * PATCH /api/v1/admin/students/:id/restore
    * Restore soft-deleted student
-   * Requirements: 28.7, 30.2
    */
   restoreStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -244,7 +235,6 @@ export class StudentController {
   /**
    * DELETE /api/v1/admin/students/:id/permanent
    * Permanently delete student (hard delete)
-   * Requirements: 28.6, 30.2
    */
   permanentDeleteStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {

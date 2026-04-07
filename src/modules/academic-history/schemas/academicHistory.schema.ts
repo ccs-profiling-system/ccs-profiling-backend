@@ -2,7 +2,6 @@
  * Academic History Validation Schemas
  * Zod schemas for validating academic history input
  * 
- * Requirements: 21.2
  */
 
 import { z } from 'zod';

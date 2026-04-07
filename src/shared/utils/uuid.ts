@@ -11,7 +11,6 @@
  * - 2 bits: Version (0b111 = 7)
  * - 62 bits: Random data
  * 
- * Requirements: 23.1, 23.3
  */
 
 /**

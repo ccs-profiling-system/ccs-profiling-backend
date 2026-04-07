@@ -2,7 +2,6 @@
  * Report Service
  * Generates PDF and Excel reports for various entities
  * 
- * Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.6, 17.7
  */
 
 import PDFDocument from 'pdfkit';
@@ -29,7 +28,6 @@ export class ReportService {
 
   /**
    * Generate student profile report (PDF)
-   * Requirements: 17.1, 17.3
    */
   async generateStudentProfileReport(
     request: StudentProfileReportRequestDTO
@@ -150,7 +148,6 @@ export class ReportService {
 
   /**
    * Generate faculty profile report (PDF)
-   * Requirements: 17.1, 17.4
    */
   async generateFacultyProfileReport(
     request: FacultyProfileReportRequestDTO
@@ -203,7 +200,6 @@ export class ReportService {
 
   /**
    * Generate enrollment report (Excel)
-   * Requirements: 17.2, 17.5
    */
   async generateEnrollmentReport(
     request: EnrollmentReportRequestDTO
@@ -262,7 +258,6 @@ export class ReportService {
 
   /**
    * Generate analytics report (PDF)
-   * Requirements: 17.1, 17.6
    */
   async generateAnalyticsReport(
     request: AnalyticsReportRequestDTO

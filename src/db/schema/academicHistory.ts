@@ -8,7 +8,6 @@ import { students } from './students';
  * Stores student grade records and academic performance history.
  * Tracks subject grades, credits, and academic period information.
  * 
- * Requirements: 8.2, 23.2, 29.4
  */
 export const academicHistory = pgTable('academic_history', {
   id: uuidPrimaryKey(),
@@ -24,7 +23,7 @@ export const academicHistory = pgTable('academic_history', {
   remarks: varchar('remarks', { length: 50 }), // 'passed', 'failed', 'incomplete'
   ...timestamps,
 }, (table) => ({
-  // Indexes for query optimization (Requirements 23.2, 29.4)
+  // Indexes for query optimization 
   studentIdIdx: index('academic_history_student_id_idx').on(table.student_id),
   semesterAcademicYearIdx: index('academic_history_semester_academic_year_idx')
     .on(table.semester, table.academic_year),

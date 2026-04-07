@@ -2,7 +2,6 @@
  * Event Service
  * Business logic layer for event operations
  * 
- * Requirements: 11.1, 11.6
  */
 
 import { EventRepository } from '../repositories/event.repository';
@@ -23,7 +22,6 @@ export class EventService {
 
   /**
    * Get event by ID
-   * Requirement: 11.1
    */
   async getEvent(id: string): Promise<EventResponseDTO> {
     const event = await this.eventRepository.findById(id);
@@ -38,7 +36,6 @@ export class EventService {
 
   /**
    * List events with pagination and filters
-   * Requirement: 11.1
    */
   async listEvents(filters?: EventFilters): Promise<EventListResponseDTO> {
     const result = await this.eventRepository.findAll(filters);
@@ -59,7 +56,6 @@ export class EventService {
 
   /**
    * Create a new event
-   * Requirement: 11.1
    */
   async createEvent(data: CreateEventDTO): Promise<EventResponseDTO> {
     // Generate UUID v7 for primary key
@@ -83,7 +79,6 @@ export class EventService {
 
   /**
    * Update event by ID
-   * Requirement: 11.1
    */
   async updateEvent(id: string, data: UpdateEventDTO): Promise<EventResponseDTO> {
     // Check if event exists
@@ -105,7 +100,6 @@ export class EventService {
 
   /**
    * Delete event by ID (soft delete)
-   * Requirement: 11.1
    */
   async deleteEvent(id: string): Promise<void> {
     const existing = await this.eventRepository.findById(id);
@@ -118,7 +112,6 @@ export class EventService {
 
   /**
    * Add participant to event
-   * Requirements: 11.3, 11.4, 11.6
    */
   async addParticipant(eventId: string, data: AddParticipantDTO): Promise<EventParticipantDTO> {
     // Verify event exists
@@ -172,7 +165,6 @@ export class EventService {
 
   /**
    * Remove participant from event
-   * Requirement: 11.6
    */
   async removeParticipant(eventId: string, participantId: string): Promise<void> {
     // Verify event exists
@@ -196,7 +188,6 @@ export class EventService {
 
   /**
    * Get all participants for an event
-   * Requirement: 11.6
    */
   async getParticipants(eventId: string): Promise<EventParticipantDTO[]> {
     // Verify event exists
@@ -264,7 +255,6 @@ export class EventService {
 
   /**
    * Get soft-deleted events (admin only)
-   * Requirements: 28.5
    */
   async getDeletedEvents(filters?: EventFilters): Promise<EventListResponseDTO> {
     const result = await this.eventRepository.findDeleted(filters);
@@ -277,7 +267,6 @@ export class EventService {
 
   /**
    * Restore soft-deleted event
-   * Requirements: 28.7
    */
   async restoreEvent(id: string): Promise<EventResponseDTO> {
     // Find event including deleted
@@ -300,7 +289,6 @@ export class EventService {
 
   /**
    * Permanently delete event (hard delete)
-   * Requirements: 28.6
    */
   async permanentDeleteEvent(id: string): Promise<void> {
     // Find event including deleted

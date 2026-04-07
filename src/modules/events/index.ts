@@ -2,7 +2,6 @@
  * Events Module
  * Exports all event-related components
  * 
- * Requirements: 11.1, 11.6
  */
 
 import { db } from '../../db';

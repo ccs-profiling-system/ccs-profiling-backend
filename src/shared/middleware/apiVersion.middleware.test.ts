@@ -1,7 +1,6 @@
 /**
  * API Version Middleware Tests
  * 
- * Requirements: 30.5, 30.6
  */
 
 import { describe, it, expect, vi } from 'vitest';

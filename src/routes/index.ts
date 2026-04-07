@@ -85,7 +85,6 @@
  *     - Global search across entities
  *     - Entity-specific search
  * 
- * Requirements: 30.1, 30.2
  */
 
 import { Router } from 'express';

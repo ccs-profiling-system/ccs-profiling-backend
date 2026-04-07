@@ -2,7 +2,6 @@
  * Audit Log Service
  * Business logic layer for audit log operations
  * 
- * Requirements: 19.5, 30.2
  */
 
 import { AuditLogRepository } from '../repositories/auditLog.repository';
@@ -18,7 +17,6 @@ export class AuditLogService {
 
   /**
    * Get audit log by ID
-   * Requirement: 19.5
    */
   async getAuditLog(id: string): Promise<AuditLogResponseDTO> {
     const auditLog = await this.auditLogRepository.findById(id);
@@ -30,7 +28,6 @@ export class AuditLogService {
 
   /**
    * List audit logs by user ID
-   * Requirement: 19.5
    */
   async listAuditLogsByUser(
     userId: string,
@@ -45,7 +42,6 @@ export class AuditLogService {
 
   /**
    * List audit logs by entity
-   * Requirement: 19.5
    */
   async listAuditLogsByEntity(
     entityType: string,
@@ -65,7 +61,6 @@ export class AuditLogService {
 
   /**
    * List audit logs with date range and filters
-   * Requirement: 19.5
    */
   async listAuditLogs(filters: AuditLogFilters): Promise<AuditLogListResponseDTO> {
     const result = await this.auditLogRepository.findByDateRange(filters);

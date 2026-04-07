@@ -2,7 +2,6 @@
  * Affiliation Repository
  * Database access layer for affiliation operations
  * 
- * Requirements: 7.1, 7.3
  */
 
 import { eq, and, inArray, sql } from 'drizzle-orm';
@@ -32,7 +31,6 @@ export class AffiliationRepository {
 
   /**
    * Find affiliation record by UUID
-   * Requirement: 7.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -46,7 +44,6 @@ export class AffiliationRepository {
 
   /**
    * Find affiliation records by student ID
-   * Requirement: 7.3
    */
   async findByStudentId(studentId: string) {
     return await this.db
@@ -59,7 +56,6 @@ export class AffiliationRepository {
   /**
    * Batch query to find affiliations by multiple student IDs
    * Prevents N+1 query problem
-   * Requirement: 7.3
    */
   async findByStudentIds(studentIds: string[]) {
     if (studentIds.length === 0) {
@@ -75,7 +71,6 @@ export class AffiliationRepository {
 
   /**
    * Find all affiliation records with pagination and filters
-   * Requirements: 7.1, 7.3
    */
   async findAll(filters?: AffiliationFilters) {
     const page = filters?.page || 1;
@@ -125,7 +120,6 @@ export class AffiliationRepository {
 
   /**
    * Create a new affiliation record
-   * Requirement: 7.1
    */
   async create(data: CreateAffiliationData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -136,7 +130,6 @@ export class AffiliationRepository {
 
   /**
    * Update affiliation record by ID
-   * Requirement: 7.1
    */
   async update(id: string, data: UpdateAffiliationData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -154,7 +147,6 @@ export class AffiliationRepository {
 
   /**
    * Delete affiliation record by ID
-   * Requirement: 7.1
    */
   async delete(id: string) {
     await this.db.delete(affiliations).where(eq(affiliations.id, id));

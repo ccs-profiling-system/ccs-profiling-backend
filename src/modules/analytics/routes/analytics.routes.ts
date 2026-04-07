@@ -2,7 +2,6 @@
  * Analytics Routes
  * Route definitions for analytics endpoints
  * 
- * Requirements: 16.7, 30.2
  */
 
 import { Router } from 'express';

@@ -2,7 +2,6 @@
  * Student Routes
  * Route definitions for student endpoints
  * 
- * Requirements: 2.1, 2.5, 2.6, 2.7, 4.7, 4.8, 19.4, 30.2
  */
 
 import { Router } from 'express';

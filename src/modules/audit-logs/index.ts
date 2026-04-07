@@ -2,7 +2,6 @@
  * Audit Logs Module
  * Exports audit log routes and dependencies
  * 
- * Requirements: 19.1, 19.5, 30.2
  */
 
 import { db } from '../../db';

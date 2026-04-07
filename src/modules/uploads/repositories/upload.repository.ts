@@ -2,7 +2,6 @@
  * Upload Repository
  * Database access layer for upload operations
  * 
- * Requirements: 20.1, 20.6
  */
 
 import { eq, and } from 'drizzle-orm';
@@ -26,7 +25,6 @@ export class UploadRepository {
 
   /**
    * Find upload by UUID
-   * Requirement: 20.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -40,7 +38,6 @@ export class UploadRepository {
 
   /**
    * Find all uploads for a specific entity
-   * Requirement: 20.1
    */
   async findByEntityId(entityType: string, entityId: string) {
     const result = await this.db
@@ -59,7 +56,6 @@ export class UploadRepository {
 
   /**
    * Create a new upload record
-   * Requirement: 20.1
    */
   async create(data: CreateUploadData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -70,7 +66,6 @@ export class UploadRepository {
 
   /**
    * Delete upload by ID
-   * Requirement: 20.6
    */
   async delete(id: string) {
     await this.db

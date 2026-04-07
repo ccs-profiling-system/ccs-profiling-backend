@@ -118,7 +118,6 @@ export function formatErrorResponse(
     error: {
       message,
       code,
-      timestamp: new Date().toISOString(), // Requirement 24.12 - ISO 8601 format
       ...(details && { 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         details 

@@ -2,7 +2,6 @@
  * Event Controller
  * HTTP request/response handling for event operations
  * 
- * Requirements: 11.1, 11.6, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -23,7 +22,6 @@ export class EventController {
   /**
    * GET /api/v1/admin/events
    * List events with pagination and filters
-   * Requirements: 11.1, 30.2
    */
   listEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -50,7 +48,6 @@ export class EventController {
   /**
    * GET /api/v1/admin/events/:id
    * Get event by ID
-   * Requirements: 11.1, 30.2
    */
   getEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -76,7 +73,6 @@ export class EventController {
   /**
    * POST /api/v1/admin/events
    * Create a new event
-   * Requirements: 11.1, 30.2
    */
   createEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -102,7 +98,6 @@ export class EventController {
   /**
    * PUT /api/v1/admin/events/:id
    * Update event by ID
-   * Requirements: 11.1, 30.2
    */
   updateEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -135,7 +130,6 @@ export class EventController {
   /**
    * DELETE /api/v1/admin/events/:id
    * Delete event by ID (soft delete)
-   * Requirements: 11.1, 30.2
    */
   deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -163,7 +157,6 @@ export class EventController {
   /**
    * GET /api/v1/admin/events/:id/participants
    * Get all participants for an event
-   * Requirements: 11.6, 30.2
    */
   getParticipants = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -189,7 +182,6 @@ export class EventController {
   /**
    * POST /api/v1/admin/events/:id/participants
    * Add participant to event
-   * Requirements: 11.6, 30.2
    */
   addParticipant = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -222,7 +214,6 @@ export class EventController {
   /**
    * DELETE /api/v1/admin/events/:id/participants/:participantId
    * Remove participant from event
-   * Requirements: 11.6, 30.2
    */
   removeParticipant = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -257,7 +248,6 @@ export class EventController {
   /**
    * GET /api/v1/admin/events/deleted
    * Get soft-deleted events (admin only)
-   * Requirements: 28.5, 30.2
    */
   getDeletedEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -284,7 +274,6 @@ export class EventController {
   /**
    * PATCH /api/v1/admin/events/:id/restore
    * Restore soft-deleted event
-   * Requirements: 28.7, 30.2
    */
   restoreEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -310,7 +299,6 @@ export class EventController {
   /**
    * DELETE /api/v1/admin/events/:id/permanent
    * Permanently delete event (hard delete)
-   * Requirements: 28.6, 30.2
    */
   permanentDeleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {

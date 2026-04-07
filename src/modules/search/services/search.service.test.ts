@@ -2,7 +2,6 @@
  * Search Service Tests
  * Tests for search functionality
  * 
- * Requirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';

@@ -2,7 +2,6 @@
  * Faculty Service
  * Business logic layer for faculty operations
  * 
- * Requirements: 3.1, 3.4, 3.5
  */
 
 import { FacultyRepository } from '../repositories/faculty.repository';
@@ -30,7 +29,6 @@ export class FacultyService {
 
   /**
    * Get faculty by ID
-   * Requirement: 3.4
    */
   async getFaculty(id: string): Promise<FacultyResponseDTO> {
     const faculty = await this.facultyRepository.findById(id);
@@ -42,7 +40,6 @@ export class FacultyService {
 
   /**
    * List faculty with pagination and filters
-   * Requirement: 3.4
    */
   async listFaculty(filters?: FacultyFilters): Promise<FacultyListResponseDTO> {
     const result = await this.facultyRepository.findAll(filters);
@@ -56,7 +53,6 @@ export class FacultyService {
    * Create a new faculty
    * Optionally creates a linked user account
    * Automatically generates UUID v7 and human-readable faculty_id
-   * Requirements: 3.1, 3.4
    */
   async createFaculty(data: CreateFacultyDTO): Promise<FacultyResponseDTO> {
     // Check for duplicate email
@@ -110,7 +106,6 @@ export class FacultyService {
   /**
    * Create faculty with linked user account in a single transaction
    * Automatically generates UUID v7 and human-readable faculty_id
-   * Requirements: 3.2, 26.5, 26.7
    */
   async createFacultyWithUser(data: CreateFacultyDTO): Promise<FacultyResponseDTO> {
     // Check for duplicate email
@@ -179,7 +174,6 @@ export class FacultyService {
 
   /**
    * Update faculty by ID
-   * Requirement: 3.4
    */
   async updateFaculty(id: string, data: UpdateFacultyDTO): Promise<FacultyResponseDTO> {
     // Check if faculty exists
@@ -206,7 +200,6 @@ export class FacultyService {
 
   /**
    * Delete faculty by ID (soft delete)
-   * Requirement: 3.5
    */
   async deleteFaculty(id: string): Promise<void> {
     const existing = await this.facultyRepository.findById(id);
@@ -271,7 +264,6 @@ export class FacultyService {
 
   /**
    * Get soft-deleted faculty (admin only)
-   * Requirements: 28.5
    */
   async getDeletedFaculty(filters?: FacultyFilters): Promise<FacultyListResponseDTO> {
     const result = await this.facultyRepository.findDeleted(filters);
@@ -284,7 +276,6 @@ export class FacultyService {
 
   /**
    * Restore soft-deleted faculty
-   * Requirements: 28.7
    */
   async restoreFaculty(id: string): Promise<FacultyResponseDTO> {
     // Find faculty including deleted
@@ -307,7 +298,6 @@ export class FacultyService {
 
   /**
    * Permanently delete faculty (hard delete)
-   * Requirements: 28.6
    */
   async permanentDeleteFaculty(id: string): Promise<void> {
     // Find faculty including deleted

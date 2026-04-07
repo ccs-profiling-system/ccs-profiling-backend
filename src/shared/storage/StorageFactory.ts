@@ -8,7 +8,6 @@ import { S3Storage } from './S3Storage';
  * Creates the appropriate storage provider based on environment configuration.
  * Supports local filesystem and AWS S3 storage.
  * 
- * Requirements: 31.8
  * 
  * Environment Variables:
  * - STORAGE_PROVIDER: 'local' or 's3' (default: 'local')

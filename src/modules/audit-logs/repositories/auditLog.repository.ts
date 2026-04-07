@@ -2,7 +2,6 @@
  * Audit Log Repository
  * Database access layer for audit log operations
  * 
- * Requirements: 19.1, 19.5
  */
 
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
@@ -26,7 +25,6 @@ export class AuditLogRepository {
 
   /**
    * Create a new audit log entry
-   * Requirement: 19.1
    */
   async create(data: CreateAuditLogData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -37,7 +35,6 @@ export class AuditLogRepository {
 
   /**
    * Find audit log by ID
-   * Requirement: 19.5
    */
   async findById(id: string) {
     const result = await this.db
@@ -51,7 +48,6 @@ export class AuditLogRepository {
 
   /**
    * Find audit logs by user ID
-   * Requirement: 19.5
    */
   async findByUserId(userId: string, filters?: AuditLogFilters) {
     const page = filters?.page || 1;
@@ -98,7 +94,6 @@ export class AuditLogRepository {
 
   /**
    * Find audit logs by entity type and ID
-   * Requirement: 19.5
    */
   async findByEntity(entityType: string, entityId: string, filters?: AuditLogFilters) {
     const page = filters?.page || 1;
@@ -148,7 +143,6 @@ export class AuditLogRepository {
 
   /**
    * Find audit logs by date range with filters
-   * Requirement: 19.5
    */
   async findByDateRange(filters: AuditLogFilters) {
     const page = filters.page || 1;

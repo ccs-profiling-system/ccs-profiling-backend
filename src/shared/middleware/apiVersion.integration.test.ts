@@ -2,7 +2,6 @@
  * API Version Middleware Integration Tests
  * Tests the middleware in the context of the Express app
  * 
- * Requirements: 30.5, 30.6
  */
 
 import { describe, it, expect } from 'vitest';

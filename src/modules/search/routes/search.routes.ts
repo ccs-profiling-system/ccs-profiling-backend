@@ -2,7 +2,6 @@
  * Search Routes
  * Route definitions for search endpoints
  * 
- * Requirements: 18.6, 30.2
  */
 
 import { Router } from 'express';

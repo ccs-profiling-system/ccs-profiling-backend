@@ -2,7 +2,6 @@
  * Violation Service
  * Business logic layer for violation operations
  * 
- * Requirements: 6.1, 6.3, 6.4
  */
 
 import { ViolationRepository } from '../repositories/violation.repository';
@@ -25,7 +24,6 @@ export class ViolationService {
 
   /**
    * Get violation record by ID
-   * Requirement: 6.1
    */
   async getViolation(id: string): Promise<ViolationResponseDTO> {
     const record = await this.violationRepository.findById(id);
@@ -37,7 +35,6 @@ export class ViolationService {
 
   /**
    * List violation records with pagination and filters
-   * Requirements: 6.1, 6.3
    */
   async listViolations(filters?: ViolationFilters): Promise<ViolationListResponseDTO> {
     const result = await this.violationRepository.findAll(filters);
@@ -49,7 +46,6 @@ export class ViolationService {
 
   /**
    * Get violation records by student ID
-   * Requirement: 6.3
    */
   async getViolationsByStudent(studentId: string): Promise<ViolationResponseDTO[]> {
     // Verify student exists
@@ -64,7 +60,6 @@ export class ViolationService {
 
   /**
    * Create a new violation record
-   * Requirements: 6.1, 6.2
    */
   async createViolation(data: CreateViolationDTO): Promise<ViolationResponseDTO> {
     // Verify student exists
@@ -90,7 +85,6 @@ export class ViolationService {
 
   /**
    * Update violation record by ID
-   * Requirement: 6.3
    */
   async updateViolation(id: string, data: UpdateViolationDTO): Promise<ViolationResponseDTO> {
     // Check if record exists
@@ -110,7 +104,6 @@ export class ViolationService {
 
   /**
    * Delete violation record by ID
-   * Requirement: 6.3
    */
   async deleteViolation(id: string): Promise<void> {
     const existing = await this.violationRepository.findById(id);
@@ -124,7 +117,6 @@ export class ViolationService {
   /**
    * Resolve a violation record
    * Updates resolution_status to 'resolved' and sets resolved_at timestamp
-   * Requirement: 6.4
    */
   async resolveViolation(id: string, resolutionNotes?: string): Promise<ViolationResponseDTO> {
     // Check if record exists

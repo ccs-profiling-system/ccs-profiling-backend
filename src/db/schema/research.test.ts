@@ -5,7 +5,6 @@ import { research, researchAuthors, researchAdvisers } from './research';
  * Research Schema Tests
  * 
  * Validates the research database schema structure.
- * Requirements: 12.2, 12.3, 12.4, 23.2, 28.1, 29.4, 29.7
  */
 describe('Research Schema', () => {
   describe('research table', () => {

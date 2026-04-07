@@ -8,7 +8,6 @@ import { users } from './users';
  * Stores file upload metadata for documents attached to various entities.
  * Tracks file information, storage location, and entity associations.
  * 
- * Requirements: 20.2, 23.2, 29.4
  */
 export const uploads = pgTable('uploads', {
   id: uuidPrimaryKey(),
@@ -22,7 +21,7 @@ export const uploads = pgTable('uploads', {
   uploaded_by: uuid('uploaded_by').references(() => users.id, { onDelete: 'set null' }), // User who uploaded the file
   ...timestamps,
 }, (table) => ({
-  // Indexes for query optimization (Requirement 29.4)
+  // Indexes for query optimization
   entityTypeIdx: index('uploads_entity_type_idx').on(table.entity_type),
   entityIdIdx: index('uploads_entity_id_idx').on(table.entity_id),
   // Composite index for efficient entity-specific queries

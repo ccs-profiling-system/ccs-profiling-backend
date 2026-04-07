@@ -2,7 +2,6 @@
  * Events Module Tests
  * Integration tests for event operations
  * 
- * Requirements: 11.1, 11.3, 11.4, 11.6
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';

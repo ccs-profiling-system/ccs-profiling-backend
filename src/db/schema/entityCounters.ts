@@ -9,7 +9,6 @@ import { uuidPrimaryKey } from './utils';
  * 
  * The counter resets each year and is unique per entity type.
  * 
- * Requirements: 23.2
  */
 export const entityCounters = pgTable('entity_counters', {
   id: uuidPrimaryKey(),

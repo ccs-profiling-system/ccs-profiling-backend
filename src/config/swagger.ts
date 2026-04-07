@@ -3,7 +3,6 @@
  * 
  * This module configures OpenAPI 3.0 documentation for the CCS Backend API.
  * 
- * Requirements: 24.1, 24.2, 24.3, 24.4
  */
 
 import swaggerJsdoc from 'swagger-jsdoc';

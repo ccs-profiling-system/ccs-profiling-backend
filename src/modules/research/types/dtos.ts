@@ -2,7 +2,6 @@
  * Research Module DTOs
  * Data Transfer Objects for research management
  * 
- * Requirements: 12.2
  */
 
 /**

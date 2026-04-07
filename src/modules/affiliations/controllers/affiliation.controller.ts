@@ -2,7 +2,6 @@
  * Affiliation Controller
  * HTTP request/response handling for affiliation operations
  * 
- * Requirements: 7.1, 7.3, 7.4, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -23,7 +22,6 @@ export class AffiliationController {
   /**
    * GET /api/v1/admin/affiliations
    * List affiliation records with pagination and filters
-   * Requirements: 7.1, 30.2
    */
   listAffiliations = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -50,7 +48,6 @@ export class AffiliationController {
   /**
    * GET /api/v1/admin/students/:studentId/affiliations
    * Get affiliation records by student ID
-   * Requirements: 7.3, 30.2
    */
   getAffiliationsByStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -76,7 +73,6 @@ export class AffiliationController {
   /**
    * POST /api/v1/admin/students/:studentId/affiliations
    * Create a new affiliation record
-   * Requirements: 7.1, 7.2, 30.2
    */
   createAffiliation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -113,7 +109,6 @@ export class AffiliationController {
   /**
    * GET /api/v1/admin/affiliations/:id
    * Get affiliation record by ID
-   * Requirements: 7.1, 30.2
    */
   getAffiliation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -139,7 +134,6 @@ export class AffiliationController {
   /**
    * PUT /api/v1/admin/affiliations/:id
    * Update affiliation record by ID
-   * Requirements: 7.1, 30.2
    */
   updateAffiliation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -172,7 +166,6 @@ export class AffiliationController {
   /**
    * DELETE /api/v1/admin/affiliations/:id
    * Delete affiliation record by ID
-   * Requirements: 7.1, 30.2
    */
   deleteAffiliation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -200,7 +193,6 @@ export class AffiliationController {
   /**
    * PATCH /api/v1/admin/affiliations/:id/end
    * End an affiliation record
-   * Requirements: 7.4, 30.2
    */
   endAffiliation = async (req: Request, res: Response, next: NextFunction) => {
     try {

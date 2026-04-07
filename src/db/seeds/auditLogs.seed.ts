@@ -2,7 +2,6 @@
  * Audit Logs Seed Data
  * Generates sample audit log entries for testing
  * 
- * Requirements: 19.1, 19.2, 19.3, 19.4
  */
 
 import { db } from '../index';

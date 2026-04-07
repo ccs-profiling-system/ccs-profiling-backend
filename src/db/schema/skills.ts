@@ -8,7 +8,6 @@ import { students } from './students';
  * Stores student skills and competencies separately from the student profile.
  * Supports cascade delete to maintain referential integrity.
  * 
- * Requirements: 5.2, 23.2, 23.4, 29.4
  */
 export const skills = pgTable('skills', {
   id: uuidPrimaryKey(),
@@ -20,6 +19,6 @@ export const skills = pgTable('skills', {
   years_of_experience: integer('years_of_experience'),
   ...timestamps,
 }, (table) => ({
-  // Index for query optimization (Requirement 29.4)
+  // Index for query optimization
   studentIdIdx: index('skills_student_id_idx').on(table.student_id),
 }));

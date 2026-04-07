@@ -2,7 +2,6 @@
  * Scheduling Module Integration Tests
  * Tests for schedule CRUD operations and conflict detection
  * 
- * Requirements: 13.1, 13.3, 13.4, 13.5, 13.6
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
