@@ -46,5 +46,23 @@ export function createDashboardRoutes(dashboardController: DashboardController):
    */
   router.get('/events', dashboardController.getEventStats);
 
+  /**
+   * GET /api/v1/admin/dashboard/recent-activity
+   * Get recent activity
+   */
+  router.get('/recent-activity', dashboardController.getRecentActivity);
+
+  /**
+   * GET /api/v1/admin/dashboard/priority-alerts
+   * Get priority alerts
+   */
+  router.get('/priority-alerts', dashboardController.getPriorityAlerts);
+
+  /**
+   * GET /api/v1/admin/dashboard/upcoming-events
+   * Get upcoming events
+   */
+  router.get('/upcoming-events', dashboardController.getUpcomingEvents);
+
   return router;
 }

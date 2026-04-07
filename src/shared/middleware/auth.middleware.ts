@@ -22,8 +22,20 @@ declare global {
  */
 export const authMiddleware = (req: Request, _res: Response, next: NextFunction) => {
   try {
-    // Extract token from Authorization header
+    // Development bypass - check for dev-bypass-token
     const authHeader = req.headers.authorization;
+    
+    if (authHeader === 'Bearer dev-bypass-token' && config.nodeEnv === 'development') {
+      // Bypass authentication in development mode
+      req.user = {
+        userId: 'dev-user-id',
+        email: 'dev@example.com',
+        role: 'admin',
+      };
+      return next();
+    }
+
+    // Extract token from Authorization header
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedError('No token provided');
     }

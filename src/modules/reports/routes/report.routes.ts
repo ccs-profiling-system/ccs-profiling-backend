@@ -24,6 +24,36 @@ export function createReportRoutes(reportController: ReportController): Router {
   router.use(adminOnly);
 
   /**
+   * GET /api/v1/admin/reports
+   * Get all reports with filters
+   */
+  router.get('/', reportController.getReports);
+
+  /**
+   * GET /api/v1/admin/reports/statistics
+   * Get report statistics
+   */
+  router.get('/statistics', reportController.getReportStatistics);
+
+  /**
+   * GET /api/v1/admin/reports/:id
+   * Get report by ID
+   */
+  router.get('/:id', reportController.getReportById);
+
+  /**
+   * GET /api/v1/admin/reports/:id/download
+   * Download report file
+   */
+  router.get('/:id/download', reportController.downloadReport);
+
+  /**
+   * DELETE /api/v1/admin/reports/:id
+   * Delete report
+   */
+  router.delete('/:id', reportController.deleteReport);
+
+  /**
    * POST /api/v1/admin/reports/student-profile
    * Generate student profile report (PDF)
    */

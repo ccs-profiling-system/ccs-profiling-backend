@@ -15,6 +15,7 @@ import { AcademicHistoryRepository } from '../academic-history/repositories/acad
 import { EnrollmentRepository } from '../enrollments/repositories/enrollment.repository';
 import { FacultyRepository } from '../faculty/repositories/faculty.repository';
 import { AuditLogRepository } from '../audit-logs/repositories/auditLog.repository';
+import { ReportRepository } from './repositories/report.repository';
 import { AuditLogger } from '../../shared/utils/auditLogger';
 import { StudentService } from '../students/services/student.service';
 import { FacultyService } from '../faculty/services/faculty.service';
@@ -34,6 +35,7 @@ const academicHistoryRepository = new AcademicHistoryRepository(db);
 const enrollmentRepository = new EnrollmentRepository(db);
 const facultyRepository = new FacultyRepository(db);
 const auditLogRepository = new AuditLogRepository(db);
+const reportRepository = new ReportRepository(db);
 
 // Initialize audit logger
 const auditLogger = new AuditLogger(auditLogRepository);
@@ -65,7 +67,8 @@ const reportService = new ReportService(
   studentService,
   facultyService,
   enrollmentRepository,
-  analyticsService
+  analyticsService,
+  reportRepository
 );
 
 // Initialize controller

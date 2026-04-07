@@ -2,9 +2,6 @@ import { app } from './app';
 import { config } from './config';
 import { db } from './db';
 import { sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import { migrate } from 'drizzle-orm/postgres-js/migrator';
-import postgres from 'postgres';
 
 /**
  * Server Startup Script
@@ -29,33 +26,12 @@ const initializeDatabase = async () => {
   }
 };
 
-const runMigrations = async () => {
-  console.log('🔄 Running database migrations...');
-  
-  const connectionString = config.database.url;
-  const migrationClient = postgres(connectionString, { max: 1 });
-  const migrationDb = drizzle(migrationClient);
-
-  try {
-    await migrate(migrationDb, { migrationsFolder: './drizzle' });
-    console.log('✅ Migrations completed successfully');
-  } catch (error) {
-    console.error('❌ Migration failed:', error);
-    throw error;
-  } finally {
-    await migrationClient.end();
-  }
-};
-
 const startServer = async () => {
   try {
     // Step 1: Initialize database connection
     await initializeDatabase();
     
-    // Step 2: Run migrations
-    await runMigrations();
-    
-    // Step 3: Start Express server
+    // Step 2: Start Express server (migrations removed - run manually with npm run db:migrate)
     app.listen(config.port, () => {
       console.log('');
       console.log('═════════════════════════════════════════════════════');

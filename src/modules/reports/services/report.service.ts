@@ -6,10 +6,14 @@
 
 import PDFDocument from 'pdfkit';
 import ExcelJS from 'exceljs';
+import fs from 'fs/promises';
+import path from 'path';
 import { StudentService } from '../../students/services/student.service';
 import { FacultyService } from '../../faculty/services/faculty.service';
 import { EnrollmentRepository } from '../../enrollments/repositories/enrollment.repository';
 import { AnalyticsService } from '../../analytics/services/analytics.service';
+import { ReportRepository, ReportFilters } from '../repositories/report.repository';
+import type { Report } from '../../../db/schema';
 import {
   StudentProfileReportRequestDTO,
   FacultyProfileReportRequestDTO,
@@ -19,18 +23,104 @@ import {
 } from '../types';
 
 export class ReportService {
+  private reportsDir: string;
+
   constructor(
     private studentService: StudentService,
     private facultyService: FacultyService,
     private enrollmentRepository: EnrollmentRepository,
-    private analyticsService: AnalyticsService
-  ) {}
+    private analyticsService: AnalyticsService,
+    private reportRepository: ReportRepository
+  ) {
+    this.reportsDir = process.env.REPORTS_STORAGE_PATH || './reports';
+    this.ensureReportsDirectory();
+  }
+
+  private async ensureReportsDirectory(): Promise<void> {
+    try {
+      await fs.mkdir(this.reportsDir, { recursive: true });
+    } catch (error) {
+      console.error('Failed to create reports directory:', error);
+    }
+  }
+
+  private async saveReportFile(buffer: Buffer, fileName: string): Promise<string> {
+    const filePath = path.join(this.reportsDir, fileName);
+    await fs.writeFile(filePath, buffer);
+    return filePath;
+  }
+
+  private async saveReportHistory(
+    reportType: string,
+    reportName: string,
+    result: ReportGenerationResult,
+    userId: string,
+    parameters?: any
+  ): Promise<Report> {
+    const filePath = await this.saveReportFile(result.buffer, result.fileName);
+
+    return this.reportRepository.create({
+      report_type: reportType,
+      report_name: reportName,
+      file_name: result.fileName,
+      file_path: filePath,
+      file_size: result.buffer.length,
+      format: result.mimeType.includes('pdf') ? 'pdf' : 'excel',
+      status: 'completed',
+      generated_by: userId,
+      parameters: parameters ? JSON.stringify(parameters) : null,
+    });
+  }
+
+  async getReports(filters?: ReportFilters, page = 1, pageSize = 20) {
+    return this.reportRepository.findAll(filters, page, pageSize);
+  }
+
+  async getReportById(id: string): Promise<Report | undefined> {
+    return this.reportRepository.findById(id);
+  }
+
+  async getReportStatistics() {
+    return this.reportRepository.getStatistics();
+  }
+
+  async deleteReport(id: string): Promise<boolean> {
+    const report = await this.reportRepository.findById(id);
+    if (!report) {
+      return false;
+    }
+
+    // Delete file from disk
+    try {
+      await fs.unlink(report.file_path);
+    } catch (error) {
+      console.error('Failed to delete report file:', error);
+    }
+
+    // Delete from database
+    return this.reportRepository.delete(id);
+  }
+
+  async downloadReport(id: string): Promise<Buffer | null> {
+    const report = await this.reportRepository.findById(id);
+    if (!report) {
+      return null;
+    }
+
+    try {
+      return await fs.readFile(report.file_path);
+    } catch (error) {
+      console.error('Failed to read report file:', error);
+      return null;
+    }
+  }
 
   /**
    * Generate student profile report (PDF)
    */
   async generateStudentProfileReport(
-    request: StudentProfileReportRequestDTO
+    request: StudentProfileReportRequestDTO,
+    userId?: string
   ): Promise<ReportGenerationResult> {
     // Fetch student profile data
     const profile = await this.studentService.getStudentProfile(request.student_id);
@@ -139,18 +229,32 @@ export class ReportService {
       });
     });
 
-    return {
+    const result = {
       buffer,
       fileName: `student-profile-${profile.student_id}-${Date.now()}.pdf`,
       mimeType: 'application/pdf',
     };
+
+    // Save report history if userId provided
+    if (userId) {
+      await this.saveReportHistory(
+        'student-profile',
+        `Student Profile - ${profile.first_name} ${profile.last_name}`,
+        result,
+        userId,
+        { student_id: request.student_id }
+      );
+    }
+
+    return result;
   }
 
   /**
    * Generate faculty profile report (PDF)
    */
   async generateFacultyProfileReport(
-    request: FacultyProfileReportRequestDTO
+    request: FacultyProfileReportRequestDTO,
+    userId?: string
   ): Promise<ReportGenerationResult> {
     // Fetch faculty profile data
     const faculty = await this.facultyService.getFaculty(request.faculty_id);
@@ -191,18 +295,32 @@ export class ReportService {
       });
     });
 
-    return {
+    const result = {
       buffer,
       fileName: `faculty-profile-${faculty.faculty_id}-${Date.now()}.pdf`,
       mimeType: 'application/pdf',
     };
+
+    // Save report history if userId provided
+    if (userId) {
+      await this.saveReportHistory(
+        'faculty-profile',
+        `Faculty Profile - ${faculty.first_name} ${faculty.last_name}`,
+        result,
+        userId,
+        { faculty_id: request.faculty_id }
+      );
+    }
+
+    return result;
   }
 
   /**
    * Generate enrollment report (Excel)
    */
   async generateEnrollmentReport(
-    request: EnrollmentReportRequestDTO
+    request: EnrollmentReportRequestDTO,
+    userId?: string
   ): Promise<ReportGenerationResult> {
     // Fetch enrollment data
     const enrollments = await this.enrollmentRepository.findAll({
@@ -247,20 +365,34 @@ export class ReportService {
     // Generate buffer
     const buffer = await workbook.xlsx.writeBuffer();
 
-    return {
+    const result = {
       buffer: Buffer.from(buffer),
       fileName: `enrollment-report-${request.semester || 'all'}-${
         request.academic_year || 'all'
       }-${Date.now()}.xlsx`,
       mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     };
+
+    // Save report history if userId provided
+    if (userId) {
+      await this.saveReportHistory(
+        'enrollments',
+        `Enrollment Report - ${request.semester || 'All'} ${request.academic_year || ''}`,
+        result,
+        userId,
+        request
+      );
+    }
+
+    return result;
   }
 
   /**
    * Generate analytics report (PDF)
    */
   async generateAnalyticsReport(
-    request: AnalyticsReportRequestDTO
+    request: AnalyticsReportRequestDTO,
+    userId?: string
   ): Promise<ReportGenerationResult> {
     // Create PDF document
     const doc = new PDFDocument({ margin: 50 });
@@ -375,10 +507,23 @@ export class ReportService {
       });
     });
 
-    return {
+    const result = {
       buffer,
       fileName: `analytics-${request.report_type}-${Date.now()}.pdf`,
       mimeType: 'application/pdf',
     };
+
+    // Save report history if userId provided
+    if (userId) {
+      await this.saveReportHistory(
+        'analytics',
+        `Analytics Report - ${request.report_type.toUpperCase()}`,
+        result,
+        userId,
+        request
+      );
+    }
+
+    return result;
   }
 }

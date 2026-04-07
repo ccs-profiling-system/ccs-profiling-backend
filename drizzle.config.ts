@@ -55,6 +55,7 @@ export default {
     './src/db/schema/research.ts',
     './src/db/schema/uploads.ts',
     './src/db/schema/auditLogs.ts',
+    './src/db/schema/reports.ts',
   ],
   out: './drizzle',
   driver: 'pg',
