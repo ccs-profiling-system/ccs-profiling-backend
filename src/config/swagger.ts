@@ -104,20 +104,23 @@ Paginated responses include a \`meta\` object:
       url: 'https://opensource.org/licenses/MIT',
     },
   },
-  servers: [
-    {
-      url: `http://localhost:${config.port}/api`,
-      description: 'Development server',
-    },
-    {
-      url: 'https://ccs-profiling-backend-oqve.onrender.com/api',
-      description: 'Production server (Render)',
-    },
-    {
-      url: 'https://api.ccs.edu/api',
-      description: 'Production server',
-    },
-  ],
+  servers: config.nodeEnv === 'production' 
+    ? [
+        {
+          url: 'https://ccs-profiling-backend-oqve.onrender.com/api',
+          description: 'Production server (Render)',
+        },
+      ]
+    : [
+        {
+          url: `http://localhost:${config.port}/api`,
+          description: 'Development server',
+        },
+        {
+          url: 'https://ccs-profiling-backend-oqve.onrender.com/api',
+          description: 'Production server (Render)',
+        },
+      ],
   tags: [
     {
       name: 'Authentication',
