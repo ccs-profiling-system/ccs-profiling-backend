@@ -38,7 +38,11 @@ export const auditContextMiddleware = (
   const user_agent = req.headers['user-agent'] || undefined;
 
   // Extract user ID from authenticated user (set by auth middleware)
-  const user_id = (req as any).user?.userId || undefined;
+  // Skip user_id if it's the dev bypass user to avoid FK constraint errors
+  const rawUserId = (req as any).user?.userId;
+  const user_id = (rawUserId === '00000000-0000-0000-0000-000000000000' || rawUserId === 'dev-user-id') 
+    ? undefined 
+    : rawUserId;
 
   // Attach audit context to request
   req.auditContext = {

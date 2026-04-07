@@ -27,8 +27,9 @@ export const authMiddleware = (req: Request, _res: Response, next: NextFunction)
     
     if (authHeader === 'Bearer dev-bypass-token' && config.nodeEnv === 'development') {
       // Bypass authentication in development mode
+      // Use a special dev user ID that won't conflict with audit logs
       req.user = {
-        userId: 'dev-user-id',
+        userId: '00000000-0000-0000-0000-000000000000', // Use null UUID for dev
         email: 'dev@example.com',
         role: 'admin',
       };
