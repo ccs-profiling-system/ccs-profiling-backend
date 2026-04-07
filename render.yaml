@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ccs-profiling-backend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+    # Cron job to keep the service alive (pings every 14 minutes)
+    # Render free tier spins down after 15 minutes of inactivity
+  - type: cron
+    name: ccs-profiling-backend-keepalive
+    env: node
+    schedule: "*/14 * * * *"
+    buildCommand: npm install
+    startCommand: node scripts/keepalive.js
+    envVars:
+      - key: BACKEND_URL
+        sync: false

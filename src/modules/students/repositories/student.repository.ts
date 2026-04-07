@@ -4,9 +4,10 @@
  * 
  */
 
-import { eq, and, isNull, or, ilike, sql } from 'drizzle-orm';
+import { eq, and, isNull, or, ilike, sql, inArray } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { students } from '../../../db/schema';
+import { skills } from '../../../db/schema/skills';
 import { StudentFilters } from '../types';
 import { calculateOffset, normalizePaginationParams } from '../../../shared/utils/pagination';
 import { createPaginationMeta } from '../../../shared/utils/apiResponse';
@@ -109,6 +110,26 @@ export class StudentRepository {
     // Filter by status
     if (filters?.status) {
       conditions.push(eq(students.status, filters.status));
+    }
+
+    // Filter by skill - requires subquery to find students with the specified skill
+    if (filters?.skill) {
+      const studentsWithSkill = await this.db
+        .select({ student_id: skills.student_id })
+        .from(skills)
+        .where(eq(skills.skill_name, filters.skill));
+      
+      const studentIds = studentsWithSkill.map(s => s.student_id);
+      
+      if (studentIds.length > 0) {
+        conditions.push(inArray(students.id, studentIds));
+      } else {
+        // No students have this skill, return empty result
+        return {
+          data: [],
+          meta: createPaginationMeta(page, limit, 0),
+        };
+      }
     }
 
     // Get total count

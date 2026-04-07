@@ -141,6 +141,7 @@ export interface StudentFilters {
   program?: string;
   year_level?: number;
   status?: string;
+  skill?: string;
   page?: number;
   limit?: number;
 }
