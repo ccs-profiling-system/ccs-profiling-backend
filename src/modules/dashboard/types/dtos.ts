@@ -55,5 +55,48 @@ export interface DashboardMetricsDTO {
   faculty: FacultyStatsDTO;
   enrollments: EnrollmentStatsDTO;
   events: EventStatsDTO;
+  research: { total_research: number };
   generated_at: string;
+}
+
+/**
+ * RecentActivityDTO - Recent activity item
+ */
+export interface RecentActivityDTO {
+  id: string;
+  type: 'student' | 'faculty' | 'event' | 'research' | 'report';
+  title: string;
+  description: string;
+  timestamp: string;
+  userId?: string;
+  userName?: string;
+}
+
+/**
+ * PriorityAlertDTO - Priority alert item
+ */
+export interface PriorityAlertDTO {
+  id: string;
+  type: 'urgent' | 'important' | 'reminder';
+  title: string;
+  description: string;
+  actionUrl: string;
+  count?: number;
+  dueDate?: string;
+  createdAt: string;
+}
+
+/**
+ * UpcomingEventDTO - Upcoming event item
+ */
+export interface UpcomingEventDTO {
+  id: string;
+  title: string;
+  description?: string;
+  startDate: string;
+  endDate?: string;
+  location?: string;
+  status: 'urgent' | 'this-week' | 'scheduled' | 'planned';
+  attendees?: number;
+  organizer?: string;
 }

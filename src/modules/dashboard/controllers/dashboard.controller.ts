@@ -95,4 +95,58 @@ export class DashboardController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/dashboard/recent-activity
+   * Get recent activity
+   */
+  getRecentActivity = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const activity = await this.dashboardService.getRecentActivity(limit);
+
+      res.json({
+        success: true,
+        data: activity,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * GET /api/v1/admin/dashboard/priority-alerts
+   * Get priority alerts
+   */
+  getPriorityAlerts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 5;
+      const alerts = await this.dashboardService.getPriorityAlerts(limit);
+
+      res.json({
+        success: true,
+        data: alerts,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * GET /api/v1/admin/dashboard/upcoming-events
+   * Get upcoming events
+   */
+  getUpcomingEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 5;
+      const events = await this.dashboardService.getUpcomingEvents(limit);
+
+      res.json({
+        success: true,
+        data: events,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
