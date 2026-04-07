@@ -1,0 +1,69 @@
+/**
+ * Instruction Routes
+ * Route definitions for instruction endpoints
+ * 
+ */
+
+import { Router } from 'express';
+import { InstructionController } from '../controllers/instruction.controller';
+import { authMiddleware } from '../../../shared/middleware/auth.middleware';
+import { adminOnly } from '../../../shared/middleware/role.middleware';
+
+export function createInstructionRoutes(instructionController: InstructionController): Router {
+  const router = Router();
+
+  // All routes require authentication and admin role
+  router.use(authMiddleware);
+  router.use(adminOnly);
+
+  /**
+   * GET /api/v1/admin/instructions/deleted
+   * Get soft-deleted instructions (admin only)
+   * IMPORTANT: This route must come BEFORE /:id to avoid route conflicts
+   */
+  router.get('/deleted', instructionController.getDeletedInstructions);
+
+  /**
+   * GET /api/v1/admin/instructions
+   * List instructions with pagination, search, and filters
+   */
+  router.get('/', instructionController.listInstructions);
+
+  /**
+   * GET /api/v1/admin/instructions/:id
+   * Get instruction by ID
+   */
+  router.get('/:id', instructionController.getInstruction);
+
+  /**
+   * POST /api/v1/admin/instructions
+   * Create a new instruction
+   */
+  router.post('/', instructionController.createInstruction);
+
+  /**
+   * PUT /api/v1/admin/instructions/:id
+   * Update instruction by ID
+   */
+  router.put('/:id', instructionController.updateInstruction);
+
+  /**
+   * PATCH /api/v1/admin/instructions/:id/restore
+   * Restore soft-deleted instruction
+   */
+  router.patch('/:id/restore', instructionController.restoreInstruction);
+
+  /**
+   * DELETE /api/v1/admin/instructions/:id/permanent
+   * Permanently delete instruction (hard delete)
+   */
+  router.delete('/:id/permanent', instructionController.permanentDeleteInstruction);
+
+  /**
+   * DELETE /api/v1/admin/instructions/:id
+   * Soft delete instruction by ID
+   */
+  router.delete('/:id', instructionController.deleteInstruction);
+
+  return router;
+}
