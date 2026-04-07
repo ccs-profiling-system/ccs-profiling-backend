@@ -1,3 +1,38 @@
+/**
+ * Drizzle ORM Configuration
+ * 
+ * This configuration file defines the database schema files and migration settings
+ * for Drizzle Kit (the migration generator and manager for Drizzle ORM).
+ * 
+ * SCHEMA FILES:
+ * All database schema files are listed here. When you run `npm run db:generate`,
+ * Drizzle Kit will analyze these files and generate SQL migration files.
+ * 
+ * REGISTERED SCHEMAS:
+ * - users: User accounts and authentication
+ * - students: Student profiles
+ * - faculty: Faculty profiles
+ * - entityCounters: Auto-incrementing ID counters
+ * - instructions: Curriculum and subjects
+ * - enrollments: Student course enrollments
+ * - academicHistory: Student grades and academic records
+ * - schedules: Class and exam schedules
+ * - skills: Student skills and competencies
+ * - violations: Student disciplinary records
+ * - affiliations: Student organization memberships
+ * - events: Academic and institutional events
+ * - research: Research projects and theses
+ * - uploads: File upload metadata
+ * - auditLogs: System activity audit trail
+ * 
+ * MIGRATION COMMANDS:
+ * - npm run db:generate - Generate migration files from schema changes
+ * - npm run db:migrate - Apply migrations to database
+ * - npm run db:push - Push schema changes directly (development only)
+ * 
+ * Requirements: 23.1, 23.2, 23.3
+ */
+
 import type { Config } from 'drizzle-kit';
 import dotenv from 'dotenv';
 

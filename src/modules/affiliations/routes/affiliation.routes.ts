@@ -2,7 +2,6 @@
  * Affiliation Routes
  * Route definitions for affiliation endpoints
  * 
- * Requirements: 7.1, 7.3, 7.4, 30.2
  */
 
 import { Router } from 'express';

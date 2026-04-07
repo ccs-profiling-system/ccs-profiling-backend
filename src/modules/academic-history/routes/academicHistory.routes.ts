@@ -2,7 +2,6 @@
  * Academic History Routes
  * Route definitions for academic history endpoints
  * 
- * Requirements: 8.1, 8.2, 8.3, 8.4, 30.2
  */
 
 import { Router } from 'express';

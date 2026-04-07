@@ -2,7 +2,6 @@
  * Faculty Controller
  * HTTP request/response handling for faculty operations
  * 
- * Requirements: 3.1, 3.4, 3.5, 4.7, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -21,7 +20,6 @@ export class FacultyController {
   /**
    * GET /api/v1/admin/faculty
    * List faculty with pagination, search, and filters
-   * Requirements: 3.4, 30.2
    */
   listFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -48,7 +46,6 @@ export class FacultyController {
   /**
    * GET /api/v1/admin/faculty/:id
    * Get faculty by ID
-   * Requirements: 3.4, 30.2
    */
   getFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,7 +71,6 @@ export class FacultyController {
   /**
    * POST /api/v1/admin/faculty
    * Create a new faculty
-   * Requirements: 3.1, 4.7, 30.2
    */
   createFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,7 +96,6 @@ export class FacultyController {
   /**
    * PUT /api/v1/admin/faculty/:id
    * Update faculty by ID
-   * Requirements: 3.4, 4.7, 30.2
    */
   updateFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -133,7 +128,6 @@ export class FacultyController {
   /**
    * DELETE /api/v1/admin/faculty/:id
    * Soft delete faculty by ID
-   * Requirements: 3.5, 4.7, 30.2
    */
   deleteFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -161,7 +155,6 @@ export class FacultyController {
   /**
    * GET /api/v1/admin/faculty/deleted
    * Get soft-deleted faculty (admin only)
-   * Requirements: 28.5, 30.2
    */
   getDeletedFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -188,7 +181,6 @@ export class FacultyController {
   /**
    * PATCH /api/v1/admin/faculty/:id/restore
    * Restore soft-deleted faculty
-   * Requirements: 28.7, 30.2
    */
   restoreFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -214,7 +206,6 @@ export class FacultyController {
   /**
    * DELETE /api/v1/admin/faculty/:id/permanent
    * Permanently delete faculty (hard delete)
-   * Requirements: 28.6, 30.2
    */
   permanentDeleteFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {

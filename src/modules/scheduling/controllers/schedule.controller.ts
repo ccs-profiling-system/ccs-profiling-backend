@@ -2,7 +2,6 @@
  * Schedule Controller
  * HTTP request/response handling for schedule operations
  * 
- * Requirements: 13.1, 13.5, 13.6, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -24,7 +23,6 @@ export class ScheduleController {
   /**
    * GET /api/v1/admin/schedules
    * List schedules with pagination and filters
-   * Requirements: 13.1, 30.2
    */
   listSchedules = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -51,7 +49,6 @@ export class ScheduleController {
   /**
    * GET /api/v1/admin/schedules/:id
    * Get schedule by ID
-   * Requirements: 13.1, 30.2
    */
   getSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -77,7 +74,6 @@ export class ScheduleController {
   /**
    * POST /api/v1/admin/schedules
    * Create a new schedule
-   * Requirements: 13.1, 30.2
    */
   createSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -103,7 +99,6 @@ export class ScheduleController {
   /**
    * PUT /api/v1/admin/schedules/:id
    * Update schedule by ID
-   * Requirements: 13.1, 30.2
    */
   updateSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -136,7 +131,6 @@ export class ScheduleController {
   /**
    * DELETE /api/v1/admin/schedules/:id
    * Delete schedule by ID
-   * Requirements: 13.1, 30.2
    */
   deleteSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -164,7 +158,6 @@ export class ScheduleController {
   /**
    * GET /api/v1/admin/schedules/room/:room
    * Get schedules by room
-   * Requirements: 13.5, 30.2
    */
   getSchedulesByRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -190,7 +183,6 @@ export class ScheduleController {
   /**
    * GET /api/v1/admin/schedules/faculty/:facultyId
    * Get schedules by faculty ID
-   * Requirements: 13.6, 30.2
    */
   getSchedulesByFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -216,7 +208,6 @@ export class ScheduleController {
   /**
    * POST /api/v1/admin/schedules/check-conflict
    * Check for schedule conflicts
-   * Requirements: 13.3, 13.4, 30.2
    */
   checkConflict = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -245,7 +236,6 @@ export class ScheduleController {
   /**
    * GET /api/v1/admin/schedules/deleted
    * Get soft-deleted schedules (admin only)
-   * Requirements: 28.5, 30.2
    */
   getDeletedSchedules = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -272,7 +262,6 @@ export class ScheduleController {
   /**
    * PATCH /api/v1/admin/schedules/:id/restore
    * Restore soft-deleted schedule
-   * Requirements: 28.7, 30.2
    */
   restoreSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -298,7 +287,6 @@ export class ScheduleController {
   /**
    * DELETE /api/v1/admin/schedules/:id/permanent
    * Permanently delete schedule (hard delete)
-   * Requirements: 28.6, 30.2
    */
   permanentDeleteSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {

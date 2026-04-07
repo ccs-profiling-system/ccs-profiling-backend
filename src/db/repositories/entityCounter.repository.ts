@@ -9,7 +9,6 @@ import { entityCounters } from '../schema/entityCounters';
  * Uses database-level locking (SELECT FOR UPDATE) to prevent race conditions
  * when multiple requests try to increment the counter simultaneously.
  * 
- * Requirements: 26.1, 26.2
  */
 export class EntityCounterRepository {
   constructor(private readonly database: Database = db) {}

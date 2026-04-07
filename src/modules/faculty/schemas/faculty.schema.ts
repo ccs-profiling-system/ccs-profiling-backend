@@ -2,7 +2,6 @@
  * Faculty Validation Schemas
  * Zod schemas for validating faculty input
  * 
- * Requirements: 21.2, 21.3, 21.4
  */
 
 import { z } from 'zod';

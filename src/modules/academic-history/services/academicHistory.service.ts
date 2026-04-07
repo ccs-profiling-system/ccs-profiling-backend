@@ -2,7 +2,6 @@
  * Academic History Service
  * Business logic layer for academic history operations
  * 
- * Requirements: 8.1, 8.2, 8.3, 8.4
  */
 
 import { AcademicHistoryRepository } from '../repositories/academicHistory.repository';
@@ -26,7 +25,6 @@ export class AcademicHistoryService {
 
   /**
    * Get academic history record by ID
-   * Requirement: 8.1
    */
   async getAcademicHistory(id: string): Promise<AcademicHistoryResponseDTO> {
     const record = await this.academicHistoryRepository.findById(id);
@@ -38,7 +36,6 @@ export class AcademicHistoryService {
 
   /**
    * List academic history records with pagination and filters
-   * Requirements: 8.1, 8.3
    */
   async listAcademicHistory(filters?: AcademicHistoryFilters): Promise<AcademicHistoryListResponseDTO> {
     const result = await this.academicHistoryRepository.findAll(filters);
@@ -50,7 +47,6 @@ export class AcademicHistoryService {
 
   /**
    * Get academic history records by student ID
-   * Requirement: 8.3
    */
   async getAcademicHistoryByStudent(studentId: string): Promise<AcademicHistoryResponseDTO[]> {
     // Verify student exists
@@ -65,7 +61,6 @@ export class AcademicHistoryService {
 
   /**
    * Create a new academic history record
-   * Requirements: 8.1, 8.2
    */
   async createAcademicHistory(data: CreateAcademicHistoryDTO): Promise<AcademicHistoryResponseDTO> {
     // Verify student exists
@@ -95,7 +90,6 @@ export class AcademicHistoryService {
 
   /**
    * Update academic history record by ID
-   * Requirement: 8.1
    */
   async updateAcademicHistory(id: string, data: UpdateAcademicHistoryDTO): Promise<AcademicHistoryResponseDTO> {
     // Check if record exists
@@ -121,7 +115,6 @@ export class AcademicHistoryService {
 
   /**
    * Delete academic history record by ID
-   * Requirement: 8.1
    */
   async deleteAcademicHistory(id: string): Promise<void> {
     const existing = await this.academicHistoryRepository.findById(id);
@@ -134,7 +127,6 @@ export class AcademicHistoryService {
 
   /**
    * Calculate GPA for a student
-   * Requirement: 8.4
    */
   async calculateGPA(studentId: string): Promise<GPAResponseDTO> {
     // Verify student exists

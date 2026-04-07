@@ -2,7 +2,6 @@
  * Event Repository
  * Database access layer for event operations
  * 
- * Requirements: 11.1, 11.3, 11.4, 11.6, 28.4
  */
 
 import { eq, and, isNull, ilike, sql, gte, lte } from 'drizzle-orm';
@@ -51,7 +50,6 @@ export class EventRepository {
 
   /**
    * Find event by UUID (excludes soft-deleted)
-   * Requirement: 11.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -66,7 +64,6 @@ export class EventRepository {
   /**
    * Find all events with pagination and filters (excludes soft-deleted)
    * Supports search by name and filtering by type and date range
-   * Requirements: 11.1, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: EventFilters) {
     // Normalize pagination parameters
@@ -117,7 +114,6 @@ export class EventRepository {
       .offset(offset)
       .orderBy(events.event_date);
 
-    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
       meta: createPaginationMeta(page, limit, total),
@@ -126,7 +122,6 @@ export class EventRepository {
 
   /**
    * Create a new event
-   * Requirement: 11.1
    */
   async create(data: CreateEventData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -137,7 +132,6 @@ export class EventRepository {
 
   /**
    * Update event by ID
-   * Requirement: 11.1
    */
   async update(id: string, data: UpdateEventData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -155,7 +149,6 @@ export class EventRepository {
 
   /**
    * Soft delete event by ID
-   * Requirements: 11.1, 28.4
    */
   async softDelete(id: string) {
     await this.db
@@ -169,7 +162,6 @@ export class EventRepository {
 
   /**
    * Restore soft-deleted event
-   * Requirement: 28.7
    */
   async restore(id: string) {
     await this.db
@@ -183,7 +175,6 @@ export class EventRepository {
 
   /**
    * Find soft-deleted events (admin only)
-   * Requirement: 28.5
    */
   async findDeleted(filters?: EventFilters) {
     // Normalize pagination parameters
@@ -233,7 +224,6 @@ export class EventRepository {
 
   /**
    * Permanently delete event by ID (hard delete)
-   * Requirement: 28.6
    */
   async permanentDelete(id: string) {
     await this.db
@@ -243,7 +233,6 @@ export class EventRepository {
 
   /**
    * Find event by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
    */
   async findByIdIncludingDeleted(id: string) {
     const result = await this.db
@@ -257,7 +246,6 @@ export class EventRepository {
 
   /**
    * Get participant count for an event
-   * Requirement: 11.6
    */
   async getParticipantCount(eventId: string): Promise<number> {
     const result = await this.db
@@ -270,7 +258,6 @@ export class EventRepository {
 
   /**
    * Add participant to event
-   * Requirements: 11.3, 11.4
    */
   async addParticipant(data: CreateParticipantData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -284,7 +271,6 @@ export class EventRepository {
 
   /**
    * Remove participant from event
-   * Requirement: 11.6
    */
   async removeParticipant(participantId: string, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -295,7 +281,6 @@ export class EventRepository {
 
   /**
    * Get all participants for an event
-   * Requirement: 11.6
    */
   async getParticipants(eventId: string) {
     const result = await this.db
@@ -314,7 +299,6 @@ export class EventRepository {
 
   /**
    * Find participant by ID
-   * Requirement: 11.6
    */
   async findParticipantById(participantId: string) {
     const result = await this.db
@@ -329,7 +313,6 @@ export class EventRepository {
   /**
    * Check if participant already exists for event
    * Prevents duplicate registrations
-   * Requirement: 11.3
    */
   async findExistingParticipant(eventId: string, studentId?: string, facultyId?: string) {
     const conditions = [eq(eventParticipants.event_id, eventId)];

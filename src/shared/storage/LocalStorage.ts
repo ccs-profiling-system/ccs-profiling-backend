@@ -10,7 +10,6 @@ import type { StorageProvider, UploadOptions, UploadResult } from './StorageProv
  * Organizes files by entity type, year, and month.
  * Uses naming convention: {timestamp}_{uuid}_{original_filename}
  * 
- * Requirements: 31.1, 31.2, 31.3
  */
 export class LocalStorage implements StorageProvider {
   private baseDir: string;
@@ -30,7 +29,6 @@ export class LocalStorage implements StorageProvider {
    * File naming convention: {timestamp}_{uuid}_{original_filename}
    * Directory structure: uploads/{entity_type}/{year}/{month}/
    * 
-   * Requirements: 31.1, 31.2, 31.3
    */
   async upload(options: UploadOptions): Promise<UploadResult> {
     const { entityType, originalFilename, buffer } = options;

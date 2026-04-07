@@ -2,7 +2,6 @@
  * Student Service
  * Business logic layer for student operations
  * 
- * Requirements: 2.1, 2.5, 2.6, 2.7, 10.1, 10.2, 10.3, 10.4, 19.1, 19.2, 19.3
  */
 
 import { StudentRepository } from '../repositories/student.repository';
@@ -43,7 +42,6 @@ export class StudentService {
 
   /**
    * Get student by ID
-   * Requirement: 2.5
    */
   async getStudent(id: string): Promise<StudentResponseDTO> {
     const student = await this.studentRepository.findById(id);
@@ -55,7 +53,6 @@ export class StudentService {
 
   /**
    * List students with pagination and filters
-   * Requirement: 2.5
    */
   async listStudents(filters?: StudentFilters): Promise<StudentListResponseDTO> {
     const result = await this.studentRepository.findAll(filters);
@@ -69,7 +66,6 @@ export class StudentService {
    * Create a new student
    * Optionally creates a linked user account
    * Automatically generates UUID v7 and human-readable student_id
-   * Requirements: 2.1, 2.6, 19.1
    */
   async createStudent(data: CreateStudentDTO, auditContext?: AuditContext): Promise<StudentResponseDTO> {
     // Check for duplicate email
@@ -117,7 +113,6 @@ export class StudentService {
         tx
       );
 
-      // Log audit event (Requirement: 19.1)
       if (auditContext) {
         await this.auditLogger.logCreate(
           'student',
@@ -135,7 +130,6 @@ export class StudentService {
   /**
    * Create student with linked user account in a single transaction
    * Automatically generates UUID v7 and human-readable student_id
-   * Requirements: 2.2, 26.2, 26.3, 26.4, 26.7, 19.1
    */
   async createStudentWithUser(data: CreateStudentDTO, auditContext?: AuditContext): Promise<StudentResponseDTO> {
     // Check for duplicate email
@@ -198,7 +192,6 @@ export class StudentService {
         tx
       );
 
-      // Log audit event (Requirement: 19.1)
       if (auditContext) {
         await this.auditLogger.logCreate(
           'student',
@@ -216,7 +209,6 @@ export class StudentService {
 
   /**
    * Update student by ID
-   * Requirement: 2.6, 19.2
    */
   async updateStudent(id: string, data: UpdateStudentDTO, auditContext?: AuditContext): Promise<StudentResponseDTO> {
     // Check if student exists and capture before state
@@ -238,7 +230,6 @@ export class StudentService {
       throw new NotFoundError('Student not found');
     }
 
-    // Log audit event (Requirement: 19.2)
     if (auditContext) {
       await this.auditLogger.logUpdate(
         'student',
@@ -254,7 +245,6 @@ export class StudentService {
 
   /**
    * Delete student by ID (soft delete)
-   * Requirement: 2.7, 19.3
    */
   async deleteStudent(id: string, auditContext?: AuditContext): Promise<void> {
     const existing = await this.studentRepository.findById(id);
@@ -264,7 +254,6 @@ export class StudentService {
 
     await this.studentRepository.softDelete(id);
 
-    // Log audit event (Requirement: 19.3)
     if (auditContext) {
       await this.auditLogger.logDelete(
         'student',
@@ -279,7 +268,6 @@ export class StudentService {
    * Get complete student profile with aggregated data
    * Fetches student, skills, violations, affiliations, academic history, and enrollments
    * Uses batch queries to prevent N+1 query problems
-   * Requirements: 10.1, 10.2, 10.3, 10.4
    */
   async getStudentProfile(id: string): Promise<StudentProfileDTO> {
     const student = await this.studentRepository.findById(id);
@@ -411,7 +399,6 @@ export class StudentService {
 
   /**
    * Get soft-deleted students (admin only)
-   * Requirements: 28.5
    */
   async getDeletedStudents(filters?: StudentFilters): Promise<StudentListResponseDTO> {
     const result = await this.studentRepository.findDeleted(filters);
@@ -424,7 +411,6 @@ export class StudentService {
 
   /**
    * Restore soft-deleted student
-   * Requirements: 28.7
    */
   async restoreStudent(id: string, auditContext?: AuditContext): Promise<StudentResponseDTO> {
     // Find student including deleted
@@ -459,7 +445,6 @@ export class StudentService {
 
   /**
    * Permanently delete student (hard delete)
-   * Requirements: 28.6
    */
   async permanentDeleteStudent(id: string, auditContext?: AuditContext): Promise<void> {
     // Find student including deleted
@@ -475,7 +460,7 @@ export class StudentService {
         entity_type: 'student',
         entity_id: id,
         before_state: student,
-        after_state: null,
+        after_state: undefined,
         context: auditContext,
       });
     }

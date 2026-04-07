@@ -2,7 +2,6 @@
  * Faculty Routes
  * Route definitions for faculty endpoints
  * 
- * Requirements: 3.1, 3.4, 3.5, 4.7, 4.8, 30.2
  */
 
 import { Router } from 'express';

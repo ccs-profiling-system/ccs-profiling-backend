@@ -2,7 +2,6 @@
  * Upload Controller
  * HTTP request/response handling for file upload operations
  * 
- * Requirements: 20.1, 20.5, 20.6, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -20,7 +19,6 @@ export class UploadController {
   /**
    * POST /api/v1/admin/uploads
    * Upload a file with metadata
-   * Requirements: 20.1, 30.2
    */
   uploadFile = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,7 +50,6 @@ export class UploadController {
   /**
    * GET /api/v1/admin/uploads/:id
    * Get upload by ID
-   * Requirements: 20.1, 30.2
    */
   getUpload = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -78,7 +75,6 @@ export class UploadController {
   /**
    * DELETE /api/v1/admin/uploads/:id
    * Delete file and database record
-   * Requirements: 20.5, 20.6, 30.2
    */
   deleteUpload = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -106,7 +102,6 @@ export class UploadController {
   /**
    * GET /api/v1/admin/uploads/entity/:entityType/:entityId
    * Get all files for a specific entity
-   * Requirements: 20.1, 30.2
    */
   getEntityUploads = async (req: Request, res: Response, next: NextFunction) => {
     try {

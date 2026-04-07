@@ -2,7 +2,6 @@
  * Dashboard Routes
  * Route definitions for dashboard endpoints
  * 
- * Requirements: 15.7, 30.2
  */
 
 import { Router } from 'express';

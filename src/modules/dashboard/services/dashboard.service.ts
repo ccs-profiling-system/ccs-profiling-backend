@@ -2,7 +2,6 @@
  * Dashboard Service
  * Computes dashboard metrics on-demand from existing database records
  * 
- * Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7
  */
 
 import { Database } from '../../../db';
@@ -25,7 +24,6 @@ export class DashboardService {
   /**
    * Get complete dashboard metrics
    * Computes all metrics on-demand without database storage
-   * Requirements: 15.1, 15.2, 15.7
    */
   async getDashboardMetrics(): Promise<DashboardMetricsDTO> {
     // Fetch all metrics in parallel for optimal performance
@@ -48,7 +46,6 @@ export class DashboardService {
   /**
    * Get student statistics
    * Calculates total student count from students table
-   * Requirements: 15.3
    */
   async getStudentStats(): Promise<StudentStatsDTO> {
     // Count total students (excluding soft-deleted)
@@ -123,7 +120,6 @@ export class DashboardService {
   /**
    * Get faculty statistics
    * Calculates total faculty count from faculty table
-   * Requirements: 15.4
    */
   async getFacultyStats(): Promise<FacultyStatsDTO> {
     // Count total faculty (excluding soft-deleted)
@@ -177,7 +173,6 @@ export class DashboardService {
   /**
    * Get enrollment statistics
    * Calculates enrollment statistics from enrollments table
-   * Requirements: 15.6
    */
   async getEnrollmentStats(): Promise<EnrollmentStatsDTO> {
     // Count total enrollments
@@ -236,7 +231,6 @@ export class DashboardService {
   /**
    * Get event statistics
    * Calculates total event count from events table
-   * Requirements: 15.5
    */
   async getEventStats(): Promise<EventStatsDTO> {
     const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format

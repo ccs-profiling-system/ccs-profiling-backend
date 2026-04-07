@@ -2,7 +2,6 @@
  * Enrollment Routes
  * Route definitions for enrollment endpoints
  * 
- * Requirements: 9.1, 9.3, 9.4, 30.2
  */
 
 import { Router } from 'express';

@@ -2,7 +2,6 @@
  * Skill Repository
  * Database access layer for skill operations
  * 
- * Requirements: 5.1, 5.3, 5.4
  */
 
 import { eq, and, inArray, sql } from 'drizzle-orm';
@@ -29,7 +28,6 @@ export class SkillRepository {
 
   /**
    * Find skill record by UUID
-   * Requirement: 5.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -43,7 +41,6 @@ export class SkillRepository {
 
   /**
    * Find skill records by student ID
-   * Requirement: 5.3
    */
   async findByStudentId(studentId: string) {
     return await this.db
@@ -56,7 +53,6 @@ export class SkillRepository {
   /**
    * Batch query to find skills by multiple student IDs
    * Prevents N+1 query problem
-   * Requirement: 5.3
    */
   async findByStudentIds(studentIds: string[]) {
     if (studentIds.length === 0) {
@@ -72,7 +68,6 @@ export class SkillRepository {
 
   /**
    * Find all skill records with pagination and filters
-   * Requirements: 5.1, 5.3
    */
   async findAll(filters?: SkillFilters) {
     const page = filters?.page || 1;
@@ -122,7 +117,6 @@ export class SkillRepository {
 
   /**
    * Create a new skill record
-   * Requirement: 5.1
    */
   async create(data: CreateSkillData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -133,7 +127,6 @@ export class SkillRepository {
 
   /**
    * Update skill record by ID
-   * Requirement: 5.3
    */
   async update(id: string, data: UpdateSkillData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -151,7 +144,6 @@ export class SkillRepository {
 
   /**
    * Delete skill record by ID
-   * Requirement: 5.4
    */
   async delete(id: string) {
     await this.db.delete(skills).where(eq(skills.id, id));

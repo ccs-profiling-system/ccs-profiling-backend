@@ -2,7 +2,6 @@
  * Student Module DTOs
  * Data Transfer Objects for student management
  * 
- * Requirements: 2.3, 2.5, 10.1
  */
 
 /**
@@ -77,7 +76,6 @@ export interface StudentListResponseDTO {
 /**
  * StudentProfileDTO - Aggregated profile with related data
  * Used for complete student profile view
- * Requirements: 10.1, 10.2, 10.3, 10.4
  */
 export interface StudentProfileDTO extends StudentResponseDTO {
   skills: Array<{

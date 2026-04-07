@@ -2,7 +2,6 @@
  * Violation Repository
  * Database access layer for violation operations
  * 
- * Requirements: 6.1, 6.3
  */
 
 import { eq, and, inArray, sql } from 'drizzle-orm';
@@ -32,7 +31,6 @@ export class ViolationRepository {
 
   /**
    * Find violation record by UUID
-   * Requirement: 6.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -46,7 +44,6 @@ export class ViolationRepository {
 
   /**
    * Find violation records by student ID
-   * Requirement: 6.3
    */
   async findByStudentId(studentId: string) {
     return await this.db
@@ -59,7 +56,6 @@ export class ViolationRepository {
   /**
    * Batch query to find violations by multiple student IDs
    * Prevents N+1 query problem
-   * Requirement: 6.3
    */
   async findByStudentIds(studentIds: string[]) {
     if (studentIds.length === 0) {
@@ -75,7 +71,6 @@ export class ViolationRepository {
 
   /**
    * Find all violation records with pagination and filters
-   * Requirements: 6.1, 6.3
    */
   async findAll(filters?: ViolationFilters) {
     const page = filters?.page || 1;
@@ -125,7 +120,6 @@ export class ViolationRepository {
 
   /**
    * Create a new violation record
-   * Requirement: 6.1
    */
   async create(data: CreateViolationData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -136,7 +130,6 @@ export class ViolationRepository {
 
   /**
    * Update violation record by ID
-   * Requirement: 6.3
    */
   async update(id: string, data: UpdateViolationData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -154,7 +147,6 @@ export class ViolationRepository {
 
   /**
    * Delete violation record by ID
-   * Requirement: 6.3
    */
   async delete(id: string) {
     await this.db.delete(violations).where(eq(violations.id, id));

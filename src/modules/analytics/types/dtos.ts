@@ -2,12 +2,10 @@
  * Analytics Module DTOs
  * Data Transfer Objects for analytics insights
  * 
- * Requirements: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 16.7
  */
 
 /**
  * GPADistributionDTO - GPA distribution analytics
- * Requirement: 16.3
  */
 export interface GPADistributionDTO {
   average_gpa: number;
@@ -24,7 +22,6 @@ export interface GPADistributionDTO {
 
 /**
  * SkillDistributionDTO - Skill distribution analytics
- * Requirement: 16.4
  */
 export interface SkillDistributionDTO {
   total_skills: number;
@@ -44,7 +41,6 @@ export interface SkillDistributionDTO {
 
 /**
  * ViolationTrendsDTO - Violation trends analytics
- * Requirement: 16.5
  */
 export interface ViolationTrendsDTO {
   total_violations: number;
@@ -68,7 +64,6 @@ export interface ViolationTrendsDTO {
 
 /**
  * ResearchMetricsDTO - Research output metrics
- * Requirement: 16.6
  */
 export interface ResearchMetricsDTO {
   total_research: number;
@@ -91,7 +86,6 @@ export interface ResearchMetricsDTO {
 
 /**
  * EnrollmentTrendsDTO - Enrollment trends analytics
- * Requirement: 16.1
  */
 export interface EnrollmentTrendsDTO {
   total_enrollments: number;

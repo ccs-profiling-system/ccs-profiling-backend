@@ -2,7 +2,6 @@
  * Research Service
  * Business logic layer for research operations
  * 
- * Requirements: 12.1, 12.6, 12.7, 26.6, 26.7
  */
 
 import { ResearchRepository } from '../repositories/research.repository';
@@ -24,7 +23,6 @@ export class ResearchService {
 
   /**
    * Get research by ID
-   * Requirement: 12.1
    */
   async getResearch(id: string): Promise<ResearchResponseDTO> {
     const researchRecord = await this.researchRepository.findById(id);
@@ -41,7 +39,6 @@ export class ResearchService {
 
   /**
    * List research with pagination and filters
-   * Requirement: 12.1
    */
   async listResearch(filters?: ResearchFilters): Promise<ResearchListResponseDTO> {
     const result = await this.researchRepository.findAll(filters);
@@ -87,7 +84,6 @@ export class ResearchService {
   /**
    * Create a new research with authors and advisers
    * Uses transaction to ensure atomicity
-   * Requirements: 12.1, 12.6, 12.7, 26.6
    */
   async createResearch(data: CreateResearchDTO): Promise<ResearchResponseDTO> {
     // Generate UUID v7 for primary key
@@ -151,7 +147,6 @@ export class ResearchService {
 
   /**
    * Update research by ID
-   * Requirement: 12.1
    */
   async updateResearch(id: string, data: UpdateResearchDTO): Promise<ResearchResponseDTO> {
     // Check if research exists
@@ -169,7 +164,6 @@ export class ResearchService {
 
   /**
    * Delete research by ID (soft delete)
-   * Requirement: 12.1
    */
   async deleteResearch(id: string): Promise<void> {
     const existing = await this.researchRepository.findById(id);
@@ -182,7 +176,6 @@ export class ResearchService {
 
   /**
    * Add author to research
-   * Requirements: 12.6, 26.7
    */
   async addAuthor(researchId: string, data: AddAuthorDTO): Promise<void> {
     // Verify research exists
@@ -221,7 +214,6 @@ export class ResearchService {
 
   /**
    * Remove author from research
-   * Requirement: 12.6
    */
   async removeAuthor(researchId: string, studentId: string): Promise<void> {
     // Verify research exists
@@ -245,7 +237,6 @@ export class ResearchService {
 
   /**
    * Add adviser to research
-   * Requirements: 12.7, 26.7
    */
   async addAdviser(researchId: string, data: AddAdviserDTO): Promise<void> {
     // Verify research exists
@@ -284,7 +275,6 @@ export class ResearchService {
 
   /**
    * Remove adviser from research
-   * Requirement: 12.7
    */
   async removeAdviser(researchId: string, facultyId: string): Promise<void> {
     // Verify research exists
@@ -350,7 +340,6 @@ export class ResearchService {
 
   /**
    * Get soft-deleted research (admin only)
-   * Requirements: 28.5
    */
   async getDeletedResearch(filters?: ResearchFilters): Promise<ResearchListResponseDTO> {
     const result = await this.researchRepository.findDeleted(filters);
@@ -362,16 +351,16 @@ export class ResearchService {
         title: research.title,
         abstract: research.abstract || undefined,
         research_type: research.research_type,
-        status: research.status,
+        status: research.status || 'ongoing',
         start_date: research.start_date
-          ? (research.start_date instanceof Date
-              ? research.start_date.toISOString().split('T')[0]
-              : research.start_date)
+          ? (typeof research.start_date === 'string'
+              ? research.start_date
+              : (research.start_date as Date).toISOString().split('T')[0])
           : undefined,
         completion_date: research.completion_date
-          ? (research.completion_date instanceof Date
-              ? research.completion_date.toISOString().split('T')[0]
-              : research.completion_date)
+          ? (typeof research.completion_date === 'string'
+              ? research.completion_date
+              : (research.completion_date as Date).toISOString().split('T')[0])
           : undefined,
         publication_url: research.publication_url || undefined,
         authors: [],
@@ -385,7 +374,6 @@ export class ResearchService {
 
   /**
    * Restore soft-deleted research
-   * Requirements: 28.7
    */
   async restoreResearch(id: string): Promise<ResearchResponseDTO> {
     // Find research including deleted
@@ -408,7 +396,6 @@ export class ResearchService {
 
   /**
    * Permanently delete research (hard delete)
-   * Requirements: 28.6
    */
   async permanentDeleteResearch(id: string): Promise<void> {
     // Find research including deleted

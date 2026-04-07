@@ -16,6 +16,7 @@ export const users = pgTable('users', {
   last_login: timestamp('last_login'),
   ...timestampsWithSoftDelete,
 }, (table) => ({
+  // Indexes for query optimization
   emailIdx: index('users_email_idx').on(table.email),
   roleIdx: index('users_role_idx').on(table.role),
 }));

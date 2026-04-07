@@ -2,7 +2,6 @@
  * Events Module DTOs
  * Data Transfer Objects for event management
  * 
- * Requirements: 11.2
  */
 
 /**

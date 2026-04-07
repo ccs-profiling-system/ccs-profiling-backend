@@ -2,7 +2,6 @@
  * Student Validation Schemas
  * Zod schemas for validating student input
  * 
- * Requirements: 21.2, 21.3, 21.4, 21.5
  */
 
 import { z } from 'zod';

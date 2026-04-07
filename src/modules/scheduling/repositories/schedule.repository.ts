@@ -2,7 +2,6 @@
  * Schedule Repository
  * Database access layer for schedule operations
  * 
- * Requirements: 13.1, 13.3, 13.5, 13.6, 28.4
  */
 
 import { eq, and, isNull, sql, ne } from 'drizzle-orm';
@@ -41,7 +40,6 @@ export class ScheduleRepository {
   /**
    * Find schedule by UUID with related instruction and faculty data
    * Automatically excludes soft-deleted records
-   * Requirement: 13.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -64,7 +62,6 @@ export class ScheduleRepository {
 
   /**
    * Find schedules by room
-   * Requirement: 13.5
    */
   async findByRoom(room: string) {
     return await this.db
@@ -85,7 +82,6 @@ export class ScheduleRepository {
 
   /**
    * Find schedules by faculty ID
-   * Requirement: 13.6
    */
   async findByFacultyId(facultyId: string) {
     return await this.db
@@ -107,7 +103,6 @@ export class ScheduleRepository {
   /**
    * Find all schedules with pagination and filters
    * Automatically excludes soft-deleted records
-   * Requirements: 13.1, 28.4
    */
   async findAll(filters?: ScheduleFilters) {
     const page = filters?.page || 1;
@@ -182,7 +177,6 @@ export class ScheduleRepository {
   /**
    * Find conflicting schedules using interval overlap logic
    * Two intervals overlap if: start_time < existing_end_time AND end_time > existing_start_time
-   * Requirements: 13.3, 13.4
    */
   async findConflicts(params: ConflictCheckParams) {
     const conditions = [
@@ -215,7 +209,6 @@ export class ScheduleRepository {
 
   /**
    * Create a new schedule
-   * Requirement: 13.1
    */
   async create(data: CreateScheduleData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -226,7 +219,6 @@ export class ScheduleRepository {
 
   /**
    * Update schedule by ID
-   * Requirement: 13.1
    */
   async update(id: string, data: UpdateScheduleData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -244,7 +236,6 @@ export class ScheduleRepository {
 
   /**
    * Soft delete schedule by ID
-   * Requirement: 28.4
    */
   async softDelete(id: string) {
     await this.db
@@ -258,7 +249,6 @@ export class ScheduleRepository {
 
   /**
    * Restore soft-deleted schedule
-   * Requirement: 28.7
    */
   async restore(id: string) {
     await this.db
@@ -272,7 +262,6 @@ export class ScheduleRepository {
 
   /**
    * Find soft-deleted schedules (admin only)
-   * Requirement: 28.5
    */
   async findDeleted(filters?: ScheduleFilters) {
     const page = filters?.page || 1;
@@ -342,7 +331,6 @@ export class ScheduleRepository {
 
   /**
    * Permanently delete schedule by ID (hard delete)
-   * Requirement: 28.6
    */
   async permanentDelete(id: string) {
     await this.db
@@ -352,7 +340,6 @@ export class ScheduleRepository {
 
   /**
    * Find schedule by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
    */
   async findByIdIncludingDeleted(id: string) {
     const result = await this.db

@@ -2,7 +2,6 @@
  * Affiliations Module Tests
  * Integration tests for affiliation operations
  * 
- * Requirements: 7.1, 7.2, 7.3, 7.4
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';

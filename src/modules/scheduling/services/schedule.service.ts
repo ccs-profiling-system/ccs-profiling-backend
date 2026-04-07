@@ -2,7 +2,6 @@
  * Schedule Service
  * Business logic layer for schedule operations
  * 
- * Requirements: 13.1, 13.3, 13.4, 13.5, 13.6
  */
 
 import { ScheduleRepository } from '../repositories/schedule.repository';
@@ -28,7 +27,6 @@ export class ScheduleService {
 
   /**
    * Get schedule by ID
-   * Requirement: 13.1
    */
   async getSchedule(id: string): Promise<ScheduleResponseDTO> {
     const result = await this.scheduleRepository.findById(id);
@@ -40,7 +38,6 @@ export class ScheduleService {
 
   /**
    * List schedules with pagination and filters
-   * Requirement: 13.1
    */
   async listSchedules(filters?: ScheduleFilters): Promise<ScheduleListResponseDTO> {
     const result = await this.scheduleRepository.findAll(filters);
@@ -52,7 +49,6 @@ export class ScheduleService {
 
   /**
    * Get schedules by room
-   * Requirement: 13.5
    */
   async getSchedulesByRoom(room: string): Promise<ScheduleResponseDTO[]> {
     const results = await this.scheduleRepository.findByRoom(room);
@@ -61,7 +57,6 @@ export class ScheduleService {
 
   /**
    * Get schedules by faculty ID
-   * Requirement: 13.6
    */
   async getSchedulesByFaculty(facultyId: string): Promise<ScheduleResponseDTO[]> {
     // Verify faculty exists
@@ -76,7 +71,6 @@ export class ScheduleService {
 
   /**
    * Check for schedule conflicts
-   * Requirements: 13.3, 13.4
    */
   async checkConflicts(params: ConflictCheckParams): Promise<ScheduleResponseDTO[]> {
     const conflicts = await this.scheduleRepository.findConflicts(params);
@@ -85,7 +79,6 @@ export class ScheduleService {
 
   /**
    * Create a new schedule with conflict detection
-   * Requirements: 13.1, 13.3, 13.4
    */
   async createSchedule(data: CreateScheduleDTO): Promise<ScheduleResponseDTO> {
     // Verify instruction exists if provided
@@ -104,7 +97,6 @@ export class ScheduleService {
       }
     }
 
-    // Check for conflicts (Requirement 13.3, 13.4)
     const conflicts = await this.scheduleRepository.findConflicts({
       room: data.room,
       day: data.day,
@@ -157,7 +149,6 @@ export class ScheduleService {
 
   /**
    * Update schedule by ID with conflict detection
-   * Requirements: 13.1, 13.3, 13.4
    */
   async updateSchedule(id: string, data: UpdateScheduleDTO): Promise<ScheduleResponseDTO> {
     // Check if schedule exists
@@ -224,7 +215,6 @@ export class ScheduleService {
 
   /**
    * Delete schedule by ID (soft delete)
-   * Requirement: 13.1
    */
   async deleteSchedule(id: string): Promise<void> {
     const existing = await this.scheduleRepository.findById(id);
@@ -266,7 +256,6 @@ export class ScheduleService {
 
   /**
    * Get soft-deleted schedules (admin only)
-   * Requirements: 28.5
    */
   async getDeletedSchedules(filters?: ScheduleFilters): Promise<ScheduleListResponseDTO> {
     const result = await this.scheduleRepository.findDeleted(filters);
@@ -279,7 +268,6 @@ export class ScheduleService {
 
   /**
    * Restore soft-deleted schedule
-   * Requirements: 28.7
    */
   async restoreSchedule(id: string): Promise<ScheduleResponseDTO> {
     // Find schedule including deleted
@@ -302,7 +290,6 @@ export class ScheduleService {
 
   /**
    * Permanently delete schedule (hard delete)
-   * Requirements: 28.6
    */
   async permanentDeleteSchedule(id: string): Promise<void> {
     // Find schedule including deleted

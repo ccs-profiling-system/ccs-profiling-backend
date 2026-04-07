@@ -2,7 +2,6 @@
  * Audit Log Module DTOs
  * Data Transfer Objects for audit logging
  * 
- * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5
  */
 
 /**

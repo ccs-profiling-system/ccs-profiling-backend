@@ -2,7 +2,6 @@
  * Uploads Module Integration Tests
  * Tests for file upload functionality
  * 
- * Requirements: 20.1, 20.3, 20.4, 20.5, 20.6
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';

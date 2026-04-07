@@ -2,7 +2,6 @@
  * Search Controller
  * HTTP request/response handling for search operations
  * 
- * Requirements: 18.6, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -17,7 +16,6 @@ export class SearchController {
    * GET /api/v1/admin/search?q=query&type=students
    * Global search across all entities or specific entity type
    * Returns results within 500ms
-   * Requirements: 18.6, 30.2
    */
   globalSearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -45,7 +43,6 @@ export class SearchController {
    * GET /api/v1/admin/search/students?q=query
    * Search students by name or student_id
    * Returns results within 500ms
-   * Requirements: 18.6, 30.2
    */
   searchStudents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -73,7 +70,6 @@ export class SearchController {
    * GET /api/v1/admin/search/faculty?q=query
    * Search faculty by name or faculty_id
    * Returns results within 500ms
-   * Requirements: 18.6, 30.2
    */
   searchFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -101,7 +97,6 @@ export class SearchController {
    * GET /api/v1/admin/search/events?q=query
    * Search events by name or type
    * Returns results within 500ms
-   * Requirements: 18.6, 30.2
    */
   searchEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -129,7 +124,6 @@ export class SearchController {
    * GET /api/v1/admin/search/research?q=query
    * Search research by title or author
    * Returns results within 500ms
-   * Requirements: 18.6, 30.2
    */
   searchResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {

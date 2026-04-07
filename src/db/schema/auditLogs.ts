@@ -8,7 +8,6 @@ import { users } from './users';
  * Stores comprehensive audit trail for all system activities.
  * Tracks who did what, when, and captures before/after state for data changes.
  * 
- * Requirements: 19.4, 23.2, 29.4, 29.9
  */
 export const auditLogs = pgTable('audit_logs', {
   id: uuidPrimaryKey(),
@@ -31,7 +30,7 @@ export const auditLogs = pgTable('audit_logs', {
   
   ...timestamps,
 }, (table) => ({
-  // Indexes for query optimization (Requirements 29.4, 29.9)
+  // Indexes for query optimization
   userIdIdx: index('audit_logs_user_id_idx').on(table.user_id),
   entityTypeEntityIdIdx: index('audit_logs_entity_type_entity_id_idx').on(table.entity_type, table.entity_id),
   createdAtIdx: index('audit_logs_created_at_idx').on(table.created_at),

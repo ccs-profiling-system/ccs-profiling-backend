@@ -2,7 +2,6 @@
  * Audit Context Middleware
  * Attaches audit context (IP, user agent, user ID) to request
  * 
- * Requirement: 19.4
  */
 
 import { Request, Response, NextFunction } from 'express';

@@ -2,7 +2,6 @@
  * Audit Log Controller
  * HTTP request/response handling for audit log operations
  * 
- * Requirements: 19.5, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -21,7 +20,6 @@ export class AuditLogController {
   /**
    * GET /api/v1/admin/audit-logs
    * List audit logs with date range filtering
-   * Requirements: 19.5, 30.2
    */
   listAuditLogs = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -48,7 +46,6 @@ export class AuditLogController {
   /**
    * GET /api/v1/admin/audit-logs/:id
    * Get audit log by ID
-   * Requirements: 19.5, 30.2
    */
   getAuditLog = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,7 +71,6 @@ export class AuditLogController {
   /**
    * GET /api/v1/admin/audit-logs/user/:userId
    * Get audit logs by user ID
-   * Requirements: 19.5, 30.2
    */
   getAuditLogsByUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -108,7 +104,6 @@ export class AuditLogController {
   /**
    * GET /api/v1/admin/audit-logs/entity/:entityType/:entityId
    * Get audit logs by entity type and ID
-   * Requirements: 19.5, 30.2
    */
   getAuditLogsByEntity = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -2,7 +2,6 @@
  * Skill Validation Schemas
  * Zod schemas for validating skill input
  * 
- * Requirements: 21.2
  */
 
 import { z } from 'zod';

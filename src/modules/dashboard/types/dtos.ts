@@ -2,12 +2,10 @@
  * Dashboard Module DTOs
  * Data Transfer Objects for dashboard metrics
  * 
- * Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7
  */
 
 /**
  * StudentStatsDTO - Student statistics
- * Requirement: 15.3
  */
 export interface StudentStatsDTO {
   total_students: number;
@@ -20,7 +18,6 @@ export interface StudentStatsDTO {
 
 /**
  * FacultyStatsDTO - Faculty statistics
- * Requirement: 15.4
  */
 export interface FacultyStatsDTO {
   total_faculty: number;
@@ -31,7 +28,6 @@ export interface FacultyStatsDTO {
 
 /**
  * EnrollmentStatsDTO - Enrollment statistics
- * Requirement: 15.6
  */
 export interface EnrollmentStatsDTO {
   total_enrollments: number;
@@ -42,7 +38,6 @@ export interface EnrollmentStatsDTO {
 
 /**
  * EventStatsDTO - Event statistics
- * Requirement: 15.5
  */
 export interface EventStatsDTO {
   total_events: number;
@@ -54,7 +49,6 @@ export interface EventStatsDTO {
 /**
  * DashboardMetricsDTO - Complete dashboard metrics
  * Aggregates all dashboard statistics
- * Requirements: 15.1, 15.2, 15.7
  */
 export interface DashboardMetricsDTO {
   students: StudentStatsDTO;

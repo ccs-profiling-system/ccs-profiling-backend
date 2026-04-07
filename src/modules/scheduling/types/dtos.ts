@@ -2,7 +2,6 @@
  * Scheduling Module DTOs
  * Data Transfer Objects for schedule management
  * 
- * Requirements: 13.2
  */
 
 /**

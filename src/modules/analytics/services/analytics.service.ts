@@ -2,7 +2,6 @@
  * Analytics Service
  * Computes analytics insights on-demand from existing database records
  * 
- * Requirements: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 16.7
  */
 
 import { Database } from '../../../db';
@@ -26,7 +25,6 @@ export class AnalyticsService {
   /**
    * Get GPA distribution analytics
    * Computes average GPA from Academic_History_Record entries
-   * Requirements: 16.1, 16.2, 16.3
    */
   async getGPADistribution(): Promise<GPADistributionDTO> {
     // Calculate GPA for each student
@@ -92,7 +90,6 @@ export class AnalyticsService {
   /**
    * Get skill distribution analytics
    * Calculates skill distribution from Skill_Record entries
-   * Requirements: 16.1, 16.2, 16.4
    */
   async getSkillDistribution(): Promise<SkillDistributionDTO> {
     // Count total skills
@@ -172,7 +169,6 @@ export class AnalyticsService {
   /**
    * Get violation trends analytics
    * Calculates violation trends from Violation_Record entries
-   * Requirements: 16.1, 16.2, 16.5
    */
   async getViolationTrends(): Promise<ViolationTrendsDTO> {
     // Count total violations
@@ -263,7 +259,6 @@ export class AnalyticsService {
   /**
    * Get research output metrics
    * Calculates research output metrics from Research_Record entries
-   * Requirements: 16.1, 16.2, 16.6
    */
   async getResearchMetrics(): Promise<ResearchMetricsDTO> {
     // Count total research (excluding soft-deleted)
@@ -348,7 +343,6 @@ export class AnalyticsService {
   /**
    * Get enrollment trends analytics
    * Calculates enrollment trends from Enrollment_Record entries
-   * Requirements: 16.1, 16.2
    */
   async getEnrollmentTrends(): Promise<EnrollmentTrendsDTO> {
     // Count total enrollments

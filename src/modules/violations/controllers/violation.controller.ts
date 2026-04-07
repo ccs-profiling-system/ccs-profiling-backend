@@ -2,7 +2,6 @@
  * Violation Controller
  * HTTP request/response handling for violation operations
  * 
- * Requirements: 6.1, 6.3, 6.4, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -23,7 +22,6 @@ export class ViolationController {
   /**
    * GET /api/v1/admin/violations
    * List violation records with pagination and filters
-   * Requirements: 6.1, 30.2
    */
   listViolations = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -50,7 +48,6 @@ export class ViolationController {
   /**
    * GET /api/v1/admin/students/:studentId/violations
    * Get violation records by student ID
-   * Requirements: 6.3, 30.2
    */
   getViolationsByStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -76,7 +73,6 @@ export class ViolationController {
   /**
    * POST /api/v1/admin/students/:studentId/violations
    * Create a new violation record
-   * Requirements: 6.1, 6.2, 30.2
    */
   createViolation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -113,7 +109,6 @@ export class ViolationController {
   /**
    * PUT /api/v1/admin/violations/:id
    * Update violation record by ID
-   * Requirements: 6.3, 30.2
    */
   updateViolation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -146,7 +141,6 @@ export class ViolationController {
   /**
    * DELETE /api/v1/admin/violations/:id
    * Delete violation record by ID
-   * Requirements: 6.3, 30.2
    */
   deleteViolation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -174,7 +168,6 @@ export class ViolationController {
   /**
    * PATCH /api/v1/admin/violations/:id/resolve
    * Resolve a violation record
-   * Requirements: 6.4, 30.2
    */
   resolveViolation = async (req: Request, res: Response, next: NextFunction) => {
     try {

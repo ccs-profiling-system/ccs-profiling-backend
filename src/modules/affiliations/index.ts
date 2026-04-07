@@ -7,7 +7,6 @@
  * - Service: Business logic and orchestration
  * - Repository: Database access layer
  * 
- * Requirements: 7.1, 7.2, 7.3, 7.4
  */
 
 import { db } from '../../db';

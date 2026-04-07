@@ -7,7 +7,6 @@ import type { StorageProvider, UploadOptions, UploadResult } from './StorageProv
  * Implements file storage using AWS S3 or S3-compatible services.
  * Supports configuration via environment variables.
  * 
- * Requirements: 31.8
  * 
  * Required Environment Variables:
  * - AWS_S3_BUCKET: S3 bucket name
@@ -77,7 +76,6 @@ export class S3Storage implements StorageProvider {
    * File naming convention: {timestamp}_{uuid}_{original_filename}
    * Directory structure: {entity_type}/{year}/{month}/
    * 
-   * Requirements: 31.2, 31.3, 31.8
    */
   async upload(options: UploadOptions): Promise<UploadResult> {
     const { entityType, originalFilename, mimeType, buffer } = options;

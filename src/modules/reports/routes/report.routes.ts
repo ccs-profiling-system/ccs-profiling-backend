@@ -2,7 +2,6 @@
  * Report Routes
  * Route definitions for report generation endpoints
  * 
- * Requirements: 17.7, 30.2
  */
 
 import { Router } from 'express';

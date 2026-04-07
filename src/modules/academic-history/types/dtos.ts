@@ -2,7 +2,6 @@
  * Academic History Module DTOs
  * Data Transfer Objects for academic history management
  * 
- * Requirements: 8.2
  */
 
 /**

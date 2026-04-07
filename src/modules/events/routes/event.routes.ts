@@ -2,7 +2,6 @@
  * Event Routes
  * Route definitions for event endpoints
  * 
- * Requirements: 11.1, 11.6, 30.2
  */
 
 import { Router } from 'express';

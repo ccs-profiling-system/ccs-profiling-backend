@@ -2,7 +2,6 @@
  * Skill Controller
  * HTTP request/response handling for skill operations
  * 
- * Requirements: 5.1, 5.3, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -22,7 +21,6 @@ export class SkillController {
   /**
    * GET /api/v1/admin/skills
    * List skill records with pagination and filters
-   * Requirements: 5.1, 30.2
    */
   listSkills = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -49,7 +47,6 @@ export class SkillController {
   /**
    * GET /api/v1/admin/students/:studentId/skills
    * Get skill records by student ID
-   * Requirements: 5.3, 30.2
    */
   getSkillsByStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -75,7 +72,6 @@ export class SkillController {
   /**
    * POST /api/v1/admin/students/:studentId/skills
    * Create a new skill record
-   * Requirements: 5.1, 5.2, 30.2
    */
   createSkill = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -112,7 +108,6 @@ export class SkillController {
   /**
    * PUT /api/v1/admin/skills/:id
    * Update skill record by ID
-   * Requirements: 5.3, 30.2
    */
   updateSkill = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -145,7 +140,6 @@ export class SkillController {
   /**
    * DELETE /api/v1/admin/skills/:id
    * Delete skill record by ID
-   * Requirements: 5.3, 30.2
    */
   deleteSkill = async (req: Request, res: Response, next: NextFunction) => {
     try {

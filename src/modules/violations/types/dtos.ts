@@ -2,7 +2,6 @@
  * Violations Module DTOs
  * Data Transfer Objects for violations management
  * 
- * Requirements: 6.2
  */
 
 /**

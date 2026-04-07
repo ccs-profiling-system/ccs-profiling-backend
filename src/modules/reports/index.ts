@@ -2,7 +2,6 @@
  * Reports Module
  * Exports report generation functionality
  * 
- * Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.6, 17.7
  */
 
 import { db } from '../../db';

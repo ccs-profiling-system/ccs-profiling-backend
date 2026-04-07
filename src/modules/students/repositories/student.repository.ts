@@ -2,7 +2,6 @@
  * Student Repository
  * Database access layer for student operations
  * 
- * Requirements: 2.1, 2.5, 2.7, 28.2, 28.4
  */
 
 import { eq, and, isNull, or, ilike, sql } from 'drizzle-orm';
@@ -45,7 +44,6 @@ export class StudentRepository {
 
   /**
    * Find student by UUID (excludes soft-deleted)
-   * Requirement: 2.5
    */
   async findById(id: string) {
     const result = await this.db
@@ -59,7 +57,6 @@ export class StudentRepository {
 
   /**
    * Find student by student_id (excludes soft-deleted)
-   * Requirement: 2.5
    */
   async findByStudentId(studentId: string) {
     const result = await this.db
@@ -74,7 +71,6 @@ export class StudentRepository {
   /**
    * Find all students with pagination and filters (excludes soft-deleted)
    * Supports search by name or student_id
-   * Requirements: 2.5, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: StudentFilters) {
     // Normalize pagination parameters
@@ -132,7 +128,6 @@ export class StudentRepository {
       .offset(offset)
       .orderBy(students.created_at);
 
-    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
       meta: createPaginationMeta(page, limit, total),
@@ -141,7 +136,6 @@ export class StudentRepository {
 
   /**
    * Create a new student
-   * Requirement: 2.1
    */
   async create(data: CreateStudentData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -152,7 +146,6 @@ export class StudentRepository {
 
   /**
    * Update student by ID
-   * Requirement: 2.6
    */
   async update(id: string, data: UpdateStudentData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -170,7 +163,6 @@ export class StudentRepository {
 
   /**
    * Soft delete student by ID
-   * Requirements: 2.7, 28.2
    */
   async softDelete(id: string) {
     await this.db
@@ -184,7 +176,6 @@ export class StudentRepository {
 
   /**
    * Restore soft-deleted student
-   * Requirement: 28.2
    */
   async restore(id: string) {
     await this.db
@@ -198,7 +189,6 @@ export class StudentRepository {
 
   /**
    * Find soft-deleted students (admin only)
-   * Requirement: 28.5
    */
   async findDeleted(filters?: StudentFilters) {
     // Normalize pagination parameters
@@ -259,7 +249,6 @@ export class StudentRepository {
 
   /**
    * Permanently delete student by ID (hard delete)
-   * Requirement: 28.6
    */
   async permanentDelete(id: string) {
     await this.db
@@ -269,7 +258,6 @@ export class StudentRepository {
 
   /**
    * Find student by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
    */
   async findByIdIncludingDeleted(id: string) {
     const result = await this.db
@@ -289,30 +277,6 @@ export class StudentRepository {
       .select()
       .from(students)
       .where(and(eq(students.email, email), isNull(students.deleted_at)))
-      .limit(1);
-
-    return result[0] || null;
-  }
-
-  /**
-   * Permanently delete student by ID (hard delete)
-   * Requirement: 28.6
-   */
-  async permanentDelete(id: string) {
-    await this.db
-      .delete(students)
-      .where(eq(students.id, id));
-  }
-
-  /**
-   * Find student by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
-   */
-  async findByIdIncludingDeleted(id: string) {
-    const result = await this.db
-      .select()
-      .from(students)
-      .where(eq(students.id, id))
       .limit(1);
 
     return result[0] || null;

@@ -2,7 +2,6 @@
  * Skill Service
  * Business logic layer for skill operations
  * 
- * Requirements: 5.1, 5.3
  */
 
 import { SkillRepository } from '../repositories/skill.repository';
@@ -25,7 +24,6 @@ export class SkillService {
 
   /**
    * Get skill record by ID
-   * Requirement: 5.1
    */
   async getSkill(id: string): Promise<SkillResponseDTO> {
     const record = await this.skillRepository.findById(id);
@@ -37,7 +35,6 @@ export class SkillService {
 
   /**
    * List skill records with pagination and filters
-   * Requirements: 5.1, 5.3
    */
   async listSkills(filters?: SkillFilters): Promise<SkillListResponseDTO> {
     const result = await this.skillRepository.findAll(filters);
@@ -49,7 +46,6 @@ export class SkillService {
 
   /**
    * Get skill records by student ID
-   * Requirement: 5.3
    */
   async getSkillsByStudent(studentId: string): Promise<SkillResponseDTO[]> {
     // Verify student exists
@@ -64,7 +60,6 @@ export class SkillService {
 
   /**
    * Create a new skill record
-   * Requirements: 5.1, 5.2
    */
   async createSkill(data: CreateSkillDTO): Promise<SkillResponseDTO> {
     // Verify student exists
@@ -90,7 +85,6 @@ export class SkillService {
 
   /**
    * Update skill record by ID
-   * Requirement: 5.3
    */
   async updateSkill(id: string, data: UpdateSkillDTO): Promise<SkillResponseDTO> {
     // Check if record exists
@@ -110,7 +104,6 @@ export class SkillService {
 
   /**
    * Delete skill record by ID
-   * Requirement: 5.3
    */
   async deleteSkill(id: string): Promise<void> {
     const existing = await this.skillRepository.findById(id);

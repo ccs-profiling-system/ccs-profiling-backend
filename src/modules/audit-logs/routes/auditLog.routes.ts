@@ -2,7 +2,6 @@
  * Audit Log Routes
  * Route definitions for audit log endpoints
  * 
- * Requirements: 19.5, 30.2
  */
 
 import { Router } from 'express';

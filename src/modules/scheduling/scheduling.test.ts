@@ -2,7 +2,6 @@
  * Scheduling Module Integration Tests
  * Tests for schedule CRUD operations and conflict detection
  * 
- * Requirements: 13.1, 13.3, 13.4, 13.5, 13.6
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -55,27 +54,27 @@ describe('Scheduling Module', () => {
 
     // Create test user for faculty
     testUserId = generateUUIDv7();
-    await db.insert(users).values({
+    const [insertedUser] = await db.insert(users).values({
       id: testUserId,
       email: testEmail,
       password_hash: 'hashed_password',
       role: 'faculty',
-    });
+    }).returning();
 
     // Create test instruction
     testInstructionId = generateUUIDv7();
     testSubjectCode = `CS${Date.now().toString().slice(-6)}`;
-    await db.insert(instructions).values({
+    const [insertedInstruction] = await db.insert(instructions).values({
       id: testInstructionId,
       subject_code: testSubjectCode,
       subject_name: 'Introduction to Computer Science',
       credits: 3,
       curriculum_year: testYear.toString(),
-    });
+    }).returning();
 
     // Create test faculty
     testFacultyId = generateUUIDv7();
-    await db.insert(faculty).values({
+    const [insertedFaculty] = await db.insert(faculty).values({
       id: testFacultyId,
       faculty_id: `F-${testYear}-${Date.now()}`,
       user_id: testUserId,
@@ -83,7 +82,11 @@ describe('Scheduling Module', () => {
       last_name: 'Doe',
       email: testEmail,
       department: 'Computer Science',
-    });
+    }).returning();
+    
+    if (!insertedUser || !insertedInstruction || !insertedFaculty) {
+      throw new Error('Failed to create test data in beforeEach');
+    }
   });
 
   describe('Schedule Creation', () => {

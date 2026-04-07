@@ -2,7 +2,6 @@
  * Schedule Validation Schemas
  * Zod schemas for validating schedule input
  * 
- * Requirements: 21.2, 21.5
  */
 
 import { z } from 'zod';

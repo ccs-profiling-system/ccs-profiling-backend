@@ -2,7 +2,6 @@
  * API Version Middleware
  * Adds X-API-Version header to all responses
  * 
- * Requirements: 30.5, 30.6
  */
 
 import { Request, Response, NextFunction } from 'express';

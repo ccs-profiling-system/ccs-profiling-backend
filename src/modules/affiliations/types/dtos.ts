@@ -2,7 +2,6 @@
  * Affiliations Module DTOs
  * Data Transfer Objects for affiliations management
  * 
- * Requirements: 7.1, 7.2
  */
 
 /**

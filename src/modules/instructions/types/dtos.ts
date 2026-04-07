@@ -2,7 +2,6 @@
  * Instruction Module DTOs
  * Data Transfer Objects for instruction management
  * 
- * Requirements: 14.2
  */
 
 /**

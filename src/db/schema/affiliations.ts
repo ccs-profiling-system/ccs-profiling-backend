@@ -8,7 +8,6 @@ import { students } from './students';
  * Stores student organization and club memberships separately from the student profile.
  * Supports cascade delete to maintain referential integrity.
  * 
- * Requirements: 7.2, 23.2, 23.4, 29.4
  */
 export const affiliations = pgTable('affiliations', {
   id: uuidPrimaryKey(),
@@ -22,6 +21,6 @@ export const affiliations = pgTable('affiliations', {
   is_active: boolean('is_active').default(true).notNull(),
   ...timestamps,
 }, (table) => ({
-  // Index for query optimization (Requirement 29.4)
+  // Index for query optimization
   studentIdIdx: index('affiliations_student_id_idx').on(table.student_id),
 }));

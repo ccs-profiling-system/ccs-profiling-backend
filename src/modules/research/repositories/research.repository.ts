@@ -2,7 +2,6 @@
  * Research Repository
  * Database access layer for research operations
  * 
- * Requirements: 12.1, 12.6, 12.7, 28.4
  */
 
 import { eq, and, isNull, ilike, sql } from 'drizzle-orm';
@@ -54,7 +53,6 @@ export class ResearchRepository {
 
   /**
    * Find research by UUID (excludes soft-deleted)
-   * Requirement: 12.1
    */
   async findById(id: string) {
     const result = await this.db
@@ -68,7 +66,6 @@ export class ResearchRepository {
 
   /**
    * Find research by student ID (as author)
-   * Requirements: 12.6, 28.4
    */
   async findByStudentId(studentId: string) {
     const result = await this.db
@@ -89,7 +86,6 @@ export class ResearchRepository {
 
   /**
    * Find research by faculty ID (as adviser)
-   * Requirements: 12.7, 28.4
    */
   async findByFacultyId(facultyId: string) {
     const result = await this.db
@@ -110,12 +106,10 @@ export class ResearchRepository {
 
   /**
    * Find all research with pagination and filters (excludes soft-deleted)
-   * Requirements: 12.1, 28.4
    */
   /**
    * Find all research with pagination and filters (excludes soft-deleted)
    * Supports search by title and filtering by type and status
-   * Requirements: 12.1, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: ResearchFilters) {
     // Normalize pagination parameters
@@ -162,7 +156,6 @@ export class ResearchRepository {
       .offset(offset)
       .orderBy(research.created_at);
 
-    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
       meta: createPaginationMeta(page, limit, total),
@@ -171,7 +164,6 @@ export class ResearchRepository {
 
   /**
    * Create a new research
-   * Requirement: 12.1
    */
   async create(data: CreateResearchData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -182,7 +174,6 @@ export class ResearchRepository {
 
   /**
    * Update research by ID
-   * Requirement: 12.1
    */
   async update(id: string, data: UpdateResearchData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -200,7 +191,6 @@ export class ResearchRepository {
 
   /**
    * Soft delete research by ID
-   * Requirements: 12.1, 28.4
    */
   async softDelete(id: string) {
     await this.db
@@ -214,7 +204,6 @@ export class ResearchRepository {
 
   /**
    * Restore soft-deleted research
-   * Requirement: 28.7
    */
   async restore(id: string) {
     await this.db
@@ -228,7 +217,6 @@ export class ResearchRepository {
 
   /**
    * Find soft-deleted research (admin only)
-   * Requirement: 28.5
    */
   async findDeleted(filters?: ResearchFilters) {
     // Normalize pagination parameters
@@ -283,7 +271,6 @@ export class ResearchRepository {
 
   /**
    * Permanently delete research by ID (hard delete)
-   * Requirement: 28.6
    */
   async permanentDelete(id: string) {
     await this.db
@@ -293,7 +280,6 @@ export class ResearchRepository {
 
   /**
    * Find research by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
    */
   async findByIdIncludingDeleted(id: string) {
     const result = await this.db
@@ -307,7 +293,6 @@ export class ResearchRepository {
 
   /**
    * Get all authors for a research
-   * Requirement: 12.6
    */
   async getAuthors(researchId: string) {
     const result = await this.db
@@ -325,7 +310,6 @@ export class ResearchRepository {
 
   /**
    * Get all advisers for a research
-   * Requirement: 12.7
    */
   async getAdvisers(researchId: string) {
     const result = await this.db
@@ -342,7 +326,6 @@ export class ResearchRepository {
 
   /**
    * Add author to research
-   * Requirement: 12.6
    */
   async addAuthor(data: CreateAuthorData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -356,7 +339,6 @@ export class ResearchRepository {
 
   /**
    * Remove author from research
-   * Requirement: 12.6
    */
   async removeAuthor(researchId: string, studentId: string, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -372,7 +354,6 @@ export class ResearchRepository {
 
   /**
    * Add adviser to research
-   * Requirement: 12.7
    */
   async addAdviser(data: CreateAdviserData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -386,7 +367,6 @@ export class ResearchRepository {
 
   /**
    * Remove adviser from research
-   * Requirement: 12.7
    */
   async removeAdviser(researchId: string, facultyId: string, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -403,7 +383,6 @@ export class ResearchRepository {
   /**
    * Check if author already exists for research
    * Prevents duplicate author entries
-   * Requirement: 12.6
    */
   async findExistingAuthor(researchId: string, studentId: string) {
     const result = await this.db
@@ -423,7 +402,6 @@ export class ResearchRepository {
   /**
    * Check if adviser already exists for research
    * Prevents duplicate adviser entries
-   * Requirement: 12.7
    */
   async findExistingAdviser(researchId: string, facultyId: string) {
     const result = await this.db
@@ -443,7 +421,6 @@ export class ResearchRepository {
   /**
    * Find student by ID
    * Used for validation before adding as author
-   * Requirement: 12.6
    */
   async findStudentById(studentId: string) {
     const result = await this.db
@@ -458,7 +435,6 @@ export class ResearchRepository {
   /**
    * Find faculty by ID
    * Used for validation before adding as adviser
-   * Requirement: 12.7
    */
   async findFacultyById(facultyId: string) {
     const result = await this.db
@@ -473,7 +449,6 @@ export class ResearchRepository {
   /**
    * Get authors and advisers for multiple research records (batch query)
    * Prevents N+1 query problem
-   * Requirements: 12.6, 12.7
    */
   async getAuthorsAndAdvisersForMultiple(researchIds: string[]) {
     if (researchIds.length === 0) {

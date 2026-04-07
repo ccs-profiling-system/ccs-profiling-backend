@@ -2,7 +2,6 @@
  * Instruction Routes
  * Route definitions for instruction endpoints
  * 
- * Requirements: 14.1, 14.3, 14.4, 30.2
  */
 
 import { Router } from 'express';

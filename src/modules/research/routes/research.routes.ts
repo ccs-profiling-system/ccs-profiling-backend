@@ -2,7 +2,6 @@
  * Research Routes
  * Route definitions for research endpoints
  * 
- * Requirements: 12.1, 12.6, 12.7, 30.2
  */
 
 import { Router } from 'express';

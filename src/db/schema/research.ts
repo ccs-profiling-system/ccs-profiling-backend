@@ -9,7 +9,6 @@ import { faculty } from './faculty';
  * Stores research project, thesis, and publication data.
  * Supports soft delete for audit trail preservation.
  * 
- * Requirements: 12.2, 23.2, 28.1, 29.4, 29.7
  */
 export const research = pgTable('research', {
   id: uuidPrimaryKey(),
@@ -22,7 +21,7 @@ export const research = pgTable('research', {
   publication_url: varchar('publication_url', { length: 500 }),
   ...timestampsWithSoftDelete,
 }, (table) => ({
-  // Indexes for query optimization (Requirement 29.7)
+  // Indexes for query optimization 
   titleIdx: index('research_title_idx').on(table.title),
   statusIdx: index('research_status_idx').on(table.status),
 }));
@@ -33,7 +32,6 @@ export const research = pgTable('research', {
  * Links students to research projects as authors.
  * Tracks author order for proper attribution.
  * 
- * Requirements: 12.3, 23.2, 29.4
  */
 export const researchAuthors = pgTable('research_authors', {
   id: uuidPrimaryKey(),
@@ -42,10 +40,10 @@ export const researchAuthors = pgTable('research_authors', {
   author_order: integer('author_order').notNull(), // 1 for first author, 2 for second, etc.
   ...timestamps,
 }, (table) => ({
-  // Indexes for query optimization (Requirement 29.4)
+  // Indexes for query optimization 
   researchIdIdx: index('research_authors_research_id_idx').on(table.research_id),
   studentIdIdx: index('research_authors_student_id_idx').on(table.student_id),
-  // Unique constraint to prevent duplicate author entries (Requirement 23.2)
+  // Unique constraint to prevent duplicate author entries
   uniqueResearchStudent: unique('research_authors_research_student_unique').on(table.research_id, table.student_id),
 }));
 
@@ -55,7 +53,6 @@ export const researchAuthors = pgTable('research_authors', {
  * Links faculty to research projects as advisers.
  * Tracks adviser role (primary adviser, co-adviser, etc.).
  * 
- * Requirements: 12.4, 23.2, 29.4
  */
 export const researchAdvisers = pgTable('research_advisers', {
   id: uuidPrimaryKey(),
@@ -64,9 +61,9 @@ export const researchAdvisers = pgTable('research_advisers', {
   adviser_role: varchar('adviser_role', { length: 100 }).default('adviser'), // 'adviser', 'co-adviser', 'panel-member'
   ...timestamps,
 }, (table) => ({
-  // Indexes for query optimization (Requirement 29.4)
+  // Indexes for query optimization 
   researchIdIdx: index('research_advisers_research_id_idx').on(table.research_id),
   facultyIdIdx: index('research_advisers_faculty_id_idx').on(table.faculty_id),
-  // Unique constraint to prevent duplicate adviser entries (Requirement 23.2)
+  // Unique constraint to prevent duplicate adviser entries
   uniqueResearchFaculty: unique('research_advisers_research_faculty_unique').on(table.research_id, table.faculty_id),
 }));

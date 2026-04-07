@@ -2,7 +2,6 @@
  * Search Module DTOs
  * Data Transfer Objects for search operations
  * 
- * Requirements: 18.1, 18.2, 18.3, 18.4
  */
 
 /**
@@ -17,7 +16,6 @@ export interface SearchRequestDTO {
 
 /**
  * StudentSearchResultDTO - Student search result
- * Requirement: 18.1
  */
 export interface StudentSearchResultDTO {
   id: string;
@@ -33,7 +31,6 @@ export interface StudentSearchResultDTO {
 
 /**
  * FacultySearchResultDTO - Faculty search result
- * Requirement: 18.2
  */
 export interface FacultySearchResultDTO {
   id: string;
@@ -49,7 +46,6 @@ export interface FacultySearchResultDTO {
 
 /**
  * EventSearchResultDTO - Event search result
- * Requirement: 18.3
  */
 export interface EventSearchResultDTO {
   id: string;
@@ -62,7 +58,6 @@ export interface EventSearchResultDTO {
 
 /**
  * ResearchSearchResultDTO - Research search result
- * Requirement: 18.4
  */
 export interface ResearchSearchResultDTO {
   id: string;

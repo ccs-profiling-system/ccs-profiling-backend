@@ -2,7 +2,6 @@
  * Instruction Service
  * Business logic layer for instruction operations
  * 
- * Requirements: 14.1, 14.2, 14.4, 14.5
  */
 
 import { InstructionRepository } from '../repositories/instruction.repository';
@@ -25,7 +24,6 @@ export class InstructionService {
 
   /**
    * Get instruction by ID
-   * Requirement: 14.2
    */
   async getInstruction(id: string): Promise<InstructionResponseDTO> {
     const instruction = await this.instructionRepository.findById(id);
@@ -37,7 +35,6 @@ export class InstructionService {
 
   /**
    * List instructions with pagination and filters
-   * Requirement: 14.2
    */
   async listInstructions(filters?: InstructionFilters): Promise<InstructionListResponseDTO> {
     const result = await this.instructionRepository.findAll(filters);
@@ -50,10 +47,8 @@ export class InstructionService {
   /**
    * Create a new instruction
    * Validates duplicate subject_code within curriculum_year
-   * Requirements: 14.1, 14.2, 14.5
    */
   async createInstruction(data: CreateInstructionDTO): Promise<InstructionResponseDTO> {
-    // Check for duplicate subject_code within the same curriculum_year (Requirement 14.5)
     const existing = await this.instructionRepository.findBySubjectCode(
       data.subject_code,
       data.curriculum_year
@@ -89,7 +84,6 @@ export class InstructionService {
   /**
    * Update instruction by ID
    * Validates duplicate subject_code within curriculum_year
-   * Requirements: 14.2, 14.5
    */
   async updateInstruction(id: string, data: UpdateInstructionDTO): Promise<InstructionResponseDTO> {
     // Check if instruction exists
@@ -128,7 +122,6 @@ export class InstructionService {
 
   /**
    * Delete instruction by ID (soft delete)
-   * Requirement: 14.4
    */
   async deleteInstruction(id: string): Promise<void> {
     const existing = await this.instructionRepository.findById(id);
@@ -157,7 +150,6 @@ export class InstructionService {
 
   /**
    * Get soft-deleted instructions (admin only)
-   * Requirements: 28.5
    */
   async getDeletedInstructions(filters?: InstructionFilters): Promise<InstructionListResponseDTO> {
     const result = await this.instructionRepository.findDeleted(filters);
@@ -170,7 +162,6 @@ export class InstructionService {
 
   /**
    * Restore soft-deleted instruction
-   * Requirements: 28.7
    */
   async restoreInstruction(id: string): Promise<InstructionResponseDTO> {
     // Find instruction including deleted
@@ -193,7 +184,6 @@ export class InstructionService {
 
   /**
    * Permanently delete instruction (hard delete)
-   * Requirements: 28.6
    */
   async permanentDeleteInstruction(id: string): Promise<void> {
     // Find instruction including deleted

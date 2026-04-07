@@ -2,7 +2,6 @@
  * Violation Routes
  * Route definitions for violation endpoints
  * 
- * Requirements: 6.1, 6.3, 6.4, 30.2
  */
 
 import { Router } from 'express';

@@ -2,7 +2,6 @@
  * Report Controller
  * HTTP request/response handling for report generation
  * 
- * Requirements: 17.7, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -20,7 +19,6 @@ export class ReportController {
   /**
    * Generate student profile report
    * POST /api/v1/admin/reports/student-profile
-   * Requirements: 17.3, 17.7
    */
   generateStudentProfileReport = async (
     req: Request,
@@ -50,7 +48,6 @@ export class ReportController {
   /**
    * Generate faculty profile report
    * POST /api/v1/admin/reports/faculty-profile
-   * Requirements: 17.4, 17.7
    */
   generateFacultyProfileReport = async (
     req: Request,
@@ -80,7 +77,6 @@ export class ReportController {
   /**
    * Generate enrollment report
    * POST /api/v1/admin/reports/enrollments
-   * Requirements: 17.5, 17.7
    */
   generateEnrollmentReport = async (
     req: Request,
@@ -112,7 +108,6 @@ export class ReportController {
   /**
    * Generate analytics report
    * POST /api/v1/admin/reports/analytics
-   * Requirements: 17.6, 17.7
    */
   generateAnalyticsReport = async (
     req: Request,

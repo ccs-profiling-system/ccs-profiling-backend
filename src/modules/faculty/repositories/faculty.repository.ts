@@ -2,7 +2,6 @@
  * Faculty Repository
  * Database access layer for faculty operations
  * 
- * Requirements: 3.1, 3.4, 3.5, 28.2, 28.4
  */
 
 import { eq, and, isNull, or, ilike, sql } from 'drizzle-orm';
@@ -43,7 +42,6 @@ export class FacultyRepository {
 
   /**
    * Find faculty by UUID (excludes soft-deleted)
-   * Requirement: 3.4
    */
   async findById(id: string) {
     const result = await this.db
@@ -57,7 +55,6 @@ export class FacultyRepository {
 
   /**
    * Find faculty by faculty_id (excludes soft-deleted)
-   * Requirement: 3.4
    */
   async findByFacultyId(facultyId: string) {
     const result = await this.db
@@ -73,7 +70,6 @@ export class FacultyRepository {
    * Find all faculty with pagination and filters (excludes soft-deleted)
    * Supports search by name or faculty_id
    * Supports filter by department
-   * Requirements: 3.4, 28.4, 27.1, 27.2, 27.3, 27.4, 27.5, 27.6, 27.7
    */
   async findAll(filters?: FacultyFilters) {
     // Normalize pagination parameters
@@ -126,7 +122,6 @@ export class FacultyRepository {
       .offset(offset)
       .orderBy(faculty.created_at);
 
-    // Requirement 27.6 - Return empty data array when no records found
     return {
       data: results,
       meta: createPaginationMeta(page, limit, total),
@@ -135,7 +130,6 @@ export class FacultyRepository {
 
   /**
    * Create a new faculty
-   * Requirement: 3.1
    */
   async create(data: CreateFacultyData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -146,7 +140,6 @@ export class FacultyRepository {
 
   /**
    * Update faculty by ID
-   * Requirement: 3.4
    */
   async update(id: string, data: UpdateFacultyData, tx?: Database) {
     const dbInstance = tx || this.db;
@@ -164,7 +157,6 @@ export class FacultyRepository {
 
   /**
    * Soft delete faculty by ID
-   * Requirements: 3.5, 28.2
    */
   async softDelete(id: string) {
     await this.db
@@ -178,7 +170,6 @@ export class FacultyRepository {
 
   /**
    * Restore soft-deleted faculty
-   * Requirement: 28.2
    */
   async restore(id: string) {
     await this.db
@@ -205,7 +196,6 @@ export class FacultyRepository {
 
   /**
    * Find soft-deleted faculty (admin only)
-   * Requirement: 28.5
    */
   async findDeleted(filters?: FacultyFilters) {
     // Normalize pagination parameters
@@ -266,7 +256,6 @@ export class FacultyRepository {
 
   /**
    * Permanently delete faculty by ID (hard delete)
-   * Requirement: 28.6
    */
   async permanentDelete(id: string) {
     await this.db
@@ -276,7 +265,6 @@ export class FacultyRepository {
 
   /**
    * Find faculty by ID including soft-deleted (for restore/permanent delete operations)
-   * Requirement: 28.5
    */
   async findByIdIncludingDeleted(id: string) {
     const result = await this.db

@@ -2,7 +2,6 @@
  * Search Service
  * Business logic layer for search operations
  * 
- * Requirements: 18.1, 18.2, 18.3, 18.4, 18.5
  */
 
 import { StudentRepository } from '../../students/repositories/student.repository';
@@ -28,7 +27,6 @@ export class SearchService {
 
   /**
    * Search students by name or student_id with partial text matching
-   * Requirement: 18.1, 18.5
    */
   async searchStudents(query: string): Promise<EntitySearchResponseDTO<StudentSearchResultDTO>> {
     const result = await this.studentRepository.findAll({
@@ -59,7 +57,6 @@ export class SearchService {
 
   /**
    * Search faculty by name or faculty_id with partial text matching
-   * Requirement: 18.2, 18.5
    */
   async searchFaculty(query: string): Promise<EntitySearchResponseDTO<FacultySearchResultDTO>> {
     const result = await this.facultyRepository.findAll({
@@ -90,7 +87,6 @@ export class SearchService {
 
   /**
    * Search events by name or type with partial text matching
-   * Requirement: 18.3, 18.5
    */
   async searchEvents(query: string): Promise<EntitySearchResponseDTO<EventSearchResultDTO>> {
     const result = await this.eventRepository.findAll({
@@ -118,7 +114,6 @@ export class SearchService {
 
   /**
    * Search research by title or author with partial text matching
-   * Requirement: 18.4, 18.5
    */
   async searchResearch(query: string): Promise<EntitySearchResponseDTO<ResearchSearchResultDTO>> {
     const result = await this.researchRepository.findAll({
@@ -161,7 +156,6 @@ export class SearchService {
   /**
    * Global search across all entities
    * Searches students, faculty, events, and research in parallel
-   * Requirement: 18.5
    */
   async globalSearch(query: string, type?: string): Promise<SearchResponseDTO> {
     // If type is specified, search only that entity type

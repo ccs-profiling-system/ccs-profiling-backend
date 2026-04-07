@@ -2,7 +2,6 @@
  * Search Service Tests
  * Tests for search functionality
  * 
- * Requirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
@@ -12,7 +11,7 @@ import { FacultyRepository } from '../../faculty/repositories/faculty.repository
 import { EventRepository } from '../../events/repositories/event.repository';
 import { ResearchRepository } from '../../research/repositories/research.repository';
 import { SearchService } from './search.service';
-import { students, faculty, events, research } from '../../../db/schema';
+import { students, faculty, events, research, users } from '../../../db/schema';
 import { generateUUIDv7 } from '../../../shared/utils/uuid';
 import { eq } from 'drizzle-orm';
 
@@ -44,21 +43,41 @@ describe('SearchService', () => {
       researchRepository
     );
 
+    // Create test user for student
+    const studentUserId = generateUUIDv7();
+    await db.insert(users).values({
+      id: studentUserId,
+      email: 'searchtest@example.com',
+      password_hash: 'hashed_password',
+      role: 'student',
+    });
+
     // Create test data
     testStudentId = generateUUIDv7();
     const studentResult = await db.insert(students).values({
       id: testStudentId,
       student_id: 'TEST-SEARCH-001',
+      user_id: studentUserId,
       first_name: 'SearchTest',
       last_name: 'Student',
       email: 'searchtest@example.com',
       status: 'active',
     }).returning();
 
+    // Create test user for faculty
+    const facultyUserId = generateUUIDv7();
+    await db.insert(users).values({
+      id: facultyUserId,
+      email: 'searchfaculty@example.com',
+      password_hash: 'hashed_password',
+      role: 'faculty',
+    });
+
     testFacultyId = generateUUIDv7();
     const facultyResult = await db.insert(faculty).values({
       id: testFacultyId,
       faculty_id: 'TEST-FACULTY-001',
+      user_id: facultyUserId,
       first_name: 'SearchTest',
       last_name: 'Faculty',
       email: 'searchfaculty@example.com',

@@ -2,7 +2,6 @@
  * Affiliation Service
  * Business logic layer for affiliation operations
  * 
- * Requirements: 7.1, 7.3, 7.4
  */
 
 import { AffiliationRepository } from '../repositories/affiliation.repository';
@@ -25,7 +24,6 @@ export class AffiliationService {
 
   /**
    * Get affiliation record by ID
-   * Requirement: 7.1
    */
   async getAffiliation(id: string): Promise<AffiliationResponseDTO> {
     const record = await this.affiliationRepository.findById(id);
@@ -37,7 +35,6 @@ export class AffiliationService {
 
   /**
    * List affiliation records with pagination and filters
-   * Requirements: 7.1, 7.3
    */
   async listAffiliations(filters?: AffiliationFilters): Promise<AffiliationListResponseDTO> {
     const result = await this.affiliationRepository.findAll(filters);
@@ -49,7 +46,6 @@ export class AffiliationService {
 
   /**
    * Get affiliation records by student ID
-   * Requirement: 7.3
    */
   async getAffiliationsByStudent(studentId: string): Promise<AffiliationResponseDTO[]> {
     // Verify student exists
@@ -64,7 +60,6 @@ export class AffiliationService {
 
   /**
    * Create a new affiliation record
-   * Requirements: 7.1, 7.2
    */
   async createAffiliation(data: CreateAffiliationDTO): Promise<AffiliationResponseDTO> {
     // Verify student exists
@@ -91,7 +86,6 @@ export class AffiliationService {
 
   /**
    * Update affiliation record by ID
-   * Requirement: 7.1
    */
   async updateAffiliation(id: string, data: UpdateAffiliationDTO): Promise<AffiliationResponseDTO> {
     // Check if record exists
@@ -111,7 +105,6 @@ export class AffiliationService {
 
   /**
    * Delete affiliation record by ID
-   * Requirement: 7.1
    */
   async deleteAffiliation(id: string): Promise<void> {
     const existing = await this.affiliationRepository.findById(id);
@@ -125,7 +118,6 @@ export class AffiliationService {
   /**
    * End an affiliation record
    * Updates end_date and sets is_active to false
-   * Requirement: 7.4
    */
   async endAffiliation(id: string, endDate: string): Promise<AffiliationResponseDTO> {
     // Check if record exists

@@ -6,7 +6,6 @@
  * - Controller: HTTP request/response handling
  * - Service: Business logic and analytics computation
  * 
- * Requirements: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 16.7
  */
 
 import { db } from '../../db';

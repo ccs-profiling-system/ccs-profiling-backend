@@ -2,7 +2,6 @@
  * Instruction Controller
  * HTTP request/response handling for instruction operations
  * 
- * Requirements: 14.1, 14.3, 14.4, 30.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -21,7 +20,6 @@ export class InstructionController {
   /**
    * GET /api/v1/admin/instructions
    * List instructions with pagination, search, and filters
-   * Requirements: 14.1, 30.2
    */
   listInstructions = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -48,7 +46,6 @@ export class InstructionController {
   /**
    * GET /api/v1/admin/instructions/:id
    * Get instruction by ID
-   * Requirements: 14.1, 30.2
    */
   getInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,7 +71,6 @@ export class InstructionController {
   /**
    * POST /api/v1/admin/instructions
    * Create a new instruction
-   * Requirements: 14.1, 14.3, 30.2
    */
   createInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,7 +96,6 @@ export class InstructionController {
   /**
    * PUT /api/v1/admin/instructions/:id
    * Update instruction by ID
-   * Requirements: 14.1, 14.3, 30.2
    */
   updateInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -133,7 +128,6 @@ export class InstructionController {
   /**
    * DELETE /api/v1/admin/instructions/:id
    * Soft delete instruction by ID
-   * Requirements: 14.1, 14.4, 30.2
    */
   deleteInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -161,7 +155,6 @@ export class InstructionController {
   /**
    * GET /api/v1/admin/instructions/deleted
    * Get soft-deleted instructions (admin only)
-   * Requirements: 28.5, 30.2
    */
   getDeletedInstructions = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -188,7 +181,6 @@ export class InstructionController {
   /**
    * PATCH /api/v1/admin/instructions/:id/restore
    * Restore soft-deleted instruction
-   * Requirements: 28.7, 30.2
    */
   restoreInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -214,7 +206,6 @@ export class InstructionController {
   /**
    * DELETE /api/v1/admin/instructions/:id/permanent
    * Permanently delete instruction (hard delete)
-   * Requirements: 28.6, 30.2
    */
   permanentDeleteInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {

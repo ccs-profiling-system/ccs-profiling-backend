@@ -10,7 +10,6 @@ import { faculty } from './faculty';
  * Links to instructions and faculty for schedule assignments.
  * Supports soft delete for audit trail preservation.
  * 
- * Requirements: 13.2, 23.2, 28.1, 29.4, 29.7
  */
 export const schedules = pgTable('schedules', {
   id: uuidPrimaryKey(),
@@ -25,7 +24,7 @@ export const schedules = pgTable('schedules', {
   academic_year: varchar('academic_year', { length: 20 }).notNull(), // e.g., '2023-2024'
   ...timestampsWithSoftDelete,
 }, (table) => ({
-  // Indexes for query optimization (Requirements 23.2, 29.4, 29.7)
+  // Indexes for query optimization 
   roomIdx: index('schedules_room_idx').on(table.room),
   facultyIdIdx: index('schedules_faculty_id_idx').on(table.faculty_id),
   dayIdx: index('schedules_day_idx').on(table.day),

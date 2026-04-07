@@ -2,12 +2,12 @@
  * Events Module Tests
  * Integration tests for event operations
  * 
- * Requirements: 11.1, 11.3, 11.4, 11.6
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { db } from '../../db';
 import { events, eventParticipants, students, faculty, users } from '../../db/schema';
+import { eq } from 'drizzle-orm';
 import { EventRepository } from './repositories/event.repository';
 import { EventService } from './services/event.service';
 import { generateUUIDv7 } from '../../shared/utils/uuid';
@@ -22,34 +22,34 @@ describe('Events Module', () => {
     
     // Create test student with unique email
     const studentUserId = generateUUIDv7();
-    await db.insert(users).values({
+    const [insertedUser] = await db.insert(users).values({
       id: studentUserId,
       email: `student-${uniqueId}@example.com`,
       password_hash: 'hashed_password',
       role: 'student',
-    });
+    }).returning();
 
     const studentId = generateUUIDv7();
-    await db.insert(students).values({
+    const [insertedStudent] = await db.insert(students).values({
       id: studentId,
       student_id: `S-${uniqueId}`,
       user_id: studentUserId,
       first_name: 'Test',
       last_name: 'Student',
       email: `student-${uniqueId}@example.com`,
-    });
+    }).returning();
 
     // Create test faculty with unique email
     const facultyUserId = generateUUIDv7();
-    await db.insert(users).values({
+    const [insertedFacultyUser] = await db.insert(users).values({
       id: facultyUserId,
       email: `faculty-${uniqueId}@example.com`,
       password_hash: 'hashed_password',
       role: 'faculty',
-    });
+    }).returning();
 
     const facultyId = generateUUIDv7();
-    await db.insert(faculty).values({
+    const [insertedFaculty] = await db.insert(faculty).values({
       id: facultyId,
       faculty_id: `F-${uniqueId}`,
       user_id: facultyUserId,
@@ -57,7 +57,11 @@ describe('Events Module', () => {
       last_name: 'Faculty',
       email: `faculty-${uniqueId}@example.com`,
       department: 'Computer Science',
-    });
+    }).returning();
+    
+    if (!insertedStudent || !insertedFaculty) {
+      throw new Error('Failed to create test data');
+    }
 
     return { studentId, facultyId };
   }
