@@ -12,43 +12,48 @@ interface StudentSeed {
   yearLevel?: number;
 }
 
-const studentSeeds: StudentSeed[] = [
-  {
-    firstName: 'Alice',
-    lastName: 'Williams',
-    email: 'alice.williams@example.com',
-    program: 'BS Computer Science',
-    yearLevel: 4,
-  },
-  {
-    firstName: 'Bob',
-    lastName: 'Brown',
-    email: 'bob.brown@example.com',
-    program: 'BS Computer Science',
-    yearLevel: 3,
-  },
-  {
-    firstName: 'Charlie',
-    lastName: 'Davis',
-    email: 'charlie.davis@example.com',
-    program: 'BS Information Technology',
-    yearLevel: 2,
-  },
-  {
-    firstName: 'Diana',
-    lastName: 'Miller',
-    email: 'diana.miller@example.com',
-    program: 'BS Information Technology',
-    yearLevel: 1,
-  },
-  {
-    firstName: 'Edward',
-    lastName: 'Wilson',
-    email: 'edward.wilson@example.com',
-    program: 'BS Computer Science',
-    yearLevel: 4,
-  },
+const firstNames = [
+  'Alice', 'Bob', 'Charlie', 'Diana', 'Edward', 'Fiona', 'George', 'Hannah',
+  'Ian', 'Julia', 'Kevin', 'Laura', 'Michael', 'Nina', 'Oscar', 'Patricia',
+  'Quinn', 'Rachel', 'Samuel', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier',
+  'Yara', 'Zachary', 'Amber', 'Brian', 'Chloe', 'Daniel', 'Emma', 'Frank',
+  'Grace', 'Henry', 'Iris', 'Jack', 'Karen', 'Leo', 'Mia', 'Nathan',
 ];
+
+const lastNames = [
+  'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis',
+  'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson',
+  'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson',
+  'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson',
+];
+
+const programs = [
+  'BS Computer Science',
+  'BS Information Technology',
+  'BS Information Systems',
+  'BS Computer Engineering',
+];
+
+function generateStudentSeeds(count: number): StudentSeed[] {
+  const seeds: StudentSeed[] = [];
+  for (let i = 0; i < count; i++) {
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const program = programs[Math.floor(Math.random() * programs.length)];
+    const yearLevel = Math.floor(Math.random() * 4) + 1;
+    
+    seeds.push({
+      firstName,
+      lastName,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`,
+      program,
+      yearLevel,
+    });
+  }
+  return seeds;
+}
+
+const studentSeeds: StudentSeed[] = generateStudentSeeds(1000);
 
 export async function seedStudents(
   db: Database,

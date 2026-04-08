@@ -10,71 +10,56 @@ interface UserSeed {
   is_active: boolean;
 }
 
-const userSeeds: UserSeed[] = [
-  // Admin users
-  {
-    email: 'admin@ccs.edu',
-    password: 'pass1234',
-    role: 'admin',
-    is_active: true,
-  },
-  {
-    email: 'superadmin@ccs.edu',
-    password: 'pass1234',
-    role: 'admin',
-    is_active: true,
-  },
-  // Faculty users
-  {
-    email: 'john.doe@ccs.edu',
-    password: 'pass1234',
-    role: 'faculty',
-    is_active: true,
-  },
-  {
-    email: 'jane.smith@ccs.edu',
-    password: 'pass1234',
-    role: 'faculty',
-    is_active: true,
-  },
-  {
-    email: 'robert.johnson@ccs.edu',
-    password: 'pass1234',
-    role: 'faculty',
-    is_active: true,
-  },
-  // Student users
-  {
-    email: 'student1@ccs.edu',
-    password: 'pass1234',
-    role: 'student',
-    is_active: true,
-  },
-  {
-    email: 'student2@ccs.edu',
-    password: 'pass1234',
-    role: 'student',
-    is_active: true,
-  },
-  {
-    email: 'student3@ccs.edu',
-    password: 'pass1234',
-    role: 'student',
-    is_active: true,
-  },
-  {
-    email: 'student4@ccs.edu',
-    password: 'pass1234',
-    role: 'student',
-    is_active: true,
-  },
-  {
-    email: 'student5@ccs.edu',
-    password: 'pass1234',
-    role: 'student',
-    is_active: true,
-  },
-];
+function generateUserSeeds(): UserSeed[] {
+  const seeds: UserSeed[] = [
+    // Admin users
+    {
+      email: 'admin@ccs.edu',
+      password: 'pass1234',
+      role: 'admin',
+      is_active: true,
+    },
+    {
+      email: 'superadmin@ccs.edu',
+      password: 'pass1234',
+      role: 'admin',
+      is_active: true,
+    },
+    // Faculty users
+    {
+      email: 'john.doe@ccs.edu',
+      password: 'pass1234',
+      role: 'faculty',
+      is_active: true,
+    },
+    {
+      email: 'jane.smith@ccs.edu',
+      password: 'pass1234',
+      role: 'faculty',
+      is_active: true,
+    },
+    {
+      email: 'robert.johnson@ccs.edu',
+      password: 'pass1234',
+      role: 'faculty',
+      is_active: true,
+    },
+  ];
+
+  // Generate 1000 student users
+  for (let i = 1; i <= 1000; i++) {
+    seeds.push({
+      email: `student${i}@ccs.edu`,
+      password: 'pass1234',
+      role: 'student',
+      is_active: true,
+    });
+  }
+
+  return seeds;
+}
+
+const userSeeds: UserSeed[] = generateUserSeeds();
 
 export async function seedUsers(db: Database) {
   const createdUsers: Array<{ id: string; role: string }> = [];
