@@ -138,6 +138,26 @@ export class StudentRepository {
       }
     }
 
+    // Filter by skill category
+    if (filters?.skill_category) {
+      const studentsWithCategory = await this.db
+        .select({ student_id: skills.student_id })
+        .from(skills)
+        .where(eq(skills.category, filters.skill_category));
+      
+      const studentIds = studentsWithCategory.map(s => s.student_id);
+      
+      if (studentIds.length > 0) {
+        conditions.push(inArray(students.id, studentIds));
+      } else {
+        // No students have skills in this category, return empty result
+        return {
+          data: [],
+          meta: createPaginationMeta(page, limit, 0),
+        };
+      }
+    }
+
     // Get total count
     const countResult = await this.db
       .select({ count: sql<number>`count(*)` })

@@ -5,6 +5,7 @@ import { generateUUIDv7 } from '../../shared/utils/uuid';
 interface SkillSeed {
   studentIndex: number;
   skillName: string;
+  category: 'technical' | 'soft' | 'sports' | 'other';
   proficiencyLevel?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   yearsOfExperience?: number;
 }
@@ -24,30 +25,35 @@ const skillSeeds: SkillSeed[] = [
   {
     studentIndex: 0,
     skillName: 'JavaScript',
+    category: 'technical',
     proficiencyLevel: 'expert',
     yearsOfExperience: 4,
   },
   {
     studentIndex: 0,
     skillName: 'TypeScript',
+    category: 'technical',
     proficiencyLevel: 'advanced',
     yearsOfExperience: 3,
   },
   {
     studentIndex: 0,
     skillName: 'React',
+    category: 'technical',
     proficiencyLevel: 'advanced',
     yearsOfExperience: 3,
   },
   {
     studentIndex: 0,
     skillName: 'Node.js',
+    category: 'technical',
     proficiencyLevel: 'advanced',
     yearsOfExperience: 3,
   },
   {
     studentIndex: 0,
     skillName: 'Python',
+    category: 'technical',
     proficiencyLevel: 'intermediate',
     yearsOfExperience: 2,
   },
@@ -56,24 +62,28 @@ const skillSeeds: SkillSeed[] = [
   {
     studentIndex: 1,
     skillName: 'Java',
+    category: 'technical',
     proficiencyLevel: 'advanced',
     yearsOfExperience: 3,
   },
   {
     studentIndex: 1,
     skillName: 'Python',
+    category: 'technical',
     proficiencyLevel: 'intermediate',
     yearsOfExperience: 2,
   },
   {
     studentIndex: 1,
     skillName: 'SQL',
+    category: 'technical',
     proficiencyLevel: 'intermediate',
     yearsOfExperience: 2,
   },
   {
     studentIndex: 1,
     skillName: 'Git',
+    category: 'technical',
     proficiencyLevel: 'advanced',
     yearsOfExperience: 3,
   },
@@ -82,18 +92,21 @@ const skillSeeds: SkillSeed[] = [
   {
     studentIndex: 2,
     skillName: 'C++',
+    category: 'technical',
     proficiencyLevel: 'intermediate',
     yearsOfExperience: 2,
   },
   {
     studentIndex: 2,
     skillName: 'Python',
+    category: 'technical',
     proficiencyLevel: 'beginner',
     yearsOfExperience: 1,
   },
   {
     studentIndex: 2,
     skillName: 'HTML/CSS',
+    category: 'technical',
     proficiencyLevel: 'intermediate',
     yearsOfExperience: 2,
   },
@@ -102,12 +115,14 @@ const skillSeeds: SkillSeed[] = [
   {
     studentIndex: 3,
     skillName: 'Python',
+    category: 'technical',
     proficiencyLevel: 'beginner',
     yearsOfExperience: 1,
   },
   {
     studentIndex: 3,
     skillName: 'HTML/CSS',
+    category: 'technical',
     proficiencyLevel: 'beginner',
     yearsOfExperience: 1,
   },
@@ -116,24 +131,28 @@ const skillSeeds: SkillSeed[] = [
   {
     studentIndex: 4,
     skillName: 'C#',
+    category: 'technical',
     proficiencyLevel: 'expert',
     yearsOfExperience: 4,
   },
   {
     studentIndex: 4,
     skillName: '.NET',
+    category: 'technical',
     proficiencyLevel: 'advanced',
     yearsOfExperience: 3,
   },
   {
     studentIndex: 4,
     skillName: 'Azure',
+    category: 'technical',
     proficiencyLevel: 'intermediate',
     yearsOfExperience: 2,
   },
   {
     studentIndex: 4,
     skillName: 'Docker',
+    category: 'technical',
     proficiencyLevel: 'advanced',
     yearsOfExperience: 2,
   },
@@ -163,6 +182,7 @@ export async function seedSkills(
           id,
           student_id: studentId,
           skill_name: seed.skillName,
+          category: seed.category,
           proficiency_level: seed.proficiencyLevel,
           years_of_experience: seed.yearsOfExperience,
         })

@@ -62,4 +62,5 @@ export const studentListQuerySchema = z.object({
   year_level: z.string().regex(/^\d+$/).transform(Number).optional(),
   status: z.enum(['active', 'inactive', 'graduated']).optional(),
   skill: z.string().optional(),
+  skill_category: z.enum(['technical', 'soft', 'sports', 'other']).optional(),
 });

@@ -142,6 +142,7 @@ export interface StudentFilters {
   year_level?: number;
   status?: string;
   skill?: string;
+  skill_category?: string;
   page?: number;
   limit?: number;
 }

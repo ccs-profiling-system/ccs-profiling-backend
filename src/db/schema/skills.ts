@@ -15,6 +15,7 @@ export const skills = pgTable('skills', {
     .notNull()
     .references(() => students.id, { onDelete: 'cascade' }),
   skill_name: varchar('skill_name', { length: 200 }).notNull(),
+  category: varchar('category', { length: 50 }).notNull(), // 'technical', 'soft', 'sports', 'other'
   proficiency_level: varchar('proficiency_level', { length: 50 }), // 'beginner', 'intermediate', 'advanced', 'expert'
   years_of_experience: integer('years_of_experience'),
   ...timestamps,
