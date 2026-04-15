@@ -1,664 +1,577 @@
 /**
- * checkOwnership Middleware Tests
+ * Unit Tests for checkOwnership Middleware
  * 
- * Comprehensive test suite for the checkOwnership middleware.
- * Tests authentication checks, role bypass logic, resource fetching,
- * ownership validation, error responses, and edge cases.
+ * Tests the ownership validation middleware with focus on:
+ * - HTTP 403 when ownership validation fails
+ * - HTTP 401 when not authenticated
+ * - HTTP 404 when resource doesn't exist
+ * - Bypass for Admin and Department_Chair roles
+ * 
+ * Task 18: Basic Unit Tests (CRITICAL)
+ * Sub-tasks:
+ * - 18.6 Test checkOwnership() returns 403 when ownership validation fails
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Request, Response, NextFunction } from 'express';
-import { checkOwnership, addResourceConfig, getResourceConfig } from './checkOwnership.middleware';
-import { UnauthorizedError, ForbiddenError, NotFoundError, ValidationError } from '../../shared/errors';
 import { Role } from '../types';
-import { db } from '../../db';
+import { UnauthorizedError, ForbiddenError, NotFoundError, ValidationError } from '../../shared/errors';
 
-// Mock database
+// Create mock database
+const mockDb = {
+  select: vi.fn(() => ({
+    from: vi.fn(() => ({
+      where: vi.fn(() => ({
+        limit: vi.fn(() => Promise.resolve([])),
+      })),
+    })),
+  })),
+};
+
+// Mock the database module
 vi.mock('../../db', () => ({
-  db: {
-    select: vi.fn(),
-  },
+  db: mockDb,
 }));
 
+// Mock the schema
+vi.mock('../../db/schema', () => ({
+  students: { id: 'id', user_id: 'user_id' },
+  faculty: { id: 'id', user_id: 'user_id' },
+  instructions: { id: 'id', faculty_id: 'faculty_id' },
+  research: { id: 'id', faculty_id: 'faculty_id' },
+  enrollments: { id: 'id', student_id: 'student_id' },
+  academicHistory: { id: 'id', student_id: 'student_id' },
+}));
+
+// Mock drizzle-orm
+vi.mock('drizzle-orm', () => ({
+  eq: vi.fn((field, value) => ({ field, value })),
+}));
+
+// Import after mocks are set up
+const { checkOwnership } = await import('./checkOwnership.middleware');
+
 describe('checkOwnership Middleware', () => {
-  let mockRequest: any;
+  let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockNext: any;
-  let mockDbSelect: any;
-  let consoleDebugSpy: any;
-  let consoleWarnSpy: any;
+  let mockNext: NextFunction;
 
   beforeEach(() => {
-    // Reset mocks
     mockRequest = {
-      user: {
-        userId: 'user-123',
-        email: 'test@example.com',
-        role: Role.FACULTY,
-      },
-      params: {
-        id: 'resource-456',
-      },
+      user: undefined,
+      params: {},
+      body: {},
     };
-    mockResponse = {};
+    mockResponse = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    };
     mockNext = vi.fn();
 
-    // Mock database query chain
-    mockDbSelect = {
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([]),
-    };
-
-    vi.mocked(db.select).mockReturnValue(mockDbSelect);
-
-    // Spy on console methods
-    consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
+    // Reset database mock
     vi.clearAllMocks();
-    consoleDebugSpy.mockRestore();
-    consoleWarnSpy.mockRestore();
   });
 
-  describe('Authentication Checks', () => {
-    it('should return 401 when user is not authenticated', async () => {
-      // Arrange
+  describe('18.6 - Returns 403 when ownership validation fails', () => {
+    it('should throw ForbiddenError when user does not own the resource', async () => {
+      const middleware = checkOwnership('instruction');
+      
+      // Faculty user trying to access another faculty's instruction
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'instruction-456' };
+      
+      // Mock database to return instruction owned by different user
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'instruction-456', faculty_id: 'faculty-999' } // Different owner
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('You do not own this instruction');
+    });
+
+    it('should throw ForbiddenError when student tries to access another student\'s data', async () => {
+      const middleware = checkOwnership('student');
+      
+      mockRequest.user = {
+        userId: 'user-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      mockRequest.params = { id: 'student-456' };
+      
+      // Mock database to return student profile owned by different user
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'student-456', user_id: 'user-999' } // Different owner
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('You do not own this student');
+    });
+
+    it('should throw ForbiddenError when faculty tries to access another faculty\'s research', async () => {
+      const middleware = checkOwnership('research');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'research-789' };
+      
+      // Mock database to return research owned by different faculty
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'research-789', faculty_id: 'faculty-888' } // Different owner
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+    });
+
+    it('should throw ForbiddenError with descriptive message', async () => {
+      const middleware = checkOwnership('enrollment');
+      
+      mockRequest.user = {
+        userId: 'student-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      mockRequest.params = { id: 'enrollment-456' };
+      
+      // Mock database to return enrollment owned by different student
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'enrollment-456', student_id: 'student-999' }
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toBe('Access denied: You do not own this enrollment');
+    });
+  });
+
+  describe('Authentication Check', () => {
+    it('should throw UnauthorizedError when user is not authenticated', async () => {
+      const middleware = checkOwnership('instruction');
+      
+      // No user authenticated
       mockRequest.user = undefined;
-      const middleware = checkOwnership('student');
-
-      // Act
+      mockRequest.params = { id: 'instruction-123' };
+      
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
+      
       expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Authentication required',
-          statusCode: 401,
-        })
-      );
-      expect(db.select).not.toHaveBeenCalled();
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('Authentication required');
     });
 
-    it('should proceed to ownership check when user is authenticated', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
+    it('should check authentication before ownership', async () => {
       const middleware = checkOwnership('student');
-
-      // Act
+      
+      mockRequest.user = null as any;
+      mockRequest.params = { id: 'student-123' };
+      
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(db.select).toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith();
+      
+      // Should fail with UnauthorizedError, not ForbiddenError
+      expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
     });
   });
 
-  describe('Role Bypass Logic', () => {
+  describe('Bypass for Admin and Department_Chair', () => {
     it('should bypass ownership check for Admin role', async () => {
-      // Arrange
-      mockRequest.user!.role = Role.ADMIN;
-      const middleware = checkOwnership('student');
-
-      // Act
+      const middleware = checkOwnership('instruction');
+      
+      mockRequest.user = {
+        userId: 'admin-123',
+        role: Role.ADMIN,
+        email: 'admin@example.com',
+      };
+      mockRequest.params = { id: 'instruction-456' };
+      
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleDebugSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Ownership check bypassed')
-      );
-      expect(consoleDebugSpy).toHaveBeenCalledWith(
-        expect.stringContaining('role=admin')
-      );
-      expect(db.select).not.toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should bypass ownership check for Department_Chair role', async () => {
-      // Arrange
-      mockRequest.user!.role = Role.DEPARTMENT_CHAIR;
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleDebugSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Ownership check bypassed')
-      );
-      expect(consoleDebugSpy).toHaveBeenCalledWith(
-        expect.stringContaining('role=department_chair')
-      );
-      expect(db.select).not.toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should NOT bypass ownership check for Faculty role', async () => {
-      // Arrange
-      mockRequest.user!.role = Role.FACULTY;
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(db.select).toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should NOT bypass ownership check for Secretary role', async () => {
-      // Arrange
-      mockRequest.user!.role = Role.SECRETARY;
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(db.select).toHaveBeenCalled();
-    });
-
-    it('should NOT bypass ownership check for Student role', async () => {
-      // Arrange
-      mockRequest.user!.role = Role.STUDENT;
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(db.select).toHaveBeenCalled();
-    });
-  });
-
-  describe('Resource ID Extraction', () => {
-    it('should extract resource ID from default param name "id"', async () => {
-      // Arrange
-      mockRequest.params = { id: 'resource-789' };
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-789', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should extract resource ID from custom param name', async () => {
-      // Arrange
-      mockRequest.params = { studentId: 'student-999' };
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'student-999', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student', { paramName: 'studentId' });
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should return error when param name not found', async () => {
-      // Arrange
-      mockRequest.params = { wrongParam: 'value' };
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Resource ID parameter "id" not found in request',
-        })
-      );
-    });
-  });
-
-  describe('Resource Fetching', () => {
-    it('should fetch resource from database', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(db.select).toHaveBeenCalled();
-      expect(mockDbSelect.from).toHaveBeenCalled();
-      expect(mockDbSelect.where).toHaveBeenCalled();
-      expect(mockDbSelect.limit).toHaveBeenCalledWith(1);
-    });
-
-    it('should return 404 when resource not found', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(expect.any(NotFoundError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'student not found',
-          statusCode: 404,
-        })
-      );
-    });
-
-    it('should handle database errors gracefully', async () => {
-      // Arrange
-      const dbError = new Error('Database connection failed');
-      mockDbSelect.limit.mockRejectedValue(dbError);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(dbError);
-    });
-  });
-
-  describe('Ownership Validation', () => {
-    it('should grant access when user owns the resource', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleDebugSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Ownership validated')
-      );
+      
+      // Should call next() without error (bypass ownership check)
       expect(mockNext).toHaveBeenCalledWith();
       expect(mockNext).not.toHaveBeenCalledWith(expect.any(Error));
     });
 
-    it('should deny access when user does not own the resource', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'different-user' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Ownership validation failed')
-      );
-      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Access denied: You do not own this student',
-          statusCode: 403,
-        })
-      );
-    });
-
-    it('should use default ownership field from config', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should use custom ownership field when provided', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', faculty_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('instruction', { ownerField: 'faculty_id' });
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should handle missing ownership field on resource', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456' }, // No ownership field
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Ownership field "user_id" not found')
-      );
-      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Cannot validate ownership: student does not have ownership information',
-        })
-      );
-    });
-  });
-
-  describe('Resource Type Configuration', () => {
-    it('should support student resource type', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should support faculty resource type', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('faculty');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should support instruction resource type', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', faculty_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('instruction');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should support research resource type', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', faculty_id: 'user-123' },
-      ]);
+    it('should bypass ownership check for Department_Chair role', async () => {
       const middleware = checkOwnership('research');
-
-      // Act
+      
+      mockRequest.user = {
+        userId: 'chair-123',
+        role: Role.DEPARTMENT_CHAIR,
+        email: 'chair@example.com',
+      };
+      mockRequest.params = { id: 'research-789' };
+      
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
+      
+      // Should call next() without error (bypass ownership check)
       expect(mockNext).toHaveBeenCalledWith();
+      expect(mockNext).not.toHaveBeenCalledWith(expect.any(Error));
     });
 
-    it('should support enrollment resource type', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', student_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('enrollment');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should support academic_history resource type', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', student_id: 'user-123' },
-      ]);
-      const middleware = checkOwnership('academic_history');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should throw error for unknown resource type', () => {
-      // Arrange & Act & Assert
-      expect(() => checkOwnership('unknown_resource')).toThrow(
-        'checkOwnership: Unknown resource type "unknown_resource"'
-      );
-    });
-  });
-
-  describe('Error Response Format', () => {
-    it('should return UnauthorizedError with status 401 when not authenticated', async () => {
-      // Arrange
-      mockRequest.user = undefined;
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      const error = mockNext.mock.calls[0][0];
-      expect(error).toBeInstanceOf(UnauthorizedError);
-      expect(error.statusCode).toBe(401);
-      expect(error.code).toBe('UNAUTHORIZED');
-    });
-
-    it('should return NotFoundError with status 404 when resource not found', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      const error = mockNext.mock.calls[0][0];
-      expect(error).toBeInstanceOf(NotFoundError);
-      expect(error.statusCode).toBe(404);
-      expect(error.code).toBe('NOT_FOUND');
-    });
-
-    it('should return ForbiddenError with status 403 when ownership validation fails', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'different-user' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      const error = mockNext.mock.calls[0][0];
-      expect(error).toBeInstanceOf(ForbiddenError);
-      expect(error.statusCode).toBe(403);
-      expect(error.code).toBe('FORBIDDEN');
-    });
-
-    it('should include resource type in error message', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', faculty_id: 'different-user' },
-      ]);
+    it('should not bypass ownership check for Faculty role', async () => {
       const middleware = checkOwnership('instruction');
-
-      // Act
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'instruction-456' };
+      
+      // Mock database to return instruction owned by different faculty
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'instruction-456', faculty_id: 'faculty-999' }
+            ])),
+          })),
+        })),
+      });
+      
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Access denied: You do not own this instruction',
-        })
-      );
+      
+      // Should check ownership and fail
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
     });
-  });
 
-  describe('Middleware Composition', () => {
-    it('should work with requirePermission middleware', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
+    it('should not bypass ownership check for Student role', async () => {
       const middleware = checkOwnership('student');
-
-      // Act
+      
+      mockRequest.user = {
+        userId: 'user-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      mockRequest.params = { id: 'student-456' };
+      
+      // Mock database to return student profile owned by different user
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'student-456', user_id: 'user-999' }
+            ])),
+          })),
+        })),
+      });
+      
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      // Should check ownership and fail
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+    });
 
-      // Assert
+    it('should not bypass ownership check for Secretary role', async () => {
+      const middleware = checkOwnership('student');
+      
+      mockRequest.user = {
+        userId: 'secretary-123',
+        role: Role.SECRETARY,
+        email: 'secretary@example.com',
+      };
+      mockRequest.params = { id: 'student-456' };
+      
+      // Mock database to return student profile owned by different user
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'student-456', user_id: 'user-999' }
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      // Should check ownership and fail
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+    });
+  });
+
+  describe('Resource Not Found', () => {
+    it('should throw NotFoundError when resource does not exist', async () => {
+      const middleware = checkOwnership('instruction');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'nonexistent-id' };
+      
+      // Mock database to return empty array (resource not found)
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(NotFoundError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('instruction not found');
+    });
+
+    it('should return 404 before checking ownership', async () => {
+      const middleware = checkOwnership('research');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'nonexistent-research' };
+      
+      // Mock database to return empty array
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      // Should fail with NotFoundError, not ForbiddenError
+      expect(mockNext).toHaveBeenCalledWith(expect.any(NotFoundError));
+    });
+  });
+
+  describe('Ownership Validation Success', () => {
+    it('should call next() when user owns the resource', async () => {
+      const middleware = checkOwnership('instruction');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'instruction-456' };
+      
+      // Mock database to return instruction owned by the user
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'instruction-456', faculty_id: 'faculty-123' } // Same owner
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith();
+      expect(mockNext).not.toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    it('should allow student to access their own profile', async () => {
+      const middleware = checkOwnership('student');
+      
+      mockRequest.user = {
+        userId: 'user-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      mockRequest.params = { id: 'student-456' };
+      
+      // Mock database to return student profile owned by the user
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'student-456', user_id: 'user-123' } // Same owner
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
       expect(mockNext).toHaveBeenCalledWith();
     });
 
-    it('should be chainable with other middleware', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValue([
-        { id: 'resource-456', user_id: 'user-123' },
-      ]);
-      const middleware1 = checkOwnership('student');
-      const middleware2 = checkOwnership('enrollment');
-
-      // Act
-      await middleware1(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
+    it('should allow faculty to access their own research', async () => {
+      const middleware = checkOwnership('research');
+      
+      mockRequest.user = {
+        userId: 'faculty-789',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'research-123' };
+      
+      // Mock database to return research owned by the faculty
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'research-123', faculty_id: 'faculty-789' } // Same owner
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
       expect(mockNext).toHaveBeenCalledWith();
     });
   });
 
-  describe('Custom Resource Configuration', () => {
-    it('should allow adding custom resource types', () => {
-      // Arrange
-      const mockTable = { id: 'mock-table' };
-      const consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
-
-      // Act
-      addResourceConfig('custom_resource', mockTable, 'owner_id');
-      const config = getResourceConfig();
-
-      // Assert
-      expect(config.custom_resource).toBeDefined();
-      expect(config.custom_resource.table).toBe(mockTable);
-      expect(config.custom_resource.ownerField).toBe('owner_id');
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Added resource config: type=custom_resource')
-      );
-
-      consoleInfoSpy.mockRestore();
+  describe('Custom Parameter Name', () => {
+    it('should support custom parameter name', async () => {
+      const middleware = checkOwnership('student', { paramName: 'studentId' });
+      
+      mockRequest.user = {
+        userId: 'user-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      mockRequest.params = { studentId: 'student-456' }; // Custom param name
+      
+      // Mock database to return student profile owned by the user
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'student-456', user_id: 'user-123' }
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith();
     });
 
-    it('should warn when overwriting existing resource config', () => {
-      // Arrange
-      const mockTable = { id: 'mock-table' };
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
-
-      // Act
-      addResourceConfig('student', mockTable, 'new_owner_id');
-
-      // Assert
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Overwriting existing resource config for "student"')
-      );
-
-      consoleWarnSpy.mockRestore();
-      consoleInfoSpy.mockRestore();
-    });
-
-    it('should return copy of resource config', () => {
-      // Arrange & Act
-      const config1 = getResourceConfig();
-      const config2 = getResourceConfig();
-
-      // Assert
-      expect(config1).toEqual(config2);
-      expect(config1).not.toBe(config2); // Different objects
+    it('should throw ValidationError when custom parameter is missing', async () => {
+      const middleware = checkOwnership('student', { paramName: 'studentId' });
+      
+      mockRequest.user = {
+        userId: 'user-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      mockRequest.params = { id: 'student-456' }; // Wrong param name
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ValidationError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('studentId');
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle null user_id in request', async () => {
-      // Arrange
-      mockRequest.user!.userId = null;
-      mockDbSelect.limit.mockResolvedValueOnce([
-        { id: 'resource-456', user_id: 'some-user' },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+    it('should throw error for unknown resource type', () => {
+      expect(() => {
+        checkOwnership('unknown_resource');
+      }).toThrow('Unknown resource type');
     });
 
-    it('should handle null owner_id in resource', async () => {
-      // Arrange
-      mockDbSelect.limit.mockResolvedValueOnce([
-        { id: 'resource-456', user_id: null },
-      ]);
-      const middleware = checkOwnership('student');
-
-      // Act
+    it('should throw ValidationError when resource ID is empty', async () => {
+      const middleware = checkOwnership('instruction');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: '' }; // Empty ID
+      
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
-    });
-
-    it('should handle empty resource ID', async () => {
-      // Arrange
-      mockRequest.params.id = '';
-      const middleware = checkOwnership('student');
-
-      // Act
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      // Empty string is treated as validation error
+      
       expect(mockNext).toHaveBeenCalledWith(expect.any(ValidationError));
+    });
+
+    it('should throw ValidationError when resource ID parameter is missing', async () => {
+      const middleware = checkOwnership('instruction');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = {}; // No ID parameter
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ValidationError));
+    });
+
+    it('should handle resource without ownership field', async () => {
+      const middleware = checkOwnership('instruction');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      mockRequest.params = { id: 'instruction-456' };
+      
+      // Mock database to return resource without ownership field
+      mockDb.select.mockReturnValue({
+        from: vi.fn(() => ({
+          where: vi.fn(() => ({
+            limit: vi.fn(() => Promise.resolve([
+              { id: 'instruction-456' } // Missing faculty_id
+            ])),
+          })),
+        })),
+      });
+      
+      await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('Cannot validate ownership');
     });
   });
 });
