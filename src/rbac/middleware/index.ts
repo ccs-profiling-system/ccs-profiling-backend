@@ -5,3 +5,4 @@
  */
 
 export { requirePermission } from './requirePermission.middleware';
+export { checkOwnership, addResourceConfig, getResourceConfig } from './checkOwnership.middleware';
