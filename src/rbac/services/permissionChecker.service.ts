@@ -162,6 +162,12 @@ export class PermissionChecker {
   /**
    * Compute permission check result using resolution algorithm
    * 
+   * Resolution order (highest priority first):
+   * 1. Explicit deny - checkExplicitDeny()
+   * 2. Explicit allow - checkExplicitAllow()
+   * 3. Wildcard allow - checkWildcardAllow()
+   * 4. Default deny - defaultDeny()
+   * 
    * @param role - The user's role
    * @param permission - The permission to check
    * @returns PermissionCheckResult with granted flag and reason
@@ -177,22 +183,108 @@ export class PermissionChecker {
     }
     
     // Step 1: Check explicit deny (highest priority)
+    const explicitDenyResult = this.checkExplicitDeny(rolePermissions, permission);
+    if (explicitDenyResult !== null) {
+      return explicitDenyResult;
+    }
+    
+    // Step 2: Check explicit allow
+    const explicitAllowResult = this.checkExplicitAllow(rolePermissions, permission);
+    if (explicitAllowResult !== null) {
+      return explicitAllowResult;
+    }
+    
+    // Step 3: Check wildcard allow
+    const wildcardAllowResult = this.checkWildcardAllow(rolePermissions, permission);
+    if (wildcardAllowResult !== null) {
+      return wildcardAllowResult;
+    }
+    
+    // Step 4: Default deny
+    return this.defaultDeny();
+  }
+
+  /**
+   * Step 1: Check if permission is explicitly denied
+   * 
+   * Checks if the permission exists in the role's deny list.
+   * Supports both specific permissions and wildcard patterns.
+   * 
+   * @param rolePermissions - The role's permission configuration
+   * @param permission - The permission to check
+   * @returns PermissionCheckResult if denied, null if not in deny list
+   * 
+   * @example
+   * ```typescript
+   * // Department chair has schedule.delete in deny list
+   * checkExplicitDeny(deptChairPerms, 'schedule.delete')
+   * // Returns: { granted: false, reason: 'Explicit deny: schedule.delete' }
+   * ```
+   */
+  private checkExplicitDeny(
+    rolePermissions: RolePermissions,
+    permission: Permission
+  ): PermissionCheckResult | null {
     if (this.matchesPermission(permission, rolePermissions.deny)) {
       return {
         granted: false,
         reason: `Explicit deny: ${permission}`,
       };
     }
-    
-    // Step 2: Check explicit allow
+    return null;
+  }
+
+  /**
+   * Step 2: Check if permission is explicitly allowed
+   * 
+   * Checks if the permission exists exactly in the role's allow list.
+   * Does NOT check wildcard patterns (that's step 3).
+   * 
+   * @param rolePermissions - The role's permission configuration
+   * @param permission - The permission to check
+   * @returns PermissionCheckResult if explicitly allowed, null if not in allow list
+   * 
+   * @example
+   * ```typescript
+   * // Faculty has research.create in allow list
+   * checkExplicitAllow(facultyPerms, 'research.create')
+   * // Returns: { granted: true, reason: 'Explicit allow: research.create' }
+   * ```
+   */
+  private checkExplicitAllow(
+    rolePermissions: RolePermissions,
+    permission: Permission
+  ): PermissionCheckResult | null {
     if (rolePermissions.allow.includes(permission)) {
       return {
         granted: true,
         reason: `Explicit allow: ${permission}`,
       };
     }
-    
-    // Step 3: Check wildcard allow
+    return null;
+  }
+
+  /**
+   * Step 3: Check if permission matches wildcard patterns in allow list
+   * 
+   * Checks if the permission matches any wildcard pattern in the allow list.
+   * Supports resource.* and *.* patterns.
+   * 
+   * @param rolePermissions - The role's permission configuration
+   * @param permission - The permission to check
+   * @returns PermissionCheckResult if wildcard matches, null if no match
+   * 
+   * @example
+   * ```typescript
+   * // Department chair has schedule.* in allow list
+   * checkWildcardAllow(deptChairPerms, 'schedule.create')
+   * // Returns: { granted: true, reason: 'Wildcard allow: schedule.*' }
+   * ```
+   */
+  private checkWildcardAllow(
+    rolePermissions: RolePermissions,
+    permission: Permission
+  ): PermissionCheckResult | null {
     const wildcardMatch = this.findWildcardMatch(permission, rolePermissions.allow);
     if (wildcardMatch) {
       return {
@@ -200,8 +292,25 @@ export class PermissionChecker {
         reason: `Wildcard allow: ${wildcardMatch}`,
       };
     }
-    
-    // Step 4: Default deny
+    return null;
+  }
+
+  /**
+   * Step 4: Default deny - no matching permission found
+   * 
+   * Returns a denial result when no explicit deny, explicit allow,
+   * or wildcard allow rule matches the permission.
+   * 
+   * @returns PermissionCheckResult with denial and default deny reason
+   * 
+   * @example
+   * ```typescript
+   * // Faculty tries to approve schedules (not in any allow list)
+   * defaultDeny()
+   * // Returns: { granted: false, reason: 'Default deny: no matching permission' }
+   * ```
+   */
+  private defaultDeny(): PermissionCheckResult {
     return {
       granted: false,
       reason: 'Default deny: no matching permission',
