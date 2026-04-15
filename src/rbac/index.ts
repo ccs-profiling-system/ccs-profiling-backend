@@ -25,4 +25,19 @@ export { permissionConfig, getPermissionsForRole, getAllRoles, isValidRole } fro
 export { PermissionChecker, permissionChecker } from './services/permissionChecker.service';
 
 // Middleware
-export { requirePermission } from './middleware';
+export { requirePermission, checkOwnership, addResourceConfig, getResourceConfig } from './middleware';
+
+// Utilities
+export {
+  composeMiddleware,
+  composeMiddlewareWithValidation,
+  validateMiddlewareComposition,
+  createPermissionConstants,
+  MiddlewarePresets,
+  MiddlewareCompositionBuilder,
+  isAuthenticated,
+  type Middleware,
+  type MiddlewareComposition,
+  type PermissionConstants,
+  type AuthenticatedRequest,
+} from './utils/middleware-composer';
