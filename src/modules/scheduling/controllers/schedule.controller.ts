@@ -310,4 +310,29 @@ export class ScheduleController {
       next(error);
     }
   };
+
+  /**
+   * POST /api/v1/admin/schedules/:id/approve
+   * Approve schedule (workflow operation)
+   */
+  approveSchedule = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Validate ID parameter
+      const validationResult = scheduleIdParamSchema.safeParse(req.params);
+      if (!validationResult.success) {
+        throw new ValidationError('Invalid schedule ID', validationResult.error.errors);
+      }
+
+      const { id } = validationResult.data;
+
+      const schedule = await this.scheduleService.approveSchedule(id);
+
+      res.json({
+        success: true,
+        data: schedule,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
