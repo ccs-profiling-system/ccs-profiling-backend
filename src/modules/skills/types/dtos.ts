@@ -10,6 +10,7 @@
 export interface CreateSkillDTO {
   student_id: string;
   skill_name: string;
+  category: 'technical' | 'soft' | 'sports' | 'other';
   proficiency_level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   years_of_experience?: number;
 }
@@ -19,6 +20,7 @@ export interface CreateSkillDTO {
  */
 export interface UpdateSkillDTO {
   skill_name?: string;
+  category?: 'technical' | 'soft' | 'sports' | 'other';
   proficiency_level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   years_of_experience?: number;
 }
@@ -30,6 +32,7 @@ export interface SkillResponseDTO {
   id: string;
   student_id: string;
   skill_name: string;
+  category: string;
   proficiency_level?: string;
   years_of_experience?: number;
   created_at: string;
@@ -54,6 +57,7 @@ export interface SkillListResponseDTO {
  */
 export interface SkillFilters {
   student_id?: string;
+  category?: string;
   proficiency_level?: string;
   page?: number;
   limit?: number;

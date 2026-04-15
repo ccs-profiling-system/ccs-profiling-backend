@@ -1,0 +1,3 @@
+# RBAC Middleware
+
+This directory contains authorization middleware functions for Express routes.

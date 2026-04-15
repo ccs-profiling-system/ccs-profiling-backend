@@ -76,6 +76,7 @@ export class SkillService {
       id,
       student_id: data.student_id,
       skill_name: data.skill_name,
+      category: data.category,
       proficiency_level: data.proficiency_level,
       years_of_experience: data.years_of_experience,
     });
@@ -122,6 +123,7 @@ export class SkillService {
       id: record.id,
       student_id: record.student_id,
       skill_name: record.skill_name,
+      category: record.category,
       proficiency_level: record.proficiency_level || undefined,
       years_of_experience: record.years_of_experience || undefined,
       created_at: record.created_at.toISOString(),

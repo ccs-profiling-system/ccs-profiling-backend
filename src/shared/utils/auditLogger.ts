@@ -30,12 +30,14 @@ export class AuditLogger {
   /**
    * Log an audit event
    * Captures before and after states as JSONB
+   * Silently fails if user_id doesn't exist (logs warning instead of throwing)
    */
   async log(options: AuditLogOptions, tx?: Database): Promise<void> {
     try {
+      // Create audit log - user_id can be undefined
       await this.auditLogRepository.create(
         {
-          user_id: options.context.user_id,
+          user_id: options.context.user_id || undefined,
           action_type: options.action_type,
           entity_type: options.entity_type,
           entity_id: options.entity_id,
@@ -46,9 +48,14 @@ export class AuditLogger {
         },
         tx
       );
-    } catch (error) {
+    } catch (error: any) {
       // Log error but don't throw - audit logging should not break main operations
       console.error('Failed to create audit log:', error);
+      
+      // If it's a foreign key constraint error on user_id, log a more specific warning
+      if (error?.code === '23503' && error?.constraint_name === 'audit_logs_user_id_users_id_fk') {
+        console.warn(`Audit log skipped: user_id "${options.context.user_id}" not found in users table`);
+      }
     }
   }
 
@@ -62,6 +69,16 @@ export class AuditLogger {
     context: AuditContext,
     tx?: Database
   ): Promise<void> {
+    // If user_id doesn't exist, skip audit logging to avoid FK constraint errors
+    // This can happen with dev tokens or deleted users
+    if (context.user_id && (
+      context.user_id === '00000000-0000-0000-0000-000000000000' || 
+      context.user_id === 'dev-user-id'
+    )) {
+      console.warn('Skipping audit log for dev/invalid user');
+      return;
+    }
+
     await this.log(
       {
         action_type: 'create',

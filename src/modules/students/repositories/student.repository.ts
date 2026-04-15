@@ -4,9 +4,10 @@
  * 
  */
 
-import { eq, and, isNull, or, ilike, sql } from 'drizzle-orm';
+import { eq, and, isNull, or, ilike, sql, inArray } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { students } from '../../../db/schema';
+import { skills } from '../../../db/schema/skills';
 import { StudentFilters } from '../types';
 import { calculateOffset, normalizePaginationParams } from '../../../shared/utils/pagination';
 import { createPaginationMeta } from '../../../shared/utils/apiResponse';
@@ -109,6 +110,52 @@ export class StudentRepository {
     // Filter by status
     if (filters?.status) {
       conditions.push(eq(students.status, filters.status));
+    }
+
+    // Filter by skill(s) - supports comma-separated skills for multiple selection
+    if (filters?.skill) {
+      const skillNames = filters.skill.includes(',') 
+        ? filters.skill.split(',').map(s => s.trim()).filter(Boolean)
+        : [filters.skill];
+      
+      if (skillNames.length > 0) {
+        const studentsWithSkills = await this.db
+          .select({ student_id: skills.student_id })
+          .from(skills)
+          .where(inArray(skills.skill_name, skillNames));
+        
+        const studentIds = studentsWithSkills.map(s => s.student_id);
+        
+        if (studentIds.length > 0) {
+          conditions.push(inArray(students.id, studentIds));
+        } else {
+          // No students have these skills, return empty result
+          return {
+            data: [],
+            meta: createPaginationMeta(page, limit, 0),
+          };
+        }
+      }
+    }
+
+    // Filter by skill category
+    if (filters?.skill_category) {
+      const studentsWithCategory = await this.db
+        .select({ student_id: skills.student_id })
+        .from(skills)
+        .where(eq(skills.category, filters.skill_category));
+      
+      const studentIds = studentsWithCategory.map(s => s.student_id);
+      
+      if (studentIds.length > 0) {
+        conditions.push(inArray(students.id, studentIds));
+      } else {
+        // No students have skills in this category, return empty result
+        return {
+          data: [],
+          meta: createPaginationMeta(page, limit, 0),
+        };
+      }
     }
 
     // Get total count

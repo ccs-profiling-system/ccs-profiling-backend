@@ -13,12 +13,14 @@ export interface CreateSkillData {
   id?: string; // Optional UUID v7, generated if not provided
   student_id: string;
   skill_name: string;
+  category: string;
   proficiency_level?: string;
   years_of_experience?: number;
 }
 
 export interface UpdateSkillData {
   skill_name?: string;
+  category?: string;
   proficiency_level?: string;
   years_of_experience?: number;
 }
@@ -80,6 +82,11 @@ export class SkillRepository {
     // Filter by student_id
     if (filters?.student_id) {
       conditions.push(eq(skills.student_id, filters.student_id));
+    }
+
+    // Filter by category
+    if (filters?.category) {
+      conditions.push(eq(skills.category, filters.category));
     }
 
     // Filter by proficiency_level

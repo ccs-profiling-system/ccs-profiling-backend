@@ -13,6 +13,9 @@ import { z } from 'zod';
 export const createSkillSchema = z.object({
   student_id: z.string().uuid('Invalid student ID format'),
   skill_name: z.string().min(1, 'Skill name is required').max(200, 'Skill name must be at most 200 characters'),
+  category: z.enum(['technical', 'soft', 'sports', 'other'], {
+    errorMap: () => ({ message: 'Category must be technical, soft, sports, or other' }),
+  }),
   proficiency_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert'], {
     errorMap: () => ({ message: 'Proficiency level must be beginner, intermediate, advanced, or expert' }),
   }).optional(),
@@ -25,6 +28,9 @@ export const createSkillSchema = z.object({
  */
 export const updateSkillSchema = z.object({
   skill_name: z.string().min(1, 'Skill name is required').max(200, 'Skill name must be at most 200 characters').optional(),
+  category: z.enum(['technical', 'soft', 'sports', 'other'], {
+    errorMap: () => ({ message: 'Category must be technical, soft, sports, or other' }),
+  }).optional(),
   proficiency_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert'], {
     errorMap: () => ({ message: 'Proficiency level must be beginner, intermediate, advanced, or expert' }),
   }).optional(),
@@ -52,5 +58,6 @@ export const skillListQuerySchema = z.object({
   page: z.string().regex(/^\d+$/).transform(Number).optional(),
   limit: z.string().regex(/^\d+$/).transform(Number).optional(),
   student_id: z.string().uuid('Invalid student ID format').optional(),
+  category: z.enum(['technical', 'soft', 'sports', 'other']).optional(),
   proficiency_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
 });

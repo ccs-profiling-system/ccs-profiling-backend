@@ -229,4 +229,21 @@ export class FacultyController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/admin/faculty/stats
+   * Get faculty statistics
+   */
+  getFacultyStats = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await this.facultyService.getFacultyStats();
+
+      res.json({
+        success: true,
+        data: stats,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
