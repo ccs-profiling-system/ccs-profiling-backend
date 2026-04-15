@@ -301,4 +301,26 @@ export class ScheduleService {
     // Permanently delete
     await this.scheduleRepository.permanentDelete(id);
   }
+
+  /**
+   * Approve schedule (workflow operation)
+   * 
+   * Note: This is a placeholder for the workflow approval process.
+   * Full workflow state management will be implemented in Phase 5 (Workflow Engine).
+   * For now, this method validates that the schedule exists and returns it.
+   */
+  async approveSchedule(id: string): Promise<ScheduleResponseDTO> {
+    const existing = await this.scheduleRepository.findById(id);
+    if (!existing) {
+      throw new NotFoundError('Schedule not found');
+    }
+
+    // TODO: Implement workflow state transition when workflow engine is added
+    // - Validate current state (e.g., must be in 'pending_approval' state)
+    // - Update state to 'approved'
+    // - Log workflow transition
+    // - Trigger any approval notifications
+
+    return this.toResponseDTO(existing);
+  }
 }
