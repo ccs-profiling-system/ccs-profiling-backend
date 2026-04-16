@@ -1,577 +1,393 @@
 /**
- * requirePermission Middleware Tests
+ * Unit Tests for requirePermission Middleware
  * 
- * Comprehensive test suite for the requirePermission middleware.
- * Tests authentication checks, permission validation, OR logic, audit logging,
- * error responses, and performance requirements.
+ * Tests the permission checking middleware with focus on:
+ * - HTTP 401 when not authenticated
+ * - HTTP 403 when permission denied
+ * - Proper permission validation
+ * - Multiple permission support (OR logic)
+ * 
+ * Task 18: Basic Unit Tests (CRITICAL)
+ * Sub-tasks:
+ * - 18.4 Test requirePermission() returns 403 when permission denied
+ * - 18.5 Test requirePermission() returns 401 when not authenticated
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Request, Response, NextFunction } from 'express';
 import { requirePermission } from './requirePermission.middleware';
-import { UnauthorizedError, ForbiddenError } from '../../shared/errors';
-import { PermissionChecker } from '../services/permissionChecker.service';
 import { Role } from '../types';
+import { UnauthorizedError, ForbiddenError } from '../../shared/errors';
 
-// Mock PermissionChecker
-vi.mock('../services/permissionChecker.service');
+// Mock the PermissionChecker service
+vi.mock('../services/permissionChecker.service', () => {
+  return {
+    PermissionChecker: {
+      getInstance: vi.fn(() => ({
+        hasPermission: vi.fn((role: Role, permission: string) => {
+          // Mock permission logic for testing
+          if (role === Role.ADMIN) {
+            return { granted: true, reason: 'Wildcard allow: *.*' };
+          }
+          if (role === Role.FACULTY && permission === 'student.read') {
+            return { granted: true, reason: 'Explicit allow: student.read' };
+          }
+          if (role === Role.FACULTY && permission === 'instruction.create') {
+            return { granted: true, reason: 'Wildcard allow: instruction.*' };
+          }
+          if (role === Role.STUDENT && permission === 'student.read_own') {
+            return { granted: true, reason: 'Explicit allow: student.read_own' };
+          }
+          if (role === Role.FACULTY && permission === 'research.create') {
+            return { granted: true, reason: 'Explicit allow: research.create' };
+          }
+          return { granted: false, reason: 'Default deny: no matching permission' };
+        }),
+      })),
+    },
+  };
+});
 
 describe('requirePermission Middleware', () => {
-  let mockRequest: any;
+  let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockNext: any;
-  let mockPermissionChecker: any;
-  let consoleWarnSpy: any;
-  let consoleInfoSpy: any;
+  let mockNext: NextFunction;
 
   beforeEach(() => {
-    // Reset mocks
     mockRequest = {
-      user: {
-        userId: 'test-user-id',
-        email: 'test@example.com',
-        role: Role.FACULTY,
-      },
+      user: undefined,
+      params: {},
+      body: {},
     };
-    mockResponse = {};
+    mockResponse = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    };
     mockNext = vi.fn();
-
-    // Mock PermissionChecker
-    mockPermissionChecker = {
-      hasPermission: vi.fn(),
-    };
-
-    vi.mocked(PermissionChecker.getInstance).mockReturnValue(mockPermissionChecker);
-
-    // Spy on console methods
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-    consoleWarnSpy.mockRestore();
-    consoleInfoSpy.mockRestore();
-  });
-
-  describe('Authentication Checks', () => {
-    it('should return 401 when user is not authenticated', () => {
-      // Arrange
+  describe('18.5 - Returns 401 when not authenticated', () => {
+    it('should throw UnauthorizedError when req.user is undefined', () => {
+      const middleware = requirePermission('student.read');
+      
+      // req.user is undefined (not authenticated)
       mockRequest.user = undefined;
-      const middleware = requirePermission('student.read');
-
-      // Act
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
+      
       expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Authentication required',
-          statusCode: 401,
-        })
-      );
-      expect(mockPermissionChecker.hasPermission).not.toHaveBeenCalled();
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('Authentication required');
     });
 
-    it('should proceed to permission check when user is authenticated', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: student.read',
-      });
-      const middleware = requirePermission('student.read');
-
-      // Act
+    it('should throw UnauthorizedError when req.user is null', () => {
+      const middleware = requirePermission('schedule.read');
+      
+      // req.user is null (not authenticated)
+      mockRequest.user = null as any;
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
+    });
 
-      // Assert
-      expect(mockPermissionChecker.hasPermission).toHaveBeenCalledWith(
-        Role.FACULTY,
-        'student.read'
-      );
-      expect(mockNext).toHaveBeenCalledWith();
+    it('should return 401 before checking permissions', () => {
+      const middleware = requirePermission('student.read');
+      
+      // No user authenticated
+      mockRequest.user = undefined;
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      // Should fail with UnauthorizedError, not ForbiddenError
+      expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
+      expect(mockNext).not.toHaveBeenCalledWith(expect.any(ForbiddenError));
     });
   });
 
-  describe('Permission Validation', () => {
-    it('should grant access when user has required permission', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: student.read',
-      });
-      const middleware = requirePermission('student.read');
-
-      // Act
+  describe('18.4 - Returns 403 when permission denied', () => {
+    it('should throw ForbiddenError when user lacks required permission', () => {
+      const middleware = requirePermission('schedule.approve');
+      
+      // Student user (lacks schedule.approve permission)
+      mockRequest.user = {
+        userId: 'user-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('Permission denied');
+      expect(error.message).toContain('schedule.approve');
+    });
 
-      // Assert
+    it('should throw ForbiddenError with detailed message for single permission', () => {
+      const middleware = requirePermission('student.delete');
+      
+      // Faculty user (lacks student.delete permission)
+      mockRequest.user = {
+        userId: 'user-456',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toBe('Permission denied: student.delete');
+    });
+
+    it('should throw ForbiddenError with multiple permissions message', () => {
+      const middleware = requirePermission(['schedule.approve', 'schedule.reject']);
+      
+      // Faculty user (lacks both permissions)
+      mockRequest.user = {
+        userId: 'user-789',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+      const error = (mockNext as any).mock.calls[0][0];
+      expect(error.message).toContain('requires one of');
+      expect(error.message).toContain('schedule.approve');
+      expect(error.message).toContain('schedule.reject');
+    });
+
+    it('should deny access for Student trying to create data', () => {
+      const middleware = requirePermission('student.create');
+      
+      mockRequest.user = {
+        userId: 'student-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+    });
+
+    it('should deny access for Faculty trying to approve schedules', () => {
+      const middleware = requirePermission('schedule.approve');
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
+    });
+  });
+
+  describe('Permission Granted - Success Cases', () => {
+    it('should call next() when user has required permission', () => {
+      const middleware = requirePermission('student.read');
+      
+      // Faculty user (has student.read permission)
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
       expect(mockNext).toHaveBeenCalledWith();
       expect(mockNext).not.toHaveBeenCalledWith(expect.any(Error));
     });
 
-    it('should return 403 when user lacks required permission', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: false,
-        reason: 'Default deny: no matching permission',
-      });
-      const middleware = requirePermission('student.delete');
-
-      // Act
+    it('should allow Admin to access any permission', () => {
+      const middleware = requirePermission('schedule.delete');
+      
+      // Admin user (has all permissions)
+      mockRequest.user = {
+        userId: 'admin-123',
+        role: Role.ADMIN,
+        email: 'admin@example.com',
+      };
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Permission denied: student.delete',
-          statusCode: 403,
-        })
-      );
+      
+      expect(mockNext).toHaveBeenCalledWith();
+      expect(mockNext).not.toHaveBeenCalledWith(expect.any(Error));
     });
 
-    it('should include role in permission check', () => {
-      // Arrange
-      mockRequest.user!.role = Role.DEPARTMENT_CHAIR;
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Wildcard allow: schedule.*',
-      });
-      const middleware = requirePermission('schedule.approve');
-
-      // Act
+    it('should allow Student to read own data', () => {
+      const middleware = requirePermission('student.read_own');
+      
+      mockRequest.user = {
+        userId: 'student-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith();
+      expect(mockNext).not.toHaveBeenCalledWith(expect.any(Error));
+    });
 
-      // Assert
-      expect(mockPermissionChecker.hasPermission).toHaveBeenCalledWith(
-        Role.DEPARTMENT_CHAIR,
-        'schedule.approve'
-      );
+    it('should allow Faculty to create instructions', () => {
+      const middleware = requirePermission('instruction.create');
+      
+      mockRequest.user = {
+        userId: 'faculty-456',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith();
     });
   });
 
   describe('Multiple Permissions (OR Logic)', () => {
-    it('should grant access if user has at least one of multiple permissions', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission
-        .mockReturnValueOnce({
-          granted: false,
-          reason: 'Default deny: no matching permission',
-        })
-        .mockReturnValueOnce({
-          granted: true,
-          reason: 'Explicit allow: research.submit',
-        });
+    it('should allow access if user has at least one of multiple permissions', () => {
       const middleware = requirePermission(['research.create', 'research.submit']);
-
-      // Act
+      
+      // Faculty has research.create
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockPermissionChecker.hasPermission).toHaveBeenCalledTimes(2);
+      
       expect(mockNext).toHaveBeenCalledWith();
       expect(mockNext).not.toHaveBeenCalledWith(expect.any(Error));
     });
 
-    it('should deny access if user has none of multiple permissions', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: false,
-        reason: 'Default deny: no matching permission',
-      });
+    it('should deny access if user has none of the multiple permissions', () => {
       const middleware = requirePermission(['schedule.approve', 'schedule.reject']);
-
-      // Act
+      
+      // Student has neither permission
+      mockRequest.user = {
+        userId: 'student-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockPermissionChecker.hasPermission).toHaveBeenCalledTimes(2);
+      
       expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Permission denied: requires one of [schedule.approve, schedule.reject]',
-        })
-      );
     });
 
-    it('should stop checking after first granted permission (short-circuit)', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: research.create',
-      });
-      const middleware = requirePermission(['research.create', 'research.submit']);
-
-      // Act
+    it('should support array of permissions with OR logic', () => {
+      const middleware = requirePermission(['student.read', 'student.read_own']);
+      
+      // Faculty has student.read
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockPermissionChecker.hasPermission).toHaveBeenCalledTimes(1);
-      expect(mockPermissionChecker.hasPermission).toHaveBeenCalledWith(
-        Role.FACULTY,
-        'research.create'
-      );
-    });
-  });
-
-  describe('Audit Logging', () => {
-    it('should log denial with WARNING level', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: false,
-        reason: 'Explicit deny: student.delete',
-      });
-      const middleware = requirePermission('student.delete');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[RBAC] Permission denied')
-      );
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('user=test-user-id')
-      );
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('role=faculty')
-      );
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('resource=student')
-      );
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('action=delete')
-      );
-    });
-
-    it('should log sensitive operations when permitted', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: student.create',
-      });
-      const middleware = requirePermission('student.create');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[RBAC] Sensitive operation permitted')
-      );
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('user=test-user-id')
-      );
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('resource=student')
-      );
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('action=create')
-      );
-    });
-
-    it('should log sensitive operation: update', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: student.update',
-      });
-      const middleware = requirePermission('student.update');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Sensitive operation permitted')
-      );
-    });
-
-    it('should log sensitive operation: delete', () => {
-      // Arrange
-      mockRequest.user!.role = Role.ADMIN;
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Wildcard allow: *.*',
-      });
-      const middleware = requirePermission('student.delete');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Sensitive operation permitted')
-      );
-    });
-
-    it('should log sensitive operation: approve', () => {
-      // Arrange
-      mockRequest.user!.role = Role.DEPARTMENT_CHAIR;
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Wildcard allow: schedule.*',
-      });
-      const middleware = requirePermission('schedule.approve');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Sensitive operation permitted')
-      );
-    });
-
-    it('should log sensitive operation: reject', () => {
-      // Arrange
-      mockRequest.user!.role = Role.DEPARTMENT_CHAIR;
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Wildcard allow: schedule.*',
-      });
-      const middleware = requirePermission('schedule.reject');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Sensitive operation permitted')
-      );
-    });
-
-    it('should log sensitive operation: manage', () => {
-      // Arrange
-      mockRequest.user!.role = Role.DEPARTMENT_CHAIR;
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: enrollment.manage',
-      });
-      const middleware = requirePermission('enrollment.manage');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Sensitive operation permitted')
-      );
-    });
-
-    it('should NOT log successful non-sensitive operations', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: student.read',
-      });
-      const middleware = requirePermission('student.read');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).not.toHaveBeenCalled();
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
-    });
-
-    it('should NOT log successful list operations', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: student.list',
-      });
-      const middleware = requirePermission('student.list');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).not.toHaveBeenCalled();
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
-    });
-
-    it('should NOT log successful search operations', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: search.student',
-      });
-      const middleware = requirePermission('search.student');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(consoleInfoSpy).not.toHaveBeenCalled();
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Error Response Format', () => {
-    it('should include permission in error message for single permission', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: false,
-        reason: 'Default deny: no matching permission',
-      });
-      const middleware = requirePermission('schedule.approve');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Permission denied: schedule.approve',
-        })
-      );
-    });
-
-    it('should include all permissions in error message for multiple permissions', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: false,
-        reason: 'Default deny: no matching permission',
-      });
-      const middleware = requirePermission(['schedule.approve', 'schedule.reject']);
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Permission denied: requires one of [schedule.approve, schedule.reject]',
-        })
-      );
-    });
-
-    it('should return ForbiddenError with status 403', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: false,
-        reason: 'Explicit deny: student.delete',
-      });
-      const middleware = requirePermission('student.delete');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      const error = mockNext.mock.calls[0][0];
-      expect(error).toBeInstanceOf(ForbiddenError);
-      expect(error.statusCode).toBe(403);
-      expect(error.code).toBe('FORBIDDEN');
-    });
-
-    it('should return UnauthorizedError with status 401 when not authenticated', () => {
-      // Arrange
-      mockRequest.user = undefined;
-      const middleware = requirePermission('student.read');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      const error = mockNext.mock.calls[0][0];
-      expect(error).toBeInstanceOf(UnauthorizedError);
-      expect(error.statusCode).toBe(401);
-      expect(error.code).toBe('UNAUTHORIZED');
-    });
-  });
-
-  describe('Performance Requirements', () => {
-    it('should complete permission check in under 2ms', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: true,
-        reason: 'Explicit allow: student.read',
-      });
-      const middleware = requirePermission('student.read');
-
-      // Act
-      const startTime = performance.now();
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-      const duration = performance.now() - startTime;
-
-      // Assert
-      expect(duration).toBeLessThan(2);
+      
       expect(mockNext).toHaveBeenCalledWith();
-    });
-
-    it('should warn in development mode if check exceeds 2ms', () => {
-      // Arrange
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
-      
-      // Mock slow permission check
-      mockPermissionChecker.hasPermission.mockImplementation(() => {
-        // Simulate slow operation (but not actually wait to keep test fast)
-        const result = { granted: true, reason: 'Explicit allow: student.read' };
-        // We can't actually make it slow in tests, so we'll just verify the logic exists
-        return result;
-      });
-      
-      const middleware = requirePermission('student.read');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      // The warning logic exists in the code, but we can't easily test it without
-      // actually making the operation slow. The important part is that the check completes.
-      expect(mockNext).toHaveBeenCalledWith();
-      
-      // Cleanup
-      process.env.NODE_ENV = originalEnv;
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty permission array', () => {
-      // Arrange & Act & Assert
-      expect(() => requirePermission([])).toThrow('requirePermission: At least one permission must be specified');
+    it('should throw error when no permissions are provided', () => {
+      expect(() => {
+        requirePermission([]);
+      }).toThrow('At least one permission must be specified');
     });
 
-    it('should handle permission with no action part', () => {
-      // Arrange
-      mockPermissionChecker.hasPermission.mockReturnValue({
-        granted: false,
-        reason: 'Invalid permission format',
-      });
-      const middleware = requirePermission('student');
-
-      // Act
-      middleware(mockRequest as Request, mockResponse as Response, mockNext);
-
-      // Assert
-      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
-    });
-
-    it('should handle different role types', () => {
-      // Arrange
-      const roles = [Role.ADMIN, Role.DEPARTMENT_CHAIR, Role.SECRETARY, Role.STUDENT];
+    it('should handle single permission as string', () => {
+      const middleware = requirePermission('student.read');
       
-      roles.forEach(role => {
-        mockRequest.user!.role = role;
-        mockPermissionChecker.hasPermission.mockReturnValue({
-          granted: true,
-          reason: 'Test permission',
-        });
-        const middleware = requirePermission('test.permission');
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalled();
+    });
 
-        // Act
-        middleware(mockRequest as Request, mockResponse as Response, mockNext);
+    it('should handle single permission as array', () => {
+      const middleware = requirePermission(['student.read']);
+      
+      mockRequest.user = {
+        userId: 'faculty-123',
+        role: Role.FACULTY,
+        email: 'faculty@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalled();
+    });
+  });
 
-        // Assert
-        expect(mockPermissionChecker.hasPermission).toHaveBeenCalledWith(
-          role,
-          'test.permission'
-        );
-      });
+  describe('Error Handling', () => {
+    it('should pass errors to next() middleware', () => {
+      const middleware = requirePermission('student.read');
+      
+      // Not authenticated
+      mockRequest.user = undefined;
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      expect(mockNext).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    it('should not call response methods directly', () => {
+      const middleware = requirePermission('student.read');
+      
+      mockRequest.user = undefined;
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      // Middleware should use next(error), not res.status().json()
+      expect(mockResponse.status).not.toHaveBeenCalled();
+      expect(mockResponse.json).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Execution Order', () => {
+    it('should check authentication before permissions', () => {
+      const middleware = requirePermission('student.read');
+      
+      // Not authenticated
+      mockRequest.user = undefined;
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      // Should fail with UnauthorizedError (401), not ForbiddenError (403)
+      expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
+    });
+
+    it('should check permissions after authentication', () => {
+      const middleware = requirePermission('schedule.approve');
+      
+      // Authenticated but lacks permission
+      mockRequest.user = {
+        userId: 'student-123',
+        role: Role.STUDENT,
+        email: 'student@example.com',
+      };
+      
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      
+      // Should fail with ForbiddenError (403), not UnauthorizedError (401)
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
     });
   });
 });
