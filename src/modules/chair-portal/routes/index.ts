@@ -11,6 +11,7 @@
  * - /api/chair/schedules - Schedule management
  * - /api/chair/events - Event management
  * - /api/chair/research - Research project management
+ * - /api/chair/reports - Report generation and analytics
  * 
  * Requirements: 1.6, 14.1
  */
@@ -32,6 +33,9 @@ import { createEventRoutes } from './event.routes';
 import { ResearchController } from '../controllers/research.controller';
 import { ResearchService } from '../services/research.service';
 import { createResearchRoutes } from './research.routes';
+import { ReportController } from '../controllers/report.controller';
+import { ReportService } from '../services/report.service';
+import { createReportRoutes } from './report.routes';
 
 // Initialize services
 const dashboardService = new DashboardService();
@@ -39,6 +43,7 @@ const studentService = new StudentService();
 const facultyService = new FacultyService();
 const scheduleService = new ScheduleService();
 const researchService = new ResearchService();
+const reportService = new ReportService();
 
 // Initialize controllers
 const dashboardController = new DashboardController(dashboardService);
@@ -46,6 +51,7 @@ const studentController = new StudentController(studentService);
 const facultyController = new FacultyController(facultyService);
 const scheduleController = new ScheduleController(scheduleService);
 const researchController = new ResearchController(researchService);
+const reportController = new ReportController(reportService);
 
 // Create route modules
 const dashboardRoutes = createDashboardRoutes(dashboardController);
@@ -54,6 +60,7 @@ const facultyRoutes = createFacultyRoutes(facultyController);
 const scheduleRoutes = createScheduleRoutes(scheduleController);
 const eventRoutes = createEventRoutes();
 const researchRoutes = createResearchRoutes(researchController);
+const reportRoutes = createReportRoutes(reportController);
 
 // Aggregate all chair portal routes
 export const chairPortalRouter = Router();
@@ -65,3 +72,4 @@ chairPortalRouter.use('/faculty', facultyRoutes);
 chairPortalRouter.use('/schedules', scheduleRoutes);
 chairPortalRouter.use('/events', eventRoutes);
 chairPortalRouter.use('/research', researchRoutes);
+chairPortalRouter.use('/reports', reportRoutes);
