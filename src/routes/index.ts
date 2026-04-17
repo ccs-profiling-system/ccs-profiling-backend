@@ -123,7 +123,7 @@ import { dashboardRoutes } from '../modules/dashboard';
 import { analyticsRoutes } from '../modules/analytics';
 import { reportRoutes } from '../modules/reports';
 import { searchRoutes } from '../modules/search';
-import { chairPortalRouter } from '../modules/chair-portal/routes';
+import { chairPortalRouter } from '../modules/chair-portal';
 
 export const routes = Router();
 

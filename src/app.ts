@@ -33,6 +33,7 @@
  * - Analytics (analytics)
  * - Reports (reports)
  * - Search (search)
+ * - Department Chair Portal (chair-portal)
  * 
  */
 

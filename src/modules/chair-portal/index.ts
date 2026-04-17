@@ -12,13 +12,12 @@
  * 
  * All endpoints are protected by RBAC permissions using the chair.* namespace
  * and filtered by department scope for multi-tenant data isolation.
+ * 
+ * Requirements: 1.6
  */
 
-// Export routes (to be implemented)
-// export { default as chairPortalRouter } from './routes';
+// Export combined router for all chair portal routes
+export { chairPortalRouter } from './routes';
 
-// Export types (to be implemented)
-// export * from './types';
-
-// Module entry point - will be populated as routes are implemented
-export default {};
+// Export types
+export * from './types';
