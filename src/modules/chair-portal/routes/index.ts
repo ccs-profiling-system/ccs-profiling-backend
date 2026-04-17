@@ -8,6 +8,7 @@
  * - /api/chair/dashboard - Dashboard statistics
  * - /api/chair/students - Student management
  * - /api/chair/faculty - Faculty management
+ * - /api/chair/schedules - Schedule management
  * 
  * Requirements: 1.6, 14.1
  */
@@ -22,21 +23,27 @@ import { createStudentRoutes } from './student.routes';
 import { FacultyController } from '../controllers/faculty.controller';
 import { FacultyService } from '../services/faculty.service';
 import { createFacultyRoutes } from './faculty.routes';
+import { ScheduleController } from '../controllers/schedule.controller';
+import { ScheduleService } from '../services/schedule.service';
+import { createScheduleRoutes } from './schedule.routes';
 
 // Initialize services
 const dashboardService = new DashboardService();
 const studentService = new StudentService();
 const facultyService = new FacultyService();
+const scheduleService = new ScheduleService();
 
 // Initialize controllers
 const dashboardController = new DashboardController(dashboardService);
 const studentController = new StudentController(studentService);
 const facultyController = new FacultyController(facultyService);
+const scheduleController = new ScheduleController(scheduleService);
 
 // Create route modules
 const dashboardRoutes = createDashboardRoutes(dashboardController);
 const studentRoutes = createStudentRoutes(studentController);
 const facultyRoutes = createFacultyRoutes(facultyController);
+const scheduleRoutes = createScheduleRoutes(scheduleController);
 
 // Aggregate all chair portal routes
 export const chairPortalRouter = Router();
@@ -45,3 +52,4 @@ export const chairPortalRouter = Router();
 chairPortalRouter.use('/dashboard', dashboardRoutes);
 chairPortalRouter.use('/students', studentRoutes);
 chairPortalRouter.use('/faculty', facultyRoutes);
+chairPortalRouter.use('/schedules', scheduleRoutes);
