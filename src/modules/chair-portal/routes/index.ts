@@ -9,6 +9,7 @@
  * - /api/chair/students - Student management
  * - /api/chair/faculty - Faculty management
  * - /api/chair/schedules - Schedule management
+ * - /api/chair/events - Event management
  * 
  * Requirements: 1.6, 14.1
  */
@@ -26,6 +27,7 @@ import { createFacultyRoutes } from './faculty.routes';
 import { ScheduleController } from '../controllers/schedule.controller';
 import { ScheduleService } from '../services/schedule.service';
 import { createScheduleRoutes } from './schedule.routes';
+import { createEventRoutes } from './event.routes';
 
 // Initialize services
 const dashboardService = new DashboardService();
@@ -44,6 +46,7 @@ const dashboardRoutes = createDashboardRoutes(dashboardController);
 const studentRoutes = createStudentRoutes(studentController);
 const facultyRoutes = createFacultyRoutes(facultyController);
 const scheduleRoutes = createScheduleRoutes(scheduleController);
+const eventRoutes = createEventRoutes();
 
 // Aggregate all chair portal routes
 export const chairPortalRouter = Router();
@@ -53,3 +56,4 @@ chairPortalRouter.use('/dashboard', dashboardRoutes);
 chairPortalRouter.use('/students', studentRoutes);
 chairPortalRouter.use('/faculty', facultyRoutes);
 chairPortalRouter.use('/schedules', scheduleRoutes);
+chairPortalRouter.use('/events', eventRoutes);

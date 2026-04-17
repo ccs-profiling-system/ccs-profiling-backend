@@ -573,7 +573,11 @@ export class EventService {
         : p.faculty_id
         ? `${p.faculty_first_name} ${p.faculty_last_name}`
         : undefined,
-      participant_email: p.student_id ? p.student_email : p.faculty_id ? p.faculty_email : undefined,
+      participant_email: p.student_id 
+        ? (p.student_email || undefined) 
+        : p.faculty_id 
+        ? (p.faculty_email || undefined) 
+        : undefined,
       created_at: p.created_at.toISOString(),
     }));
   }
