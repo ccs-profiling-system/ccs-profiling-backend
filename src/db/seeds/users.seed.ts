@@ -44,6 +44,13 @@ function generateUserSeeds(): UserSeed[] {
       role: 'faculty',
       is_active: true,
     },
+    // Department Chair
+    {
+      email: 'chair.cs@ccs.edu',
+      password: 'pass1234',
+      role: 'faculty',
+      is_active: true,
+    },
   ];
 
   // Generate 1000 student users

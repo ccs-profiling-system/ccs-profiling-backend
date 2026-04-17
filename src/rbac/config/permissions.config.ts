@@ -53,9 +53,35 @@ export const permissionConfig: PermissionConfig = {
    * - Read access to student profiles, instructions, academic history
    * - Department-level reports and analytics
    * - Audit log access for department
+   * - Department Chair Portal API access (chair.* namespace)
+   * 
+   * Department Chair Portal Permissions (chair.* namespace):
+   * - chair.dashboard.read: Access to department dashboard statistics
+   * - chair.student.read: View student records within department
+   * - chair.student.approve: Approve pending student records
+   * - chair.student.reject: Reject pending student records
+   * - chair.faculty.read: View faculty records within department
+   * - chair.faculty.monitor: View faculty teaching loads and statistics
+   * - chair.schedule.read: View course schedules within department
+   * - chair.schedule.create: Create new course schedules
+   * - chair.schedule.approve: Approve pending schedules
+   * - chair.event.read: View events within department
+   * - chair.event.create: Create new events
+   * - chair.event.update: Update draft or pending events
+   * - chair.event.delete: Delete draft events or cancel approved events
+   * - chair.event.approve: Approve pending events
+   * - chair.event.reject: Reject pending events
+   * - chair.research.read: View research projects within department
+   * - chair.research.approve: Approve pending research projects
+   * - chair.research.reject: Reject pending research projects
+   * - chair.report.generate: Generate analytics reports for department
+   * - chair.report.export: Export reports in PDF or Excel format
    */
   [Role.DEPARTMENT_CHAIR]: {
     allow: [
+      // Department Chair Portal API (all chair.* permissions)
+      'chair.*',
+      
       // Schedule Management
       'schedule.*',
       

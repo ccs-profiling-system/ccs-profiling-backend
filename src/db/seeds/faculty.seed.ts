@@ -34,6 +34,13 @@ const facultySeeds: FacultySeed[] = [
     position: 'Assistant Professor',
     specialization: 'Software Engineering',
   },
+  {
+    firstName: 'Maria',
+    lastName: 'Garcia',
+    department: 'Computer Science',
+    position: 'Department Chair',
+    specialization: 'Computer Science Education',
+  },
 ];
 
 export async function seedFaculty(

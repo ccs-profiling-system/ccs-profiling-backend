@@ -123,6 +123,7 @@ import { dashboardRoutes } from '../modules/dashboard';
 import { analyticsRoutes } from '../modules/analytics';
 import { reportRoutes } from '../modules/reports';
 import { searchRoutes } from '../modules/search';
+import { chairPortalRouter } from '../modules/chair-portal';
 
 export const routes = Router();
 
@@ -172,3 +173,10 @@ routes.use('/v1/admin/dashboard', dashboardRoutes);
 routes.use('/v1/admin/analytics', analyticsRoutes);
 routes.use('/v1/admin/reports', reportRoutes);
 routes.use('/v1/admin/search', searchRoutes);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DEPARTMENT CHAIR PORTAL ROUTES (Authentication + chair.* permissions required)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Department Chair Portal
+routes.use('/chair', chairPortalRouter);
