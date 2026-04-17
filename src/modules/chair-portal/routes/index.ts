@@ -7,6 +7,7 @@
  * Registered Routes:
  * - /api/chair/dashboard - Dashboard statistics
  * - /api/chair/students - Student management
+ * - /api/chair/faculty - Faculty management
  * 
  * Requirements: 1.6, 14.1
  */
@@ -18,18 +19,24 @@ import { createDashboardRoutes } from './dashboard.routes';
 import { StudentController } from '../controllers/student.controller';
 import { StudentService } from '../services/student.service';
 import { createStudentRoutes } from './student.routes';
+import { FacultyController } from '../controllers/faculty.controller';
+import { FacultyService } from '../services/faculty.service';
+import { createFacultyRoutes } from './faculty.routes';
 
 // Initialize services
 const dashboardService = new DashboardService();
 const studentService = new StudentService();
+const facultyService = new FacultyService();
 
 // Initialize controllers
 const dashboardController = new DashboardController(dashboardService);
 const studentController = new StudentController(studentService);
+const facultyController = new FacultyController(facultyService);
 
 // Create route modules
 const dashboardRoutes = createDashboardRoutes(dashboardController);
 const studentRoutes = createStudentRoutes(studentController);
+const facultyRoutes = createFacultyRoutes(facultyController);
 
 // Aggregate all chair portal routes
 export const chairPortalRouter = Router();
@@ -37,3 +44,4 @@ export const chairPortalRouter = Router();
 // Register sub-routes
 chairPortalRouter.use('/dashboard', dashboardRoutes);
 chairPortalRouter.use('/students', studentRoutes);
+chairPortalRouter.use('/faculty', facultyRoutes);
