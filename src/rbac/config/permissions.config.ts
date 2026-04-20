@@ -171,6 +171,8 @@ export const permissionConfig: PermissionConfig = {
    * - faculty.roster.read: View student rosters for assigned courses
    * - faculty.attendance.read: View attendance records for assigned courses
    * - faculty.attendance.submit: Submit attendance records for assigned courses
+   * - faculty.participation.read: View student participation records for assigned courses
+   * - faculty.participation.submit: Submit student participation scores for assigned courses
    * - faculty.research.read: View own research projects
    * - faculty.research.create: Create new research projects
    * - faculty.research.update: Update own research projects
