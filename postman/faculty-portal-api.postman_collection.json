@@ -424,19 +424,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/faculty/courses/:courseId/attendance?startDate=:startDate&endDate=:endDate",
+							"raw": "{{baseUrl}}/faculty/courses/:courseId/attendance?date_from=:date_from&date_to=:date_to",
 							"host": ["{{baseUrl}}"],
 							"path": ["faculty", "courses", ":courseId", "attendance"],
 							"query": [
 								{
-									"key": "startDate",
-									"value": ":startDate",
-									"description": "Start date (YYYY-MM-DD)"
+									"key": "date_from",
+									"value": ":date_from",
+									"description": "Start date (YYYY-MM-DD) - defaults to first day of current month if not provided"
 								},
 								{
-									"key": "endDate",
-									"value": ":endDate",
-									"description": "End date (YYYY-MM-DD)"
+									"key": "date_to",
+									"value": ":date_to",
+									"description": "End date (YYYY-MM-DD) - defaults to last day of current month if not provided"
 								}
 							],
 							"variable": [
@@ -462,7 +462,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"date\": \"2024-04-20\",\n  \"records\": [\n    {\n      \"studentId\": \"STU-001\",\n      \"status\": \"present\"\n    },\n    {\n      \"studentId\": \"STU-002\",\n      \"status\": \"absent\",\n      \"remarks\": \"Excused - Medical\"\n    },\n    {\n      \"studentId\": \"STU-003\",\n      \"status\": \"late\",\n      \"remarks\": \"Arrived 15 minutes late\"\n    }\n  ]\n}"
+							"raw": "{\n  \"date\": \"2024-04-20\",\n  \"attendance_records\": [\n    {\n      \"student_id\": \"STU-001\",\n      \"status\": \"present\"\n    },\n    {\n      \"student_id\": \"STU-002\",\n      \"status\": \"absent\",\n      \"remarks\": \"Excused - Medical\"\n    },\n    {\n      \"student_id\": \"STU-003\",\n      \"status\": \"late\",\n      \"remarks\": \"Arrived 15 minutes late\"\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/faculty/courses/:courseId/attendance",
@@ -491,19 +491,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/faculty/courses/:subjectId/participation?startDate=:startDate&endDate=:endDate",
+							"raw": "{{baseUrl}}/faculty/courses/:subjectId/participation?date_from=:date_from&date_to=:date_to",
 							"host": ["{{baseUrl}}"],
 							"path": ["faculty", "courses", ":subjectId", "participation"],
 							"query": [
 								{
-									"key": "startDate",
-									"value": ":startDate",
-									"description": "Start date (YYYY-MM-DD)"
+									"key": "date_from",
+									"value": ":date_from",
+									"description": "Start date (YYYY-MM-DD) - defaults to first day of current month if not provided"
 								},
 								{
-									"key": "endDate",
-									"value": ":endDate",
-									"description": "End date (YYYY-MM-DD)"
+									"key": "date_to",
+									"value": ":date_to",
+									"description": "End date (YYYY-MM-DD) - defaults to last day of current month if not provided"
 								}
 							],
 							"variable": [
@@ -530,7 +530,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"date\": \"2024-04-20\",\n  \"records\": [\n    {\n      \"studentId\": \"STU-001\",\n      \"participationType\": \"discussion\",\n      \"score\": 5,\n      \"remarks\": \"Excellent contribution\"\n    },\n    {\n      \"studentId\": \"STU-002\",\n      \"participationType\": \"presentation\",\n      \"score\": 4,\n      \"remarks\": \"Good presentation skills\"\n    }\n  ]\n}"
+							"raw": "{\n  \"date\": \"2024-04-20\",\n  \"participation_records\": [\n    {\n      \"student_id\": \"STU-001\",\n      \"participation_type\": \"discussion\",\n      \"score\": 5,\n      \"remarks\": \"Excellent contribution\"\n    },\n    {\n      \"student_id\": \"STU-002\",\n      \"participation_type\": \"presentation\",\n      \"score\": 4,\n      \"remarks\": \"Good presentation skills\"\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/faculty/courses/:subjectId/participation",

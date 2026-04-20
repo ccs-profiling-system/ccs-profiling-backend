@@ -234,13 +234,20 @@ export class MaterialService {
 
     // Query materials from uploads table
     const materials = await this.db
-      .select()
+      .select({
+        id: uploads.id,
+        original_name: uploads.original_name,
+        file_type: uploads.file_type,
+        file_size: uploads.file_size,
+        storage_path: uploads.storage_path,
+        uploaded_by: uploads.uploaded_by,
+        created_at: uploads.created_at,
+      })
       .from(uploads)
       .where(
         and(
           eq(uploads.entity_type, 'course_material'),
-          eq(uploads.entity_id, courseId),
-          isNull(uploads.deleted_at)
+          eq(uploads.entity_id, courseId)
         )
       )
       .orderBy(desc(uploads.created_at));
@@ -306,8 +313,7 @@ export class MaterialService {
         and(
           eq(uploads.id, materialId),
           eq(uploads.entity_type, 'course_material'),
-          eq(uploads.entity_id, courseId),
-          isNull(uploads.deleted_at)
+          eq(uploads.entity_id, courseId)
         )
       )
       .limit(1);
@@ -320,12 +326,9 @@ export class MaterialService {
     const storage = StorageFactory.getProvider();
     await storage.delete(material.storage_path);
 
-    // Soft delete database record (set deleted_at timestamp)
+    // Hard delete database record (uploads table doesn't support soft delete)
     await this.db
-      .update(uploads)
-      .set({
-        deleted_at: new Date(),
-      })
+      .delete(uploads)
       .where(eq(uploads.id, materialId));
 
     // Create audit log entry
