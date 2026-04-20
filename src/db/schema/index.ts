@@ -15,4 +15,7 @@ export * from './research';
 export * from './uploads';
 export * from './auditLogs';
 export * from './attendance';
+export * from './facultySkills';
+export * from './facultyAffiliations';
+export * from './studentParticipation';
 export * from './utils';
