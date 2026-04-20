@@ -28,6 +28,8 @@ import { AttendanceController } from '../controllers/attendance.controller';
 import { ResearchController } from '../controllers/research.controller';
 import { EventController } from '../controllers/event.controller';
 import { MaterialController } from '../controllers/material.controller';
+import { SkillsController } from '../controllers/skills.controller';
+import { AffiliationsController } from '../controllers/affiliations.controller';
 
 // Import services
 import { ProfileService } from '../services/profile.service';
@@ -37,6 +39,8 @@ import { AttendanceService } from '../services/attendance.service';
 import { ResearchService } from '../services/research.service';
 import { EventService } from '../services/event.service';
 import { MaterialService } from '../services/material.service';
+import { SkillsService } from '../services/skills.service';
+import { AffiliationsService } from '../services/affiliations.service';
 
 // Import route creators
 import { createProfileRoutes } from './profile.routes';
@@ -46,6 +50,8 @@ import { createAttendanceRoutes } from './attendance.routes';
 import { createResearchRoutes } from './research.routes';
 import { createEventRoutes } from './event.routes';
 import { createMaterialRoutes } from './material.routes';
+import { createSkillsRoutes } from './skills.routes';
+import { createAffiliationsRoutes } from './affiliations.routes';
 
 // Initialize services
 const profileService = new ProfileService(db);
@@ -55,6 +61,8 @@ const attendanceService = new AttendanceService(db);
 const researchService = new ResearchService(db);
 const eventService = new EventService(db);
 const materialService = new MaterialService(db);
+const skillsService = new SkillsService(db);
+const affiliationsService = new AffiliationsService(db);
 
 // Initialize controllers
 const profileController = new ProfileController(profileService);
@@ -64,6 +72,8 @@ const attendanceController = new AttendanceController(attendanceService);
 const researchController = new ResearchController(researchService);
 const eventController = new EventController(eventService);
 const materialController = new MaterialController(materialService);
+const skillsController = new SkillsController(skillsService);
+const affiliationsController = new AffiliationsController(affiliationsService);
 
 // Create route modules
 const profileRoutes = createProfileRoutes(profileController);
@@ -73,6 +83,8 @@ const attendanceRoutes = createAttendanceRoutes(attendanceController);
 const researchRoutes = createResearchRoutes(researchController);
 const eventRoutes = createEventRoutes(eventController);
 const materialRoutes = createMaterialRoutes(materialController);
+const skillsRoutes = createSkillsRoutes(skillsController);
+const affiliationsRoutes = createAffiliationsRoutes(affiliationsController);
 
 // Aggregate all faculty portal routes
 export const facultyPortalRouter = Router();
@@ -87,3 +99,7 @@ facultyPortalRouter.use('/faculty', attendanceRoutes);
 facultyPortalRouter.use('/faculty', researchRoutes);
 facultyPortalRouter.use('/faculty', eventRoutes);
 facultyPortalRouter.use('/faculty', materialRoutes);
+
+// Register profile sub-resources (uses /faculty/profile pattern)
+facultyPortalRouter.use('/faculty/profile/skills', skillsRoutes);
+facultyPortalRouter.use('/faculty/profile/affiliations', affiliationsRoutes);
