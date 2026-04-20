@@ -124,6 +124,7 @@ import { analyticsRoutes } from '../modules/analytics';
 import { reportRoutes } from '../modules/reports';
 import { searchRoutes } from '../modules/search';
 import { chairPortalRouter } from '../modules/chair-portal';
+import { facultyPortalRouter } from '../modules/faculty-portal';
 
 export const routes = Router();
 
@@ -180,3 +181,18 @@ routes.use('/v1/admin/search', searchRoutes);
 
 // Department Chair Portal
 routes.use('/chair', chairPortalRouter);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FACULTY PORTAL ROUTES (Authentication + faculty.* permissions required)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Faculty Portal
+// Provides endpoints for faculty members to manage:
+// - Profile management (view and update own profile)
+// - Course assignments and teaching load
+// - Student rosters for assigned courses
+// - Attendance management (view and submit)
+// - Research project management (create, update, view)
+// - Event viewing and registration
+// - Course material management (upload, view, delete)
+routes.use('/', facultyPortalRouter);

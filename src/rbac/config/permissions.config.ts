@@ -162,9 +162,31 @@ export const permissionConfig: PermissionConfig = {
    * - Academic history read for advisees
    * - Course-related uploads
    * - Faculty-specific reports and dashboard
+   * - Faculty Portal API access (faculty.* namespace)
+   * 
+   * Faculty Portal Permissions (faculty.* namespace):
+   * - faculty.profile.read: View own faculty profile
+   * - faculty.profile.update: Update own faculty profile
+   * - faculty.course.read: View assigned courses and teaching load
+   * - faculty.roster.read: View student rosters for assigned courses
+   * - faculty.attendance.read: View attendance records for assigned courses
+   * - faculty.attendance.submit: Submit attendance records for assigned courses
+   * - faculty.participation.read: View student participation records for assigned courses
+   * - faculty.participation.submit: Submit student participation scores for assigned courses
+   * - faculty.research.read: View own research projects
+   * - faculty.research.create: Create new research projects
+   * - faculty.research.update: Update own research projects
+   * - faculty.event.read: View department events and own participation
+   * - faculty.event.register: Register for department events
+   * - faculty.material.upload: Upload course materials for assigned courses
+   * - faculty.material.read: View course materials for assigned courses
+   * - faculty.material.delete: Delete own course materials
    */
   [Role.FACULTY]: {
     allow: [
+      // Faculty Portal API (all faculty.* permissions)
+      'faculty.*',
+      
       // Instruction Management (ownership validated separately)
       'instruction.*',
       

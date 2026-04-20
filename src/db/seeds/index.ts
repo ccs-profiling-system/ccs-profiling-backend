@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -14,6 +14,9 @@ import { seedSchedules } from './schedules.seed';
 import { seedResearch } from './research.seed';
 import { seedUploads } from './uploads.seed';
 import { seedAuditLogs } from './auditLogs.seed';
+import { seedFacultySkills } from './facultySkills.seed';
+import { seedFacultyAffiliations } from './facultyAffiliations.seed';
+import { seedAttendance } from './attendance.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -245,6 +248,51 @@ export async function runSeeders() {
       const createdAuditLogs = await db.select({ id: auditLogs.id }).from(auditLogs);
       auditLogIds = createdAuditLogs.map(a => a.id);
       console.log(`✅ Created ${auditLogIds.length} audit log records\n`);
+    }
+
+    // Check if faculty_skills table has data
+    const facultySkillsHasData = await hasData('faculty_skills');
+    let facultySkillIds: string[] = [];
+
+    if (facultySkillsHasData) {
+      console.log('ℹ️  Faculty skills table already has data, skipping faculty skills seeding...');
+      const existingFacultySkills = await db.select({ id: facultySkills.id }).from(facultySkills);
+      facultySkillIds = existingFacultySkills.map(fs => fs.id);
+      console.log(`📊 Found ${facultySkillIds.length} existing faculty skill records\n`);
+    } else {
+      console.log('📝 Seeding faculty skills...');
+      facultySkillIds = await seedFacultySkills(db, facultyIds);
+      console.log(`✅ Created ${facultySkillIds.length} faculty skill records\n`);
+    }
+
+    // Check if faculty_affiliations table has data
+    const facultyAffiliationsHasData = await hasData('faculty_affiliations');
+    let facultyAffiliationIds: string[] = [];
+
+    if (facultyAffiliationsHasData) {
+      console.log('ℹ️  Faculty affiliations table already has data, skipping faculty affiliations seeding...');
+      const existingFacultyAffiliations = await db.select({ id: facultyAffiliations.id }).from(facultyAffiliations);
+      facultyAffiliationIds = existingFacultyAffiliations.map(fa => fa.id);
+      console.log(`📊 Found ${facultyAffiliationIds.length} existing faculty affiliation records\n`);
+    } else {
+      console.log('📝 Seeding faculty affiliations...');
+      facultyAffiliationIds = await seedFacultyAffiliations(db, facultyIds);
+      console.log(`✅ Created ${facultyAffiliationIds.length} faculty affiliation records\n`);
+    }
+
+    // Check if attendance table has data
+    const attendanceHasData = await hasData('attendance');
+    let attendanceIds: string[] = [];
+
+    if (attendanceHasData) {
+      console.log('ℹ️  Attendance table already has data, skipping attendance seeding...');
+      const existingAttendance = await db.select({ id: attendance.id }).from(attendance);
+      attendanceIds = existingAttendance.map(a => a.id);
+      console.log(`📊 Found ${attendanceIds.length} existing attendance records\n`);
+    } else {
+      console.log('📝 Seeding attendance...');
+      attendanceIds = await seedAttendance(db, instructionIds, studentIds, facultyIds);
+      console.log(`✅ Created ${attendanceIds.length} attendance records\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

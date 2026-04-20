@@ -34,6 +34,7 @@
  * - Reports (reports)
  * - Search (search)
  * - Department Chair Portal (chair-portal)
+ * - Faculty Portal (faculty-portal)
  * 
  */
 

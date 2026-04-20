@@ -3,6 +3,9 @@ import jwt from 'jsonwebtoken';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { UnauthorizedError } from '../../../shared/errors';
 import { config } from '../../../config';
+import { db } from '../../../db';
+import { faculty, students } from '../../../db/schema';
+import { eq } from 'drizzle-orm';
 
 export interface LoginDTO {
   email: string;
@@ -20,6 +23,8 @@ export interface TokenPayload {
   userId: string;
   email: string;
   role: string;
+  facultyId?: string; // Optional: only present for faculty users
+  studentId?: string; // Optional: only present for student users
 }
 
 export class AuthService {
@@ -52,12 +57,50 @@ export class AuthService {
       last_login: new Date(),
     });
 
-    // Generate tokens
-    const tokens = this.generateTokens({
+    // Fetch faculty_id or student_id based on role
+    let facultyId: string | undefined;
+    let studentId: string | undefined;
+
+    if (user.role === 'faculty') {
+      const facultyRecord = await db
+        .select({ id: faculty.id })
+        .from(faculty)
+        .where(eq(faculty.user_id, user.id))
+        .limit(1);
+      
+      if (facultyRecord[0]) {
+        facultyId = facultyRecord[0].id;
+        console.log(`✓ Faculty ID found for user ${user.email}: ${facultyId}`);
+      } else {
+        console.warn(`⚠ No faculty record found for user ${user.email} (user_id: ${user.id})`);
+      }
+    } else if (user.role === 'student') {
+      const studentRecord = await db
+        .select({ id: students.id })
+        .from(students)
+        .where(eq(students.user_id, user.id))
+        .limit(1);
+      
+      if (studentRecord[0]) {
+        studentId = studentRecord[0].id;
+        console.log(`✓ Student ID found for user ${user.email}: ${studentId}`);
+      } else {
+        console.warn(`⚠ No student record found for user ${user.email} (user_id: ${user.id})`);
+      }
+    }
+
+    // Generate tokens with role-specific IDs
+    const tokenPayload = {
       userId: user.id,
       email: user.email,
       role: user.role,
-    });
+      ...(facultyId && { facultyId }),
+      ...(studentId && { studentId }),
+    };
+    
+    console.log('Token payload:', JSON.stringify(tokenPayload, null, 2));
+    
+    const tokens = this.generateTokens(tokenPayload);
 
     return tokens;
   }
