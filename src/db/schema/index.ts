@@ -14,4 +14,5 @@ export * from './events';
 export * from './research';
 export * from './uploads';
 export * from './auditLogs';
+export * from './attendance';
 export * from './utils';
