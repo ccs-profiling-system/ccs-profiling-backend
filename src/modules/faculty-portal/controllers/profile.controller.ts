@@ -12,39 +12,26 @@ import { Request, Response, NextFunction } from 'express';
 import { ProfileService } from '../services/profile.service';
 import { ValidationError } from '../../../shared/errors';
 import { updateProfileSchema } from '../schemas/profile.schema';
-import { extractAndValidateFacultyId } from '../utils/facultyScope';
-import { z } from 'zod';
-
-/**
- * Validation schema for facultyId route parameter
- */
-const facultyIdParamSchema = z.object({
-  facultyId: z.string().min(1, 'Faculty ID is required'),
-});
+import { extractFacultyId } from '../utils/facultyScope';
+import { AuthenticatedRequest } from '../../../rbac/utils/middleware-composer';
 
 export class ProfileController {
   constructor(private profileService: ProfileService) {}
 
   /**
-   * GET /api/admin/faculty/:facultyId/profile
-   * Get faculty profile by ID
+   * GET /api/faculty/profile
+   * Get faculty profile for authenticated user
    * 
-   * Validates that the authenticated user's faculty_id matches the requested facultyId.
-   * Returns HTTP 403 if attempting to access another faculty's profile.
+   * Extracts faculty_id from JWT token and returns the profile.
    * 
    * Requirements: 3.1, 3.2, 3.4
    */
   getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Validate facultyId parameter
-      const paramValidation = facultyIdParamSchema.safeParse(req.params);
-      if (!paramValidation.success) {
-        throw new ValidationError('Invalid faculty ID', paramValidation.error.errors);
-      }
-
-      // Extract and validate faculty_id from authenticated user
-      // This will throw FacultyAccessError (403) if facultyId doesn't match user's facultyId
-      const facultyId = extractAndValidateFacultyId(req, 'facultyId');
+      // Extract faculty_id from authenticated user (from JWT token)
+      // This will throw FacultyAccessError (403) if user is not faculty
+      const authenticatedReq = req as AuthenticatedRequest;
+      const facultyId = extractFacultyId(authenticatedReq.user);
 
       // Retrieve profile
       const profile = await this.profileService.getProfileById(facultyId);
@@ -59,32 +46,26 @@ export class ProfileController {
   };
 
   /**
-   * PUT /api/admin/faculty/:facultyId/profile
-   * Update faculty profile by ID
+   * PUT /api/faculty/profile
+   * Update faculty profile for authenticated user
    * 
-   * Validates that the authenticated user's faculty_id matches the requested facultyId.
-   * Returns HTTP 403 if attempting to update another faculty's profile.
+   * Extracts faculty_id from JWT token and updates the profile.
    * Validates request body using Zod schema for email and phone formats.
    * 
    * Requirements: 3.5, 3.6, 3.10, 3.11
    */
   updateProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Validate facultyId parameter
-      const paramValidation = facultyIdParamSchema.safeParse(req.params);
-      if (!paramValidation.success) {
-        throw new ValidationError('Invalid faculty ID', paramValidation.error.errors);
-      }
-
       // Validate request body
       const bodyValidation = updateProfileSchema.safeParse(req.body);
       if (!bodyValidation.success) {
         throw new ValidationError('Validation failed', bodyValidation.error.errors);
       }
 
-      // Extract and validate faculty_id from authenticated user
-      // This will throw FacultyAccessError (403) if facultyId doesn't match user's facultyId
-      const facultyId = extractAndValidateFacultyId(req, 'facultyId');
+      // Extract faculty_id from authenticated user (from JWT token)
+      // This will throw FacultyAccessError (403) if user is not faculty
+      const authenticatedReq = req as AuthenticatedRequest;
+      const facultyId = extractFacultyId(authenticatedReq.user);
 
       const data = bodyValidation.data;
 

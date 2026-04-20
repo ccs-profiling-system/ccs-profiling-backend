@@ -214,18 +214,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/admin/faculty/:facultyId/profile",
+							"raw": "{{baseUrl}}/faculty/profile",
 							"host": ["{{baseUrl}}"],
-							"path": ["admin", "faculty", ":facultyId", "profile"],
-							"variable": [
-								{
-									"key": "facultyId",
-									"value": "{{facultyId}}",
-									"description": "Faculty ID (auto-captured from login)"
-								}
-							]
+							"path": ["faculty", "profile"]
 						},
-						"description": "Get faculty profile by ID"
+						"description": "Get faculty profile for authenticated user (no ID needed in URL)"
 					},
 					"response": []
 				},
@@ -244,17 +237,11 @@
 							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+1234567890\",\n  \"department\": \"Computer Science\",\n  \"position\": \"Associate Professor\",\n  \"specialization\": \"Machine Learning\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/admin/faculty/:facultyId/profile",
+							"raw": "{{baseUrl}}/faculty/profile",
 							"host": ["{{baseUrl}}"],
-							"path": ["admin", "faculty", ":facultyId", "profile"],
-							"variable": [
-								{
-									"key": "facultyId",
-									"value": "{{facultyId}}"
-								}
-							]
+							"path": ["faculty", "profile"]
 						},
-						"description": "Update faculty profile"
+						"description": "Update faculty profile for authenticated user (no ID needed in URL)"
 					},
 					"response": []
 				},

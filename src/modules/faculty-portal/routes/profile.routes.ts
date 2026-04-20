@@ -26,36 +26,36 @@ export function createProfileRoutes(profileController: ProfileController): Route
   router.use(authMiddleware);
 
   /**
-   * GET /api/admin/faculty/:facultyId/profile
-   * Get faculty profile by ID
+   * GET /api/faculty/profile
+   * Get faculty profile for authenticated user
    * 
    * Permission: faculty.profile.read
    * 
-   * Validates that the authenticated user's faculty_id matches the requested facultyId.
-   * Returns HTTP 403 if attempting to access another faculty's profile.
+   * Extracts faculty_id from JWT token and returns the profile.
+   * No facultyId parameter needed in URL - determined from authentication.
    * 
    * Response:
    * - 200: Profile retrieved successfully
    * - 401: Unauthorized (missing or invalid JWT token)
-   * - 403: Forbidden (missing permission or attempting to access another faculty's profile)
+   * - 403: Forbidden (missing permission or not a faculty member)
    * - 404: Not Found (faculty profile not found)
    * 
    * Requirements: 3.1, 3.2, 3.4, 14.1, 16.1, 16.3
    */
   router.get(
-    '/:facultyId/profile',
+    '/',
     requirePermission('faculty.profile.read'),
     profileController.getProfile
   );
 
   /**
-   * PUT /api/admin/faculty/:facultyId/profile
-   * Update faculty profile by ID
+   * PUT /api/faculty/profile
+   * Update faculty profile for authenticated user
    * 
    * Permission: faculty.profile.update
    * 
-   * Validates that the authenticated user's faculty_id matches the requested facultyId.
-   * Returns HTTP 403 if attempting to update another faculty's profile.
+   * Extracts faculty_id from JWT token and updates the profile.
+   * No facultyId parameter needed in URL - determined from authentication.
    * Validates request body using Zod schema for email and phone formats.
    * 
    * Request Body (all fields optional):
@@ -70,13 +70,13 @@ export function createProfileRoutes(profileController: ProfileController): Route
    * - 200: Profile updated successfully
    * - 400: Bad Request (validation failed)
    * - 401: Unauthorized (missing or invalid JWT token)
-   * - 403: Forbidden (missing permission or attempting to update another faculty's profile)
+   * - 403: Forbidden (missing permission or not a faculty member)
    * - 404: Not Found (faculty profile not found)
    * 
    * Requirements: 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 14.1, 16.1, 16.3
    */
   router.put(
-    '/:facultyId/profile',
+    '/',
     requirePermission('faculty.profile.update'),
     profileController.updateProfile
   );

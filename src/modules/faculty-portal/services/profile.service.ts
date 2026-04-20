@@ -16,9 +16,9 @@ export class ProfileService {
   constructor(private db: Database) {}
 
   /**
-   * Get faculty profile by faculty_id
+   * Get faculty profile by faculty UUID (internal ID)
    * 
-   * @param facultyId - The faculty_id to retrieve
+   * @param facultyId - The faculty UUID (internal ID) to retrieve
    * @returns Faculty profile data
    * @throws NotFoundError if faculty not found
    */
@@ -26,7 +26,7 @@ export class ProfileService {
     const result = await this.db
       .select()
       .from(faculty)
-      .where(and(eq(faculty.faculty_id, facultyId), isNull(faculty.deleted_at)))
+      .where(and(eq(faculty.id, facultyId), isNull(faculty.deleted_at)))
       .limit(1);
 
     const facultyRecord = result[0];
@@ -41,7 +41,7 @@ export class ProfileService {
   /**
    * Update faculty profile
    * 
-   * @param facultyId - The faculty_id to update
+   * @param facultyId - The faculty UUID (internal ID) to update
    * @param data - Profile update data (validated by Zod schema)
    * @returns Updated faculty profile data
    * @throws NotFoundError if faculty not found
@@ -54,7 +54,7 @@ export class ProfileService {
     const existing = await this.db
       .select()
       .from(faculty)
-      .where(and(eq(faculty.faculty_id, facultyId), isNull(faculty.deleted_at)))
+      .where(and(eq(faculty.id, facultyId), isNull(faculty.deleted_at)))
       .limit(1);
 
     if (!existing[0]) {
@@ -68,7 +68,7 @@ export class ProfileService {
         ...data,
         updated_at: new Date(),
       })
-      .where(eq(faculty.faculty_id, facultyId))
+      .where(eq(faculty.id, facultyId))
       .returning();
 
     const updated = result[0];

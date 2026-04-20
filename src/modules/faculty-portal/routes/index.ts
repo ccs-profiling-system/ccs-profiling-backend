@@ -96,8 +96,8 @@ const affiliationsRoutes = createAffiliationsRoutes(affiliationsController);
 // Aggregate all faculty portal routes
 export const facultyPortalRouter = Router();
 
-// Register profile routes (uses /admin/faculty/:facultyId pattern)
-facultyPortalRouter.use('/admin/faculty', profileRoutes);
+// Register profile routes (uses /faculty/profile pattern - no ID in URL)
+facultyPortalRouter.use('/faculty/profile', profileRoutes);
 
 // Register faculty-specific routes (uses /faculty pattern)
 facultyPortalRouter.use('/faculty', courseRoutes);
