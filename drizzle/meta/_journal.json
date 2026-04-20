@@ -127,6 +127,13 @@
       "when": 1776687676081,
       "tag": "0017_eager_maverick",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1776705877764,
+      "tag": "0018_daily_clint_barton",
+      "breakpoints": true
     }
   ]
 }

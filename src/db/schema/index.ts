@@ -18,4 +18,8 @@ export * from './attendance';
 export * from './facultySkills';
 export * from './facultyAffiliations';
 export * from './studentParticipation';
+export * from './notifications';
+export * from './financialRecords';
+export * from './researchApplications';
+export * from './advisors';
 export * from './utils';
