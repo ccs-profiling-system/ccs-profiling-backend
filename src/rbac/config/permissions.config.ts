@@ -359,10 +359,32 @@ export const permissionConfig: PermissionConfig = {
    * - Upload assignment submissions
    * - Student-specific dashboard
    * - Limited public search
+   * - Student Portal API access (student.* namespace)
+   * 
+   * Student Portal Permissions (student.* namespace):
+   * - student.profile.read: View own student profile
+   * - student.profile.update: Update own profile (email, phone)
+   * - student.dashboard.read: View dashboard summary
+   * - student.progress.read: View academic progress
+   * - student.financial.read: View financial records
+   * - student.notification.read: View notifications
+   * - student.notification.update: Mark notifications as read
+   * - student.course.read: View enrolled courses and schedule
+   * - student.grade.read: View grades and GPA
+   * - student.research.read: View research opportunities
+   * - student.research.apply: Apply to research opportunities
+   * - student.event.read: View events
+   * - student.event.register: Register/unregister for events
+   * - student.advisor.read: View advisor information
+   * - student.advisor.message: Send messages to advisor
+   * - student.advisor.appointment: Book appointments with advisor
    */
   [Role.STUDENT]: {
     allow: [
-      // Own Profile Access
+      // Student Portal API (all student.* permissions)
+      'student.*',
+      
+      // Own Profile Access (legacy)
       'student.read_own',
       
       // Schedule Access
