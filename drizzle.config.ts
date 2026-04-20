@@ -58,6 +58,7 @@ export default {
     './src/db/schema/reports.ts',
     './src/db/schema/facultySkills.ts',
     './src/db/schema/facultyAffiliations.ts',
+    './src/db/schema/studentParticipation.ts',
   ],
   out: './drizzle',
   driver: 'pg',
