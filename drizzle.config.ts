@@ -56,6 +56,7 @@ export default {
     './src/db/schema/uploads.ts',
     './src/db/schema/auditLogs.ts',
     './src/db/schema/reports.ts',
+    './src/db/schema/attendance.ts',
     './src/db/schema/facultySkills.ts',
     './src/db/schema/facultyAffiliations.ts',
     './src/db/schema/studentParticipation.ts',
