@@ -125,6 +125,7 @@ import { reportRoutes } from '../modules/reports';
 import { searchRoutes } from '../modules/search';
 import { chairPortalRouter } from '../modules/chair-portal';
 import { facultyPortalRouter } from '../modules/faculty-portal';
+import { studentPortalRouter } from '../modules/student-portal/routes';
 
 export const routes = Router();
 
@@ -196,3 +197,12 @@ routes.use('/chair', chairPortalRouter);
 // - Event viewing and registration
 // - Course material management (upload, view, delete)
 routes.use('/', facultyPortalRouter);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STUDENT PORTAL ROUTES (Authentication + student.* permissions required)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Student Portal
+// Provides endpoints for students to manage:
+// - Profile management (view and update own profile)
+routes.use('/', studentPortalRouter);
