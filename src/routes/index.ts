@@ -124,7 +124,7 @@ import { analyticsRoutes } from '../modules/analytics';
 import { reportRoutes } from '../modules/reports';
 import { searchRoutes } from '../modules/search';
 import { chairPortalRouter } from '../modules/chair-portal';
-import { facultyPortalRouter } from '../modules/faculty-portal/routes';
+import { facultyPortalRouter } from '../modules/faculty-portal';
 
 export const routes = Router();
 
