@@ -8,7 +8,7 @@
  * Requirements: 13.1-13.6, 14.1-14.4, 15.1-15.8, 16.1-16.4, 29.1-29.5
  */
 
-import { eq, asc, sql } from 'drizzle-orm';
+import { eq, asc, sql, inArray } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { 
   research, 
@@ -77,16 +77,18 @@ export class ResearchService {
 
     // Count applicants for each opportunity
     const opportunityIds = opportunities.map(o => o.id);
-    const applicantCounts = opportunityIds.length > 0
-      ? await this.db
-          .select({
-            research_id: researchApplications.research_id,
-            count: sql<number>`count(*)::int`,
-          })
-          .from(researchApplications)
-          .where(sql`${researchApplications.research_id} IN ${sql.raw(`(${opportunityIds.map(() => '?').join(',')})`)}`)
-          .groupBy(researchApplications.research_id)
-      : [];
+    let applicantCounts: Array<{ research_id: string; count: number }> = [];
+    
+    if (opportunityIds.length > 0) {
+      applicantCounts = await this.db
+        .select({
+          research_id: researchApplications.research_id,
+          count: sql<number>`count(*)::int`,
+        })
+        .from(researchApplications)
+        .where(inArray(researchApplications.research_id, opportunityIds))
+        .groupBy(researchApplications.research_id);
+    }
 
     const applicantCountMap = new Map(
       applicantCounts.map(ac => [ac.research_id, ac.count])
