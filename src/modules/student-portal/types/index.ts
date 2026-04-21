@@ -265,7 +265,7 @@ export interface ResearchOpportunityDTO {
   faculty_adviser_name: string;
   required_skills: string | null;
   start_date: string | null;
-  application_deadline: string;
+  application_deadline: string | null;
   available_positions: number | null;
   current_applicants: number;
 }
