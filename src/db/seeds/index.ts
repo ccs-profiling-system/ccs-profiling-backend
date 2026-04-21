@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -14,13 +14,6 @@ import { seedSchedules } from './schedules.seed';
 import { seedResearch } from './research.seed';
 import { seedUploads } from './uploads.seed';
 import { seedAuditLogs } from './auditLogs.seed';
-import { seedFacultySkills } from './facultySkills.seed';
-import { seedFacultyAffiliations } from './facultyAffiliations.seed';
-import { seedAttendance } from './attendance.seed';
-import { seedNotifications } from './notifications.seed';
-import { seedFinancialRecords } from './financialRecords.seed';
-import { seedResearchApplications } from './researchApplications.seed';
-import { seedAdvisors } from './advisors.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -252,135 +245,6 @@ export async function runSeeders() {
       const createdAuditLogs = await db.select({ id: auditLogs.id }).from(auditLogs);
       auditLogIds = createdAuditLogs.map(a => a.id);
       console.log(`✅ Created ${auditLogIds.length} audit log records\n`);
-    }
-
-    // Check if faculty_skills table has data
-    const facultySkillsHasData = await hasData('faculty_skills');
-    let facultySkillIds: string[] = [];
-
-    if (facultySkillsHasData) {
-      console.log('ℹ️  Faculty skills table already has data, skipping faculty skills seeding...');
-      const existingFacultySkills = await db.select({ id: facultySkills.id }).from(facultySkills);
-      facultySkillIds = existingFacultySkills.map(fs => fs.id);
-      console.log(`📊 Found ${facultySkillIds.length} existing faculty skill records\n`);
-    } else {
-      console.log('📝 Seeding faculty skills...');
-      facultySkillIds = await seedFacultySkills(db, facultyIds);
-      console.log(`✅ Created ${facultySkillIds.length} faculty skill records\n`);
-    }
-
-    // Check if faculty_affiliations table has data
-    const facultyAffiliationsHasData = await hasData('faculty_affiliations');
-    let facultyAffiliationIds: string[] = [];
-
-    if (facultyAffiliationsHasData) {
-      console.log('ℹ️  Faculty affiliations table already has data, skipping faculty affiliations seeding...');
-      const existingFacultyAffiliations = await db.select({ id: facultyAffiliations.id }).from(facultyAffiliations);
-      facultyAffiliationIds = existingFacultyAffiliations.map(fa => fa.id);
-      console.log(`📊 Found ${facultyAffiliationIds.length} existing faculty affiliation records\n`);
-    } else {
-      console.log('📝 Seeding faculty affiliations...');
-      facultyAffiliationIds = await seedFacultyAffiliations(db, facultyIds);
-      console.log(`✅ Created ${facultyAffiliationIds.length} faculty affiliation records\n`);
-    }
-
-    // Check if attendance table has data
-    const attendanceHasData = await hasData('attendance');
-    let attendanceIds: string[] = [];
-
-    if (attendanceHasData) {
-      console.log('ℹ️  Attendance table already has data, skipping attendance seeding...');
-      const existingAttendance = await db.select({ id: attendance.id }).from(attendance);
-      attendanceIds = existingAttendance.map(a => a.id);
-      console.log(`📊 Found ${attendanceIds.length} existing attendance records\n`);
-    } else {
-      console.log('📝 Seeding attendance...');
-      attendanceIds = await seedAttendance(db, instructionIds, studentIds, facultyIds);
-      console.log(`✅ Created ${attendanceIds.length} attendance records\n`);
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STUDENT PORTAL TABLES
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    // Check if notifications table has data
-    const notificationsHasData = await hasData('notifications');
-    let notificationIds: string[] = [];
-
-    if (notificationsHasData) {
-      console.log('ℹ️  Notifications table already has data, skipping notifications seeding...');
-      const existingNotifications = await db.select({ id: notifications.id }).from(notifications);
-      notificationIds = existingNotifications.map(n => n.id);
-      console.log(`📊 Found ${notificationIds.length} existing notification records\n`);
-    } else {
-      console.log('📝 Seeding notifications...');
-      notificationIds = await seedNotifications(db, studentIds);
-      console.log(`✅ Created ${notificationIds.length} notification records\n`);
-    }
-
-    // Check if financial_records table has data
-    const financialRecordsHasData = await hasData('financial_records');
-    let financialRecordIds: string[] = [];
-    let paymentIds: string[] = [];
-
-    if (financialRecordsHasData) {
-      console.log('ℹ️  Financial records table already has data, skipping financial records seeding...');
-      const existingRecords = await db.select({ id: financialRecords.id }).from(financialRecords);
-      financialRecordIds = existingRecords.map(r => r.id);
-      console.log(`📊 Found ${financialRecordIds.length} existing financial records\n`);
-    } else {
-      console.log('📝 Seeding financial records and payments...');
-      // Get student year levels for tuition calculation
-      const studentsWithYearLevels = await db.select({ 
-        id: students.id, 
-        year_level: students.year_level 
-      }).from(students);
-      const studentYearLevels: Record<string, number> = {};
-      studentsWithYearLevels.forEach(s => {
-        studentYearLevels[s.id] = s.year_level || 1;
-      });
-      
-      const result = await seedFinancialRecords(db, studentIds, studentYearLevels);
-      financialRecordIds = result.recordIds;
-      paymentIds = result.paymentIds;
-      console.log(`✅ Created ${financialRecordIds.length} financial records and ${paymentIds.length} payments\n`);
-    }
-
-    // Check if research_applications table has data
-    const researchApplicationsHasData = await hasData('research_applications');
-    let researchApplicationIds: string[] = [];
-
-    if (researchApplicationsHasData) {
-      console.log('ℹ️  Research applications table already has data, skipping research applications seeding...');
-      const existingApplications = await db.select({ id: researchApplications.id }).from(researchApplications);
-      researchApplicationIds = existingApplications.map(a => a.id);
-      console.log(`📊 Found ${researchApplicationIds.length} existing research applications\n`);
-    } else {
-      console.log('📝 Seeding research applications...');
-      researchApplicationIds = await seedResearchApplications(db, studentIds, researchIds);
-      console.log(`✅ Created ${researchApplicationIds.length} research applications\n`);
-    }
-
-    // Check if student_advisors table has data
-    const studentAdvisorsHasData = await hasData('student_advisors');
-    let advisorIds: string[] = [];
-    let messageIds: string[] = [];
-    let slotIds: string[] = [];
-    let appointmentIds: string[] = [];
-
-    if (studentAdvisorsHasData) {
-      console.log('ℹ️  Student advisors table already has data, skipping advisor seeding...');
-      const existingAdvisors = await db.select({ id: studentAdvisors.id }).from(studentAdvisors);
-      advisorIds = existingAdvisors.map(a => a.id);
-      console.log(`📊 Found ${advisorIds.length} existing student-advisor assignments\n`);
-    } else {
-      console.log('📝 Seeding student advisors, messages, slots, and appointments...');
-      const result = await seedAdvisors(db, studentIds, facultyIds, userIds);
-      advisorIds = result.advisorIds;
-      messageIds = result.messageIds;
-      slotIds = result.slotIds;
-      appointmentIds = result.appointmentIds;
-      console.log(`✅ Created ${advisorIds.length} advisor assignments, ${messageIds.length} messages, ${slotIds.length} slots, ${appointmentIds.length} appointments\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

@@ -1,128 +1,111 @@
-# Postman Collections for CCS Profiling Backend
+# Postman Collection
 
-This directory contains Postman collections for testing the CCS Profiling Backend API.
+Single-file Postman collection for the CCS Profiling API.
 
-## Collections
+## 🚀 Quick Start
 
-### 1. **ccs-profiling-api.postman_collection.json**
-Main API collection for general endpoints.
+1. **Import Collection**
+   - Open Postman
+   - Click **Import**
+   - Select `ccs-profiling-api.postman_collection.json`
 
-### 2. **faculty-portal-api.postman_collection.json**
-Complete API collection for Faculty Portal endpoints with automatic authentication.
+2. **Configure Base URL** (if needed)
+   - Click on the collection name
+   - Go to **Variables** tab
+   - Update `base_url` (default: `http://localhost:3000`)
 
-### 3. **student-portal-api.postman_collection.json**
-Complete API collection for Student Portal endpoints with automatic authentication.
+3. **Login**
+   - Send request: `Auth > Login`
+   - Tokens automatically saved to collection variables
 
-## Test Credentials
+4. **Test Endpoints**
+   - All requests now work with saved token
+   - No additional setup needed
 
-All seeded users have the password: `pass1234`
+## 📋 Collection Variables
 
-### Student Accounts (10 accounts)
-- `student1@ccs.edu` to `student10@ccs.edu`
-- Role: `student`
-- Permissions: All `student.*` permissions (profile, dashboard, courses, grades, research, events, advisor)
+Built-in variables (no separate environment needed):
 
-### Faculty Accounts (4 accounts)
-- `john.doe@ccs.edu` - Professor, AI Specialization
-- `jane.smith@ccs.edu` - Associate Professor, Network Security
-- `robert.johnson@ccs.edu` - Assistant Professor, Software Engineering
-- `chair.cs@ccs.edu` - Department Chair
-- Role: `faculty`
-- Permissions: All `faculty.*` permissions
+| Variable | Default Value | Description |
+|----------|---------------|-------------|
+| `base_url` | `http://localhost:3000` | API server URL |
+| `token` | (empty) | Auto-populated after login |
+| `refreshToken` | (empty) | Auto-populated after login |
 
-### Admin Accounts (2 accounts)
+## 🔐 Authentication
+
+- Login request automatically saves tokens
+- All admin endpoints use saved token
+- Refresh token endpoint updates both tokens
+- No manual token copying needed
+
+### Test Credentials
+
+All users have the password: `pass1234`
+
+**Admin Users:**
 - `admin@ccs.edu`
 - `superadmin@ccs.edu`
-- Role: `admin`
-- Permissions: All permissions (`*.*`)
 
-## RBAC Permissions
+**Faculty Users:**
+- `john.doe@ccs.edu` (Computer Science)
+- `jane.smith@ccs.edu` (Information Technology)
+- `robert.johnson@ccs.edu` (Computer Science)
 
-The system uses Role-Based Access Control (RBAC) with permissions defined in `src/rbac/config/permissions.config.ts`.
+**Student Users:**
+- `student1@ccs.edu` (Alice Williams - 2021-00001)
+- `student2@ccs.edu` (Bob Brown - 2021-00002)
+- `student3@ccs.edu` (Charlie Davis - 2022-00001)
+- `student4@ccs.edu` (Diana Miller - 2022-00002)
+- `student5@ccs.edu` (Edward Wilson - 2023-00001)
 
-### Student Portal Permissions
+## 📚 Available Endpoints
 
-Students have access to the following permissions via the `student.*` wildcard:
+- **Auth**: Login, logout, refresh, change password, get current user
+- **Students**: CRUD operations, profile aggregation
+- **Faculty**: CRUD operations, department filtering
+- **Instructions**: Subject/course management
+- **Enrollments**: Student course enrollment management
+- **Academic History**: Student grade records, GPA calculation
+- **Skills**: Student skills management
+- **Violations**: Student violation records
+- **Affiliations**: Student organization memberships
+- **Events**: Event management, participant tracking
+- **Scheduling**: Schedule creation, conflict detection
+- **Research**: Research project management, author/adviser tracking
+- **Uploads**: File upload management with entity association
+- **Audit Logs**: Complete audit trail for all system operations (NEW)
+- **Analytics**: Dashboard metrics, GPA/skill distribution
 
-- `student.profile.read` - View own student profile
-- `student.profile.update` - Update own profile (email, phone)
-- `student.dashboard.read` - View dashboard summary
-- `student.progress.read` - View academic progress
-- `student.financial.read` - View financial records
-- `student.notification.read` - View notifications
-- `student.notification.update` - Mark notifications as read
-- `student.course.read` - View enrolled courses and schedule
-- `student.grade.read` - View grades and GPA
-- `student.research.read` - View research opportunities
-- `student.research.apply` - Apply to research opportunities
-- `student.event.read` - View events
-- `student.event.register` - Register/unregister for events
-- `student.advisor.read` - View advisor information
-- `student.advisor.message` - Send messages to advisor
-- `student.advisor.appointment` - Book appointments with advisor
+## 💡 Tips
 
-## How to Use
+- All endpoints use `/api/v1/` prefix
+- Admin endpoints use `/api/v1/admin/` prefix
+- List endpoints support pagination (`?page=1&limit=10`)
+- Auth endpoints are rate limited (5 req/15min)
+- Audit logs track all create, update, and delete operations
+- Audit logs include before/after states for compliance tracking
+- Use audit logs to investigate changes and track user activity
 
-1. **Import Collection**: Import the desired collection into Postman
-2. **Set Base URL**: Update the `baseUrl` variable (default: `http://localhost:3000/api`)
-3. **Login**: Use the Login endpoint with test credentials
-4. **Auto-Authentication**: The collection automatically captures and uses the access token
-5. **Test Endpoints**: All subsequent requests will use the captured token
+## 🔍 Audit Logs Features
 
-## Auto-Capture Features
+The Audit Logs module provides comprehensive tracking:
 
-The collections include scripts that automatically:
-- Capture access token on login
-- Capture refresh token
-- Capture user ID, email, and role
-- Capture student ID or faculty ID
-- Set token expiry time
-- Use bearer token authentication for all requests
+- **Track all mutations**: Create, update, and delete operations
+- **Before/after states**: JSONB capture of state changes
+- **User tracking**: See who made each change
+- **Entity history**: View complete timeline for any entity
+- **Compliance ready**: IP address and user agent tracking
+- **Date range filtering**: Query logs by time period
+- **Retention**: Logs retained for at least 1 year
 
-## Troubleshooting
+### Audit Log Endpoints
 
-### "Insufficient permissions" Error
+1. `GET /api/v1/admin/audit-logs` - List all audit logs with filters
+2. `GET /api/v1/admin/audit-logs/:id` - Get specific audit log
+3. `GET /api/v1/admin/audit-logs/user/:userId` - User activity tracking
+4. `GET /api/v1/admin/audit-logs/entity/:entityType/:entityId` - Entity history
 
-If you get a 403 Forbidden error with "Insufficient permissions":
+## 🔗 Documentation
 
-1. **Verify Login**: Make sure you're logged in with the correct role
-2. **Check Token**: Ensure the access token is captured (check collection variables)
-3. **Verify Role**: Check that the user role matches the endpoint requirements
-4. **Check Permissions**: Verify the role has the required permission in `permissions.config.ts`
-
-### "Token expired" Error
-
-If you get a 401 Unauthorized error:
-
-1. Use the "Refresh Token" endpoint to get a new access token
-2. Or login again to get fresh tokens
-
-### Database Not Seeded
-
-If you get "Not found" errors for students, courses, etc.:
-
-1. Run the seed script: `npm run seed`
-2. Or reset and seed: `npm run db:reset && npm run seed`
-
-## Environment Variables
-
-The collections use the following variables:
-
-- `baseUrl` - API base URL (default: `http://localhost:3000/api`)
-- `accessToken` - JWT access token (auto-captured on login)
-- `refreshToken` - JWT refresh token (auto-captured on login)
-- `userId` - User UUID (auto-captured on login)
-- `userEmail` - User email (auto-captured on login)
-- `userRole` - User role (auto-captured on login)
-- `studentId` - Student ID (auto-captured for student logins)
-- `facultyId` - Faculty ID (auto-captured for faculty logins)
-- `tokenExpiry` - Token expiration timestamp (auto-calculated)
-
-## Notes
-
-- All endpoints require authentication except the login endpoint
-- The system uses JWT bearer token authentication
-- Permissions are checked on every request using RBAC middleware
-- Students can only access their own data (enforced by student-scoping utilities)
-- Faculty can only access their assigned courses and research
-- Department chairs have broader access within their department
+See collection description in Postman for detailed endpoint documentation.

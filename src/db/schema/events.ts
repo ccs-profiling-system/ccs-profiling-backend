@@ -19,19 +19,13 @@ export const events = pgTable('events', {
   start_time: time('start_time'),
   end_time: time('end_time'),
   location: varchar('location', { length: 255 }),
-  organizer: varchar('organizer', { length: 200 }),
   max_participants: integer('max_participants'),
-  registration_deadline: date('registration_deadline'),
-  status: varchar('status', { length: 50 }).default('draft').notNull(), // 'draft', 'pending_approval', 'approved', 'rejected', 'cancelled'
-  department_id: varchar('department_id', { length: 100 }), // Department scope for multi-tenant isolation
   ...timestampsWithSoftDelete,
 }, (table) => ({
   // Indexes for query optimization 
   eventNameIdx: index('events_event_name_idx').on(table.event_name),
   eventDateIdx: index('events_event_date_idx').on(table.event_date),
   eventTypeIdx: index('events_event_type_idx').on(table.event_type),
-  statusIdx: index('events_status_idx').on(table.status),
-  departmentIdIdx: index('events_department_id_idx').on(table.department_id),
 }));
 
 /**

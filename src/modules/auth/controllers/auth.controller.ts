@@ -34,40 +34,6 @@ export class AuthController {
         throw new ValidationError('User not found after login');
       }
 
-      // Fetch faculty_id or student_id for response
-      let facultyId: string | undefined;
-      let studentId: string | undefined;
-
-      if (user.role === 'faculty') {
-        const { faculty } = await import('../../../db/schema');
-        const { db } = await import('../../../db');
-        const { eq } = await import('drizzle-orm');
-        
-        const facultyRecord = await db
-          .select({ id: faculty.id })
-          .from(faculty)
-          .where(eq(faculty.user_id, user.id))
-          .limit(1);
-        
-        if (facultyRecord[0]) {
-          facultyId = facultyRecord[0].id;
-        }
-      } else if (user.role === 'student') {
-        const { students } = await import('../../../db/schema');
-        const { db } = await import('../../../db');
-        const { eq } = await import('drizzle-orm');
-        
-        const studentRecord = await db
-          .select({ id: students.id })
-          .from(students)
-          .where(eq(students.user_id, user.id))
-          .limit(1);
-        
-        if (studentRecord[0]) {
-          studentId = studentRecord[0].id;
-        }
-      }
-
       // Calculate expiration details
       const accessExpiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
       const refreshExpiresAt = new Date(Date.now() + tokens.refreshExpiresIn * 1000);
@@ -79,8 +45,6 @@ export class AuthController {
             id: user.id,
             email: user.email,
             role: user.role,
-            ...(facultyId && { facultyId }),
-            ...(studentId && { studentId }),
           },
           tokens: {
             access: {
@@ -137,12 +101,8 @@ export class AuthController {
       // Verify refresh token
       const payload = this.authService.verifyToken(refreshToken);
 
-      // Generate new tokens with clean payload (remove JWT standard claims)
-      const tokens = this.authService.generateTokens({
-        userId: payload.userId,
-        email: payload.email,
-        role: payload.role,
-      });
+      // Generate new tokens
+      const tokens = this.authService.generateTokens(payload);
 
       // Calculate expiration details
       const accessExpiresAt = new Date(Date.now() + tokens.expiresIn * 1000);

@@ -11,9 +11,6 @@ interface EventSeed {
   endTime: string;
   location: string;
   maxParticipants?: number;
-  departmentId: string;
-  organizer?: string;
-  registrationDeadline?: string;
 }
 
 const eventSeeds: EventSeed[] = [
@@ -26,9 +23,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '12:00:00',
     location: 'Computer Lab 1',
     maxParticipants: 30,
-    departmentId: 'Computer Science',
-    organizer: 'CS Department',
-    registrationDeadline: '2026-04-13',
   },
   {
     eventName: 'Web Development Bootcamp',
@@ -39,9 +33,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '17:00:00',
     location: 'Computer Lab 2',
     maxParticipants: 25,
-    departmentId: 'Computer Science',
-    organizer: 'CS Department',
-    registrationDeadline: '2026-04-18',
   },
   {
     eventName: 'Cybersecurity Awareness Seminar',
@@ -52,9 +43,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '16:00:00',
     location: 'Auditorium',
     maxParticipants: 100,
-    departmentId: 'Computer Science',
-    organizer: 'IT Security Office',
-    registrationDeadline: '2026-04-20',
   },
   {
     eventName: 'Annual Programming Competition',
@@ -65,9 +53,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '18:00:00',
     location: 'Main Hall',
     maxParticipants: 50,
-    departmentId: 'Computer Science',
-    organizer: 'CS Department',
-    registrationDeadline: '2026-05-01',
   },
   {
     eventName: 'Capstone Project Defense - Batch 2026',
@@ -77,8 +62,6 @@ const eventSeeds: EventSeed[] = [
     startTime: '09:00:00',
     endTime: '17:00:00',
     location: 'Conference Room A',
-    departmentId: 'Computer Science',
-    organizer: 'CS Department',
   },
   {
     eventName: 'Cloud Computing Seminar',
@@ -89,9 +72,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '12:00:00',
     location: 'Room 301',
     maxParticipants: 40,
-    departmentId: 'Computer Science',
-    organizer: 'Cloud Computing Lab',
-    registrationDeadline: '2026-05-13',
   },
   {
     eventName: 'Mobile App Development Workshop',
@@ -102,9 +82,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '16:00:00',
     location: 'Computer Lab 3',
     maxParticipants: 20,
-    departmentId: 'Computer Science',
-    organizer: 'Mobile Dev Team',
-    registrationDeadline: '2026-05-18',
   },
   {
     eventName: 'Hackathon 2026',
@@ -115,9 +92,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '08:00:00',
     location: 'Innovation Hub',
     maxParticipants: 60,
-    departmentId: 'Computer Science',
-    organizer: 'Innovation Hub',
-    registrationDeadline: '2026-05-25',
   },
   {
     eventName: 'AI Ethics and Society Seminar',
@@ -128,9 +102,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '17:00:00',
     location: 'Auditorium',
     maxParticipants: 80,
-    departmentId: 'Computer Science',
-    organizer: 'AI Research Group',
-    registrationDeadline: '2026-06-08',
   },
   {
     eventName: 'Database Optimization Workshop',
@@ -141,9 +112,6 @@ const eventSeeds: EventSeed[] = [
     endTime: '12:00:00',
     location: 'Computer Lab 1',
     maxParticipants: 25,
-    departmentId: 'Computer Science',
-    organizer: 'Database Lab',
-    registrationDeadline: '2026-06-13',
   },
 ];
 
@@ -167,10 +135,6 @@ export async function seedEvents(db: Database, studentIds: string[], facultyIds:
         end_time: seed.endTime,
         location: seed.location,
         max_participants: seed.maxParticipants,
-        department_id: seed.departmentId,
-        organizer: seed.organizer,
-        registration_deadline: seed.registrationDeadline,
-        status: 'approved', // Set events as approved so they're visible
       })
       .returning({ id: events.id, event_name: events.event_name });
 

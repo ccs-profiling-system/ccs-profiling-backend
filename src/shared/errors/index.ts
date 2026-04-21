@@ -66,13 +66,3 @@ export class ConflictError extends AppError {
     super(message, 'CONFLICT', 409);
   }
 }
-
-/**
- * UnprocessableEntityError - 422
- * Used when the request is well-formed but cannot be processed due to business logic constraints
- */
-export class UnprocessableEntityError extends AppError {
-  constructor(message: string) {
-    super(message, 'UNPROCESSABLE_ENTITY', 422);
-  }
-}
