@@ -21,6 +21,9 @@ export const faculty = pgTable('faculty', {
   department: varchar('department', { length: 100 }).notNull(),
   position: varchar('position', { length: 100 }),
   specialization: varchar('specialization', { length: 255 }),
+  office_location: varchar('office_location', { length: 255 }),
+  consultation_hours: varchar('consultation_hours', { length: 255 }),
+  bio: varchar('bio', { length: 1000 }),
   status: varchar('status', { length: 50 }).default('active'), // 'active', 'inactive'
   ...timestampsWithSoftDelete,
 }, (table) => ({

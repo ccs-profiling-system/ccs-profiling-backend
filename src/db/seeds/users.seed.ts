@@ -53,8 +53,8 @@ function generateUserSeeds(): UserSeed[] {
     },
   ];
 
-  // Generate 1000 student users
-  for (let i = 1; i <= 1000; i++) {
+  // Generate 10 student users
+  for (let i = 1; i <= 10; i++) {
     seeds.push({
       email: `student${i}@ccs.edu`,
       password: 'pass1234',

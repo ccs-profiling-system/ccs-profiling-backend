@@ -1,0 +1,651 @@
+{
+	"info": {
+		"_postman_id": "student-portal-api-2024-cleaned",
+		"name": "Student Portal API (Cleaned)",
+		"description": "Optimized Student Portal API focused on core profiling features: academic tracking, research viewing, and event participation viewing. Non-core features (financial, advisor communication, self-registration) have been removed.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-refresh token if expired",
+					"const tokenExpiry = pm.collectionVariables.get('tokenExpiry');",
+					"if (tokenExpiry && Date.now() >= tokenExpiry) {",
+					"    console.log('Token expired, please re-login');",
+					"}"
+				]
+			}
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-capture credentials from login response",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    ",
+									"    // Store access token",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"        console.log('✓ Access token captured');",
+									"    }",
+									"    ",
+									"    // Store refresh token",
+									"    if (response.data && response.data.refreshToken) {",
+									"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+									"        console.log('✓ Refresh token captured');",
+									"    }",
+									"    ",
+									"    // Store user info",
+									"    if (response.data && response.data.user) {",
+									"        pm.collectionVariables.set('userId', response.data.user.id);",
+									"        pm.collectionVariables.set('userEmail', response.data.user.email);",
+									"        pm.collectionVariables.set('userRole', response.data.user.role);",
+									"        console.log('✓ User info captured');",
+									"    }",
+									"    ",
+									"    // Store student ID if available",
+									"    if (response.data && response.data.user && response.data.user.studentId) {",
+									"        pm.collectionVariables.set('studentId', response.data.user.studentId);",
+									"        console.log('✓ Student ID captured:', response.data.user.studentId);",
+									"    }",
+									"    ",
+									"    // Calculate token expiry (assuming 1 hour validity)",
+									"    const expiryTime = Date.now() + (60 * 60 * 1000);",
+									"    pm.collectionVariables.set('tokenExpiry', expiryTime);",
+									"    ",
+									"    pm.test('Login successful', () => {",
+									"        pm.expect(response.success).to.be.true;",
+									"    });",
+									"} else {",
+									"    pm.test('Login failed', () => {",
+									"        pm.expect.fail('Login request failed with status ' + pm.response.code);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"student1@ccs.edu\",\n  \"password\": \"pass1234\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "auth", "login"]
+						},
+						"description": "Login with student credentials. Automatically captures access token, refresh token, and user info."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "auth", "me"]
+						},
+						"description": "Get current authenticated user information"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"        const expiryTime = Date.now() + (60 * 60 * 1000);",
+									"        pm.collectionVariables.set('tokenExpiry', expiryTime);",
+									"        console.log('✓ Token refreshed');",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/auth/refresh",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "auth", "refresh"]
+						},
+						"description": "Refresh access token using refresh token"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"oldPassword123\",\n  \"newPassword\": \"newPassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/auth/change-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "auth", "change-password"]
+						},
+						"description": "Change user password"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "auth", "logout"]
+						},
+						"description": "Logout current user"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login, logout, and token management"
+		},
+		{
+			"name": "Profile Management",
+			"item": [
+				{
+					"name": "Get Student Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "profile"]
+						},
+						"description": "Get student profile for authenticated user. Returns student information including name, email, phone, program, year level, and academic status."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"alice.smith1@example.com\",\n  \"phone\": \"+639171234567\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/student/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "profile"]
+						},
+						"description": "Update student profile. Only email and phone fields can be updated by students."
+					},
+					"response": []
+				}
+			],
+			"description": "Student profile management endpoints"
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Get Dashboard Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/dashboard",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "dashboard"]
+						},
+						"description": "Get dashboard summary including current semester courses, current GPA, unread notifications count, and upcoming registered events."
+					},
+					"response": []
+				}
+			],
+			"description": "Dashboard overview with aggregated student data"
+		},
+		{
+			"name": "Academic Progress",
+			"item": [
+				{
+					"name": "Get Academic Progress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/progress",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "progress"]
+						},
+						"description": "Get academic progress including total credits earned, academic standing, and completed courses grouped by academic year and semester."
+					},
+					"response": []
+				}
+			],
+			"description": "Academic progress tracking and metrics"
+		},
+		{
+			"name": "Notifications (Optional)",
+			"item": [
+				{
+					"name": "Get All Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "notifications"]
+						},
+						"description": "Get all notifications for the student, ordered by creation date (newest first). [Optional - UX Enhancement]"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/notifications/:notificationId/read",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "notifications", ":notificationId", "read"],
+							"variable": [
+								{
+									"key": "notificationId",
+									"value": "{{notificationId}}",
+									"description": "Notification ID (UUID from Get All Notifications response)"
+								}
+							]
+						},
+						"description": "Mark a specific notification as read. Updates read status and read timestamp. [Optional - UX Enhancement]"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark All Notifications as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/notifications/read-all",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "notifications", "read-all"]
+						},
+						"description": "Mark all unread notifications as read for the student. [Optional - UX Enhancement]"
+					},
+					"response": []
+				}
+			],
+			"description": "Notification management and read status tracking (Optional - UX Enhancement only)"
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Get Enrolled Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/courses/enrolled",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "courses", "enrolled"]
+						},
+						"description": "Get all courses the student is currently enrolled in for the current semester. Includes course code, name, section, instructor, schedule, room, units, and enrollment status."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/courses/:courseId",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "courses", ":courseId"],
+							"variable": [
+								{
+									"key": "courseId",
+									"value": "COURSE-001",
+									"description": "Course ID"
+								}
+							]
+						},
+						"description": "Get comprehensive course information including description, learning outcomes, grading criteria, and available materials. Student must be enrolled in the course."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Weekly Schedule",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/courses/schedule",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "courses", "schedule"]
+						},
+						"description": "Get weekly class schedule grouped by day of week. Includes course code, name, instructor, room, and time range for each class."
+					},
+					"response": []
+				}
+			],
+			"description": "Course enrollment and schedule management"
+		},
+		{
+			"name": "Grades",
+			"item": [
+				{
+					"name": "Get Current Semester Grades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/grades/current",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "grades", "current"]
+						},
+						"description": "Get grades for the current semester including course details, grade values, and semester GPA."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Grade Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/grades/:gradeId",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "grades", ":gradeId"],
+							"variable": [
+								{
+									"key": "gradeId",
+									"value": "GRADE-001",
+									"description": "Grade ID"
+								}
+							]
+						},
+						"description": "Get specific grade details including course information, grade value, grade points, and units."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Grade History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/grades/history",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "grades", "history"]
+						},
+						"description": "Get all grades from all completed semesters, grouped by academic year and semester with GPA calculations."
+					},
+					"response": []
+				},
+				{
+					"name": "Get GPA Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/grades/gpa",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "grades", "gpa"]
+						},
+						"description": "Get GPA summary including cumulative GPA, current semester GPA, units attempted, and units earned."
+					},
+					"response": []
+				}
+			],
+			"description": "Grade viewing and GPA calculations"
+		},
+		{
+			"name": "Research (View Only)",
+			"item": [
+				{
+					"name": "List Research Opportunities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/research/opportunities?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "research", "opportunities"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (default: 10, max: 50)"
+								}
+							]
+						},
+						"description": "List approved research opportunities with open application deadlines. Supports pagination. [View Only - Students cannot apply]"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Research Opportunity Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/research/opportunities/:opportunityId",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "research", "opportunities", ":opportunityId"],
+							"variable": [
+								{
+									"key": "opportunityId",
+									"value": "{{researchOpportunityId}}",
+									"description": "Research opportunity UUID (get from List Research Opportunities response)"
+								}
+							]
+						},
+						"description": "Get comprehensive research opportunity information including description, qualifications, time commitment, compensation, and faculty contact. [View Only]\n\nNOTE: Replace {{researchOpportunityId}} with an actual UUID from the List Research Opportunities endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Application Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/research/applications/:applicationId",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "research", "applications", ":applicationId"],
+							"variable": [
+								{
+									"key": "applicationId",
+									"value": "{{applicationId}}",
+									"description": "Application UUID (must be your own application)"
+								}
+							]
+						},
+						"description": "Get application status including research title, faculty adviser, application date, status (pending/accepted/rejected), and faculty feedback. [View Only]\n\nNOTE: Replace {{applicationId}} with an actual UUID of your application from the database."
+					},
+					"response": []
+				}
+			],
+			"description": "Research opportunity browsing and application status viewing (View Only - No self-application)"
+		},
+		{
+			"name": "Events (View Only)",
+			"item": [
+				{
+					"name": "List Upcoming Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/events/upcoming?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "events", "upcoming"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (default: 10, max: 50)"
+								}
+							]
+						},
+						"description": "List upcoming events with available slots. Includes event details, date, location, and available capacity. [View Only - Students cannot self-register]"
+					},
+					"response": []
+				},
+				{
+					"name": "List Registered Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/student/events/registered",
+							"host": ["{{baseUrl}}"],
+							"path": ["student", "events", "registered"]
+						},
+						"description": "List events the student has been registered for by faculty/staff, including registration date and attendance status. [View Only]"
+					},
+					"response": []
+				}
+			],
+			"description": "Event browsing and participation viewing (View Only - No self-registration)"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userRole",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tokenExpiry",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "researchOpportunityId",
+			"value": "",
+			"type": "string",
+			"description": "UUID of a research opportunity (get from List Research Opportunities)"
+		},
+		{
+			"key": "applicationId",
+			"value": "",
+			"type": "string",
+			"description": "UUID of a research application (must be your own)"
+		},
+		{
+			"key": "notificationId",
+			"value": "",
+			"type": "string",
+			"description": "UUID of a notification"
+		}
+	]
+}

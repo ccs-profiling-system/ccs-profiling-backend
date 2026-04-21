@@ -53,7 +53,7 @@ function generateStudentSeeds(count: number): StudentSeed[] {
   return seeds;
 }
 
-const studentSeeds: StudentSeed[] = generateStudentSeeds(1000);
+const studentSeeds: StudentSeed[] = generateStudentSeeds(10);
 
 export async function seedStudents(
   db: Database,
