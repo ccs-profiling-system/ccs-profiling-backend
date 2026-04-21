@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "student-portal-api-2024",
-		"name": "Student Portal API",
-		"description": "Complete API collection for Student Portal endpoints with automatic authentication",
+		"_postman_id": "student-portal-api-2024-cleaned",
+		"name": "Student Portal API (Cleaned)",
+		"description": "Optimized Student Portal API focused on core profiling features: academic tracking, research viewing, and event participation viewing. Non-core features (financial, advisor communication, self-registration) have been removed.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"auth": {
@@ -289,27 +289,7 @@
 			"description": "Academic progress tracking and metrics"
 		},
 		{
-			"name": "Financial Records",
-			"item": [
-				{
-					"name": "Get Financial Record",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/student/financial",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "financial"]
-						},
-						"description": "Get financial record including total tuition, total fees, total payments, outstanding balance, and payment history."
-					},
-					"response": []
-				}
-			],
-			"description": "Financial records and payment history"
-		},
-		{
-			"name": "Notifications",
+			"name": "Notifications (Optional)",
 			"item": [
 				{
 					"name": "Get All Notifications",
@@ -321,7 +301,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["student", "notifications"]
 						},
-						"description": "Get all notifications for the student, ordered by creation date (newest first)."
+						"description": "Get all notifications for the student, ordered by creation date (newest first). [Optional - UX Enhancement]"
 					},
 					"response": []
 				},
@@ -342,7 +322,7 @@
 								}
 							]
 						},
-						"description": "Mark a specific notification as read. Updates read status and read timestamp."
+						"description": "Mark a specific notification as read. Updates read status and read timestamp. [Optional - UX Enhancement]"
 					},
 					"response": []
 				},
@@ -356,12 +336,12 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["student", "notifications", "read-all"]
 						},
-						"description": "Mark all unread notifications as read for the student."
+						"description": "Mark all unread notifications as read for the student. [Optional - UX Enhancement]"
 					},
 					"response": []
 				}
 			],
-			"description": "Notification management and read status tracking"
+			"description": "Notification management and read status tracking (Optional - UX Enhancement only)"
 		},
 		{
 			"name": "Courses",
@@ -488,7 +468,7 @@
 			"description": "Grade viewing and GPA calculations"
 		},
 		{
-			"name": "Research Opportunities",
+			"name": "Research (View Only)",
 			"item": [
 				{
 					"name": "List Research Opportunities",
@@ -512,7 +492,7 @@
 								}
 							]
 						},
-						"description": "List approved research opportunities with open application deadlines. Supports pagination."
+						"description": "List approved research opportunities with open application deadlines. Supports pagination. [View Only - Students cannot apply]"
 					},
 					"response": []
 				},
@@ -533,37 +513,7 @@
 								}
 							]
 						},
-						"description": "Get comprehensive research opportunity information including description, qualifications, time commitment, compensation, and faculty contact."
-					},
-					"response": []
-				},
-				{
-					"name": "Apply to Research Opportunity",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"statement_of_interest\": \"I am very interested in this research opportunity because of my background in machine learning and data analysis. I have completed relevant coursework including CS401 (Artificial Intelligence) and CS201 (Data Structures and Algorithms). I have hands-on experience with Python, TensorFlow, and scikit-learn from previous projects. I am particularly drawn to this research because it aligns with my career goals in AI and data science. I believe I can contribute meaningfully to this project while developing valuable research skills that will benefit my academic and professional growth.\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/student/research/opportunities/:opportunityId/apply",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "research", "opportunities", ":opportunityId", "apply"],
-							"variable": [
-								{
-									"key": "opportunityId",
-									"value": "RES-001",
-									"description": "Research opportunity ID"
-								}
-							]
-						},
-						"description": "Apply to a research opportunity with a statement of interest. Application deadline must not have passed and student cannot have already applied."
+						"description": "Get comprehensive research opportunity information including description, qualifications, time commitment, compensation, and faculty contact. [View Only]"
 					},
 					"response": []
 				},
@@ -584,15 +534,15 @@
 								}
 							]
 						},
-						"description": "Get application status including research title, faculty adviser, application date, status (pending/accepted/rejected), and faculty feedback."
+						"description": "Get application status including research title, faculty adviser, application date, status (pending/accepted/rejected), and faculty feedback. [View Only]"
 					},
 					"response": []
 				}
 			],
-			"description": "Research opportunity browsing and application management"
+			"description": "Research opportunity browsing and application status viewing (View Only - No self-application)"
 		},
 		{
-			"name": "Events",
+			"name": "Events (View Only)",
 			"item": [
 				{
 					"name": "List Upcoming Events",
@@ -616,7 +566,7 @@
 								}
 							]
 						},
-						"description": "List upcoming events with available slots. Includes event details, date, location, and available capacity."
+						"description": "List upcoming events with available slots. Includes event details, date, location, and available capacity. [View Only - Students cannot self-register]"
 					},
 					"response": []
 				},
@@ -630,174 +580,12 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["student", "events", "registered"]
 						},
-						"description": "List events the student has registered for, including registration date and attendance status."
-					},
-					"response": []
-				},
-				{
-					"name": "Register for Event",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/student/events/:eventId/register",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "events", ":eventId", "register"],
-							"variable": [
-								{
-									"key": "eventId",
-									"value": "EVT-001",
-									"description": "Event ID"
-								}
-							]
-						},
-						"description": "Register for an event. Registration deadline must not have passed, event must have available slots, and student cannot already be registered."
-					},
-					"response": []
-				},
-				{
-					"name": "Unregister from Event",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/student/events/:eventId/unregister",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "events", ":eventId", "unregister"],
-							"variable": [
-								{
-									"key": "eventId",
-									"value": "EVT-001",
-									"description": "Event ID"
-								}
-							]
-						},
-						"description": "Unregister from an event. Student must be currently registered and event date must not have passed."
+						"description": "List events the student has been registered for by faculty/staff, including registration date and attendance status. [View Only]"
 					},
 					"response": []
 				}
 			],
-			"description": "Event browsing and registration management"
-		},
-		{
-			"name": "Advisor Communication",
-			"item": [
-				{
-					"name": "Get Assigned Advisor",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/student/advisor",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "advisor"]
-						},
-						"description": "Get assigned advisor information including name, email, phone, office location, consultation hours, and specialization."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Message History",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/student/advisor/messages?page=1&limit=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "advisor", "messages"],
-							"query": [
-								{
-									"key": "page",
-									"value": "1",
-									"description": "Page number (default: 1)"
-								},
-								{
-									"key": "limit",
-									"value": "20",
-									"description": "Items per page (default: 20, max: 100)"
-								}
-							]
-						},
-						"description": "Get message history with assigned advisor. Includes sender name, role, message content, sent date, and read status."
-					},
-					"response": []
-				},
-				{
-					"name": "Send Message to Advisor",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"message_content\": \"Good day Professor! I would like to discuss my academic progress and course selection for the upcoming semester. I'm particularly interested in taking advanced electives in AI and machine learning, and I would appreciate your guidance on which courses would best align with my career goals in software development. When would be a convenient time for us to meet? Thank you!\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/student/advisor/messages",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "advisor", "messages"]
-						},
-						"description": "Send a message to assigned advisor. Message content must not be empty and must be 2000 characters or less."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Available Appointment Slots",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/student/advisor/available-slots",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "advisor", "available-slots"]
-						},
-						"description": "Get available appointment time slots for assigned advisor within the next 30 days. Only shows unbooked slots."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Booked Appointments",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/student/advisor/appointments",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "advisor", "appointments"]
-						},
-						"description": "Get all appointments scheduled with advisor, including date, time, purpose, status, and advisor notes."
-					},
-					"response": []
-				},
-				{
-					"name": "Book Appointment",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"slot_id\": \"SLOT-001\",\n  \"purpose\": \"I would like to discuss my course selection for the next semester and review my academic progress. Specifically, I need guidance on choosing electives that align with my career goals in software development and AI. I also want to discuss potential research opportunities and internship options.\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/student/advisor/appointments",
-							"host": ["{{baseUrl}}"],
-							"path": ["student", "advisor", "appointments"]
-						},
-						"description": "Book an appointment with assigned advisor. Slot must be available and purpose must be provided (500 characters or less)."
-					},
-					"response": []
-				}
-			],
-			"description": "Advisor communication, messaging, and appointment scheduling"
+			"description": "Event browsing and participation viewing (View Only - No self-registration)"
 		}
 	],
 	"variable": [

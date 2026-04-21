@@ -10,7 +10,6 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { ResearchService } from '../services/research.service';
-import { applyToOpportunitySchema } from '../schemas/research.schema';
 import { paginationSchema } from '../schemas/common.schemas';
 import { extractStudentId } from '../utils/studentScope';
 
@@ -69,40 +68,11 @@ export class ResearchController {
   };
 
   /**
-   * Apply to a research opportunity
+   * REMOVED: applyToOpportunity
    * 
-   * POST /api/student/research/opportunities/:id/apply
-   * 
-   * Body:
-   * - statement_of_interest: string (required)
-   * 
-   * Requirements: 15.1
+   * Reason: Students are viewers in the profiling system.
+   * Research applications are managed through Faculty → Secretary → Chair → Admin workflow.
    */
-  applyToOpportunity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { id } = req.params;
-      const studentId = extractStudentId(req.user as any);
-      const userId = (req.user as any)?.userId;
-
-      // Validate request body
-      const validatedData = applyToOpportunitySchema.parse(req.body);
-
-      // Get IP address for audit logging
-      const ipAddress = req.ip || req.socket.remoteAddress;
-
-      const application = await this.researchService.createApplication(
-        id,
-        studentId,
-        userId,
-        validatedData.statement_of_interest,
-        ipAddress
-      );
-
-      res.status(201).json(application);
-    } catch (error) {
-      next(error);
-    }
-  };
 
   /**
    * Get application status

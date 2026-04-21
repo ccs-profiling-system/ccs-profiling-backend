@@ -8,16 +8,15 @@
  * Requirements: 13.1-13.6, 14.1-14.4, 15.1-15.8, 16.1-16.4, 29.1-29.5
  */
 
-import { eq, and, asc, sql } from 'drizzle-orm';
+import { eq, asc, sql } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { 
   research, 
   researchAdvisers, 
   researchApplications,
-  faculty,
-  auditLogs
+  faculty
 } from '../../../db/schema';
-import { NotFoundError, ConflictError } from '../../../shared/errors';
+import { NotFoundError } from '../../../shared/errors';
 import { 
   ResearchOpportunityDTO, 
   ResearchOpportunityDetailsDTO,
@@ -190,125 +189,12 @@ export class ResearchService {
   }
 
   /**
-   * Create a research application
+   * REMOVED: createApplication
    * 
-   * Validates deadline, checks for duplicates, creates application record,
-   * and logs the action to audit_logs.
-   * 
-   * @param opportunityId - The research opportunity UUID
-   * @param studentId - The student UUID
-   * @param userId - The user UUID (for audit logging)
-   * @param statementOfInterest - Student's statement of interest
-   * @param ipAddress - Request IP address (for audit logging)
-   * @returns Created application status
-   * @throws NotFoundError if opportunity not found
-   * @throws ValidationError if deadline passed
-   * @throws ConflictError if already applied
-   * 
-   * Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 29.1, 29.2, 29.3, 29.4, 29.5
+   * Reason: Students are viewers in the profiling system.
+   * Research applications are managed through Faculty → Secretary → Chair → Admin workflow.
+   * Students can view opportunities and check application status, but cannot self-apply.
    */
-  async createApplication(
-    opportunityId: string,
-    studentId: string,
-    userId: string,
-    statementOfInterest: string,
-    ipAddress?: string
-  ): Promise<ResearchApplicationStatusDTO> {
-    // Check if opportunity exists and is available
-    const opportunityResult = await this.db
-      .select({
-        id: research.id,
-        title: research.title,
-        status: research.status,
-      })
-      .from(research)
-      .where(eq(research.id, opportunityId))
-      .limit(1);
-
-    const opportunity = opportunityResult[0];
-
-    if (!opportunity || opportunity.status !== 'ongoing') {
-      throw new NotFoundError('Research opportunity not found or not available');
-    }
-
-    // Note: Application deadline validation would go here if the field existed in the schema
-    // For now, we skip this validation
-
-    // Check for duplicate application
-    const existingApplication = await this.db
-      .select()
-      .from(researchApplications)
-      .where(
-        and(
-          eq(researchApplications.research_id, opportunityId),
-          eq(researchApplications.student_id, studentId)
-        )
-      )
-      .limit(1);
-
-    if (existingApplication.length > 0) {
-      throw new ConflictError('You have already applied to this research opportunity');
-    }
-
-    // Create application
-    const applicationDate = new Date();
-    const applicationResult = await this.db
-      .insert(researchApplications)
-      .values({
-        research_id: opportunityId,
-        student_id: studentId,
-        application_date: applicationDate.toISOString().split('T')[0],
-        statement_of_interest: statementOfInterest,
-        status: 'pending',
-      })
-      .returning();
-
-    const application = applicationResult[0];
-
-    // Log to audit_logs
-    try {
-      await this.db.insert(auditLogs).values({
-        user_id: userId,
-        action_type: 'create',
-        entity_type: 'research_application',
-        entity_id: application.id,
-        after_state: {
-          research_id: opportunityId,
-          student_id: studentId,
-          status: 'pending',
-        },
-        ip_address: ipAddress || null,
-      });
-    } catch (error) {
-      // Don't block the operation if audit logging fails
-      console.error('Failed to log research application to audit_logs:', error);
-    }
-
-    // Get faculty adviser name for response
-    const adviserResult = await this.db
-      .select({
-        faculty_first_name: faculty.first_name,
-        faculty_last_name: faculty.last_name,
-      })
-      .from(researchAdvisers)
-      .leftJoin(faculty, eq(researchAdvisers.faculty_id, faculty.id))
-      .where(eq(researchAdvisers.research_id, opportunityId))
-      .limit(1);
-
-    const adviser = adviserResult[0];
-    const facultyAdviserName = adviser?.faculty_first_name && adviser?.faculty_last_name
-      ? `${adviser.faculty_first_name} ${adviser.faculty_last_name}`
-      : 'Not assigned';
-
-    return {
-      id: application.id,
-      research_title: opportunity.title,
-      faculty_adviser_name: facultyAdviserName,
-      application_date: application.application_date,
-      status: application.status as 'pending' | 'accepted' | 'rejected',
-      faculty_feedback: application.faculty_feedback,
-    };
-  }
 
   /**
    * Get application status

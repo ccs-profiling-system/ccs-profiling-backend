@@ -77,60 +77,12 @@ export function createEventRoutes(
   );
 
   /**
-   * POST /api/student/events/:eventId/register
-   * Register for an event
+   * REMOVED: POST /api/student/events/:eventId/register
+   * REMOVED: POST /api/student/events/:eventId/unregister
    * 
-   * Permission: student.event.register
-   * 
-   * Creates a registration record for the student.
-   * Validates registration deadline, event capacity, and duplicate registration.
-   * 
-   * Route Parameters:
-   * - eventId: Event UUID
-   * 
-   * Response:
-   * - 201: Registration created successfully
-   * - 400: Bad Request (registration deadline passed or not registered)
-   * - 401: Unauthorized (missing or invalid JWT token)
-   * - 403: Forbidden (missing permission or not a student)
-   * - 404: Not Found (event not found)
-   * - 409: Conflict (already registered)
-   * - 422: Unprocessable Entity (event at maximum capacity)
-   * 
-   * Requirements: 19.1, 19.8, 27.1, 27.2, 27.3, 27.4, 27.5
+   * Reason: Event participation is assigned/tracked by Faculty/Secretary, not self-managed.
+   * Students can view upcoming events and their registered events, but cannot self-register.
    */
-  router.post(
-    '/:eventId/register',
-    requirePermission('student.event.register'),
-    eventController.registerForEvent
-  );
-
-  /**
-   * POST /api/student/events/:eventId/unregister
-   * Unregister from an event
-   * 
-   * Permission: student.event.register
-   * 
-   * Removes the student's registration record.
-   * Validates student is currently registered and event date has not passed.
-   * 
-   * Route Parameters:
-   * - eventId: Event UUID
-   * 
-   * Response:
-   * - 200: Unregistration successful
-   * - 400: Bad Request (not registered or event date passed)
-   * - 401: Unauthorized (missing or invalid JWT token)
-   * - 403: Forbidden (missing permission or not a student)
-   * - 404: Not Found (event not found)
-   * 
-   * Requirements: 20.1, 20.6, 27.1, 27.2, 27.3, 27.4, 27.5
-   */
-  router.post(
-    '/:eventId/unregister',
-    requirePermission('student.event.register'),
-    eventController.unregisterFromEvent
-  );
 
   return router;
 }

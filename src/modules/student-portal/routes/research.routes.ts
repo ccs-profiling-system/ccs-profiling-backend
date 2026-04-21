@@ -80,35 +80,12 @@ export function createResearchRoutes(
   );
 
   /**
-   * POST /api/student/research/opportunities/:id/apply
-   * Apply to a research opportunity
+   * REMOVED: POST /api/student/research/opportunities/:id/apply
    * 
-   * Permission: student.research.apply
-   * 
-   * Creates an application to a research opportunity.
-   * Validates deadline, checks for duplicates, and logs the action.
-   * 
-   * Route Parameters:
-   * - id: Research opportunity UUID
-   * 
-   * Request Body:
-   * - statement_of_interest: string (required, max 5000 chars)
-   * 
-   * Response:
-   * - 201: Application created successfully
-   * - 400: Bad Request (validation error or deadline passed)
-   * - 401: Unauthorized (missing or invalid JWT token)
-   * - 403: Forbidden (missing permission or not a student)
-   * - 404: Not Found (opportunity not found)
-   * - 409: Conflict (already applied)
-   * 
-   * Requirements: 15.1, 15.8, 27.1, 27.2, 27.3, 27.4, 27.5, 29.1, 29.2, 29.3, 29.4, 29.5
+   * Reason: Students are viewers in the profiling system.
+   * Research applications are managed through Faculty → Secretary → Chair → Admin workflow.
+   * Students can view opportunities and check application status, but cannot self-apply.
    */
-  router.post(
-    '/opportunities/:id/apply',
-    requirePermission('student.research.apply'),
-    researchController.applyToOpportunity
-  );
 
   /**
    * GET /api/student/research/applications/:applicationId

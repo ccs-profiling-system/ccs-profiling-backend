@@ -68,42 +68,10 @@ export class EventController {
   };
 
   /**
-   * Register for an event
+   * REMOVED: registerForEvent
+   * REMOVED: unregisterFromEvent
    * 
-   * POST /api/student/events/:eventId/register
-   * 
-   * Requirements: 19.1
+   * Reason: Event participation is assigned/tracked by Faculty/Secretary, not self-managed.
+   * Students can view events but cannot self-register or unregister.
    */
-  registerForEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { eventId } = req.params;
-      const studentId = extractStudentId(req.user as any);
-
-      await this.eventService.registerForEvent(eventId, studentId);
-
-      res.status(201).json({ message: 'Successfully registered for event' });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * Unregister from an event
-   * 
-   * POST /api/student/events/:eventId/unregister
-   * 
-   * Requirements: 20.1
-   */
-  unregisterFromEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { eventId } = req.params;
-      const studentId = extractStudentId(req.user as any);
-
-      await this.eventService.unregisterFromEvent(eventId, studentId);
-
-      res.status(200).json({ message: 'Successfully unregistered from event' });
-    } catch (error) {
-      next(error);
-    }
-  };
 }

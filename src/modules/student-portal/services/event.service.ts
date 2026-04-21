@@ -14,7 +14,7 @@ import {
   events, 
   eventParticipants,
 } from '../../../db/schema';
-import { NotFoundError, ConflictError, ValidationError, UnprocessableEntityError } from '../../../shared/errors';
+import { NotFoundError } from '../../../shared/errors';
 import { 
   EventDTO, 
   RegisteredEventDTO,
@@ -225,150 +225,11 @@ export class EventService {
    * 
    * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6, 19.7
    */
-  async registerForEvent(eventId: string, studentId: string): Promise<void> {
-    // Check if event exists
-    const eventResult = await this.db
-      .select({
-        id: events.id,
-        event_name: events.event_name,
-        registration_deadline: events.registration_deadline,
-        max_participants: events.max_participants,
-      })
-      .from(events)
-      .where(
-        and(
-          eq(events.id, eventId),
-          eq(events.deleted_at, sql`NULL`)
-        )
-      )
-      .limit(1);
-
-    const event = eventResult[0];
-
-    if (!event) {
-      throw new NotFoundError('Event not found');
-    }
-
-    // Validate registration deadline has not passed
-    if (event.registration_deadline) {
-      const currentDate = new Date().toISOString().split('T')[0];
-      if (event.registration_deadline < currentDate) {
-        throw new ValidationError('Registration deadline has passed');
-      }
-    }
-
-    // Check if student is already registered
-    const existingRegistration = await this.db
-      .select()
-      .from(eventParticipants)
-      .where(
-        and(
-          eq(eventParticipants.event_id, eventId),
-          eq(eventParticipants.student_id, studentId),
-          eq(eventParticipants.attendance_status, 'registered')
-        )
-      )
-      .limit(1);
-
-    if (existingRegistration.length > 0) {
-      throw new ConflictError('You are already registered for this event');
-    }
-
-    // Check if event has reached maximum capacity
-    if (event.max_participants) {
-      const participantCountResult = await this.db
-        .select({ count: sql<number>`count(*)::int` })
-        .from(eventParticipants)
-        .where(
-          and(
-            eq(eventParticipants.event_id, eventId),
-            eq(eventParticipants.attendance_status, 'registered')
-          )
-        );
-
-      const currentParticipants = participantCountResult[0]?.count || 0;
-
-      if (currentParticipants >= event.max_participants) {
-        throw new UnprocessableEntityError('Event has reached maximum capacity');
-      }
-    }
-
-    // Create registration record
-    await this.db
-      .insert(eventParticipants)
-      .values({
-        event_id: eventId,
-        student_id: studentId,
-        participation_role: 'participant',
-        attendance_status: 'registered',
-      });
-  }
-
   /**
-   * Unregister student from an event
+   * REMOVED: registerForEvent
+   * REMOVED: unregisterFromEvent
    * 
-   * Validates student is currently registered and event date has not passed.
-   * Removes registration record.
-   * 
-   * @param eventId - The event UUID
-   * @param studentId - The student UUID
-   * @throws ValidationError if student is not registered or event date has passed
-   * 
-   * Requirements: 20.1, 20.2, 20.3, 20.4, 20.5
+   * Reason: Event participation is assigned/tracked by Faculty/Secretary, not self-managed.
+   * Students can view events but cannot self-register or unregister.
    */
-  async unregisterFromEvent(eventId: string, studentId: string): Promise<void> {
-    // Check if event exists and get event date
-    const eventResult = await this.db
-      .select({
-        id: events.id,
-        event_date: events.event_date,
-      })
-      .from(events)
-      .where(
-        and(
-          eq(events.id, eventId),
-          eq(events.deleted_at, sql`NULL`)
-        )
-      )
-      .limit(1);
-
-    const event = eventResult[0];
-
-    if (!event) {
-      throw new NotFoundError('Event not found');
-    }
-
-    // Validate event date has not passed
-    const currentDate = new Date().toISOString().split('T')[0];
-    if (event.event_date < currentDate) {
-      throw new ValidationError('Cannot unregister from past events');
-    }
-
-    // Check if student is currently registered
-    const existingRegistration = await this.db
-      .select()
-      .from(eventParticipants)
-      .where(
-        and(
-          eq(eventParticipants.event_id, eventId),
-          eq(eventParticipants.student_id, studentId),
-          eq(eventParticipants.attendance_status, 'registered')
-        )
-      )
-      .limit(1);
-
-    if (existingRegistration.length === 0) {
-      throw new ValidationError('You are not registered for this event');
-    }
-
-    // Remove registration record
-    await this.db
-      .delete(eventParticipants)
-      .where(
-        and(
-          eq(eventParticipants.event_id, eventId),
-          eq(eventParticipants.student_id, studentId)
-        )
-      );
-  }
 }
