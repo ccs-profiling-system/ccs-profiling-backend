@@ -14,6 +14,7 @@
  * - /api/student/grades - Grade management (GET)
  * - /api/student/research - Research opportunities (GET, POST)
  * - /api/student/events - Event management (GET, POST)
+ * - /api/student/advisor - Advisor communication (GET, POST)
  * 
  * Requirements: 27.1, 27.2, 27.3, 27.4, 27.5
  */
@@ -31,6 +32,7 @@ import { CourseController } from '../controllers/course.controller';
 import { GradeController } from '../controllers/grade.controller';
 import { ResearchController } from '../controllers/research.controller';
 import { EventController } from '../controllers/event.controller';
+import { AdvisorController } from '../controllers/advisor.controller';
 
 // Import services
 import { ProfileService } from '../services/profile.service';
@@ -42,6 +44,7 @@ import { CourseService } from '../services/course.service';
 import { GradeService } from '../services/grade.service';
 import { ResearchService } from '../services/research.service';
 import { EventService } from '../services/event.service';
+import { AdvisorService } from '../services/advisor.service';
 
 // Import route creators
 import { createProfileRoutes } from './profile.routes';
@@ -53,6 +56,7 @@ import { createCourseRoutes } from './course.routes';
 import { createGradeRoutes } from './grade.routes';
 import { createResearchRoutes } from './research.routes';
 import { createEventRoutes } from './event.routes';
+import { createAdvisorRoutes } from './advisor.routes';
 
 // Initialize services
 const profileService = new ProfileService(db);
@@ -64,6 +68,7 @@ const courseService = new CourseService(db);
 const gradeService = new GradeService(db);
 const researchService = new ResearchService(db);
 const eventService = new EventService(db);
+const advisorService = new AdvisorService(db);
 
 // Initialize controllers
 const profileController = new ProfileController(profileService);
@@ -75,6 +80,7 @@ const courseController = new CourseController(courseService);
 const gradeController = new GradeController(gradeService);
 const researchController = new ResearchController(researchService);
 const eventController = new EventController(eventService);
+const advisorController = new AdvisorController(advisorService);
 
 // Create route modules
 const profileRoutes = createProfileRoutes(profileController);
@@ -86,6 +92,7 @@ const courseRoutes = createCourseRoutes(courseController);
 const gradeRoutes = createGradeRoutes(gradeController);
 const researchRoutes = createResearchRoutes(researchController);
 const eventRoutes = createEventRoutes(eventController);
+const advisorRoutes = createAdvisorRoutes(advisorController);
 
 // Aggregate all student portal routes
 export const studentPortalRouter = Router();
@@ -116,3 +123,6 @@ studentPortalRouter.use('/student/research', researchRoutes);
 
 // Register event routes (uses /student/events pattern)
 studentPortalRouter.use('/student/events', eventRoutes);
+
+// Register advisor routes (uses /student/advisor pattern)
+studentPortalRouter.use('/student/advisor', advisorRoutes);
