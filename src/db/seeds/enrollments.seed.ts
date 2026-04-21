@@ -27,155 +27,155 @@ interface EnrollmentSeed {
  * 12-14: Fourth Year courses (CS401, CS402, CS403)
  */
 const enrollmentSeeds: EnrollmentSeed[] = [
-  // Diana (Student 3) - Year 1 - First Semester
+  // Diana (Student 3) - Year 1 - Second Semester (Current)
   {
     studentIndex: 3,
     instructionIndex: 0, // CS101
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 3,
     instructionIndex: 1, // CS102
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 3,
     instructionIndex: 2, // MATH101
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 3,
     instructionIndex: 3, // ENG101
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
 
-  // Charlie (Student 2) - Year 2 - First Semester
+  // Charlie (Student 2) - Year 2 - Second Semester (Current)
   {
     studentIndex: 2,
     instructionIndex: 4, // CS201
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 2,
     instructionIndex: 5, // CS202
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 2,
     instructionIndex: 6, // CS203
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 2,
     instructionIndex: 7, // MATH201
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
 
-  // Bob (Student 1) - Year 3 - First Semester
+  // Bob (Student 1) - Year 3 - Second Semester (Current)
   {
     studentIndex: 1,
     instructionIndex: 8, // CS301
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 1,
     instructionIndex: 9, // CS302
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 1,
     instructionIndex: 10, // CS303
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 1,
     instructionIndex: 11, // CS304
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
 
-  // Alice (Student 0) - Year 4 - First Semester
+  // Alice (Student 0) - Year 4 - Second Semester (Current)
   {
     studentIndex: 0,
     instructionIndex: 12, // CS401
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 0,
     instructionIndex: 13, // CS402
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
 
-  // Edward (Student 4) - Year 4 - First Semester
+  // Edward (Student 4) - Year 4 - Second Semester (Current)
   {
     studentIndex: 4,
     instructionIndex: 12, // CS401
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
   {
     studentIndex: 4,
     instructionIndex: 13, // CS402
-    semester: '1st',
+    semester: '2nd',
     academicYear: '2025-2026',
     enrollmentStatus: 'enrolled',
   },
 
-  // Some completed enrollments from previous semester (2nd semester 2024-2025)
+  // Some completed enrollments from previous semester (1st semester 2025-2026)
   {
     studentIndex: 0,
     instructionIndex: 8, // CS301
-    semester: '2nd',
-    academicYear: '2024-2025',
+    semester: '1st',
+    academicYear: '2025-2026',
     enrollmentStatus: 'completed',
   },
   {
     studentIndex: 0,
     instructionIndex: 9, // CS302
-    semester: '2nd',
-    academicYear: '2024-2025',
+    semester: '1st',
+    academicYear: '2025-2026',
     enrollmentStatus: 'completed',
   },
   {
     studentIndex: 1,
     instructionIndex: 4, // CS201
-    semester: '2nd',
-    academicYear: '2024-2025',
+    semester: '1st',
+    academicYear: '2025-2026',
     enrollmentStatus: 'completed',
   },
   {
     studentIndex: 1,
     instructionIndex: 5, // CS202
-    semester: '2nd',
-    academicYear: '2024-2025',
+    semester: '1st',
+    academicYear: '2025-2026',
     enrollmentStatus: 'completed',
   },
 
@@ -183,8 +183,8 @@ const enrollmentSeeds: EnrollmentSeed[] = [
   {
     studentIndex: 2,
     instructionIndex: 4, // CS201
-    semester: '2nd',
-    academicYear: '2024-2025',
+    semester: '1st',
+    academicYear: '2025-2026',
     enrollmentStatus: 'dropped',
   },
 ];

@@ -337,8 +337,8 @@
 							"variable": [
 								{
 									"key": "notificationId",
-									"value": "NOTIF-001",
-									"description": "Notification ID"
+									"value": "{{notificationId}}",
+									"description": "Notification ID (UUID from Get All Notifications response)"
 								}
 							]
 						},
