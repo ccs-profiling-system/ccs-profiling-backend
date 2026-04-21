@@ -508,12 +508,12 @@
 							"variable": [
 								{
 									"key": "opportunityId",
-									"value": "RES-001",
-									"description": "Research opportunity ID"
+									"value": "{{researchOpportunityId}}",
+									"description": "Research opportunity UUID (get from List Research Opportunities response)"
 								}
 							]
 						},
-						"description": "Get comprehensive research opportunity information including description, qualifications, time commitment, compensation, and faculty contact. [View Only]"
+						"description": "Get comprehensive research opportunity information including description, qualifications, time commitment, compensation, and faculty contact. [View Only]\n\nNOTE: Replace {{researchOpportunityId}} with an actual UUID from the List Research Opportunities endpoint."
 					},
 					"response": []
 				},
@@ -529,12 +529,12 @@
 							"variable": [
 								{
 									"key": "applicationId",
-									"value": "APP-001",
-									"description": "Application ID"
+									"value": "{{applicationId}}",
+									"description": "Application UUID (must be your own application)"
 								}
 							]
 						},
-						"description": "Get application status including research title, faculty adviser, application date, status (pending/accepted/rejected), and faculty feedback. [View Only]"
+						"description": "Get application status including research title, faculty adviser, application date, status (pending/accepted/rejected), and faculty feedback. [View Only]\n\nNOTE: Replace {{applicationId}} with an actual UUID of your application from the database."
 					},
 					"response": []
 				}
@@ -628,6 +628,24 @@
 			"key": "tokenExpiry",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "researchOpportunityId",
+			"value": "",
+			"type": "string",
+			"description": "UUID of a research opportunity (get from List Research Opportunities)"
+		},
+		{
+			"key": "applicationId",
+			"value": "",
+			"type": "string",
+			"description": "UUID of a research application (must be your own)"
+		},
+		{
+			"key": "notificationId",
+			"value": "",
+			"type": "string",
+			"description": "UUID of a notification"
 		}
 	]
 }
