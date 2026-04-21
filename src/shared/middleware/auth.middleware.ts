@@ -11,6 +11,8 @@ declare global {
         userId: string;
         email: string;
         role: string;
+        facultyId?: string;
+        studentId?: string;
       };
     }
   }
@@ -48,6 +50,8 @@ export const authMiddleware = (req: Request, _res: Response, next: NextFunction)
       userId: string;
       email: string;
       role: string;
+      facultyId?: string;
+      studentId?: string;
     };
 
     // Attach user to request

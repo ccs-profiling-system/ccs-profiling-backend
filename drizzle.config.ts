@@ -24,6 +24,10 @@
  * - research: Research projects and theses
  * - uploads: File upload metadata
  * - auditLogs: System activity audit trail
+ * - notifications: Student notifications (Student Portal API)
+ * - financialRecords: Student financial records and payments (Student Portal API)
+ * - researchApplications: Student research applications (Student Portal API)
+ * - advisors: Student-advisor relationships, messages, slots, and appointments (Student Portal API)
  * 
  * MIGRATION COMMANDS:
  * - npm run db:generate - Generate migration files from schema changes
@@ -56,6 +60,14 @@ export default {
     './src/db/schema/uploads.ts',
     './src/db/schema/auditLogs.ts',
     './src/db/schema/reports.ts',
+    './src/db/schema/attendance.ts',
+    './src/db/schema/facultySkills.ts',
+    './src/db/schema/facultyAffiliations.ts',
+    './src/db/schema/studentParticipation.ts',
+    './src/db/schema/notifications.ts',
+    './src/db/schema/financialRecords.ts',
+    './src/db/schema/researchApplications.ts',
+    './src/db/schema/advisors.ts',
   ],
   out: './drizzle',
   driver: 'pg',

@@ -44,10 +44,17 @@ function generateUserSeeds(): UserSeed[] {
       role: 'faculty',
       is_active: true,
     },
+    // Department Chair
+    {
+      email: 'chair.cs@ccs.edu',
+      password: 'pass1234',
+      role: 'faculty',
+      is_active: true,
+    },
   ];
 
-  // Generate 1000 student users
-  for (let i = 1; i <= 1000; i++) {
+  // Generate 10 student users
+  for (let i = 1; i <= 10; i++) {
     seeds.push({
       email: `student${i}@ccs.edu`,
       password: 'pass1234',

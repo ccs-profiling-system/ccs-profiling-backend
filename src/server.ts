@@ -2,16 +2,41 @@ import { app } from './app';
 import { config } from './config';
 import { db } from './db';
 import { sql } from 'drizzle-orm';
+import { validatePermissionConfig, getValidationSummary } from './rbac/config';
 
 /**
  * Server Startup Script
  * 
  * This script handles the complete server initialization sequence:
- * 1. Initialize database connection
- * 2. Run database migrations
- * 3. Start Express server
+ * 1. Validate RBAC permission configuration
+ * 2. Initialize database connection
+ * 3. Run database migrations
+ * 4. Start Express server
  * 
  */
+
+const validateRBACConfiguration = () => {
+  console.log('🔄 Validating RBAC permission configuration...');
+  
+  try {
+    // Validate permission configuration
+    validatePermissionConfig();
+    
+    // Get and display validation summary
+    const summary = getValidationSummary();
+    console.log('✅ RBAC configuration validated successfully');
+    console.log(`   - Total roles configured: ${summary.totalRoles}`);
+    console.log(`   - Roles: ${summary.rolesConfigured.join(', ')}`);
+    
+    // Log permission counts for each role
+    for (const [role, counts] of Object.entries(summary.permissionCounts)) {
+      console.log(`   - ${role}: ${counts.allow} allow, ${counts.deny} deny`);
+    }
+  } catch (error) {
+    console.error('❌ RBAC configuration validation failed:', error);
+    throw error;
+  }
+};
 
 const initializeDatabase = async () => {
   console.log('🔄 Initializing database connection...');
@@ -28,10 +53,13 @@ const initializeDatabase = async () => {
 
 const startServer = async () => {
   try {
-    // Step 1: Initialize database connection
+    // Step 1: Validate RBAC permission configuration
+    validateRBACConfiguration();
+    
+    // Step 2: Initialize database connection
     await initializeDatabase();
     
-    // Step 2: Start Express server (migrations removed - run manually with npm run db:migrate)
+    // Step 3: Start Express server (migrations removed - run manually with npm run db:migrate)
     app.listen(config.port, () => {
       console.log('');
       console.log('═════════════════════════════════════════════════════');
