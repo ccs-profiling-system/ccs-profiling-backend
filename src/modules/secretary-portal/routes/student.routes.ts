@@ -1,169 +1,121 @@
 /**
- * Secretary Portal - Student Routes
- * Route definitions for student management endpoints
+ * Student Routes
  * 
- * Provides endpoints for secretaries to manage student records.
- * All routes require authentication and RBAC permission checks.
+ * Defines routes for secretary portal student operations.
+ * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 3.1-3.10, 3.20-3.23
+ * Requirements: 3.1-3.10
  */
 
 import { Router } from 'express';
 import { requirePermission } from '../../../rbac/middleware/requirePermission.middleware';
+import {
+  getAllStudentsController,
+  getStudentByIdController,
+  createStudentController,
+  updateStudentController,
+  deleteStudentController,
+  getAcademicHistoryController,
+} from '../controllers/student.controller';
 
 /**
- * Create student routes
+ * Create student router
  * 
- * @returns Express router with student routes
+ * Endpoints:
+ * - GET /api/secretary/students - Get all students with pagination and filtering
+ * - GET /api/secretary/students/:id - Get student by ID
+ * - POST /api/secretary/students - Create a new student
+ * - PUT /api/secretary/students/:id - Update an existing student
+ * - DELETE /api/secretary/students/:id - Delete a student (soft delete)
+ * - GET /api/secretary/students/:id/academic-history - Get academic history for a student
+ * 
+ * All endpoints require:
+ * - Valid JWT authentication (handled by parent router)
+ * - Appropriate permission for the operation
  */
 export function createStudentRoutes(): Router {
   const router = Router();
 
   /**
    * GET /api/secretary/students
-   * Get all students with pagination and filtering
    * 
-   * Permission: secretary.student.read
+   * Retrieve all students with pagination and filtering.
    * 
-   * Query Parameters:
-   * - page: number (default: 1)
-   * - limit: number (default: 10, max: 100)
-   * - year_level: string (filter)
-   * - program: string (filter)
-   * - status: string (filter)
-   * - search: string (search by name or student_id)
-   * 
-   * Response:
-   * - 200: Students retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Requirements: 3.1, 3.7, 3.14, 3.15, 3.16, 3.20
+   * Requirements: 3.1, 3.7
    */
   router.get(
     '/',
     requirePermission('secretary.student.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getAllStudentsController
   );
 
   /**
    * GET /api/secretary/students/:id
-   * Get individual student by ID
    * 
-   * Permission: secretary.student.read
+   * Retrieve a student by ID.
    * 
-   * Response:
-   * - 200: Student retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Student not found
-   * 
-   * Requirements: 3.2, 3.7, 3.20, 3.23
+   * Requirements: 3.2, 3.7
    */
   router.get(
     '/:id',
     requirePermission('secretary.student.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getStudentByIdController
   );
 
   /**
    * POST /api/secretary/students
-   * Create a new student record
    * 
-   * Permission: secretary.student.create
+   * Create a new student.
    * 
-   * Request Body:
-   * - student_id: string (required, unique)
-   * - first_name: string (required)
-   * - last_name: string (required)
-   * - email: string (required, RFC 5322 format)
-   * - year_level: string (required)
-   * - program: string (required)
-   * 
-   * Response:
-   * - 201: Student created successfully
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Requirements: 3.3, 3.8, 3.11, 3.12, 3.13, 3.21, 3.22
+   * Requirements: 3.3, 3.8
    */
   router.post(
     '/',
     requirePermission('secretary.student.create'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    createStudentController
   );
 
   /**
    * PUT /api/secretary/students/:id
-   * Update an existing student record
    * 
-   * Permission: secretary.student.update
+   * Update an existing student.
    * 
-   * Creates a pending change record for approval workflow.
-   * 
-   * Response:
-   * - 200: Student updated successfully
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Student not found
-   * 
-   * Requirements: 3.4, 3.9, 3.17, 3.20, 3.22, 3.23
+   * Requirements: 3.4, 3.9
    */
   router.put(
     '/:id',
     requirePermission('secretary.student.update'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    updateStudentController
   );
 
   /**
    * DELETE /api/secretary/students/:id
-   * Delete a student record (soft delete)
    * 
-   * Permission: secretary.student.delete
+   * Delete a student (soft delete).
    * 
-   * Performs soft delete to preserve audit trail.
-   * 
-   * Response:
-   * - 200: Student deleted successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Student not found
-   * 
-   * Requirements: 3.5, 3.10, 3.18, 3.20, 3.23
+   * Requirements: 3.5, 3.10
    */
   router.delete(
     '/:id',
     requirePermission('secretary.student.delete'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    deleteStudentController
   );
 
   /**
    * GET /api/secretary/students/:id/academic-history
-   * Get academic history for a student
    * 
-   * Permission: secretary.student.read
+   * Retrieve academic history for a student.
    * 
-   * Response:
-   * - 200: Academic history retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Student not found
-   * 
-   * Requirements: 3.6, 3.7, 3.20, 3.23
+   * Requirements: 3.6, 3.7
    */
   router.get(
     '/:id/academic-history',
     requirePermission('secretary.student.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getAcademicHistoryController
   );
 
   return router;
 }
+
+// Default export for backward compatibility
+export default createStudentRoutes();
