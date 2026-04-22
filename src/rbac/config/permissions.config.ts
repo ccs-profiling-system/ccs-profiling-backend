@@ -264,10 +264,26 @@ export const permissionConfig: PermissionConfig = {
    * - Affiliations management
    * - Upload management
    * - Operational dashboard and search
+   * - Secretary Portal API access (secretary.* namespace)
+   * 
+   * Secretary Portal Permissions (secretary.* namespace):
+   * - secretary.dashboard.read: Access to secretary dashboard statistics
+   * - secretary.student.*: Full student management (read, create, update, delete)
+   * - secretary.faculty.*: Full faculty management (read, create, update, delete)
+   * - secretary.schedule.*: Full schedule management (read, create, update, delete)
+   * - secretary.document.*: Document management (upload, read, delete)
+   * - secretary.event.*: Event management (read, create, update, delete)
+   * - secretary.research.*: Research management (read, create, update, delete)
+   * - secretary.pending.*: Pending changes management (read, withdraw)
+   * - secretary.report.generate: Generate reports in various formats
+   * - secretary.filter.read: Access filter options for dropdowns
    */
   [Role.SECRETARY]: {
     allow: [
-      // Student Management
+      // Secretary Portal API (all secretary.* permissions)
+      'secretary.*',
+      
+      // Student Management (legacy)
       'student.*',
       
       // Schedule Management
@@ -333,7 +349,7 @@ export const permissionConfig: PermissionConfig = {
       'event.reject',
       'enrollment.approve',
       
-      // Prevent deletion of critical data
+      // Prevent deletion of critical data (legacy - secretary.* allows these)
       'student.delete',
       'schedule.delete',
       'enrollment.delete',

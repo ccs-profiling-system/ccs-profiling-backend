@@ -14,6 +14,16 @@
 
 import { Router } from 'express';
 import { authMiddleware } from '../../../shared/middleware/auth.middleware';
+import { createDashboardRoutes } from './dashboard.routes';
+import { createStudentRoutes } from './student.routes';
+import { createFacultyRoutes } from './faculty.routes';
+import { createScheduleRoutes } from './schedule.routes';
+import { createDocumentRoutes } from './document.routes';
+import { createEventRoutes } from './event.routes';
+import { createResearchRoutes } from './research.routes';
+import { createPendingChangesRoutes } from './pendingChanges.routes';
+import { createReportRoutes } from './report.routes';
+import { createFilterRoutes } from './filter.routes';
 
 /**
  * Secretary Portal Router
@@ -41,9 +51,37 @@ export const secretaryPortalRouter = Router();
 // Requirements: 1.1, 1.4, 18.2
 secretaryPortalRouter.use(authMiddleware);
 
-// TODO: Register module routes here as they are implemented
-// Example:
-// secretaryPortalRouter.use('/dashboard', dashboardRoutes);
-// secretaryPortalRouter.use('/students', studentRoutes);
-// secretaryPortalRouter.use('/faculty', facultyRoutes);
-// etc.
+// Register module routes with appropriate prefixes
+// All routes have requirePermission middleware applied at the route level
+// Requirements: 1.2, 1.3, 1.5
+
+// Dashboard routes - GET /api/secretary/dashboard
+secretaryPortalRouter.use('/dashboard', createDashboardRoutes());
+
+// Student management routes - /api/secretary/students
+secretaryPortalRouter.use('/students', createStudentRoutes());
+
+// Faculty management routes - /api/secretary/faculty
+secretaryPortalRouter.use('/faculty', createFacultyRoutes());
+
+// Schedule management routes - /api/secretary/schedules
+secretaryPortalRouter.use('/schedules', createScheduleRoutes());
+
+// Document management routes - /api/secretary/documents
+secretaryPortalRouter.use('/documents', createDocumentRoutes());
+
+// Event management routes - /api/secretary/events
+secretaryPortalRouter.use('/events', createEventRoutes());
+
+// Research management routes - /api/secretary/research
+secretaryPortalRouter.use('/research', createResearchRoutes());
+
+// Pending changes routes - /api/secretary/pending-changes
+secretaryPortalRouter.use('/pending-changes', createPendingChangesRoutes());
+
+// Report generation routes - /api/secretary/reports
+secretaryPortalRouter.use('/reports', createReportRoutes());
+
+// Filter options routes - /api/secretary/filters
+secretaryPortalRouter.use('/filters', createFilterRoutes());
+
