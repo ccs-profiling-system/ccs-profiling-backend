@@ -75,6 +75,8 @@ export const errorHandler = (
  * Log detailed error information for debugging
  * Includes stack traces and request context
  * Only logs to console/logging service, never exposed to client
+ * 
+ * Requirements: 18.8 - Stack traces logged server-side only, never in responses
  */
 function logErrorDetails(err: Error, req: Request): void {
   const isProduction = config.nodeEnv === 'production';
@@ -86,8 +88,9 @@ function logErrorDetails(err: Error, req: Request): void {
     error: {
       name: err.name,
       message: err.message,
-      // Include stack trace only in non-production or for debugging
-      ...((!isProduction || config.nodeEnv === 'development') && { stack: err.stack }),
+      // Include stack trace only in non-production for debugging
+      // Stack traces are NEVER sent in HTTP responses (Requirement 18.8)
+      ...(!isProduction && { stack: err.stack }),
       // Include AppError details if available
       ...(err instanceof AppError && {
         code: err.code,
