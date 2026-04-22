@@ -62,51 +62,75 @@ const violationSeeds: ViolationSeed[] = [
   },
 ];
 
+const violationTypes = [
+  'Late Submission',
+  'Academic Dishonesty',
+  'Attendance Violation',
+  'Disruptive Behavior',
+  'Plagiarism',
+  'Unauthorized Collaboration',
+  'Dress Code Violation',
+  'Laboratory Safety Violation',
+];
+
+const resolutionStatuses: Array<'pending' | 'resolved' | 'dismissed'> = ['pending', 'resolved', 'dismissed'];
+
 export async function seedViolations(
   db: Database,
   studentIds: string[]
 ) {
-  const createdRecords: string[] = [];
-
   console.log('  Creating violation records...');
 
-  for (const seed of violationSeeds) {
-    if (seed.studentIndex >= studentIds.length) {
-      console.warn(`  ⚠️  Skipping violation: student index ${seed.studentIndex} out of range`);
-      continue;
-    }
+  const violationsToInsert = [];
 
-    const studentId = studentIds[seed.studentIndex];
-    const id = generateUUIDv7();
+  for (const studentId of studentIds) {
+    // 20% of students have 1-2 violations, 80% have none
+    if (Math.random() < 0.2) {
+      const violationCount = Math.floor(Math.random() * 2) + 1;
 
-    try {
-      const [record] = await db
-        .insert(violations)
-        .values({
+      for (let i = 0; i < violationCount; i++) {
+        const id = generateUUIDv7();
+        const violationType = violationTypes[Math.floor(Math.random() * violationTypes.length)];
+        const resolutionStatus = resolutionStatuses[Math.floor(Math.random() * resolutionStatuses.length)];
+        const daysAgo = Math.floor(Math.random() * 180) + 1; // 1-180 days ago
+        const violationDate = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+        
+        const resolvedAt = resolutionStatus === 'resolved' 
+          ? new Date(violationDate.getTime() + Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000)
+          : null;
+
+        const resolutionNotes = resolutionStatus === 'resolved'
+          ? 'Student completed required actions and violation was resolved.'
+          : resolutionStatus === 'dismissed'
+          ? 'Violation was dismissed after review.'
+          : null;
+
+        violationsToInsert.push({
           id,
           student_id: studentId,
-          violation_type: seed.violationType,
-          description: seed.description,
-          violation_date: seed.violationDate,
-          resolution_status: seed.resolutionStatus || 'pending',
-          resolution_notes: seed.resolutionNotes,
-          resolved_at: seed.resolvedAt,
-        })
-        .returning({ id: violations.id });
-
-      createdRecords.push(record.id);
-      console.log(
-        `  - Created: Student ${seed.studentIndex} → ${seed.violationType} ` +
-        `(${seed.resolutionStatus || 'pending'})`
-      );
-    } catch (error: any) {
-      console.error(
-        `  ❌ Error creating violation for Student ${seed.studentIndex} → ${seed.violationType}:`,
-        error.message
-      );
-      throw error;
+          violation_type: violationType,
+          description: `${violationType} incident recorded on ${violationDate.toISOString().split('T')[0]}`,
+          violation_date: violationDate.toISOString().split('T')[0],
+          resolution_status: resolutionStatus,
+          resolution_notes: resolutionNotes,
+          resolved_at: resolvedAt,
+        });
+      }
     }
   }
+
+  // Batch insert in chunks of 500
+  const chunkSize = 500;
+  const createdRecords: string[] = [];
+  
+  for (let i = 0; i < violationsToInsert.length; i += chunkSize) {
+    const chunk = violationsToInsert.slice(i, i + chunkSize);
+    const inserted = await db.insert(violations).values(chunk).returning({ id: violations.id });
+    createdRecords.push(...inserted.map(v => v.id));
+    console.log(`  - Inserted ${inserted.length} violations (${i + inserted.length}/${violationsToInsert.length})`);
+  }
+
+  console.log(`  ✅ Created ${createdRecords.length} violation records for ${studentIds.length} students`);
 
   return createdRecords;
 }

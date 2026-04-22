@@ -158,49 +158,72 @@ const skillSeeds: SkillSeed[] = [
   },
 ];
 
+const skillTemplates = [
+  { name: 'JavaScript', category: 'technical' as const },
+  { name: 'TypeScript', category: 'technical' as const },
+  { name: 'Python', category: 'technical' as const },
+  { name: 'Java', category: 'technical' as const },
+  { name: 'C++', category: 'technical' as const },
+  { name: 'C#', category: 'technical' as const },
+  { name: 'React', category: 'technical' as const },
+  { name: 'Node.js', category: 'technical' as const },
+  { name: 'SQL', category: 'technical' as const },
+  { name: 'Git', category: 'technical' as const },
+  { name: 'Docker', category: 'technical' as const },
+  { name: 'HTML/CSS', category: 'technical' as const },
+  { name: 'Leadership', category: 'soft' as const },
+  { name: 'Communication', category: 'soft' as const },
+  { name: 'Teamwork', category: 'soft' as const },
+  { name: 'Problem Solving', category: 'soft' as const },
+];
+
+const proficiencyLevels: Array<'beginner' | 'intermediate' | 'advanced' | 'expert'> = [
+  'beginner', 'intermediate', 'advanced', 'expert'
+];
+
 export async function seedSkills(
   db: Database,
   studentIds: string[]
 ) {
-  const createdRecords: string[] = [];
-
   console.log('  Creating skill records...');
 
-  for (const seed of skillSeeds) {
-    if (seed.studentIndex >= studentIds.length) {
-      console.warn(`  ⚠️  Skipping skill: student index ${seed.studentIndex} out of range`);
-      continue;
-    }
+  const skillsToInsert = [];
 
-    const studentId = studentIds[seed.studentIndex];
-    const id = generateUUIDv7();
+  for (const studentId of studentIds) {
+    // Each student gets 3-7 random skills
+    const skillCount = Math.floor(Math.random() * 5) + 3;
+    const selectedSkills = [...skillTemplates]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, skillCount);
 
-    try {
-      const [record] = await db
-        .insert(skills)
-        .values({
-          id,
-          student_id: studentId,
-          skill_name: seed.skillName,
-          category: seed.category,
-          proficiency_level: seed.proficiencyLevel,
-          years_of_experience: seed.yearsOfExperience,
-        })
-        .returning({ id: skills.id });
+    for (const skill of selectedSkills) {
+      const id = generateUUIDv7();
+      const proficiencyLevel = proficiencyLevels[Math.floor(Math.random() * proficiencyLevels.length)];
+      const yearsOfExperience = Math.floor(Math.random() * 5) + 1;
 
-      createdRecords.push(record.id);
-      console.log(
-        `  - Created: Student ${seed.studentIndex} → ${seed.skillName} ` +
-        `(${seed.proficiencyLevel || 'N/A'}, ${seed.yearsOfExperience || 0} years)`
-      );
-    } catch (error: any) {
-      console.error(
-        `  ❌ Error creating skill for Student ${seed.studentIndex} → ${seed.skillName}:`,
-        error.message
-      );
-      throw error;
+      skillsToInsert.push({
+        id,
+        student_id: studentId,
+        skill_name: skill.name,
+        category: skill.category,
+        proficiency_level: proficiencyLevel,
+        years_of_experience: yearsOfExperience,
+      });
     }
   }
+
+  // Batch insert in chunks of 500
+  const chunkSize = 500;
+  const createdRecords: string[] = [];
+  
+  for (let i = 0; i < skillsToInsert.length; i += chunkSize) {
+    const chunk = skillsToInsert.slice(i, i + chunkSize);
+    const inserted = await db.insert(skills).values(chunk).returning({ id: skills.id });
+    createdRecords.push(...inserted.map(s => s.id));
+    console.log(`  - Inserted ${inserted.length} skills (${i + inserted.length}/${skillsToInsert.length})`);
+  }
+
+  console.log(`  ✅ Created ${createdRecords.length} skill records for ${studentIds.length} students`);
 
   return createdRecords;
 }

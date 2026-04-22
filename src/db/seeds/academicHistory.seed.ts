@@ -378,53 +378,90 @@ const academicHistorySeeds: AcademicHistorySeed[] = [
   },
 ];
 
+const courses = [
+  // First Year
+  { code: 'CS101', name: 'Introduction to Programming', credits: 3, semester: '1st' as const },
+  { code: 'CS102', name: 'Data Structures', credits: 3, semester: '1st' as const },
+  { code: 'MATH101', name: 'Calculus I', credits: 3, semester: '1st' as const },
+  { code: 'ENG101', name: 'Technical Writing', credits: 3, semester: '2nd' as const },
+  { code: 'PHYS101', name: 'Physics I', credits: 3, semester: '2nd' as const },
+  // Second Year
+  { code: 'CS201', name: 'Object-Oriented Programming', credits: 3, semester: '1st' as const },
+  { code: 'CS202', name: 'Database Systems', credits: 3, semester: '1st' as const },
+  { code: 'CS203', name: 'Web Development', credits: 3, semester: '2nd' as const },
+  { code: 'MATH201', name: 'Discrete Mathematics', credits: 3, semester: '2nd' as const },
+  // Third Year
+  { code: 'CS301', name: 'Software Engineering', credits: 3, semester: '1st' as const },
+  { code: 'CS302', name: 'Computer Networks', credits: 3, semester: '1st' as const },
+  { code: 'CS303', name: 'Operating Systems', credits: 3, semester: '2nd' as const },
+  { code: 'CS304', name: 'Algorithm Design', credits: 3, semester: '2nd' as const },
+  // Fourth Year
+  { code: 'CS401', name: 'Machine Learning', credits: 3, semester: '1st' as const },
+  { code: 'CS402', name: 'Capstone Project', credits: 3, semester: '2nd' as const },
+];
+
+function generateGrade(): number {
+  const rand = Math.random();
+  if (rand < 0.3) return 1.0 + Math.floor(Math.random() * 3) * 0.25; // 1.0-1.75 (30%)
+  if (rand < 0.6) return 2.0 + Math.floor(Math.random() * 4) * 0.25; // 2.0-2.75 (30%)
+  if (rand < 0.9) return 3.0; // 3.0 (30%)
+  return 5.0; // Failed (10%)
+}
+
 export async function seedAcademicHistory(
   db: Database,
   studentIds: string[]
 ) {
-  const createdRecords: string[] = [];
-
   console.log('  Creating academic history records...');
 
-  for (const seed of academicHistorySeeds) {
-    // Validate student index
-    if (seed.studentIndex >= studentIds.length) {
-      console.warn(`  ⚠️  Skipping academic history: student index ${seed.studentIndex} out of range`);
-      continue;
-    }
+  const historyToInsert = [];
 
-    const studentId = studentIds[seed.studentIndex];
-    const id = generateUUIDv7();
+  for (const studentId of studentIds) {
+    // Generate random year level (1-4)
+    const yearLevel = Math.floor(Math.random() * 4) + 1;
+    
+    // Generate history based on year level
+    const coursesToTake = courses.filter((_, idx) => {
+      if (yearLevel === 1) return idx < 5; // First year courses
+      if (yearLevel === 2) return idx < 9; // First + Second year
+      if (yearLevel === 3) return idx < 13; // First + Second + Third year
+      return true; // All courses for 4th year
+    });
 
-    try {
-      const [record] = await db
-        .insert(academicHistory)
-        .values({
-          id,
-          student_id: studentId,
-          subject_code: seed.subjectCode,
-          subject_name: seed.subjectName,
-          grade: seed.grade.toString(),
-          semester: seed.semester,
-          academic_year: seed.academicYear,
-          credits: seed.credits,
-          remarks: seed.remarks,
-        })
-        .returning({ id: academicHistory.id });
+    for (const course of coursesToTake) {
+      const id = generateUUIDv7();
+      const grade = generateGrade();
+      
+      // Calculate academic year based on course
+      const courseYear = Math.floor(courses.indexOf(course) / 5) + 1;
+      const academicYear = `${2022 + courseYear}-${2023 + courseYear}`;
 
-      createdRecords.push(record.id);
-      console.log(
-        `  - Created: Student ${seed.studentIndex} → ${seed.subjectCode} ` +
-        `(Grade: ${seed.grade}, ${seed.semester} ${seed.academicYear})`
-      );
-    } catch (error: any) {
-      console.error(
-        `  ❌ Error creating academic history for Student ${seed.studentIndex} → ${seed.subjectCode}:`,
-        error.message
-      );
-      throw error;
+      historyToInsert.push({
+        id,
+        student_id: studentId,
+        subject_code: course.code,
+        subject_name: course.name,
+        grade: grade.toString(),
+        semester: course.semester,
+        academic_year: academicYear,
+        credits: course.credits,
+        remarks: grade === 5.0 ? 'Failed' : undefined,
+      });
     }
   }
+
+  // Batch insert in chunks of 500
+  const chunkSize = 500;
+  const createdRecords: string[] = [];
+  
+  for (let i = 0; i < historyToInsert.length; i += chunkSize) {
+    const chunk = historyToInsert.slice(i, i + chunkSize);
+    const inserted = await db.insert(academicHistory).values(chunk).returning({ id: academicHistory.id });
+    createdRecords.push(...inserted.map(h => h.id));
+    console.log(`  - Inserted ${inserted.length} academic history records (${i + inserted.length}/${historyToInsert.length})`);
+  }
+
+  console.log(`  ✅ Created ${createdRecords.length} academic history records for ${studentIds.length} students`);
 
   return createdRecords;
 }
