@@ -170,6 +170,7 @@ export class EventController {
         data: participation,
         message: 'Successfully registered for event',
       });
+      return;
     } catch (error) {
       // Handle service-specific errors with appropriate HTTP status codes
       if (error instanceof AlreadyRegisteredError) {
@@ -228,6 +229,7 @@ export class EventController {
       }
 
       next(error);
+      return;
     }
   };
 }

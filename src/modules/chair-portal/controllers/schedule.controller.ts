@@ -125,6 +125,7 @@ export class ScheduleController {
           data: result.schedule,
           message: 'Schedule created successfully',
         });
+        return;
       } catch (error) {
         // Check if error is a conflict error
         if (error instanceof Error && error.message === 'Schedule conflicts detected') {
@@ -167,6 +168,7 @@ export class ScheduleController {
       }
     } catch (error) {
       next(error);
+      return;
     }
   };
 

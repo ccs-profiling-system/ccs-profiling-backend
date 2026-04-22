@@ -2,13 +2,6 @@ import { Database } from '../index';
 import { researchApplications } from '../schema/researchApplications';
 import { generateUUIDv7 } from '../../shared/utils/uuid';
 
-interface ApplicationSeed {
-  statement_of_interest: string;
-  status: 'pending' | 'accepted' | 'rejected';
-  faculty_feedback?: string;
-  daysAgo: number; // How many days ago the application was submitted
-}
-
 const statementTemplates = [
   'I am very interested in this research opportunity because of my strong background in computer science and passion for innovation. I have completed relevant coursework including Data Structures, Algorithms, and Software Engineering. I am eager to contribute to this project and develop my research skills under your guidance.',
   'This research aligns perfectly with my academic interests and career goals. I have hands-on experience with programming languages such as Python and Java, and I am familiar with the methodologies used in this field. I am committed to dedicating the necessary time and effort to make meaningful contributions to this research.',

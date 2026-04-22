@@ -78,7 +78,7 @@ export interface ResearchDTO {
  * Approval action data
  */
 export interface ApprovalData {
-  approval_notes?: string;
+  approver_notes?: string;
 }
 
 /**
@@ -384,7 +384,7 @@ export class ResearchService {
     }
 
     // Update research status
-    const updateResult = await db
+    await db
       .update(research)
       .set({
         status: 'approved',
@@ -392,8 +392,6 @@ export class ResearchService {
       })
       .where(eq(research.id, id))
       .returning();
-
-    const updatedResearch = updateResult[0];
 
     // Create audit log entry
     const auditLogData: CreateAuditLogData = {
@@ -404,7 +402,7 @@ export class ResearchService {
       before_state: { status: researchProject.status },
       after_state: { 
         status: 'approved',
-        approval_notes: approvalData.approval_notes,
+        approver_notes: approvalData.approver_notes,
       },
     };
 
@@ -453,7 +451,7 @@ export class ResearchService {
     }
 
     // Update research status
-    const updateResult = await db
+    await db
       .update(research)
       .set({
         status: 'rejected',
@@ -461,8 +459,6 @@ export class ResearchService {
       })
       .where(eq(research.id, id))
       .returning();
-
-    const updatedResearch = updateResult[0];
 
     // Create audit log entry
     const auditLogData: CreateAuditLogData = {

@@ -15,8 +15,8 @@
 
 import { db } from '../../../db';
 import { schedules, instructions, faculty } from '../../../db/schema';
-import { eq, and, isNull, or, sql } from 'drizzle-orm';
-import { validateApprovalState } from '../utils/workflowValidation';
+import { eq, and, isNull, sql } from 'drizzle-orm';
+// import { validateApprovalState } from '../utils/workflowValidation';
 
 /**
  * Schedule filters for list queries
@@ -272,7 +272,7 @@ export class ScheduleService {
   async approveSchedule(
     id: string,
     departmentId: string,
-    userId: string
+    _userId: string
   ): Promise<ScheduleDTO | null> {
     // Get schedule with related data
     const result = await db

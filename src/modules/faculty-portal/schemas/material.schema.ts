@@ -55,7 +55,7 @@ export function validateFileUpload(file: Express.Multer.File | undefined): {
 
   // Check file extension
   const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
-  if (!fileExtension || !FILE_VALIDATION.ALLOWED_TYPES.includes(fileExtension)) {
+  if (!fileExtension || !FILE_VALIDATION.ALLOWED_TYPES.includes(fileExtension as any)) {
     return {
       valid: false,
       error: `File type not allowed. Allowed types: ${FILE_VALIDATION.ALLOWED_TYPES.join(', ')}`,
@@ -63,7 +63,7 @@ export function validateFileUpload(file: Express.Multer.File | undefined): {
   }
 
   // Check MIME type
-  if (!FILE_VALIDATION.ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+  if (!FILE_VALIDATION.ALLOWED_MIME_TYPES.includes(file.mimetype as any)) {
     return {
       valid: false,
       error: `Invalid file MIME type. Allowed types: ${FILE_VALIDATION.ALLOWED_TYPES.join(', ')}`,

@@ -77,8 +77,10 @@ export class CourseController {
         success: true,
         data: courses,
       });
+      return;
     } catch (error) {
       next(error);
+      return;
     }
   };
 
@@ -133,8 +135,10 @@ export class CourseController {
         success: true,
         data: teachingLoad,
       });
+      return;
     } catch (error) {
       next(error);
+      return;
     }
   };
 }

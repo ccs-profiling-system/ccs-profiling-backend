@@ -8,7 +8,7 @@
  * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10, 6.11, 6.12, 6.13, 6.14, 6.15, 6.16
  */
 
-import { eq, and, isNull, gte, lte, inArray, sql } from 'drizzle-orm';
+import { eq, and, isNull, gte, lte, inArray } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { attendance, students, enrollments } from '../../../db/schema';
 import { AttendanceRecordDTO, AttendanceStatus } from '../types';

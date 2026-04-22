@@ -8,7 +8,7 @@
  * Requirements: 7.1-7.22, 12.2, 12.3, 12.6, 12.7, 12.8
  */
 
-import { eq, and, or, isNull, sql, inArray } from 'drizzle-orm';
+import { eq, and, isNull, sql } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { research, researchAdvisers, researchAuthors, students, faculty } from '../../../db/schema';
 import { ResearchProjectDTO, PaginationParams, PaginatedResponse } from '../types';
@@ -152,12 +152,7 @@ export class ResearchService {
 
     const adviserResearchIdSet = new Set(adviserResearchIds.map(r => r.research_id));
 
-    // Get total count of research projects associated with faculty
-    const countResult = await this.db
-      .select({ count: sql<number>`count(*)` })
-      .from(research)
-      .where(and(...conditions));
-
+    // Get all research projects matching conditions
     const allResearch = await this.db
       .select()
       .from(research)
@@ -390,7 +385,7 @@ export class ResearchService {
 
     // Validate status transition if status is being updated
     if (data.status && data.status !== existingResearch.status) {
-      this.validateStatusTransition(existingResearch.status, data.status);
+      this.validateStatusTransition(existingResearch.status || 'draft', data.status);
     }
 
     // Build update object
