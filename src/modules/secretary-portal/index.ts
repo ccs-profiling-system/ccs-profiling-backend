@@ -2,8 +2,11 @@
  * Secretary Portal Module
  * 
  * Main entry point for the secretary portal API module.
- * Exports all shared utilities, types, and schemas.
+ * Exports all shared utilities, types, schemas, and routes.
  */
+
+// Export router
+export { secretaryPortalRouter } from './routes';
 
 // Export all types and DTOs
 export type {
