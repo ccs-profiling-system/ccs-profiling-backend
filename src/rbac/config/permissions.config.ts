@@ -267,16 +267,54 @@ export const permissionConfig: PermissionConfig = {
    * - Secretary Portal API access (secretary.* namespace)
    * 
    * Secretary Portal Permissions (secretary.* namespace):
-   * - secretary.dashboard.read: Access to secretary dashboard statistics
-   * - secretary.student.*: Full student management (read, create, update, delete)
-   * - secretary.faculty.*: Full faculty management (read, create, update, delete)
-   * - secretary.schedule.*: Full schedule management (read, create, update, delete)
-   * - secretary.document.*: Document management (upload, read, delete)
-   * - secretary.event.*: Event management (read, create, update, delete)
-   * - secretary.research.*: Research management (read, create, update, delete)
-   * - secretary.pending.*: Pending changes management (read, withdraw)
-   * - secretary.report.generate: Generate reports in various formats
-   * - secretary.filter.read: Access filter options for dropdowns
+   * 
+   * Dashboard:
+   * - secretary.dashboard.read: Access to secretary dashboard statistics and recent activities
+   * 
+   * Student Management:
+   * - secretary.student.read: View student records with pagination, filtering, and search
+   * - secretary.student.create: Create new student records
+   * - secretary.student.update: Update existing student records (creates pending change)
+   * - secretary.student.delete: Soft delete student records
+   * 
+   * Faculty Management:
+   * - secretary.faculty.read: View faculty records with pagination, filtering, and search
+   * - secretary.faculty.create: Create new faculty records
+   * - secretary.faculty.update: Update existing faculty records (creates pending change)
+   * - secretary.faculty.delete: Soft delete faculty records
+   * 
+   * Schedule Management:
+   * - secretary.schedule.read: View class schedules with pagination and filtering
+   * - secretary.schedule.create: Create new class schedules
+   * - secretary.schedule.update: Update existing class schedules
+   * - secretary.schedule.delete: Soft delete class schedules
+   * 
+   * Document Management:
+   * - secretary.document.upload: Upload documents with file validation (max 10MB)
+   * - secretary.document.read: View and download documents with pagination and filtering
+   * - secretary.document.delete: Delete documents and associated files
+   * 
+   * Event Management (with Approval Workflow):
+   * - secretary.event.read: View events with pagination, filtering, and search
+   * - secretary.event.create: Create new events (initial status: draft)
+   * - secretary.event.update: Update events (draft status only, creates pending approval)
+   * - secretary.event.delete: Soft delete events (draft status only)
+   * 
+   * Research Management (with Approval Workflow):
+   * - secretary.research.read: View research projects with pagination, filtering, and search
+   * - secretary.research.create: Create new research projects (initial status: draft)
+   * - secretary.research.update: Update research projects (draft status only, creates pending approval)
+   * - secretary.research.delete: Soft delete research projects (draft status only)
+   * 
+   * Pending Changes Management:
+   * - secretary.pending.read: View pending changes with pagination and filtering
+   * - secretary.pending.withdraw: Withdraw pending changes (pending_approval status only)
+   * 
+   * Report Generation:
+   * - secretary.report.generate: Generate reports in PDF, Excel, or CSV formats
+   * 
+   * Filter Options:
+   * - secretary.filter.read: Access dynamic filter options for dropdown menus
    */
   [Role.SECRETARY]: {
     allow: [
