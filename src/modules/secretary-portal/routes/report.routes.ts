@@ -1,121 +1,76 @@
 /**
- * Secretary Portal - Report Routes
- * Route definitions for report generation endpoints
+ * Report Routes
  * 
- * Provides endpoints for secretaries to generate reports in multiple formats.
- * All routes require authentication and RBAC permission checks.
+ * Defines routes for secretary portal report generation operations.
+ * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 10.1-10.4, 10.13-10.14
+ * Requirements: 10.1-10.4
  */
 
 import { Router } from 'express';
 import { requirePermission } from '../../../rbac/middleware/requirePermission.middleware';
+import {
+  generateStudentReportController,
+  generateFacultyReportController,
+  generateEventReportController,
+} from '../controllers/report.controller';
 
 /**
- * Create report routes
+ * Create report router
  * 
- * @returns Express router with report routes
+ * Endpoints:
+ * - POST /api/secretary/reports/students - Generate student report
+ * - POST /api/secretary/reports/faculty - Generate faculty report
+ * - POST /api/secretary/reports/events - Generate event report
+ * 
+ * All endpoints require:
+ * - Valid JWT authentication (handled by parent router)
+ * - secretary.report.generate permission
  */
 export function createReportRoutes(): Router {
   const router = Router();
 
   /**
    * POST /api/secretary/reports/students
-   * Generate student report
    * 
-   * Permission: secretary.report.generate
+   * Generate a student report in the specified format (pdf, excel, csv).
    * 
-   * Request Body:
-   * - format: string (required, enum: pdf, excel, csv)
-   * - start_date: string (optional, ISO 8601)
-   * - end_date: string (optional, ISO 8601)
-   * - status: string (optional)
-   * - year_level: string (optional)
-   * - program: string (optional)
-   * 
-   * Response:
-   * - 200: Report generated successfully with file content
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Headers:
-   * - Content-Type: application/pdf | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet | text/csv
-   * - Content-Disposition: attachment; filename="students-report.{ext}"
-   * 
-   * Requirements: 10.1, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10, 10.11, 10.13, 10.14
+   * Requirements: 10.1, 10.4
    */
   router.post(
     '/students',
     requirePermission('secretary.report.generate'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    generateStudentReportController
   );
 
   /**
    * POST /api/secretary/reports/faculty
-   * Generate faculty report
    * 
-   * Permission: secretary.report.generate
+   * Generate a faculty report in the specified format (pdf, excel, csv).
    * 
-   * Request Body:
-   * - format: string (required, enum: pdf, excel, csv)
-   * - start_date: string (optional, ISO 8601)
-   * - end_date: string (optional, ISO 8601)
-   * - status: string (optional)
-   * - department: string (optional)
-   * - position: string (optional)
-   * 
-   * Response:
-   * - 200: Report generated successfully with file content
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Headers:
-   * - Content-Type: application/pdf | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet | text/csv
-   * - Content-Disposition: attachment; filename="faculty-report.{ext}"
-   * 
-   * Requirements: 10.2, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10, 10.11, 10.13, 10.14
+   * Requirements: 10.2, 10.4
    */
   router.post(
     '/faculty',
     requirePermission('secretary.report.generate'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    generateFacultyReportController
   );
 
   /**
    * POST /api/secretary/reports/events
-   * Generate events report
    * 
-   * Permission: secretary.report.generate
+   * Generate an event report in the specified format (pdf, excel, csv).
    * 
-   * Request Body:
-   * - format: string (required, enum: pdf, excel, csv)
-   * - start_date: string (optional, ISO 8601)
-   * - end_date: string (optional, ISO 8601)
-   * - status: string (optional)
-   * - event_type: string (optional)
-   * 
-   * Response:
-   * - 200: Report generated successfully with file content
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Headers:
-   * - Content-Type: application/pdf | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet | text/csv
-   * - Content-Disposition: attachment; filename="events-report.{ext}"
-   * 
-   * Requirements: 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10, 10.11, 10.13, 10.14
+   * Requirements: 10.3, 10.4
    */
   router.post(
     '/events',
     requirePermission('secretary.report.generate'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    generateEventReportController
   );
 
   return router;
 }
+
+// Default export for backward compatibility
+export default createReportRoutes();
