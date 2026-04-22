@@ -9,11 +9,16 @@
  * 2. Returns HTTP 401 Unauthorized if authentication fails
  * 3. Attaches user info to req.user for downstream middleware
  * 
- * Requirements: 1.1, 1.4, 18.2, 19.2
+ * Audit Context Flow:
+ * 1. auditContextMiddleware extracts IP address, user agent, and user ID
+ * 2. Attaches audit context to req.auditContext for use in audit logging
+ * 
+ * Requirements: 1.1, 1.4, 18.2, 19.2, 14.1-14.10
  */
 
 import { Router } from 'express';
 import { authMiddleware } from '../../../shared/middleware/auth.middleware';
+import { auditContextMiddleware } from '../../../shared/middleware/auditContext.middleware';
 import { createDashboardRoutes } from './dashboard.routes';
 import { createStudentRoutes } from './student.routes';
 import { createFacultyRoutes } from './faculty.routes';
@@ -30,6 +35,7 @@ import { createFilterRoutes } from './filter.routes';
  * 
  * All routes under this router are protected by JWT authentication.
  * The authMiddleware is applied globally to all secretary portal routes.
+ * The auditContextMiddleware is applied after authentication to capture audit context.
  * 
  * Authentication Requirements:
  * - Valid JWT token in Authorization header (Bearer <token>)
@@ -38,6 +44,7 @@ import { createFilterRoutes } from './filter.routes';
  * 
  * On Success:
  * - req.user is populated with { userId, email, role }
+ * - req.auditContext is populated with { user_id, ip_address, user_agent }
  * - Request proceeds to next middleware/handler
  * 
  * On Failure:
@@ -50,6 +57,11 @@ export const secretaryPortalRouter = Router();
 // This validates JWT tokens for all API requests
 // Requirements: 1.1, 1.4, 18.2
 secretaryPortalRouter.use(authMiddleware);
+
+// Apply audit context middleware after authentication
+// This captures IP address, user agent, and user ID for audit logging
+// Requirements: 14.1, 14.5, 14.6
+secretaryPortalRouter.use(auditContextMiddleware);
 
 // Register module routes with appropriate prefixes
 // All routes have requirePermission middleware applied at the route level
