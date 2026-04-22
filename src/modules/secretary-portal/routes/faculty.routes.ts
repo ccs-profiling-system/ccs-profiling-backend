@@ -1,169 +1,121 @@
 /**
- * Secretary Portal - Faculty Routes
- * Route definitions for faculty management endpoints
+ * Faculty Routes
  * 
- * Provides endpoints for secretaries to manage faculty records.
- * All routes require authentication and RBAC permission checks.
+ * Defines routes for secretary portal faculty operations.
+ * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 4.1-4.10, 4.20-4.23
+ * Requirements: 4.7-4.10
  */
 
 import { Router } from 'express';
 import { requirePermission } from '../../../rbac/middleware/requirePermission.middleware';
+import {
+  getAllFacultyController,
+  getFacultyByIdController,
+  createFacultyController,
+  updateFacultyController,
+  deleteFacultyController,
+  getTeachingLoadController,
+} from '../controllers/faculty.controller';
 
 /**
- * Create faculty routes
+ * Create faculty router
  * 
- * @returns Express router with faculty routes
+ * Endpoints:
+ * - GET /api/secretary/faculty - Get all faculty with pagination and filtering
+ * - GET /api/secretary/faculty/:id - Get faculty by ID
+ * - POST /api/secretary/faculty - Create a new faculty member
+ * - PUT /api/secretary/faculty/:id - Update an existing faculty member
+ * - DELETE /api/secretary/faculty/:id - Delete a faculty member (soft delete)
+ * - GET /api/secretary/faculty/:id/teaching-load - Get teaching load for a faculty member
+ * 
+ * All endpoints require:
+ * - Valid JWT authentication (handled by parent router)
+ * - Appropriate permission for the operation
  */
 export function createFacultyRoutes(): Router {
   const router = Router();
 
   /**
    * GET /api/secretary/faculty
-   * Get all faculty with pagination and filtering
    * 
-   * Permission: secretary.faculty.read
+   * Retrieve all faculty with pagination and filtering.
    * 
-   * Query Parameters:
-   * - page: number (default: 1)
-   * - limit: number (default: 10, max: 100)
-   * - department: string (filter)
-   * - position: string (filter)
-   * - status: string (filter)
-   * - search: string (search by name or faculty_id)
-   * 
-   * Response:
-   * - 200: Faculty retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Requirements: 4.1, 4.7, 4.14, 4.15, 4.16, 4.20
+   * Requirements: 4.1, 4.7
    */
   router.get(
     '/',
     requirePermission('secretary.faculty.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getAllFacultyController
   );
 
   /**
    * GET /api/secretary/faculty/:id
-   * Get individual faculty by ID
    * 
-   * Permission: secretary.faculty.read
+   * Retrieve a faculty member by ID.
    * 
-   * Response:
-   * - 200: Faculty retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Faculty not found
-   * 
-   * Requirements: 4.2, 4.7, 4.20, 4.23
+   * Requirements: 4.2, 4.7
    */
   router.get(
     '/:id',
     requirePermission('secretary.faculty.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getFacultyByIdController
   );
 
   /**
    * POST /api/secretary/faculty
-   * Create a new faculty record
    * 
-   * Permission: secretary.faculty.create
+   * Create a new faculty member.
    * 
-   * Request Body:
-   * - faculty_id: string (required, unique)
-   * - first_name: string (required)
-   * - last_name: string (required)
-   * - email: string (required, RFC 5322 format)
-   * - department: string (required)
-   * - position: string (required)
-   * 
-   * Response:
-   * - 201: Faculty created successfully
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Requirements: 4.3, 4.8, 4.11, 4.12, 4.13, 4.21, 4.22
+   * Requirements: 4.3, 4.8
    */
   router.post(
     '/',
     requirePermission('secretary.faculty.create'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    createFacultyController
   );
 
   /**
    * PUT /api/secretary/faculty/:id
-   * Update an existing faculty record
    * 
-   * Permission: secretary.faculty.update
+   * Update an existing faculty member.
    * 
-   * Creates a pending change record for approval workflow.
-   * 
-   * Response:
-   * - 200: Faculty updated successfully
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Faculty not found
-   * 
-   * Requirements: 4.4, 4.9, 4.17, 4.20, 4.22, 4.23
+   * Requirements: 4.4, 4.9
    */
   router.put(
     '/:id',
     requirePermission('secretary.faculty.update'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    updateFacultyController
   );
 
   /**
    * DELETE /api/secretary/faculty/:id
-   * Delete a faculty record (soft delete)
    * 
-   * Permission: secretary.faculty.delete
+   * Delete a faculty member (soft delete).
    * 
-   * Performs soft delete to preserve audit trail.
-   * 
-   * Response:
-   * - 200: Faculty deleted successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Faculty not found
-   * 
-   * Requirements: 4.5, 4.10, 4.18, 4.20, 4.23
+   * Requirements: 4.5, 4.10
    */
   router.delete(
     '/:id',
     requirePermission('secretary.faculty.delete'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    deleteFacultyController
   );
 
   /**
    * GET /api/secretary/faculty/:id/teaching-load
-   * Get teaching load for a faculty member
    * 
-   * Permission: secretary.faculty.read
+   * Retrieve teaching load for a faculty member.
    * 
-   * Response:
-   * - 200: Teaching load retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Faculty not found
-   * 
-   * Requirements: 4.6, 4.7, 4.20, 4.23
+   * Requirements: 4.6, 4.7
    */
   router.get(
     '/:id/teaching-load',
     requirePermission('secretary.faculty.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getTeachingLoadController
   );
 
   return router;
 }
+
+// Default export for backward compatibility
+export default createFacultyRoutes();
