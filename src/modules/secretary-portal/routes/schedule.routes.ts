@@ -1,148 +1,106 @@
 /**
- * Secretary Portal - Schedule Routes
- * Route definitions for schedule management endpoints
+ * Schedule Routes
  * 
- * Provides endpoints for secretaries to manage class schedules.
- * All routes require authentication and RBAC permission checks.
+ * Defines routes for secretary portal schedule operations.
+ * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 5.1-5.9, 5.18-5.21
+ * Requirements: 5.6-5.9
  */
 
 import { Router } from 'express';
 import { requirePermission } from '../../../rbac/middleware/requirePermission.middleware';
+import {
+  getAllSchedulesController,
+  getScheduleByIdController,
+  createScheduleController,
+  updateScheduleController,
+  deleteScheduleController,
+} from '../controllers/schedule.controller';
 
 /**
- * Create schedule routes
+ * Create schedule router
  * 
- * @returns Express router with schedule routes
+ * Endpoints:
+ * - GET /api/secretary/schedules - Get all schedules with pagination and filtering
+ * - GET /api/secretary/schedules/:id - Get schedule by ID
+ * - POST /api/secretary/schedules - Create a new schedule
+ * - PUT /api/secretary/schedules/:id - Update an existing schedule
+ * - DELETE /api/secretary/schedules/:id - Delete a schedule (soft delete)
+ * 
+ * All endpoints require:
+ * - Valid JWT authentication (handled by parent router)
+ * - Appropriate permission for the operation
  */
 export function createScheduleRoutes(): Router {
   const router = Router();
 
   /**
    * GET /api/secretary/schedules
-   * Get all schedules with pagination and filtering
    * 
-   * Permission: secretary.schedule.read
+   * Retrieve all schedules with pagination and filtering.
    * 
-   * Query Parameters:
-   * - page: number (default: 1)
-   * - limit: number (default: 10, max: 100)
-   * - semester: string (filter)
-   * - academic_year: string (filter)
-   * - faculty_id: string (filter)
-   * - room: string (filter)
-   * 
-   * Response:
-   * - 200: Schedules retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Requirements: 5.1, 5.6, 5.14, 5.15, 5.18
+   * Requirements: 5.1, 5.6
    */
   router.get(
     '/',
     requirePermission('secretary.schedule.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getAllSchedulesController
   );
 
   /**
    * GET /api/secretary/schedules/:id
-   * Get individual schedule by ID
    * 
-   * Permission: secretary.schedule.read
+   * Retrieve a schedule by ID.
    * 
-   * Response:
-   * - 200: Schedule retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Schedule not found
-   * 
-   * Requirements: 5.2, 5.6, 5.18, 5.21
+   * Requirements: 5.2, 5.6
    */
   router.get(
     '/:id',
     requirePermission('secretary.schedule.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getScheduleByIdController
   );
 
   /**
    * POST /api/secretary/schedules
-   * Create a new schedule
    * 
-   * Permission: secretary.schedule.create
+   * Create a new schedule.
    * 
-   * Request Body:
-   * - instruction_id: string (required)
-   * - faculty_id: string (required)
-   * - room: string (required)
-   * - day: string (required, enum: monday-sunday)
-   * - start_time: string (required)
-   * - end_time: string (required, must be after start_time)
-   * - semester: string (required, enum: 1st, 2nd, summer)
-   * - academic_year: string (required)
-   * 
-   * Response:
-   * - 201: Schedule created successfully
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * 
-   * Requirements: 5.3, 5.7, 5.10, 5.11, 5.12, 5.13, 5.19, 5.20
+   * Requirements: 5.3, 5.7
    */
   router.post(
     '/',
     requirePermission('secretary.schedule.create'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    createScheduleController
   );
 
   /**
    * PUT /api/secretary/schedules/:id
-   * Update an existing schedule
    * 
-   * Permission: secretary.schedule.update
+   * Update an existing schedule.
    * 
-   * Response:
-   * - 200: Schedule updated successfully
-   * - 400: Validation error
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Schedule not found
-   * 
-   * Requirements: 5.4, 5.8, 5.18, 5.20, 5.21
+   * Requirements: 5.4, 5.8
    */
   router.put(
     '/:id',
     requirePermission('secretary.schedule.update'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    updateScheduleController
   );
 
   /**
    * DELETE /api/secretary/schedules/:id
-   * Delete a schedule (soft delete)
    * 
-   * Permission: secretary.schedule.delete
+   * Delete a schedule (soft delete).
    * 
-   * Performs soft delete to preserve audit trail.
-   * 
-   * Response:
-   * - 200: Schedule deleted successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
-   * - 404: Schedule not found
-   * 
-   * Requirements: 5.5, 5.9, 5.16, 5.18, 5.21
+   * Requirements: 5.5, 5.9
    */
   router.delete(
     '/:id',
     requirePermission('secretary.schedule.delete'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    deleteScheduleController
   );
 
   return router;
 }
+
+// Default export for backward compatibility
+export default createScheduleRoutes();
