@@ -7,7 +7,7 @@
  */
 
 export interface UploadOptions {
-  entityType: 'student' | 'faculty' | 'research' | 'event';
+  entityType: 'student' | 'faculty' | 'research' | 'event' | 'document' | 'course_material';
   originalFilename: string;
   mimeType: string;
   buffer: Buffer;

@@ -8,3 +8,4 @@ export * from './dashboard.service';
 export * from './student.service';
 export * from './faculty.service';
 export * from './schedule.service';
+export * from './document.service';
