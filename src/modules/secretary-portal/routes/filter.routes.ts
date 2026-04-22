@@ -1,92 +1,100 @@
 /**
- * Secretary Portal - Filter Routes
- * Route definitions for filter options endpoints
+ * Filter Routes
  * 
- * Provides endpoints for secretaries to retrieve dynamic filter options for dropdown menus.
- * All routes require authentication and RBAC permission checks.
+ * Defines routes for filter options in secretary portal.
+ * All routes require authentication and secretary.filter.read permission.
  * 
- * Requirements: 11.1-11.4, 11.8
+ * Requirements: 11.1-11.4
  */
 
 import { Router } from 'express';
 import { requirePermission } from '../../../rbac/middleware/requirePermission.middleware';
+import {
+  getPrograms,
+  getDepartments,
+  getEventTypes,
+} from '../controllers/filter.controller';
 
 /**
- * Create filter routes
+ * Create filter router
  * 
- * @returns Express router with filter routes
+ * Endpoints:
+ * - GET /api/secretary/filters/programs - Get distinct program names
+ * - GET /api/secretary/filters/departments - Get distinct department names
+ * - GET /api/secretary/filters/event-types - Get distinct event type names
+ * 
+ * All endpoints require:
+ * - Valid JWT authentication (handled by parent router)
+ * - secretary.filter.read permission
  */
 export function createFilterRoutes(): Router {
   const router = Router();
 
   /**
    * GET /api/secretary/filters/programs
-   * Get list of programs for filter dropdown
    * 
-   * Permission: secretary.filter.read
-   * 
-   * Returns distinct program values from the database, excluding soft-deleted records.
-   * Results are ordered alphabetically.
+   * Retrieve distinct program names from students table.
+   * Results are ordered alphabetically and exclude soft-deleted records.
+   * Results are cached for 5 minutes for performance.
    * 
    * Response:
-   * - 200: Programs retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
+   * {
+   *   success: true,
+   *   data: string[]
+   * }
    * 
-   * Requirements: 11.1, 11.4, 11.5, 11.6, 11.7, 11.8
+   * Requirements: 11.1, 11.4
    */
   router.get(
     '/programs',
     requirePermission('secretary.filter.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getPrograms
   );
 
   /**
    * GET /api/secretary/filters/departments
-   * Get list of departments for filter dropdown
    * 
-   * Permission: secretary.filter.read
-   * 
-   * Returns distinct department values from the database, excluding soft-deleted records.
-   * Results are ordered alphabetically.
+   * Retrieve distinct department names from faculty table.
+   * Results are ordered alphabetically and exclude soft-deleted records.
+   * Results are cached for 5 minutes for performance.
    * 
    * Response:
-   * - 200: Departments retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
+   * {
+   *   success: true,
+   *   data: string[]
+   * }
    * 
-   * Requirements: 11.2, 11.4, 11.5, 11.6, 11.7, 11.8
+   * Requirements: 11.2, 11.4
    */
   router.get(
     '/departments',
     requirePermission('secretary.filter.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getDepartments
   );
 
   /**
    * GET /api/secretary/filters/event-types
-   * Get list of event types for filter dropdown
    * 
-   * Permission: secretary.filter.read
-   * 
-   * Returns distinct event type values from the database, excluding soft-deleted records.
-   * Results are ordered alphabetically.
+   * Retrieve distinct event type names from events table.
+   * Results are ordered alphabetically and exclude soft-deleted records.
+   * Results are cached for 5 minutes for performance.
    * 
    * Response:
-   * - 200: Event types retrieved successfully
-   * - 401: Unauthorized
-   * - 403: Forbidden
+   * {
+   *   success: true,
+   *   data: string[]
+   * }
    * 
-   * Requirements: 11.3, 11.4, 11.5, 11.6, 11.7, 11.8
+   * Requirements: 11.3, 11.4
    */
   router.get(
     '/event-types',
     requirePermission('secretary.filter.read'),
-    // TODO: Implement controller
-    (_req, res) => res.status(501).json({ message: 'Not implemented' })
+    getEventTypes
   );
 
   return router;
 }
+
+// Default export for backward compatibility
+export default createFilterRoutes();

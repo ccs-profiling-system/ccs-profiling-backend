@@ -10,3 +10,4 @@ export * from './faculty.service';
 export * from './schedule.service';
 export * from './document.service';
 export * from './pendingChanges.service';
+export * from './filter.service';
