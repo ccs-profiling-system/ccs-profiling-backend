@@ -1,0 +1,14 @@
+{
+  "id": "performance-indexes-migration",
+  "prevId": "a3d07c3f-ebd9-4b4c-bf7f-6a903f6ad8c2",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {},
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

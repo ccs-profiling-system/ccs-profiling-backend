@@ -10,6 +10,7 @@
 import { Router } from 'express';
 import { requirePermission } from '../../../rbac/middleware/requirePermission.middleware';
 import { researchUpload } from '../utils/fileUpload';
+import { uploadLimiter } from '../middleware/uploadLimiter';
 import {
   getAllResearchController,
   getResearchByIdController,
@@ -19,6 +20,7 @@ import {
   submitResearchController,
   uploadResearchFileController,
   getResearchFilesController,
+  downloadResearchFileController,
   deleteResearchFileController,
   getResearchAuthorsController,
 } from '../controllers/research.controller';
@@ -35,6 +37,7 @@ import {
  * - POST /api/secretary/research/:id/submit - Submit a research project for approval
  * - POST /api/secretary/research/:id/files - Upload a file for a research project
  * - GET /api/secretary/research/:id/files - Get files for a research project
+ * - GET /api/secretary/research/:id/files/:fileId/download - Download a research file
  * - DELETE /api/secretary/research/:id/files/:fileId - Delete a research file
  * - GET /api/secretary/research/:id/authors - Get authors for a research project
  * 
@@ -129,12 +132,14 @@ export function createResearchRoutes(): Router {
    * 
    * Upload a file for a research project.
    * Uses multer middleware for multipart/form-data handling.
+   * Upload limiter prevents resource exhaustion from concurrent uploads.
    * 
-   * Requirements: 8.7, 8.13
+   * Requirements: 8.7, 8.13, 16.6
    */
   router.post(
     '/:id/files',
     requirePermission('secretary.research.update'),
+    uploadLimiter,
     researchUpload.single('file'),
     uploadResearchFileController
   );
@@ -150,6 +155,20 @@ export function createResearchRoutes(): Router {
     '/:id/files',
     requirePermission('secretary.research.read'),
     getResearchFilesController
+  );
+
+  /**
+   * GET /api/secretary/research/:id/files/:fileId/download
+   * 
+   * Download a research file.
+   * Streams file to client to reduce memory usage.
+   * 
+   * Requirements: 8.8, 8.11, 16.7
+   */
+  router.get(
+    '/:id/files/:fileId/download',
+    requirePermission('secretary.research.read'),
+    downloadResearchFileController
   );
 
   /**

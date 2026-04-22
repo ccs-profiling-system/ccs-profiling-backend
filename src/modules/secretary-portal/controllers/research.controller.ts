@@ -794,6 +794,127 @@ export async function deleteResearchFileController(
 }
 
 /**
+ * GET /api/secretary/research/:id/files/:fileId/download
+ * 
+ * Download a research file.
+ * Streams the file to the client to reduce memory usage.
+ * 
+ * @param req - Express request
+ * @param res - Express response
+ * @param next - Express next function for error handling
+ * 
+ * @returns File stream with appropriate headers
+ * @returns HTTP 400 for validation errors
+ * @returns HTTP 404 when research or file not found
+ * @throws Error if file download fails
+ * 
+ * Requirements: 8.8, 8.35, 15.4, 16.7
+ */
+export async function downloadResearchFileController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    // Validate ID parameter
+    const idResult = idParamSchema.safeParse({ id: req.params.id });
+    if (!idResult.success) {
+      res.status(400).json({
+        success: false,
+        error: {
+          message: 'Validation failed',
+          details: idResult.error.errors.map((err) => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        },
+      });
+      return;
+    }
+
+    // Validate fileId parameter
+    const fileIdResult = idParamSchema.safeParse({ id: req.params.fileId });
+    if (!fileIdResult.success) {
+      res.status(400).json({
+        success: false,
+        error: {
+          message: 'Validation failed',
+          details: fileIdResult.error.errors.map((err) => ({
+            field: 'fileId',
+            message: err.message,
+          })),
+        },
+      });
+      return;
+    }
+
+    const { id } = idResult.data;
+    const fileId = fileIdResult.data.id;
+
+    // Get research files to find the specific file
+    const files = await getResearchFiles(id);
+    const file = files.find(f => f.id === fileId);
+
+    if (!file) {
+      res.status(404).json({
+        success: false,
+        error: {
+          message: 'File not found',
+          entity_type: 'research_file',
+        },
+      });
+      return;
+    }
+
+    // Build file path for streaming
+    const { createReadStream } = await import('fs');
+    const { join } = await import('path');
+    const baseDir = process.env.LOCAL_STORAGE_PATH || './uploads';
+    const filePath = join(baseDir, file.storage_path);
+
+    // Set appropriate headers for file download
+    res.setHeader('Content-Type', file.file_type);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(file.original_name)}"`
+    );
+    res.setHeader('Content-Length', file.file_size);
+
+    // Stream file to client
+    const fileStream = createReadStream(filePath);
+    
+    fileStream.on('error', (error) => {
+      console.error('File stream error:', error);
+      if (!res.headersSent) {
+        res.status(404).json({
+          success: false,
+          error: {
+            message: 'File not found in storage',
+            entity_type: 'research_file',
+          },
+        });
+      }
+    });
+
+    fileStream.pipe(res);
+  } catch (error) {
+    // Handle specific service errors
+    if (error instanceof Error && error.message === 'Research not found') {
+      res.status(404).json({
+        success: false,
+        error: {
+          message: 'Research not found',
+        },
+      });
+      return;
+    }
+
+    // Pass error to error handling middleware
+    next(error);
+  }
+}
+
+/**
  * GET /api/secretary/research/:id/authors
  * 
  * Retrieve authors for a research project.

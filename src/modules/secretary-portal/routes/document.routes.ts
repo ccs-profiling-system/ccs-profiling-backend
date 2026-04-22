@@ -10,6 +10,7 @@
 import { Router } from 'express';
 import { requirePermission } from '../../../rbac/middleware/requirePermission.middleware';
 import { documentUpload } from '../utils/fileUpload';
+import { uploadLimiter } from '../middleware/uploadLimiter';
 import {
   uploadDocumentController,
   getAllDocumentsController,
@@ -40,12 +41,14 @@ export function createDocumentRoutes(): Router {
    * 
    * Upload a new document with file.
    * Uses multer middleware for multipart/form-data handling.
+   * Upload limiter prevents resource exhaustion from concurrent uploads.
    * 
-   * Requirements: 6.6
+   * Requirements: 6.6, 16.6
    */
   router.post(
     '/',
     requirePermission('secretary.document.upload'),
+    uploadLimiter,
     documentUpload.single('file'),
     uploadDocumentController
   );
