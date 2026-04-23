@@ -242,7 +242,7 @@ export async function seedUploads(
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
-    const storagePath = `uploads/${uploadSeed.entityType}/${year}/${month}/${uploadSeed.fileName}`;
+    const storagePath = `${uploadSeed.entityType}/${year}/${month}/${uploadSeed.fileName}`;
 
     const [upload] = await db
       .insert(uploads)

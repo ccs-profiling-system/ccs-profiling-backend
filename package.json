@@ -10,7 +10,7 @@
     "db:generate": "drizzle-kit generate:pg",
     "db:push": "drizzle-kit push:pg",
     "db:migrate": "tsx src/db/migrate.ts",
-    "db:seed": "tsx src/db/seeds/run-seeds.ts",
+    "db:seed": "tsx src/db/seeds/run-seeds.ts && tsx src/db/seeds/createDummyFiles.ts",
     "db:truncate": "tsx src/db/truncate.ts",
     "db:reset": "tsx src/db/reset.ts",
     "lint": "eslint . --ext .ts",
