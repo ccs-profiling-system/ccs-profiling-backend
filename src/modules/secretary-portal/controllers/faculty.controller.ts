@@ -216,7 +216,6 @@ export async function createFacultyController(
     // Create faculty via service
     const facultyMember = await createFaculty(
       bodyResult.data as {
-        faculty_id: string;
         first_name: string;
         last_name: string;
         middle_name?: string;

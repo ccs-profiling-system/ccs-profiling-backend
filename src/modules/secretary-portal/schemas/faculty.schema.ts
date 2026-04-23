@@ -11,14 +11,11 @@ import { emailSchema, optionalEmailSchema } from './common.schemas';
 /**
  * Schema for creating a new faculty member
  * Validates all required fields for faculty creation
+ * faculty_id is auto-generated and should NOT be included in the request
  * 
  * Requirements: 4.11, 4.12, 4.13
  */
 export const createFacultySchema = z.object({
-  faculty_id: z
-    .string()
-    .min(1, 'Faculty ID is required')
-    .max(50, 'Faculty ID must be at most 50 characters'),
   first_name: z
     .string()
     .min(1, 'First name is required')

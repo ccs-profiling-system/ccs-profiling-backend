@@ -11,6 +11,8 @@ import { eq, and, isNull, or, ilike, sql, SQL } from 'drizzle-orm';
 import { FacultyDTO, PaginationParams, PaginatedResponse } from '../types';
 import { buildPaginationMeta, applyPagination } from '../utils/pagination';
 import { logCreate, logUpdate, logDelete } from '../utils/auditLogger';
+import { IDGenerator } from '../../../shared/utils/idGenerator';
+import { entityCounterRepository } from '../../../db/repositories/entityCounter.repository';
 
 /**
  * Filter options for faculty queries
@@ -132,8 +134,9 @@ export async function getFacultyById(id: string): Promise<FacultyDTO | null> {
 
 /**
  * Create a new faculty member
+ * faculty_id is auto-generated using the format: F-YYYY-0001
  * 
- * @param data - Faculty data
+ * @param data - Faculty data (without faculty_id)
  * @param userId - ID of user creating the faculty
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
@@ -143,7 +146,6 @@ export async function getFacultyById(id: string): Promise<FacultyDTO | null> {
  */
 export async function createFaculty(
   data: {
-    faculty_id: string;
     first_name: string;
     last_name: string;
     middle_name?: string;
@@ -164,22 +166,23 @@ export async function createFaculty(
 ): Promise<FacultyDTO> {
   // Use transaction for data integrity
   const result = await db.transaction(async (tx) => {
-    // Validate faculty_id uniqueness
-    const existing = await tx
-      .select()
-      .from(faculty)
-      .where(eq(faculty.faculty_id, data.faculty_id))
-      .limit(1);
+    // Auto-generate faculty_id
+    const currentYear = IDGenerator.getCurrentYear();
     
-    if (existing.length > 0) {
-      throw new Error('Faculty ID already exists');
-    }
+    // Ensure counter exists for current year
+    await entityCounterRepository.getOrCreateCounter('faculty', currentYear, tx);
+    
+    // Increment counter and get new sequence
+    const sequence = await entityCounterRepository.incrementCounter('faculty', currentYear, tx);
+    
+    // Generate human-readable ID (e.g., F-2024-0001)
+    const facultyId = IDGenerator.generate('faculty', sequence, currentYear);
     
     // Create faculty record
     const [newFaculty] = await tx
       .insert(faculty)
       .values({
-        faculty_id: data.faculty_id,
+        faculty_id: facultyId,
         user_id: data.user_id || null,
         first_name: data.first_name,
         last_name: data.last_name,
