@@ -11,14 +11,11 @@ import { emailSchema, optionalEmailSchema } from './common.schemas';
 /**
  * Schema for creating a new student
  * Validates all required fields for student creation
+ * student_id is auto-generated and should NOT be included in the request
  * 
  * Requirements: 3.11, 3.12, 3.13
  */
 export const createStudentSchema = z.object({
-  student_id: z
-    .string()
-    .min(1, 'Student ID is required')
-    .max(50, 'Student ID must be at most 50 characters'),
   first_name: z
     .string()
     .min(1, 'First name is required')

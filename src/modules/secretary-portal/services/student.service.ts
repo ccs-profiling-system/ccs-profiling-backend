@@ -11,6 +11,8 @@ import { eq, and, isNull, or, ilike, sql, SQL } from 'drizzle-orm';
 import { StudentDTO, AcademicHistoryDTO, PaginationParams, PaginatedResponse } from '../types';
 import { buildPaginationMeta, applyPagination } from '../utils/pagination';
 import { logCreate, logUpdate, logDelete } from '../utils/auditLogger';
+import { IDGenerator } from '../../../shared/utils/idGenerator';
+import { entityCounterRepository } from '../../../db/repositories/entityCounter.repository';
 
 /**
  * Filter options for student queries
@@ -116,8 +118,9 @@ export async function getStudentById(id: string): Promise<StudentDTO | null> {
 
 /**
  * Create a new student
+ * student_id is auto-generated using the format: S-YYYY-0001
  * 
- * @param data - Student data
+ * @param data - Student data (without student_id)
  * @param userId - ID of user creating the student
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
@@ -127,7 +130,6 @@ export async function getStudentById(id: string): Promise<StudentDTO | null> {
  */
 export async function createStudent(
   data: {
-    student_id: string;
     first_name: string;
     last_name: string;
     middle_name?: string;
@@ -146,22 +148,23 @@ export async function createStudent(
 ): Promise<StudentDTO> {
   // Use transaction for data integrity
   const result = await db.transaction(async (tx) => {
-    // Validate student_id uniqueness
-    const existing = await tx
-      .select()
-      .from(students)
-      .where(eq(students.student_id, data.student_id))
-      .limit(1);
+    // Auto-generate student_id
+    const currentYear = IDGenerator.getCurrentYear();
     
-    if (existing.length > 0) {
-      throw new Error('Student ID already exists');
-    }
+    // Ensure counter exists for current year
+    await entityCounterRepository.getOrCreateCounter('student', currentYear, tx);
+    
+    // Increment counter and get new sequence
+    const sequence = await entityCounterRepository.incrementCounter('student', currentYear, tx);
+    
+    // Generate human-readable ID (e.g., S-2024-0001)
+    const studentId = IDGenerator.generate('student', sequence, currentYear);
     
     // Create student record
     const [newStudent] = await tx
       .insert(students)
       .values({
-        student_id: data.student_id,
+        student_id: studentId,
         user_id: data.user_id || null,
         first_name: data.first_name,
         last_name: data.last_name,
