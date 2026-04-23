@@ -5,7 +5,7 @@ import { users } from '../../../db/schema';
 export interface CreateUserData {
   email: string;
   password_hash: string;
-  role: 'admin' | 'faculty' | 'student';
+  role: 'admin' | 'department_chair' | 'faculty' | 'secretary' | 'student';
 }
 
 export interface UpdateUserData {
