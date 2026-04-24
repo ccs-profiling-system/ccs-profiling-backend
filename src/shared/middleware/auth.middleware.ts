@@ -3,6 +3,16 @@ import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from '../errors';
 import { config } from '../../config';
 
+// Lazy import to avoid circular dependency issues
+let auditLogRepository: any;
+async function getAuditLogRepository() {
+  if (!auditLogRepository) {
+    const module = await import('../../modules/audit-logs');
+    auditLogRepository = module.auditLogRepository;
+  }
+  return auditLogRepository;
+}
+
 // Extend Express Request type to include user
 declare global {
   namespace Express {
@@ -21,8 +31,9 @@ declare global {
 /**
  * Authentication middleware
  * Verifies JWT token and attaches user to request
+ * Logs authentication failures to audit log
  */
-export const authMiddleware = (req: Request, _res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     // Development bypass - check for dev-bypass-token
     const authHeader = req.headers.authorization;
@@ -40,6 +51,8 @@ export const authMiddleware = (req: Request, _res: Response, next: NextFunction)
 
     // Extract token from Authorization header
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      // Log authentication failure
+      await logAuthFailure(req, 'No token provided');
       throw new UnauthorizedError('No token provided');
     }
 
@@ -60,11 +73,40 @@ export const authMiddleware = (req: Request, _res: Response, next: NextFunction)
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
+      await logAuthFailure(req, 'Invalid token');
       next(new UnauthorizedError('Invalid token'));
     } else if (error instanceof jwt.TokenExpiredError) {
+      await logAuthFailure(req, 'Token expired');
       next(new UnauthorizedError('Token expired'));
     } else {
       next(error);
     }
   }
 };
+
+/**
+ * Log authentication failure to audit log
+ * Non-blocking - failures are logged but don't affect the response
+ */
+async function logAuthFailure(req: Request, reason: string): Promise<void> {
+  try {
+    const ip_address =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+      req.socket.remoteAddress ||
+      undefined;
+
+    const user_agent = req.headers['user-agent'] || undefined;
+
+    const repository = await getAuditLogRepository();
+    await repository.create({
+      action_type: 'auth_failure',
+      entity_type: 'authentication',
+      ip_address,
+      user_agent,
+      after_state: { reason, path: req.path, method: req.method },
+    });
+  } catch (error) {
+    // Log to console but don't throw - audit logging should not block authentication
+    console.error('Failed to log authentication failure:', error);
+  }
+}

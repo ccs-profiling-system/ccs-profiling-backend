@@ -7,8 +7,8 @@ interface UploadSeed {
   originalName: string;
   fileType: string;
   fileSize: number;
-  entityType: 'student' | 'faculty' | 'research' | 'event';
-  entityIndex: number; // Index into the respective entity array
+  entityType: 'student' | 'faculty' | 'research' | 'event' | 'document';
+  entityIndex: number; // Index into the respective entity array (0 for document type)
 }
 
 const uploadSeeds: UploadSeed[] = [
@@ -112,6 +112,71 @@ const uploadSeeds: UploadSeed[] = [
     entityType: 'event',
     entityIndex: 0,
   },
+  // General documents (for secretary portal document management)
+  {
+    fileName: '1705104000000_w9x0y1z2_memo_2024_001.pdf',
+    originalName: 'Department Memo 2024-001.pdf',
+    fileType: 'application/pdf',
+    fileSize: 234567,
+    entityType: 'document',
+    entityIndex: 0,
+  },
+  {
+    fileName: '1705190400000_a3b4c5d6_policy_guidelines.pdf',
+    originalName: 'Academic Policy Guidelines.pdf',
+    fileType: 'application/pdf',
+    fileSize: 567890,
+    entityType: 'document',
+    entityIndex: 0,
+  },
+  {
+    fileName: '1705276800000_e7f8g9h0_enrollment_form.pdf',
+    originalName: 'Enrollment Form Template.pdf',
+    fileType: 'application/pdf',
+    fileSize: 123456,
+    entityType: 'document',
+    entityIndex: 0,
+  },
+  {
+    fileName: '1705363200000_i1j2k3l4_curriculum_2024.pdf',
+    originalName: 'BS CS Curriculum 2024.pdf',
+    fileType: 'application/pdf',
+    fileSize: 789012,
+    entityType: 'document',
+    entityIndex: 0,
+  },
+  {
+    fileName: '1705449600000_m5n6o7p8_faculty_handbook.pdf',
+    originalName: 'Faculty Handbook 2024.pdf',
+    fileType: 'application/pdf',
+    fileSize: 1234567,
+    entityType: 'document',
+    entityIndex: 0,
+  },
+  {
+    fileName: '1705536000000_q9r0s1t2_student_handbook.pdf',
+    originalName: 'Student Handbook 2024.pdf',
+    fileType: 'application/pdf',
+    fileSize: 987654,
+    entityType: 'document',
+    entityIndex: 0,
+  },
+  {
+    fileName: '1705622400000_u3v4w5x6_grading_system.pdf',
+    originalName: 'Grading System Guidelines.pdf',
+    fileType: 'application/pdf',
+    fileSize: 345678,
+    entityType: 'document',
+    entityIndex: 0,
+  },
+  {
+    fileName: '1705708800000_y7z8a9b0_attendance_policy.pdf',
+    originalName: 'Attendance Policy.pdf',
+    fileType: 'application/pdf',
+    fileSize: 234567,
+    entityType: 'document',
+    entityIndex: 0,
+  },
 ];
 
 export async function seedUploads(
@@ -130,37 +195,54 @@ export async function seedUploads(
 
   for (const uploadSeed of uploadSeeds) {
     // Determine entity_id based on entity type and index
-    let entityId: string | undefined;
+    let entityId: string;
     
     switch (uploadSeed.entityType) {
       case 'student':
         entityId = studentIds[uploadSeed.entityIndex];
+        if (!entityId) {
+          console.log(`  ⚠️  Skipping upload for ${uploadSeed.entityType} at index ${uploadSeed.entityIndex} (entity not found)`);
+          continue;
+        }
         break;
       case 'faculty':
         entityId = facultyIds[uploadSeed.entityIndex];
+        if (!entityId) {
+          console.log(`  ⚠️  Skipping upload for ${uploadSeed.entityType} at index ${uploadSeed.entityIndex} (entity not found)`);
+          continue;
+        }
         break;
       case 'research':
         entityId = researchIds[uploadSeed.entityIndex];
+        if (!entityId) {
+          console.log(`  ⚠️  Skipping upload for ${uploadSeed.entityType} at index ${uploadSeed.entityIndex} (entity not found)`);
+          continue;
+        }
         break;
       case 'event':
         entityId = eventIds[uploadSeed.entityIndex];
+        if (!entityId) {
+          console.log(`  ⚠️  Skipping upload for ${uploadSeed.entityType} at index ${uploadSeed.entityIndex} (entity not found)`);
+          continue;
+        }
         break;
-    }
-
-    // Skip if entity doesn't exist
-    if (!entityId) {
-      console.log(`  ⚠️  Skipping upload for ${uploadSeed.entityType} at index ${uploadSeed.entityIndex} (entity not found)`);
-      continue;
+      case 'document':
+        // For general documents, generate a new UUID (self-referencing)
+        entityId = generateUUIDv7();
+        break;
+      default:
+        console.log(`  ⚠️  Unknown entity type: ${uploadSeed.entityType}`);
+        continue;
     }
 
     // Generate UUID v7 for primary key
-    const id = generateUUIDv7();
+    const id = uploadSeed.entityType === 'document' ? entityId : generateUUIDv7();
 
     // Generate storage path based on entity type and current date
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
-    const storagePath = `uploads/${uploadSeed.entityType}/${year}/${month}/${uploadSeed.fileName}`;
+    const storagePath = `${uploadSeed.entityType}/${year}/${month}/${uploadSeed.fileName}`;
 
     const [upload] = await db
       .insert(uploads)

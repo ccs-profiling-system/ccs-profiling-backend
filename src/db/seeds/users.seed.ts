@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 interface UserSeed {
   email: string;
   password: string;
-  role: 'admin' | 'faculty' | 'student';
+  role: 'admin' | 'faculty' | 'student' | 'secretary';
   is_active: boolean;
 }
 
@@ -49,6 +49,19 @@ function generateUserSeeds(): UserSeed[] {
       email: 'chair.cs@ccs.edu',
       password: 'pass1234',
       role: 'faculty',
+      is_active: true,
+    },
+    // Secretary users
+    {
+      email: 'secretary@ccs.edu',
+      password: 'pass1234',
+      role: 'secretary',
+      is_active: true,
+    },
+    {
+      email: 'secretary.main@ccs.edu',
+      password: 'pass1234',
+      role: 'secretary',
       is_active: true,
     },
   ];

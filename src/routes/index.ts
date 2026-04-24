@@ -126,6 +126,7 @@ import { searchRoutes } from '../modules/search';
 import { chairPortalRouter } from '../modules/chair-portal';
 import { facultyPortalRouter } from '../modules/faculty-portal';
 import { studentPortalRouter } from '../modules/student-portal/routes';
+import { secretaryPortalRouter } from '../modules/secretary-portal/routes';
 
 export const routes = Router();
 
@@ -206,3 +207,20 @@ routes.use('/', facultyPortalRouter);
 // Provides endpoints for students to manage:
 // - Profile management (view and update own profile)
 routes.use('/', studentPortalRouter);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SECRETARY PORTAL ROUTES (Authentication + secretary.* permissions required)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Secretary Portal
+// Provides endpoints for department secretaries to manage:
+// - Dashboard statistics and recent activities
+// - Student records (CRUD operations)
+// - Faculty records (CRUD operations)
+// - Class schedules (CRUD operations)
+// - Document management with file uploads
+// - Event management with approval workflow
+// - Research project management with approval workflow
+// - Pending changes management
+// - Report generation (PDF, Excel, CSV)
+routes.use('/secretary', secretaryPortalRouter);

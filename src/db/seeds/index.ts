@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors, pendingChanges } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -21,6 +21,7 @@ import { seedNotifications } from './notifications.seed';
 import { seedFinancialRecords } from './financialRecords.seed';
 import { seedResearchApplications } from './researchApplications.seed';
 import { seedAdvisors } from './advisors.seed';
+import { seedPendingChanges } from './pendingChanges.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -381,6 +382,21 @@ export async function runSeeders() {
       slotIds = result.slotIds;
       appointmentIds = result.appointmentIds;
       console.log(`✅ Created ${advisorIds.length} advisor assignments, ${messageIds.length} messages, ${slotIds.length} slots, ${appointmentIds.length} appointments\n`);
+    }
+
+    // Seed pending changes
+    let pendingChangeIds: string[] = [];
+    const pendingChangesHasData = await hasData('pending_changes');
+    
+    if (pendingChangesHasData) {
+      console.log('ℹ️  Pending changes table already has data, skipping pending changes seeding...');
+      const existingPendingChanges = await db.select({ id: pendingChanges.id }).from(pendingChanges);
+      pendingChangeIds = existingPendingChanges.map(pc => pc.id);
+      console.log(`ℹ️  Found ${pendingChangeIds.length} existing pending changes\n`);
+    } else {
+      console.log('📝 Seeding pending changes...');
+      pendingChangeIds = await seedPendingChanges(db, studentIds, facultyIds, eventIds, researchIds, userIds);
+      console.log(`✅ Created ${pendingChangeIds.length} pending changes\n`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

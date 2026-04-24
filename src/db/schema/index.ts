@@ -22,4 +22,5 @@ export * from './notifications';
 export * from './financialRecords';
 export * from './researchApplications';
 export * from './advisors';
+export * from './pendingChanges';
 export * from './utils';
