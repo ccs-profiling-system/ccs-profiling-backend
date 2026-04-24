@@ -4,7 +4,7 @@ import {
   InvalidStateTransitionError,
   approvalStateMachine,
 } from '../approval-state-machine.service';
-import { ApprovalStatus } from '../../db/schema/approvals';
+import { ApprovalStatus } from '../../../../db/schema/approvals';
 
 describe('ApprovalStateMachineService', () => {
   let stateMachine: ApprovalStateMachineService;

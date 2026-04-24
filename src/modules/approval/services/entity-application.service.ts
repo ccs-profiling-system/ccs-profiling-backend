@@ -1,12 +1,12 @@
-import { db } from '../db';
-import { students } from '../db/schema/students';
-import { faculty } from '../db/schema/faculty';
-import { events } from '../db/schema/events';
-import { research } from '../db/schema/research';
-import { approvals, ApprovalStatus, EntityType } from '../db/schema/approvals';
+import { db } from '../../../db';
+import { students } from '../../../db/schema/students';
+import { faculty } from '../../../db/schema/faculty';
+import { events } from '../../../db/schema/events';
+import { research } from '../../../db/schema/research';
+import { approvals, ApprovalStatus, EntityType } from '../../../db/schema/approvals';
 import { approvalRepository } from '../repositories/approval.repository';
 import { notificationRepository } from '../repositories/notification.repository';
-import { NotificationType, NotificationPriority } from '../db/schema/approvalNotifications';
+import { NotificationType, NotificationPriority } from '../../../db/schema/approvalNotifications';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 

@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { ApprovalStatisticsService } from '../approval-statistics.service';
-import { db } from '../../db';
-import { approvals, ApprovalStatus } from '../../db/schema/approvals';
+import { db } from '../../../../db';
+import { approvals, ApprovalStatus } from '../../../../db/schema/approvals';
 
 // Mock the database
-vi.mock('../../db', () => ({
+vi.mock('../../../../db', () => ({
   db: {
     select: vi.fn(),
   },

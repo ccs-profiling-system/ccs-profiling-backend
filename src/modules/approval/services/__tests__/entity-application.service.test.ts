@@ -7,7 +7,7 @@ import {
 } from '../entity-application.service';
 import { approvalRepository } from '../../repositories/approval.repository';
 import { notificationRepository } from '../../repositories/notification.repository';
-import { db } from '../../db';
+import { db } from '../../../../db';
 import { ApprovalStatus, EntityType } from '../../db/schema/approvals';
 import { NotificationType, NotificationPriority } from '../../db/schema/approvalNotifications';
 

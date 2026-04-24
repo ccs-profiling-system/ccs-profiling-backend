@@ -6,8 +6,8 @@ import {
   NotificationPriority,
   type Approval,
   type ApprovalNotification,
-} from '../../db/schema/approvalNotifications';
-import { ApprovalStatus, EntityType, Category } from '../../db/schema/approvals';
+} from '../../../../db/schema/approvalNotifications';
+import { ApprovalStatus, EntityType, Category } from '../../../../db/schema/approvals';
 
 // Mock the notification repository
 vi.mock('../../repositories/notification.repository', () => ({

@@ -1,4 +1,4 @@
-import { ApprovalStatus, ApprovalStatusType } from '../db/schema/approvals';
+import { ApprovalStatus, ApprovalStatusType } from '../../../db/schema/approvals';
 
 /**
  * State Machine Service for Approval Workflow

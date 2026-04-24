@@ -6,8 +6,8 @@ import {
   NotificationPriority,
   type NotificationTypeType,
   type NotificationPriorityType,
-} from '../db/schema/approvalNotifications';
-import { type Approval } from '../db/schema/approvals';
+} from '../../../db/schema/approvalNotifications';
+import { type Approval } from '../../../db/schema/approvals';
 
 /**
  * Notification template definition

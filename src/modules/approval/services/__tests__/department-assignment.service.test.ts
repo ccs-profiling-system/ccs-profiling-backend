@@ -3,10 +3,10 @@ import {
   DepartmentAssignmentService,
   DepartmentNotFoundError,
 } from '../department-assignment.service';
-import { db } from '../../db';
+import { db } from '../../../../db';
 
 // Mock the database
-vi.mock('../../db', () => ({
+vi.mock('../../../../db', () => ({
   db: {
     query: {
       students: {

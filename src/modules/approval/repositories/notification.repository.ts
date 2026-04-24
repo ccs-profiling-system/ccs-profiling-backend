@@ -1,9 +1,9 @@
-import { db } from '../db';
+import { db } from '../../../db';
 import { 
   approvalNotifications, 
   type ApprovalNotification, 
   type InsertApprovalNotification 
-} from '../db/schema/approvalNotifications';
+} from '../../../db/schema/approvalNotifications';
 import { eq, and, desc, sql } from 'drizzle-orm';
 
 /**

@@ -5,9 +5,9 @@ import { approvalStateMachine } from '../approval-state-machine.service';
 import { departmentAssignmentService } from '../department-assignment.service';
 import { entityApplicationService } from '../entity-application.service';
 import { notificationService } from '../notification.service';
-import { ApprovalStatus, EntityType, Category } from '../../db/schema/approvals';
-import { NotificationType } from '../../db/schema/approvalNotifications';
-import { db } from '../../db';
+import { ApprovalStatus, EntityType, Category } from '../../../../db/schema/approvals';
+import { NotificationType } from '../../../../db/schema/approvalNotifications';
+import { db } from '../../../../db';
 
 // Mock all dependencies
 vi.mock('../../repositories/approval.repository');

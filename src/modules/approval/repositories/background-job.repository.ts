@@ -1,10 +1,10 @@
-import { db } from '../db';
+import { db } from '../../../db';
 import { 
   backgroundJobs, 
   type BackgroundJob, 
   type InsertBackgroundJob,
   JobStatus,
-} from '../db/schema/backgroundJobs';
+} from '../../../db/schema/backgroundJobs';
 import { eq, and, inArray, sql, asc } from 'drizzle-orm';
 
 /**

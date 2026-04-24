@@ -1,8 +1,8 @@
-import { db } from '../db';
-import { students } from '../db/schema/students';
-import { faculty } from '../db/schema/faculty';
-import { events } from '../db/schema/events';
-import { research, researchAuthors } from '../db/schema/research';
+import { db } from '../../../db';
+import { students } from '../../../db/schema/students';
+import { faculty } from '../../../db/schema/faculty';
+import { events } from '../../../db/schema/events';
+import { research, researchAuthors } from '../../../db/schema/research';
 import { eq, and, isNull, asc } from 'drizzle-orm';
 
 /**

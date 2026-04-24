@@ -1,5 +1,5 @@
-import { db } from '../db';
-import { approvals, ApprovalStatus, EntityType, Category } from '../db/schema/approvals';
+import { db } from '../../../db';
+import { approvals, ApprovalStatus, EntityType, Category } from '../../../db/schema/approvals';
 import { eq, and, isNull, sql, gte, inArray } from 'drizzle-orm';
 
 /**

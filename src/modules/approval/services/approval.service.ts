@@ -11,8 +11,8 @@ import {
   EntityType,
   type EntityTypeType,
   type CategoryType,
-} from '../db/schema/approvals';
-import { NotificationType } from '../db/schema/approvalNotifications';
+} from '../../../db/schema/approvals';
+import { NotificationType } from '../../../db/schema/approvalNotifications';
 import { db } from '../db';
 import { students } from '../db/schema/students';
 import { faculty } from '../db/schema/faculty';
