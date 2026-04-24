@@ -6,8 +6,8 @@
  */
 
 import { db } from '../../../db';
-import { students, faculty, events, research, auditLogs } from '../../../db/schema';
-import { count, desc, isNull, eq } from 'drizzle-orm';
+import { students, faculty, events, research, auditLogs, pendingChanges } from '../../../db/schema';
+import { count, desc, isNull, eq, sql } from 'drizzle-orm';
 import { DashboardDTO, ActivityDTO } from '../types';
 
 /**
@@ -18,7 +18,7 @@ import { DashboardDTO, ActivityDTO } from '../types';
  * - Total count of faculty (exclude soft-deleted)
  * - Total count of events (exclude soft-deleted)
  * - Total count of research projects (exclude soft-deleted)
- * - Count of pending changes (returns 0 as pending_changes table doesn't exist yet)
+ * - Count of pending changes with status 'pending_approval'
  * - 10 most recent activities from audit_logs
  * 
  * @returns Promise<DashboardDTO> Dashboard statistics and activities
@@ -49,8 +49,12 @@ export async function getDashboardStats(): Promise<DashboardDTO> {
     .where(isNull(research.deleted_at));
 
   // Get count of pending changes
-  // Note: pending_changes table doesn't exist yet, so return 0 for now
-  const pendingChangesCount = 0;
+  const [pendingChangesResult] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(pendingChanges)
+    .where(eq(pendingChanges.status, 'pending_approval'));
+  
+  const pendingChangesCount = pendingChangesResult?.count || 0;
 
   // Get 10 most recent activities from audit_logs
   const recentActivities = await db

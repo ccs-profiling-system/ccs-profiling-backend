@@ -9,6 +9,9 @@ import { PendingChangeDTO, PaginationParams, PaginatedResponse, ApprovalStatus }
 import { buildPaginationMeta } from '../utils/pagination';
 import { logWithdraw } from '../utils/auditLogger';
 import { ValidationError } from '../../../shared/errors';
+import { db } from '../../../db';
+import { pendingChanges } from '../../../db/schema';
+import { eq, and, desc, sql } from 'drizzle-orm';
 
 /**
  * Filter options for pending changes queries
@@ -32,36 +35,41 @@ export async function getAllPendingChanges(
   filters?: PendingChangesFilters
 ): Promise<PaginatedResponse<PendingChangeDTO>> {
   const { page = 1, limit = 10 } = pagination;
+  const offset = (page - 1) * limit;
   
-  // TODO: Implement actual database query when pending_changes table exists
-  // The pending_changes table needs to be created with the following structure:
-  // - id (UUID, primary key)
-  // - entity_type (string) - type of entity being changed (student, faculty, event, etc.)
-  // - entity_id (UUID) - ID of the entity being changed
-  // - change_type (string) - type of change (create, update, delete)
-  // - old_values (JSONB) - state before the change
-  // - new_values (JSONB) - state after the change
-  // - status (enum) - approval status (pending_approval, approved, rejected, withdrawn)
-  // - created_by (UUID) - user who created the change
-  // - created_at (timestamp)
-  // - updated_at (timestamp)
-  //
-  // Query should:
-  // 1. Filter by entity_type if provided
-  // 2. Filter by status if provided
-  // 3. Apply pagination with limit and offset
-  // 4. Order by created_at DESC
-  // 5. Return total count for pagination metadata
+  // Build where conditions
+  const conditions = [];
   
-  // For now, return empty paginated results
-  const total = 0;
-  const data: PendingChangeDTO[] = [];
+  if (filters?.entity_type) {
+    conditions.push(eq(pendingChanges.entity_type, filters.entity_type));
+  }
+  
+  if (filters?.status) {
+    conditions.push(eq(pendingChanges.status, filters.status));
+  }
+  
+  // Get total count
+  const [countResult] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(pendingChanges)
+    .where(conditions.length > 0 ? and(...conditions) : undefined);
+  
+  const total = countResult?.count || 0;
+  
+  // Get paginated data
+  const data = await db
+    .select()
+    .from(pendingChanges)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(pendingChanges.created_at))
+    .limit(limit)
+    .offset(offset);
   
   // Build pagination metadata
   const meta = buildPaginationMeta(total, page, limit);
   
   return {
-    data,
+    data: data as PendingChangeDTO[],
     meta,
   };
 }
@@ -86,60 +94,48 @@ export async function withdrawPendingChange(
   ipAddress?: string,
   userAgent?: string
 ): Promise<PendingChangeDTO> {
-  // TODO: Implement actual database query when pending_changes table exists
-  // The implementation should:
-  // 1. Use a transaction for data integrity
-  // 2. Validate the pending change exists
-  // 3. Validate state transition: only 'pending_approval' can be withdrawn
-  // 4. Prevent withdrawal of changes with status 'approved' or 'rejected'
-  // 5. Update status from 'pending_approval' to 'withdrawn'
-  // 6. Update updated_at timestamp
-  // 7. Log the withdrawal action using logWithdraw
-  //
-  // Example implementation:
-  // const result = await db.transaction(async (tx) => {
-  //   const existing = await tx
-  //     .select()
-  //     .from(pendingChanges)
-  //     .where(eq(pendingChanges.id, id))
-  //     .limit(1);
-  //   
-  //   if (existing.length === 0) {
-  //     throw new ValidationError('Pending change not found');
-  //   }
-  //   
-  //   const oldValues = existing[0];
-  //   
-  //   // Validate state transition
-  //   if (oldValues.status === 'approved' || oldValues.status === 'rejected') {
-  //     throw new ValidationError(
-  //       `Cannot withdraw pending change with status '${oldValues.status}'`
-  //     );
-  //   }
-  //   
-  //   if (oldValues.status !== 'pending_approval') {
-  //     throw new ValidationError(
-  //       `Cannot withdraw pending change with status '${oldValues.status}'. Only pending_approval changes can be withdrawn.`
-  //     );
-  //   }
-  //   
-  //   // Update status to 'withdrawn'
-  //   const [updated] = await tx
-  //     .update(pendingChanges)
-  //     .set({
-  //       status: 'withdrawn',
-  //       updated_at: new Date(),
-  //     })
-  //     .where(eq(pendingChanges.id, id))
-  //     .returning();
-  //   
-  //   return updated;
-  // });
-  //
-  // await logWithdraw(userId, 'pending_change', id, ipAddress, userAgent);
-  //
-  // return result as PendingChangeDTO;
+  const result = await db.transaction(async (tx) => {
+    // Validate the pending change exists
+    const existing = await tx
+      .select()
+      .from(pendingChanges)
+      .where(eq(pendingChanges.id, id))
+      .limit(1);
+    
+    if (existing.length === 0) {
+      throw new ValidationError('Pending change not found');
+    }
+    
+    const oldValues = existing[0];
+    
+    // Validate state transition: only 'pending_approval' can be withdrawn
+    if (oldValues.status === 'approved' || oldValues.status === 'rejected') {
+      throw new ValidationError(
+        `Cannot withdraw pending change with status '${oldValues.status}'`
+      );
+    }
+    
+    if (oldValues.status !== 'pending_approval') {
+      throw new ValidationError(
+        `Cannot withdraw pending change with status '${oldValues.status}'. Only pending_approval changes can be withdrawn.`
+      );
+    }
+    
+    // Update status to 'withdrawn'
+    const [updated] = await tx
+      .update(pendingChanges)
+      .set({
+        status: 'withdrawn',
+        updated_at: new Date(),
+      })
+      .where(eq(pendingChanges.id, id))
+      .returning();
+    
+    return updated;
+  });
   
-  // For now, throw an error indicating the table doesn't exist
-  throw new ValidationError('Pending change not found');
+  // Log the withdrawal action
+  await logWithdraw(userId, 'pending_change', id, ipAddress, userAgent);
+  
+  return result as PendingChangeDTO;
 }

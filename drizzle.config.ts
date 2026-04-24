@@ -68,6 +68,7 @@ export default {
     './src/db/schema/financialRecords.ts',
     './src/db/schema/researchApplications.ts',
     './src/db/schema/advisors.ts',
+    './src/db/schema/pendingChanges.ts',
   ],
   out: './drizzle',
   driver: 'pg',

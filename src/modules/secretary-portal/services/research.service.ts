@@ -238,11 +238,8 @@ export async function updateResearch(
     research_type?: ResearchType;
     start_date?: string;
     completion_date?: string;
-    description?: string;
     abstract?: string;
-    keywords?: string;
-    funding_source?: string;
-    budget?: number;
+    publication_url?: string;
   },
   userId?: string,
   ipAddress?: string,
@@ -285,11 +282,16 @@ export async function updateResearch(
       }
     }
     
+    // Filter out undefined values from data
+    const updateData = Object.fromEntries(
+      Object.entries(data).filter(([_, value]) => value !== undefined)
+    );
+    
     // Update research record
     const [updated] = await tx
       .update(research)
       .set({
-        ...data,
+        ...updateData,
         updated_at: new Date(),
       })
       .where(eq(research.id, id))

@@ -52,25 +52,14 @@ export const createResearchSchema = z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format. Expected YYYY-MM-DD')
       .optional(),
-    description: z
-      .string()
-      .max(5000, 'Description must be at most 5000 characters')
-      .optional(),
     abstract: z
       .string()
       .max(2000, 'Abstract must be at most 2000 characters')
       .optional(),
-    keywords: z
+    publication_url: z
       .string()
-      .max(500, 'Keywords must be at most 500 characters')
-      .optional(),
-    funding_source: z
-      .string()
-      .max(200, 'Funding source must be at most 200 characters')
-      .optional(),
-    budget: z
-      .number()
-      .nonnegative('Budget must be a non-negative number')
+      .url('Invalid URL format')
+      .max(500, 'Publication URL must be at most 500 characters')
       .optional(),
   })
   .refine(
@@ -125,25 +114,14 @@ export const updateResearchSchema = z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format. Expected YYYY-MM-DD')
       .optional(),
-    description: z
-      .string()
-      .max(5000, 'Description must be at most 5000 characters')
-      .optional(),
     abstract: z
       .string()
       .max(2000, 'Abstract must be at most 2000 characters')
       .optional(),
-    keywords: z
+    publication_url: z
       .string()
-      .max(500, 'Keywords must be at most 500 characters')
-      .optional(),
-    funding_source: z
-      .string()
-      .max(200, 'Funding source must be at most 200 characters')
-      .optional(),
-    budget: z
-      .number()
-      .nonnegative('Budget must be a non-negative number')
+      .url('Invalid URL format')
+      .max(500, 'Publication URL must be at most 500 characters')
       .optional(),
   })
   .refine(
