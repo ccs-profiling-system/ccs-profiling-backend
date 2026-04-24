@@ -127,6 +127,7 @@ import { chairPortalRouter } from '../modules/chair-portal';
 import { facultyPortalRouter } from '../modules/faculty-portal';
 import { studentPortalRouter } from '../modules/student-portal/routes';
 import { secretaryPortalRouter } from '../modules/secretary-portal/routes';
+import { approvalRouter } from '../modules/approval/routes';
 
 export const routes = Router();
 
@@ -224,3 +225,15 @@ routes.use('/', studentPortalRouter);
 // - Pending changes management
 // - Report generation (PDF, Excel, CSV)
 routes.use('/secretary', secretaryPortalRouter);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// APPROVAL SYSTEM ROUTES (Authentication required, role-based permissions)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Approval System
+// Provides comprehensive approval workflow for change requests:
+// - Secretary: Submit and manage change requests
+// - Admin: Review and approve/reject all change requests
+// - Chair: Review and approve/reject department change requests
+// - Shared: Notifications and system configuration
+routes.use('/v1', approvalRouter);

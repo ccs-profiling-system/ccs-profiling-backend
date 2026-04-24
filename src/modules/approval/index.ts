@@ -18,3 +18,9 @@ export * from './services/approval-state-machine.service';
 export * from './services/department-assignment.service';
 export * from './services/entity-application.service';
 export * from './services/notification.service';
+
+// Routes
+export * from './routes/approval-secretary.routes';
+export * from './routes/approval-admin.routes';
+export * from './routes/approval-chair.routes';
+export * from './routes/approval-shared.routes';

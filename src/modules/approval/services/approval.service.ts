@@ -13,11 +13,11 @@ import {
   type CategoryType,
 } from '../../../db/schema/approvals';
 import { NotificationType } from '../../../db/schema/approvalNotifications';
-import { db } from '../db';
-import { students } from '../db/schema/students';
-import { faculty } from '../db/schema/faculty';
-import { events } from '../db/schema/events';
-import { research } from '../db/schema/research';
+import { db } from '../../../db';
+import { students } from '../../../db/schema/students';
+import { faculty } from '../../../db/schema/faculty';
+import { events } from '../../../db/schema/events';
+import { research } from '../../../db/schema/research';
 import { eq } from 'drizzle-orm';
 
 /**
