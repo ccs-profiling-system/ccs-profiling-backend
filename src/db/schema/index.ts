@@ -23,4 +23,7 @@ export * from './financialRecords';
 export * from './researchApplications';
 export * from './advisors';
 export * from './pendingChanges';
+export * from './approvals';
+export * from './approvalNotifications';
+export * from './backgroundJobs';
 export * from './utils';
