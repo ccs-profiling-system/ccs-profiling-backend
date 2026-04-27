@@ -74,7 +74,7 @@ export const approvals = pgTable('approvals', {
   
   // Additional details
   comments: text('comments'),
-  department_id: uuid('department_id'), // Will be linked to departments table
+  department_id: varchar('department_id', { length: 100 }), // Department scope key (currently department name/program)
   
   // Conflict detection and retry logic
   entity_version: integer('entity_version'),
@@ -165,7 +165,7 @@ export const insertApprovalSchema = z.object({
   decision_timestamp: z.date().optional().nullable(),
   application_timestamp: z.date().optional().nullable(),
   comments: z.string().optional().nullable(),
-  department_id: z.string().uuid().optional().nullable(),
+  department_id: z.string().max(100).optional().nullable(),
   entity_version: z.number().int().optional().nullable(),
   retry_count: z.number().int().default(0),
   failure_reason: z.string().optional().nullable(),
@@ -188,7 +188,7 @@ export const selectApprovalSchema = z.object({
   decision_timestamp: z.date().nullable(),
   application_timestamp: z.date().nullable(),
   comments: z.string().nullable(),
-  department_id: z.string().uuid().nullable(),
+  department_id: z.string().nullable(),
   entity_version: z.number().int().nullable(),
   retry_count: z.number().int(),
   failure_reason: z.string().nullable(),

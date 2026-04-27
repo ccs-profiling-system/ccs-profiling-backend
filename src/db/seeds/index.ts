@@ -44,12 +44,12 @@ export async function runSeeders() {
   try {
     // Check if users table has data
     const usersHasData = await hasData('users');
-    let userIds: Array<{ id: string; role: string }> = [];
+    let userIds: Array<{ id: string; role: string; email: string }> = [];
 
     if (usersHasData) {
       console.log('ℹ️  Users table already has data, skipping user seeding...');
       // Get existing user IDs for reference
-      const existingUsers = await db.select({ id: users.id, role: users.role }).from(users);
+      const existingUsers = await db.select({ id: users.id, role: users.role, email: users.email }).from(users);
       userIds = existingUsers;
       console.log(`📊 Found ${userIds.length} existing users\n`);
     } else {
@@ -73,20 +73,14 @@ export async function runSeeders() {
       console.log(`✅ Created ${studentIds.length} students\n`);
     }
 
-    // Check if faculty table has data
-    const facultyHasData = await hasData('faculty');
-    let facultyIds: string[] = [];
-
-    if (facultyHasData) {
-      console.log('ℹ️  Faculty table already has data, skipping faculty seeding...');
-      const existingFaculty = await db.select({ id: faculty.id }).from(faculty);
-      facultyIds = existingFaculty.map(f => f.id);
-      console.log(`📊 Found ${facultyIds.length} existing faculty members\n`);
-    } else {
-      console.log('📝 Seeding faculty...');
-      facultyIds = await seedFaculty(db, userIds.filter(u => u.role === 'faculty'));
-      console.log(`✅ Created ${facultyIds.length} faculty members\n`);
-    }
+    console.log('📝 Ensuring faculty seed records exist...');
+    const createdFacultyIds = await seedFaculty(
+      db,
+      userIds.filter(u => u.role === 'faculty' || u.role === 'department_chair')
+    );
+    const existingFaculty = await db.select({ id: faculty.id }).from(faculty);
+    const facultyIds = existingFaculty.map(f => f.id);
+    console.log(`✅ Faculty seed sync complete (${createdFacultyIds.length} created, ${facultyIds.length} total)\n`);
 
     // Check if instructions table has data
     const instructionsHasData = await hasData('instructions');

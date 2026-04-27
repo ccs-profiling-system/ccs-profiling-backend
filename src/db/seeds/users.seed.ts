@@ -82,7 +82,7 @@ function generateUserSeeds(): UserSeed[] {
 const userSeeds: UserSeed[] = generateUserSeeds();
 
 export async function seedUsers(db: Database) {
-  const createdUsers: Array<{ id: string; role: string }> = [];
+  const createdUsers: Array<{ id: string; role: string; email: string }> = [];
 
   for (const userSeed of userSeeds) {
     // Generate UUID v7 for primary key
@@ -98,7 +98,7 @@ export async function seedUsers(db: Database) {
         role: userSeed.role,
         is_active: userSeed.is_active,
       })
-      .returning({ id: users.id, role: users.role });
+      .returning({ id: users.id, role: users.role, email: users.email });
 
     createdUsers.push(user);
     console.log(`  - Created ${userSeed.role}: ${userSeed.email}`);

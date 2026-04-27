@@ -38,7 +38,7 @@ export class AuthController {
       let facultyId: string | undefined;
       let studentId: string | undefined;
 
-      if (user.role === 'faculty') {
+      if (user.role === 'faculty' || user.role === 'department_chair') {
         const { faculty } = await import('../../../db/schema');
         const { db } = await import('../../../db');
         const { eq } = await import('drizzle-orm');
