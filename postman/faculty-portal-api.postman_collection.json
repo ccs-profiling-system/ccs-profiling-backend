@@ -854,6 +854,315 @@
 				}
 			],
 			"description": "Course material management (upload, view, delete)"
+		},
+		{
+			"name": "Approval System (Chair)",
+			"item": [
+				{
+					"name": "Get Pending Approvals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/pending?page=1&limit=10&entityType=&priority=",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", "pending"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "entityType",
+									"value": "",
+									"description": "Filter by entity type: event, research, document, schedule (optional)"
+								},
+								{
+									"key": "priority",
+									"value": "",
+									"description": "Filter by priority: low, medium, high, urgent (optional)"
+								}
+							]
+						},
+						"description": "Get all pending approval requests for the department chair to review"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Approval Details",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set a sample approvalId if not already set",
+									"if (!pm.collectionVariables.get('approvalId')) {",
+									"    pm.collectionVariables.set('approvalId', 'APPROVAL-001');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{approvalId}}",
+									"description": "Approval ID"
+								}
+							]
+						},
+						"description": "Get detailed information about a specific approval request including submitter info, change data, and history"
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Request",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comments\": \"Approved. Looks good to proceed.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/:id/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", ":id", "approve"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{approvalId}}",
+									"description": "Approval ID"
+								}
+							]
+						},
+						"description": "Approve a pending approval request. Optionally provide comments for the submitter."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Request",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Insufficient budget allocation\",\n  \"comments\": \"Please revise the budget and resubmit.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/:id/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", ":id", "reject"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{approvalId}}",
+									"description": "Approval ID"
+								}
+							]
+						},
+						"description": "Reject a pending approval request. Reason is required, comments are optional."
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Approve",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"approvalIds\": [\n    \"{{approvalId}}\",\n    \"APPROVAL-002\",\n    \"APPROVAL-003\"\n  ],\n  \"comments\": \"Batch approval for routine requests\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/bulk-approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", "bulk-approve"]
+						},
+						"description": "Approve multiple approval requests at once. Useful for routine approvals."
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Reject",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"approvalIds\": [\n    \"APPROVAL-004\",\n    \"APPROVAL-005\"\n  ],\n  \"reason\": \"Does not meet department standards\",\n  \"comments\": \"Please review department guidelines and resubmit\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/bulk-reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", "bulk-reject"]
+						},
+						"description": "Reject multiple approval requests at once with a common reason."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Approval History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/history?page=1&limit=10&status=&entityType=&startDate=&endDate=",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", "history"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"description": "Filter by status: approved, rejected (optional)"
+								},
+								{
+									"key": "entityType",
+									"value": "",
+									"description": "Filter by entity type (optional)"
+								},
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Filter by start date (YYYY-MM-DD) (optional)"
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "Filter by end date (YYYY-MM-DD) (optional)"
+								}
+							]
+						},
+						"description": "Get history of all approval decisions made by the chair"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Approval Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/department/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "department", "stats"]
+						},
+						"description": "Get approval statistics including pending count, approval rate, average processing time, and breakdown by entity type"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Approval Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/notifications?page=1&limit=10&read=",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "notifications"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								},
+								{
+									"key": "read",
+									"value": "",
+									"description": "Filter by read status: true, false (optional)"
+								}
+							]
+						},
+						"description": "Get approval-related notifications for the chair"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/notifications/:id/read",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "notifications", ":id", "read"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{notificationId}}",
+									"description": "Notification ID"
+								}
+							]
+						},
+						"description": "Mark a specific approval notification as read"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Approval Config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/approvals/config",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "approvals", "config"]
+						},
+						"description": "Get approval system configuration including entity types, change types, and approval workflows"
+					},
+					"response": []
+				}
+			],
+			"description": "Approval system endpoints for department chairs to review and approve/reject requests"
 		}
 	],
 	"variable": [
@@ -894,6 +1203,16 @@
 		},
 		{
 			"key": "courseId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "approvalId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "notificationId",
 			"value": "",
 			"type": "string"
 		},
