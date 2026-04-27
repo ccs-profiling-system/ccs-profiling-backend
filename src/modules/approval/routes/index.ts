@@ -70,7 +70,7 @@ export function createApprovalRouter(): Router {
   // - POST /api/v1/approvals/department/bulk-reject
   // - GET /api/v1/approvals/department/history
   // - GET /api/v1/approvals/department/stats
-  router.use('/approvals', createChairRoutes());
+  router.use('/approvals/department', createChairRoutes());
 
   // Admin advanced routes
   // - GET /api/v1/audit-logs

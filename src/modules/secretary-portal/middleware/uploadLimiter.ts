@@ -61,7 +61,7 @@ export function uploadLimiter(
     activeUploads--;
 
     // Call original end function
-    return originalEnd.apply(this, args);
+    return originalEnd.apply(this, args as any);
   };
 
   // Also handle connection close/abort

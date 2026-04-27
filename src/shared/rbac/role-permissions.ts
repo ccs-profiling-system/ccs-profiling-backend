@@ -3,6 +3,8 @@ import { Permission } from './permissions';
 
 export const rolePermissions: Record<Role, Permission[]> = {
   [Role.ADMIN]: [Permission.READ_USERS, Permission.WRITE_USERS, Permission.DELETE_USERS],
-  [Role.STUDENT]: [Permission.READ_USERS],
+  [Role.DEPARTMENT_CHAIR]: [Permission.READ_USERS, Permission.WRITE_USERS],
   [Role.FACULTY]: [Permission.READ_USERS, Permission.WRITE_USERS],
+  [Role.SECRETARY]: [Permission.READ_USERS],
+  [Role.STUDENT]: [Permission.READ_USERS],
 };

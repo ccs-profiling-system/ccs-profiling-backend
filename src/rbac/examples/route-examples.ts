@@ -16,6 +16,8 @@ import { requirePermission, checkOwnership } from '../middleware';
 import { Permission } from '../types';
 
 const router = Router();
+const emptyList: unknown[] = [];
+const emptyResource: Record<string, never> = {};
 
 // ============================================================================
 // PATTERN 1: PERMISSION-ONLY CHECK
@@ -32,7 +34,7 @@ router.get('/students',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch all students
-      const students = []; // await studentService.findAll();
+      const students: unknown[] = emptyList; // await studentService.findAll();
       res.json(students);
     } catch (error) {
       next(error);
@@ -50,7 +52,7 @@ router.get('/schedules',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch all schedules
-      const schedules = []; // await scheduleService.findAll();
+      const schedules: unknown[] = emptyList; // await scheduleService.findAll();
       res.json(schedules);
     } catch (error) {
       next(error);
@@ -68,7 +70,7 @@ router.post('/students',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: create student
-      const student = {}; // await studentService.create(req.body);
+      const student = emptyResource; // await studentService.create(req.body);
       res.status(201).json(student);
     } catch (error) {
       next(error);
@@ -86,7 +88,7 @@ router.post('/research',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: create research
-      const research = {}; // await researchService.create(req.body);
+      const research = emptyResource; // await researchService.create(req.body);
       res.status(201).json(research);
     } catch (error) {
       next(error);
@@ -104,7 +106,7 @@ router.get('/analytics/dashboard',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch analytics
-      const analytics = {}; // await analyticsService.getDashboard();
+      const analytics = emptyResource; // await analyticsService.getDashboard();
       res.json(analytics);
     } catch (error) {
       next(error);
@@ -129,7 +131,7 @@ router.put('/instructions/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update instruction
-      const instruction = {}; // await instructionService.update(req.params.id, req.body);
+      const instruction = emptyResource; // await instructionService.update(req.params.id, req.body);
       res.json(instruction);
     } catch (error) {
       next(error);
@@ -169,7 +171,7 @@ router.put('/students/:id/profile',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update student profile
-      const student = {}; // await studentService.updateProfile(req.params.id, req.body);
+      const student = emptyResource; // await studentService.updateProfile(req.params.id, req.body);
       res.json(student);
     } catch (error) {
       next(error);
@@ -188,7 +190,7 @@ router.put('/students/:studentId/academic-history',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update academic history
-      const history = {}; // await academicHistoryService.update(req.params.studentId, req.body);
+      const history = emptyResource; // await academicHistoryService.update(req.params.studentId, req.body);
       res.json(history);
     } catch (error) {
       next(error);
@@ -207,7 +209,7 @@ router.put('/enrollments/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update enrollment
-      const enrollment = {}; // await enrollmentService.update(req.params.id, req.body);
+      const enrollment = emptyResource; // await enrollmentService.update(req.params.id, req.body);
       res.json(enrollment);
     } catch (error) {
       next(error);
@@ -226,7 +228,7 @@ router.get('/students/:id/profile',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch student profile
-      const student = {}; // await studentService.findById(req.params.id);
+      const student = emptyResource; // await studentService.findById(req.params.id);
       res.json(student);
     } catch (error) {
       next(error);
@@ -251,7 +253,7 @@ router.post('/schedules/:id/approve',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: approve schedule
-      const schedule = {}; // await scheduleService.approve(req.params.id);
+      const schedule = emptyResource; // await scheduleService.approve(req.params.id);
       res.json(schedule);
     } catch (error) {
       next(error);
@@ -271,7 +273,7 @@ router.post('/research/:id/submit',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: submit research
-      const research = {}; // await researchService.submit(req.params.id);
+      const research = emptyResource; // await researchService.submit(req.params.id);
       res.json(research);
     } catch (error) {
       next(error);
@@ -291,7 +293,7 @@ router.post('/events/:id/reject',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: reject event
-      const event = {}; // await eventService.reject(req.params.id, req.body.reason);
+      const event = emptyResource; // await eventService.reject(req.params.id, req.body.reason);
       res.json(event);
     } catch (error) {
       next(error);
@@ -311,7 +313,7 @@ router.post('/schedules/:id/publish',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: publish schedule
-      const schedule = {}; // await scheduleService.publish(req.params.id);
+      const schedule = emptyResource; // await scheduleService.publish(req.params.id);
       res.json(schedule);
     } catch (error) {
       next(error);
@@ -331,7 +333,7 @@ router.post('/enrollments/:id/approve',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: approve enrollment
-      const enrollment = {}; // await enrollmentService.approve(req.params.id);
+      const enrollment = emptyResource; // await enrollmentService.approve(req.params.id);
       res.json(enrollment);
     } catch (error) {
       next(error);
@@ -357,7 +359,7 @@ router.post('/research/:id/submit',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: submit research
-      const research = {}; // await researchService.submit(req.params.id);
+      const research = emptyResource; // await researchService.submit(req.params.id);
       res.json(research);
     } catch (error) {
       next(error);
@@ -378,7 +380,7 @@ router.put('/instructions/:id/draft',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update instruction
-      const instruction = {}; // await instructionService.update(req.params.id, req.body);
+      const instruction = emptyResource; // await instructionService.update(req.params.id, req.body);
       res.json(instruction);
     } catch (error) {
       next(error);
@@ -399,7 +401,7 @@ router.post('/events/:id/withdraw',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: withdraw event
-      const event = {}; // await eventService.withdraw(req.params.id);
+      const event = emptyResource; // await eventService.withdraw(req.params.id);
       res.json(event);
     } catch (error) {
       next(error);
@@ -420,7 +422,7 @@ router.post('/research/:id/resubmit',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: resubmit research
-      const research = {}; // await researchService.resubmit(req.params.id, req.body);
+      const research = emptyResource; // await researchService.resubmit(req.params.id, req.body);
       res.json(research);
     } catch (error) {
       next(error);
@@ -441,7 +443,7 @@ router.put('/schedules/:id/draft',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update schedule
-      const schedule = {}; // await scheduleService.update(req.params.id, req.body);
+      const schedule = emptyResource; // await scheduleService.update(req.params.id, req.body);
       res.json(schedule);
     } catch (error) {
       next(error);
@@ -469,7 +471,7 @@ router.put('/students/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update student
-      const student = {}; // await studentService.update(req.params.id, req.body);
+      const student = emptyResource; // await studentService.update(req.params.id, req.body);
       res.json(student);
     } catch (error) {
       next(error);
@@ -488,7 +490,7 @@ router.post('/students/:studentId/enrollments/:enrollmentId/approve',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: approve enrollment
-      const enrollment = {}; // await enrollmentService.approve(req.params.enrollmentId);
+      const enrollment = emptyResource; // await enrollmentService.approve(req.params.enrollmentId);
       res.json(enrollment);
     } catch (error) {
       next(error);
@@ -513,7 +515,7 @@ router.get('/students',
   requirePermission(PERMISSIONS.STUDENT_READ),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const students = []; // await studentService.findAll();
+      const students: unknown[] = emptyList; // await studentService.findAll();
       res.json(students);
     } catch (error) {
       next(error);
@@ -530,7 +532,7 @@ function composeMiddleware(config: {
   ownership?: { resourceType: string; options?: any };
   workflow?: { resourceType: string };
 }) {
-  const middleware = [];
+  const middleware: ReturnType<typeof requirePermission>[] = [];
 
   middleware.push(requirePermission(config.permission));
 
@@ -557,7 +559,7 @@ router.put('/instructions/:id',
   }),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const instruction = {}; // await instructionService.update(req.params.id, req.body);
+      const instruction = emptyResource; // await instructionService.update(req.params.id, req.body);
       res.json(instruction);
     } catch (error) {
       next(error);
@@ -575,7 +577,7 @@ router.post('/research/:id/approve',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic with error handling
-      const research = {}; // await researchService.approve(req.params.id);
+      const research = emptyResource; // await researchService.approve(req.params.id);
       
       if (!research) {
         return res.status(404).json({ error: 'Research not found' });

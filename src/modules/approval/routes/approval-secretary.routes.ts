@@ -186,7 +186,7 @@ export function createSecretaryRoutes(): Router {
         const approval = await approvalService.getApprovalById(approvalId);
 
         if (!approval) {
-          return res.status(404).json({
+          res.status(404).json({
             success: false,
             error: {
               code: 'NOT_FOUND',
@@ -194,11 +194,12 @@ export function createSecretaryRoutes(): Router {
               timestamp: new Date().toISOString(),
             },
           });
+          return;
         }
 
         // Verify the submission belongs to the authenticated user
         if (approval.submitter_id !== userId) {
-          return res.status(403).json({
+          res.status(403).json({
             success: false,
             error: {
               code: 'FORBIDDEN',
@@ -206,6 +207,7 @@ export function createSecretaryRoutes(): Router {
               timestamp: new Date().toISOString(),
             },
           });
+          return;
         }
 
         res.status(200).json({

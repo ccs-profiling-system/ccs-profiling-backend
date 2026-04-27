@@ -90,7 +90,7 @@ export class EntityApplicationService {
       await this.detectConflict(approval, entity);
 
       // Validate change_details against entity schema (Requirement 21.3)
-      this.validateChangeDetails(approval.entity_type, approval.change_details);
+      this.validateChangeDetails(approval.entity_type, approval.change_details as Record<string, any>);
 
       // Apply changes in a transaction (Requirement 21.7)
       await db.transaction(async (tx) => {
@@ -99,7 +99,7 @@ export class EntityApplicationService {
           tx,
           approval.entity_type,
           approval.entity_id,
-          approval.change_details
+          approval.change_details as Record<string, any>
         );
 
         // Increment entity version (Requirement 21.5)

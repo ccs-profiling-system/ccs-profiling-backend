@@ -283,7 +283,7 @@ export async function generateEventReport(
  * 
  * Requirements: 10.7
  */
-function generateStudentPDF(data: any[]): ReportResult {
+function generateStudentPDF(data: any[]): Promise<ReportResult> {
   const doc = new PDFDocument({ margin: 50 });
   const chunks: Buffer[] = [];
 
@@ -335,7 +335,7 @@ function generateStudentPDF(data: any[]): ReportResult {
 
   doc.end();
 
-  return new Promise((resolve) => {
+  return new Promise<ReportResult>((resolve) => {
     doc.on('end', () => {
       resolve({
         buffer: Buffer.concat(chunks),
@@ -351,7 +351,7 @@ function generateStudentPDF(data: any[]): ReportResult {
  * 
  * Requirements: 10.7
  */
-function generateFacultyPDF(data: any[]): ReportResult {
+function generateFacultyPDF(data: any[]): Promise<ReportResult> {
   const doc = new PDFDocument({ margin: 50 });
   const chunks: Buffer[] = [];
 
@@ -401,7 +401,7 @@ function generateFacultyPDF(data: any[]): ReportResult {
 
   doc.end();
 
-  return new Promise((resolve) => {
+  return new Promise<ReportResult>((resolve) => {
     doc.on('end', () => {
       resolve({
         buffer: Buffer.concat(chunks),
@@ -417,7 +417,7 @@ function generateFacultyPDF(data: any[]): ReportResult {
  * 
  * Requirements: 10.7
  */
-function generateEventPDF(data: any[]): ReportResult {
+function generateEventPDF(data: any[]): Promise<ReportResult> {
   const doc = new PDFDocument({ margin: 50 });
   const chunks: Buffer[] = [];
 
@@ -466,7 +466,7 @@ function generateEventPDF(data: any[]): ReportResult {
 
   doc.end();
 
-  return new Promise((resolve) => {
+  return new Promise<ReportResult>((resolve) => {
     doc.on('end', () => {
       resolve({
         buffer: Buffer.concat(chunks),

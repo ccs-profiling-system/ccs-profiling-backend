@@ -31,6 +31,19 @@ interface TableColumn {
   is_nullable: string;
 }
 
+function getQueryRows<T>(result: unknown): T[] {
+  if (Array.isArray(result)) {
+    return result as T[];
+  }
+
+  if (result && typeof result === 'object' && 'rows' in result) {
+    const rows = (result as { rows?: unknown }).rows;
+    return Array.isArray(rows) ? (rows as T[]) : [];
+  }
+
+  return [];
+}
+
 /**
  * Verify foreign key constraints exist
  * 
@@ -53,7 +66,7 @@ async function verifyForeignKeyConstraints(): Promise<void> {
     { table: 'research_advisers', column: 'faculty_id', references: 'faculty', onDelete: 'CASCADE' },
   ];
   
-  const result = await db.execute<ForeignKeyConstraint>(sql`
+  const result = await db.execute(sql<ForeignKeyConstraint>`
     SELECT
       tc.table_name,
       kcu.column_name,
@@ -75,7 +88,7 @@ async function verifyForeignKeyConstraints(): Promise<void> {
     ORDER BY tc.table_name, kcu.column_name;
   `);
   
-  const constraints = result.rows || [];
+  const constraints = getQueryRows<ForeignKeyConstraint>(result);
   
   let allFound = true;
   
@@ -119,7 +132,7 @@ async function verifyUniqueConstraints(): Promise<void> {
     { table: 'faculty', column: 'faculty_id' },
   ];
   
-  const result = await db.execute<UniqueConstraint>(sql`
+  const result = await db.execute(sql<UniqueConstraint>`
     SELECT
       tc.table_name,
       kcu.column_name,
@@ -133,7 +146,7 @@ async function verifyUniqueConstraints(): Promise<void> {
     ORDER BY tc.table_name, kcu.column_name;
   `);
   
-  const constraints = result.rows || [];
+  const constraints = getQueryRows<UniqueConstraint>(result);
   
   let allFound = true;
   
@@ -175,7 +188,7 @@ async function verifySoftDeleteColumns(): Promise<void> {
     'research',
   ];
   
-  const result = await db.execute<TableColumn>(sql`
+  const result = await db.execute(sql<TableColumn>`
     SELECT
       table_name,
       column_name,
@@ -187,7 +200,7 @@ async function verifySoftDeleteColumns(): Promise<void> {
     ORDER BY table_name, column_name;
   `);
   
-  const columns = result.rows || [];
+  const columns = getQueryRows<TableColumn>(result);
   
   let allFound = true;
   
@@ -227,7 +240,7 @@ async function verifyApprovalStatusColumns(): Promise<void> {
     { table: 'research', column: 'status' },
   ];
   
-  const result = await db.execute<TableColumn>(sql`
+  const result = await db.execute(sql<TableColumn>`
     SELECT
       table_name,
       column_name,
@@ -239,7 +252,7 @@ async function verifyApprovalStatusColumns(): Promise<void> {
     ORDER BY table_name;
   `);
   
-  const columns = result.rows || [];
+  const columns = getQueryRows<TableColumn>(result);
   
   let allFound = true;
   

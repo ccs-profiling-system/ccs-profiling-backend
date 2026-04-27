@@ -549,7 +549,11 @@ export async function uploadResearchFile(
     userAgent
   );
   
-  return result as ResearchFileDTO;
+  // Map to ResearchFileDTO (entity_id becomes research_id)
+  return {
+    ...result,
+    research_id: result.entity_id,
+  } as ResearchFileDTO;
 }
 
 /**
@@ -580,7 +584,11 @@ export async function getResearchFiles(id: string): Promise<ResearchFileDTO[]> {
     )
     .orderBy(uploads.created_at);
   
-  return files as ResearchFileDTO[];
+  // Map to ResearchFileDTO (entity_id becomes research_id)
+  return files.map(file => ({
+    ...file,
+    research_id: file.entity_id,
+  })) as ResearchFileDTO[];
 }
 
 /**
@@ -656,7 +664,11 @@ export async function deleteResearchFile(
     userAgent
   );
   
-  return result as ResearchFileDTO;
+  // Map to ResearchFileDTO (entity_id becomes research_id)
+  return {
+    ...result,
+    research_id: result.entity_id,
+  } as ResearchFileDTO;
 }
 
 /**

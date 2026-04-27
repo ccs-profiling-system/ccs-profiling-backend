@@ -7,9 +7,12 @@
  */
 
 // Repositories
-export * from './repositories/approval.repository';
-export * from './repositories/notification.repository';
+export { approvalRepository, ApprovalRepository } from './repositories/approval.repository';
+export { notificationRepository, NotificationRepository } from './repositories/notification.repository';
 export * from './repositories/background-job.repository';
+
+// Re-export shared types from approval.repository only (avoid duplicates)
+export type { ApprovalFilters, PaginationOptions, PaginatedResult } from './repositories/approval.repository';
 
 // Services
 export * from './services/approval.service';

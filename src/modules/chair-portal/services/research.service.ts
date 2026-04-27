@@ -78,7 +78,7 @@ export interface ResearchDTO {
  * Approval action data
  */
 export interface ApprovalData {
-  approval_notes?: string;
+  approver_notes?: string;
 }
 
 /**
@@ -404,7 +404,7 @@ export class ResearchService {
       before_state: { status: researchProject.status },
       after_state: { 
         status: 'approved',
-        approval_notes: approvalData.approval_notes,
+        approval_notes: approvalData.approver_notes,
       },
     };
 

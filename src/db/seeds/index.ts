@@ -395,7 +395,8 @@ export async function runSeeders() {
       console.log(`ℹ️  Found ${pendingChangeIds.length} existing pending changes\n`);
     } else {
       console.log('📝 Seeding pending changes...');
-      pendingChangeIds = await seedPendingChanges(db, studentIds, facultyIds, eventIds, researchIds, userIds);
+      const userIdStrings = userIds.map(u => u.id);
+      pendingChangeIds = await seedPendingChanges(db, studentIds, facultyIds, eventIds, researchIds, userIdStrings);
       console.log(`✅ Created ${pendingChangeIds.length} pending changes\n`);
     }
 

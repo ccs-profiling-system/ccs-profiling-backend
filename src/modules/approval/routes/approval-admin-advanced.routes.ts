@@ -24,7 +24,7 @@ import { entityApplicationService } from '../services/entity-application.service
 import { approvalStateMachine } from '../services/approval-state-machine.service';
 import { notificationService } from '../services/notification.service';
 import { db } from '../../../db';
-import { ApprovalStatus } from '../../../db/schema/approvals';
+import { ApprovalStatus, type ApprovalStatusType } from '../../../db/schema/approvals';
 
 /**
  * Validation Schemas
@@ -203,7 +203,7 @@ export function createAdminAdvancedRoutes(): Router {
         }
 
         // Validate status is 'failed'
-        if (!approvalStateMachine.canRetry(approval.status)) {
+        if (!approvalStateMachine.canRetry(approval.status as ApprovalStatusType)) {
           res.status(400).json({
             success: false,
             error: {

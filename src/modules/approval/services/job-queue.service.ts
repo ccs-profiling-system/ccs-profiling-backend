@@ -140,14 +140,17 @@ export class JobQueueService {
       });
 
       // Execute the job handler
-      const result = await handler(job.payload);
+      const result = await handler(job.payload as Record<string, any>);
 
       // Update status to completed
+      // Double cast to handle unknown type from handler
+      const resultData: Record<string, any> | undefined = 
+        result && typeof result === 'object' ? (result as unknown as Record<string, any>) : undefined;
       const completedJob = await backgroundJobRepository.updateStatus(
         jobId,
         JobStatus.COMPLETED,
         {
-          result,
+          ...(resultData && { result: resultData }),
           completed_at: new Date(),
         }
       );
