@@ -178,7 +178,7 @@ export function createAdminAdvancedRoutes(): Router {
   router.patch(
     '/approvals/:id/retry',
     readOperationRateLimiter,
-    requirePermission('admin.approval.retry'),
+    requirePermission('approval.retry'),
     approvalAuditMiddleware,
     validate(idParamSchema, 'params'),
     validate(retryRequestSchema, 'body'),

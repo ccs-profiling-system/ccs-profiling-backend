@@ -74,7 +74,7 @@ export function createSecretaryRoutes(): Router {
   router.post(
     '/',
     submissionRateLimiter,
-    requirePermission('secretary.approval.submit'),
+    requirePermission('approval.submit'),
     validate(submitChangeRequestSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -119,7 +119,7 @@ export function createSecretaryRoutes(): Router {
   router.get(
     '/my-submissions',
     readOperationRateLimiter,
-    requirePermission('secretary.approval.read'),
+    requirePermission('approval.read'),
     validate(listQuerySchema, 'query'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -176,7 +176,7 @@ export function createSecretaryRoutes(): Router {
   router.get(
     '/my-submissions/:id',
     readOperationRateLimiter,
-    requirePermission('secretary.approval.read'),
+    requirePermission('approval.read'),
     validate(idParamSchema, 'params'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -243,7 +243,7 @@ export function createSecretaryRoutes(): Router {
   router.patch(
     '/:id/withdraw',
     submissionRateLimiter,
-    requirePermission('secretary.approval.withdraw'),
+    requirePermission('approval.withdraw'),
     validate(idParamSchema, 'params'),
     validate(withdrawRequestSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -279,7 +279,7 @@ export function createSecretaryRoutes(): Router {
   router.get(
     '/my-stats',
     readOperationRateLimiter,
-    requirePermission('secretary.approval.read'),
+    requirePermission('approval.read'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const userId = req.user!.userId;

@@ -88,7 +88,7 @@ export function createChairRoutes(): Router {
   router.get(
     '/pending',
     readOperationRateLimiter,
-    requirePermission('chair.approval.review'),
+    requirePermission('approval.review'),
     validate(listQuerySchema, 'query'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -147,7 +147,7 @@ export function createChairRoutes(): Router {
   router.get(
     '/:id',
     readOperationRateLimiter,
-    requirePermission('chair.approval.review'),
+    requirePermission('approval.review'),
     validate(idParamSchema, 'params'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -219,7 +219,7 @@ export function createChairRoutes(): Router {
   router.patch(
     '/:id/approve',
     readOperationRateLimiter,
-    requirePermission('chair.approval.approve'),
+    requirePermission('approval.approve'),
     validate(idParamSchema, 'params'),
     validate(approveRequestSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -298,7 +298,7 @@ export function createChairRoutes(): Router {
   router.patch(
     '/:id/reject',
     readOperationRateLimiter,
-    requirePermission('chair.approval.reject'),
+    requirePermission('approval.reject'),
     validate(idParamSchema, 'params'),
     validate(rejectRequestSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -377,7 +377,7 @@ export function createChairRoutes(): Router {
   router.post(
     '/bulk-approve',
     bulkOperationRateLimiter,
-    requirePermission('chair.approval.bulk'),
+    requirePermission('approval.bulk'),
     validate(bulkApproveSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -440,7 +440,7 @@ export function createChairRoutes(): Router {
   router.post(
     '/bulk-reject',
     bulkOperationRateLimiter,
-    requirePermission('chair.approval.bulk'),
+    requirePermission('approval.bulk'),
     validate(bulkRejectSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -506,7 +506,7 @@ export function createChairRoutes(): Router {
   router.get(
     '/history',
     readOperationRateLimiter,
-    requirePermission('chair.approval.review'),
+    requirePermission('approval.review'),
     validate(listQuerySchema, 'query'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -561,7 +561,7 @@ export function createChairRoutes(): Router {
   router.get(
     '/stats',
     readOperationRateLimiter,
-    requirePermission('chair.approval.stats'),
+    requirePermission('approval.stats'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const departmentInfo = await extractDepartmentFromRequest(req);

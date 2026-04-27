@@ -35,12 +35,12 @@ export const permissionConfig: PermissionConfig = {
    * Can perform all operations across all modules.
    * 
    * Approval System Permissions:
-   * - admin.approval.review: Review all approval requests
-   * - admin.approval.approve: Approve any request
-   * - admin.approval.reject: Reject any request
-   * - admin.approval.bulk: Perform bulk operations
-   * - admin.approval.stats: View system-wide statistics
-   * - admin.approval.retry: Retry failed operations
+   * - approval.review: Review all approval requests
+   * - approval.approve: Approve any request
+   * - approval.reject: Reject any request
+   * - approval.bulk: Perform bulk operations
+   * - approval.stats: View system-wide statistics
+   * - approval.retry: Retry failed operations
    */
   [Role.ADMIN]: {
     allow: ['*.*'],
@@ -91,11 +91,11 @@ export const permissionConfig: PermissionConfig = {
       'chair.*',
       
       // Approval System Permissions
-      'chair.approval.review',
-      'chair.approval.approve',
-      'chair.approval.reject',
-      'chair.approval.bulk',
-      'chair.approval.stats',
+      'approval.review',
+      'approval.approve',
+      'approval.reject',
+      'approval.bulk',
+      'approval.stats',
       
       // Schedule Management
       'schedule.*',
@@ -337,9 +337,9 @@ export const permissionConfig: PermissionConfig = {
       'secretary.*',
       
       // Approval System Permissions
-      'secretary.approval.submit',
-      'secretary.approval.read',
-      'secretary.approval.withdraw',
+      'approval.submit',
+      'approval.read',
+      'approval.withdraw',
       
       // Student Management (legacy)
       'student.*',

@@ -83,7 +83,7 @@ export function createAdminRoutes(): Router {
   router.get(
     '/pending',
     readOperationRateLimiter,
-    requirePermission('admin.approval.review'),
+    requirePermission('approval.review'),
     validate(listQuerySchema, 'query'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -138,7 +138,7 @@ export function createAdminRoutes(): Router {
   router.get(
     '/:id',
     readOperationRateLimiter,
-    requirePermission('admin.approval.review'),
+    requirePermission('approval.review'),
     validate(idParamSchema, 'params'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -195,7 +195,7 @@ export function createAdminRoutes(): Router {
   router.patch(
     '/:id/approve',
     readOperationRateLimiter,
-    requirePermission('admin.approval.approve'),
+    requirePermission('approval.approve'),
     validate(idParamSchema, 'params'),
     validate(approveRequestSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -246,7 +246,7 @@ export function createAdminRoutes(): Router {
   router.patch(
     '/:id/reject',
     readOperationRateLimiter,
-    requirePermission('admin.approval.reject'),
+    requirePermission('approval.reject'),
     validate(idParamSchema, 'params'),
     validate(rejectRequestSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -296,7 +296,7 @@ export function createAdminRoutes(): Router {
   router.post(
     '/bulk-approve',
     bulkOperationRateLimiter,
-    requirePermission('admin.approval.bulk'),
+    requirePermission('approval.bulk'),
     validate(bulkApproveSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -355,7 +355,7 @@ export function createAdminRoutes(): Router {
   router.post(
     '/bulk-reject',
     bulkOperationRateLimiter,
-    requirePermission('admin.approval.bulk'),
+    requirePermission('approval.bulk'),
     validate(bulkRejectSchema, 'body'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -417,7 +417,7 @@ export function createAdminRoutes(): Router {
   router.get(
     '/history',
     readOperationRateLimiter,
-    requirePermission('admin.approval.review'),
+    requirePermission('approval.review'),
     validate(listQuerySchema, 'query'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
@@ -468,7 +468,7 @@ export function createAdminRoutes(): Router {
   router.get(
     '/stats',
     readOperationRateLimiter,
-    requirePermission('admin.approval.stats'),
+    requirePermission('approval.stats'),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const stats = await approvalStatisticsService.getAdminStats();

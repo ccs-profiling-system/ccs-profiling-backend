@@ -10,7 +10,7 @@
  * **Validates: Requirements 25.1-25.8**
  */
 
-import rateLimit, { RateLimitRequestHandler } from 'express-rate-limit';
+import rateLimit, { RateLimitRequestHandler, ipKeyGenerator } from 'express-rate-limit';
 import { Request, Response } from 'express';
 import { AuditLogRepository } from '../../audit-logs/repositories/auditLog.repository';
 import { db } from '../../../db';
@@ -71,7 +71,7 @@ const rateLimitHandler = async (req: Request, res: Response) => {
  */
 const keyGenerator = (req: Request): string => {
   const userId = (req as any).user?.id;
-  return userId || req.ip || 'anonymous';
+  return userId || ipKeyGenerator(req.ip || req.socket.remoteAddress || 'anonymous');
 };
 
 /**
