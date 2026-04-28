@@ -5,7 +5,6 @@
  * Handles full CRUD operations, pagination, filtering, approval/rejection workflows,
  * and department-scoped access.
  * 
- * Requirements: 6.1, 6.4, 6.8, 6.11, 6.13, 6.15, 6.17, 6.20, 9.1, 9.2, 14.1
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -42,7 +41,6 @@ export class EventController {
    * @returns HTTP 200 with paginated event list
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.1, 6.2, 6.3
    */
   listEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -115,7 +113,6 @@ export class EventController {
    * @throws ValidationError if request body is invalid
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.4, 6.5, 6.6, 6.7
    */
   createEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -156,7 +153,6 @@ export class EventController {
    * @returns HTTP 404 if event not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.8, 6.9, 6.10
    */
   getEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -206,7 +202,6 @@ export class EventController {
    * @returns HTTP 404 if event not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.11, 6.12
    */
   updateEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -270,7 +265,6 @@ export class EventController {
    * @returns HTTP 404 if event not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.13, 6.14
    */
   deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -321,7 +315,6 @@ export class EventController {
    * @returns HTTP 404 if event not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.15, 6.16
    */
   approveEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -392,7 +385,6 @@ export class EventController {
    * @returns HTTP 404 if event not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.17, 6.18, 6.19
    */
   rejectEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -462,7 +454,6 @@ export class EventController {
    * @returns HTTP 404 if event not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 6.20, 6.21
    */
   getParticipants = async (req: Request, res: Response, next: NextFunction) => {
     try {

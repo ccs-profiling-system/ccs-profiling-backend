@@ -5,7 +5,6 @@
  * Handles participation record viewing and submission for courses assigned to faculty members.
  * Validates course ownership and student enrollment before processing participation records.
  * 
- * Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10, 10.11, 10.12, 10.13, 10.14
  */
 
 import { eq, and, isNull, inArray } from 'drizzle-orm';
@@ -94,7 +93,6 @@ export class ParticipationService {
    * @throws CourseNotFoundError if course doesn't exist (HTTP 404)
    * @throws CourseOwnershipError if course is not assigned to faculty (HTTP 403)
    * 
-   * Requirements:
    * - 10.1: Endpoint protected by faculty.participation.read permission
    * - 10.2: Validate courseId is assigned to authenticated faculty
    * - 10.3: Accept optional date query parameter
@@ -166,7 +164,6 @@ export class ParticipationService {
    * @throws InvalidStudentError if any student_id is not enrolled in the course (HTTP 400)
    * @throws InvalidParticipationScoreError if any score is invalid (HTTP 400)
    * 
-   * Requirements:
    * - 10.7: Endpoint protected by faculty.participation.submit permission
    * - 10.8: Validate courseId is assigned to authenticated faculty
    * - 10.9: Require date and records array in request body

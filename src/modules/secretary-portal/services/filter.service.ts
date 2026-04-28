@@ -2,7 +2,6 @@
  * Filter Service
  * Business logic for filter options in secretary portal
  * 
- * Requirements: 11.1-11.7, 16.8
  */
 
 import { db } from '../../../db';
@@ -41,7 +40,6 @@ function isCacheValid<T>(entry?: CacheEntry<T>): boolean {
  * 
  * @returns Array of program names ordered alphabetically
  * 
- * Requirements: 11.1, 11.4, 16.8
  */
 export async function getPrograms(): Promise<string[]> {
   // Check cache first
@@ -75,7 +73,6 @@ export async function getPrograms(): Promise<string[]> {
  * 
  * @returns Array of department names ordered alphabetically
  * 
- * Requirements: 11.2, 11.5, 16.8
  */
 export async function getDepartments(): Promise<string[]> {
   // Check cache first
@@ -109,7 +106,6 @@ export async function getDepartments(): Promise<string[]> {
  * 
  * @returns Array of event type names ordered alphabetically
  * 
- * Requirements: 11.3, 11.6, 16.8
  */
 export async function getEventTypes(): Promise<string[]> {
   // Check cache first

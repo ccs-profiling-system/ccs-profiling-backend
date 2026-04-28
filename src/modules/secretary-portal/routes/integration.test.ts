@@ -5,7 +5,6 @@
  * with the secretary portal routes and that the authentication flow works
  * correctly from the main application entry point.
  * 
- * Requirements: 1.1, 1.4, 18.2, 19.2
  */
 
 import request from 'supertest';

@@ -1,0 +1,611 @@
+{
+  "info": {
+    "name": "Instructions & Scheduling API",
+    "description": "Complete API collection for Instructions and Scheduling modules - Backend Implementation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api/v1/admin",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Curriculum",
+      "item": [
+        {
+          "name": "Get All Curriculum",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/curriculum?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["curriculum"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "search", "value": "", "disabled": true},
+                {"key": "program", "value": "", "disabled": true},
+                {"key": "year", "value": "", "disabled": true},
+                {"key": "status", "value": "", "disabled": true}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Curriculum by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/curriculum/:id",
+              "host": ["{{base_url}}"],
+              "path": ["curriculum", ":id"],
+              "variable": [{"key": "id", "value": "curriculum-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Create Curriculum",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"BSCS-2024\",\n  \"name\": \"Bachelor of Science in Computer Science\",\n  \"description\": \"Computer Science curriculum for 2024\",\n  \"program\": \"Computer Science\",\n  \"year\": \"2024\",\n  \"totalUnits\": 120,\n  \"effectiveDate\": \"2024-08-01\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/curriculum",
+              "host": ["{{base_url}}"],
+              "path": ["curriculum"]
+            }
+          }
+        },
+        {
+          "name": "Update Curriculum",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Curriculum Name\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/curriculum/:id",
+              "host": ["{{base_url}}"],
+              "path": ["curriculum", ":id"],
+              "variable": [{"key": "id", "value": "curriculum-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Curriculum (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/curriculum/:id",
+              "host": ["{{base_url}}"],
+              "path": ["curriculum", ":id"],
+              "variable": [{"key": "id", "value": "curriculum-uuid"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Subjects",
+      "item": [
+        {
+          "name": "Get All Subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["subjects"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "search", "value": "", "disabled": true},
+                {"key": "curriculum_id", "value": "", "disabled": true},
+                {"key": "semester", "value": "", "disabled": true},
+                {"key": "yearLevel", "value": "", "disabled": true},
+                {"key": "type", "value": "", "disabled": true}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subject by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/:id",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":id"],
+              "variable": [{"key": "id", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Create Subject",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CS101\",\n  \"name\": \"Introduction to Programming\",\n  \"description\": \"Basic programming concepts\",\n  \"units\": 3,\n  \"semester\": 1,\n  \"yearLevel\": 1,\n  \"type\": \"core\",\n  \"lectureHours\": 2,\n  \"laboratoryHours\": 1,\n  \"prerequisites\": [],\n  \"corequisites\": [],\n  \"objectives\": [\"Learn programming basics\"],\n  \"topics\": [\"Variables\", \"Control structures\"],\n  \"curriculumId\": \"curriculum-uuid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects",
+              "host": ["{{base_url}}"],
+              "path": ["subjects"]
+            }
+          }
+        },
+        {
+          "name": "Update Subject",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Subject Name\",\n  \"units\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects/:id",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":id"],
+              "variable": [{"key": "id", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Subject (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/:id",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":id"],
+              "variable": [{"key": "id", "value": "subject-uuid"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Syllabus",
+      "item": [
+        {
+          "name": "Get Syllabus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/:subjectId/syllabus",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":subjectId", "syllabus"],
+              "variable": [{"key": "subjectId", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Upload Syllabus (File)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "title", "value": "CS101 Syllabus", "type": "text"},
+                {"key": "description", "value": "Course syllabus", "type": "text"},
+                {"key": "contentType", "value": "file", "type": "text"},
+                {"key": "file", "type": "file", "src": ""}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects/:subjectId/syllabus",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":subjectId", "syllabus"],
+              "variable": [{"key": "subjectId", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Upload Syllabus (External Link)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "title", "value": "CS101 Syllabus", "type": "text"},
+                {"key": "description", "value": "Course syllabus", "type": "text"},
+                {"key": "contentType", "value": "link", "type": "text"},
+                {"key": "externalLink", "value": "https://example.com/syllabus.pdf", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects/:subjectId/syllabus",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":subjectId", "syllabus"],
+              "variable": [{"key": "subjectId", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Update Syllabus",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "title", "value": "Updated Syllabus", "type": "text"},
+                {"key": "file", "type": "file", "src": ""}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects/:subjectId/syllabus",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":subjectId", "syllabus"],
+              "variable": [{"key": "subjectId", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Syllabus",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/:subjectId/syllabus",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":subjectId", "syllabus"],
+              "variable": [{"key": "subjectId", "value": "subject-uuid"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Lessons",
+      "item": [
+        {
+          "name": "Get All Lessons",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/:subjectId/lessons",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":subjectId", "lessons"],
+              "variable": [{"key": "subjectId", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Get Lesson by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lessons/:id",
+              "host": ["{{base_url}}"],
+              "path": ["lessons", ":id"],
+              "variable": [{"key": "id", "value": "lesson-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Create Lesson (File)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "week", "value": "1", "type": "text"},
+                {"key": "title", "value": "Introduction to Programming", "type": "text"},
+                {"key": "description", "value": "Week 1 lesson", "type": "text"},
+                {"key": "type", "value": "lecture", "type": "text"},
+                {"key": "contentType", "value": "file", "type": "text"},
+                {"key": "file", "type": "file", "src": ""}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects/:subjectId/lessons",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", ":subjectId", "lessons"],
+              "variable": [{"key": "subjectId", "value": "subject-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Update Lesson",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "title", "value": "Updated Lesson Title", "type": "text"},
+                {"key": "file", "type": "file", "src": ""}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/lessons/:id",
+              "host": ["{{base_url}}"],
+              "path": ["lessons", ":id"],
+              "variable": [{"key": "id", "value": "lesson-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/lessons/:id",
+              "host": ["{{base_url}}"],
+              "path": ["lessons", ":id"],
+              "variable": [{"key": "id", "value": "lesson-uuid"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Rooms",
+      "item": [
+        {
+          "name": "Get All Rooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rooms?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["rooms"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "search", "value": "", "disabled": true},
+                {"key": "building", "value": "", "disabled": true},
+                {"key": "type", "value": "", "disabled": true},
+                {"key": "status", "value": "", "disabled": true}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Room by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rooms/:id",
+              "host": ["{{base_url}}"],
+              "path": ["rooms", ":id"],
+              "variable": [{"key": "id", "value": "room-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Create Room",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Room 101\",\n  \"building\": \"Main Building\",\n  \"capacity\": 40,\n  \"type\": \"lecture\",\n  \"facilities\": [\"projector\", \"whiteboard\", \"aircon\"],\n  \"status\": \"available\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/rooms",
+              "host": ["{{base_url}}"],
+              "path": ["rooms"]
+            }
+          }
+        },
+        {
+          "name": "Update Room",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacity\": 45,\n  \"status\": \"available\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/rooms/:id",
+              "host": ["{{base_url}}"],
+              "path": ["rooms", ":id"],
+              "variable": [{"key": "id", "value": "room-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Room (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rooms/:id",
+              "host": ["{{base_url}}"],
+              "path": ["rooms", ":id"],
+              "variable": [{"key": "id", "value": "room-uuid"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Schedule Occurrences",
+      "item": [
+        {
+          "name": "Get Schedule Occurrences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schedules/:scheduleId/occurrences",
+              "host": ["{{base_url}}"],
+              "path": ["schedules", ":scheduleId", "occurrences"],
+              "variable": [{"key": "scheduleId", "value": "schedule-uuid"}]
+            }
+          }
+        },
+        {
+          "name": "Cancel Occurrence",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Holiday\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/schedules/:scheduleId/occurrences/:occurrenceId/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["schedules", ":scheduleId", "occurrences", ":occurrenceId", "cancel"],
+              "variable": [
+                {"key": "scheduleId", "value": "schedule-uuid"},
+                {"key": "occurrenceId", "value": "occurrence-uuid"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Restore Occurrence",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schedules/:scheduleId/occurrences/:occurrenceId/restore",
+              "host": ["{{base_url}}"],
+              "path": ["schedules", ":scheduleId", "occurrences", ":occurrenceId", "restore"],
+              "variable": [
+                {"key": "scheduleId", "value": "schedule-uuid"},
+                {"key": "occurrenceId", "value": "occurrence-uuid"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Statistics",
+      "item": [
+        {
+          "name": "Get Instructions Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/instructions/statistics",
+              "host": ["{{base_url}}"],
+              "path": ["instructions", "statistics"]
+            }
+          }
+        },
+        {
+          "name": "Get Schedules Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schedules/statistics?semester=1&academic_year=2024-2025",
+              "host": ["{{base_url}}"],
+              "path": ["schedules", "statistics"],
+              "query": [
+                {"key": "semester", "value": "1", "disabled": true},
+                {"key": "academic_year", "value": "2024-2025", "disabled": true}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Export",
+      "item": [
+        {
+          "name": "Export Instructions to PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/instructions/export/pdf",
+              "host": ["{{base_url}}"],
+              "path": ["instructions", "export", "pdf"]
+            }
+          }
+        },
+        {
+          "name": "Export Instructions to Excel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/instructions/export/excel",
+              "host": ["{{base_url}}"],
+              "path": ["instructions", "export", "excel"]
+            }
+          }
+        },
+        {
+          "name": "Export Schedules to PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schedules/export/pdf?semester=1&academic_year=2024-2025",
+              "host": ["{{base_url}}"],
+              "path": ["schedules", "export", "pdf"],
+              "query": [
+                {"key": "semester", "value": "1", "disabled": true},
+                {"key": "academic_year", "value": "2024-2025", "disabled": true}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export Schedules to Excel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schedules/export/excel?semester=1&academic_year=2024-2025",
+              "host": ["{{base_url}}"],
+              "path": ["schedules", "export", "excel"],
+              "query": [
+                {"key": "semester", "value": "1", "disabled": true},
+                {"key": "academic_year", "value": "2024-2025", "disabled": true}
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

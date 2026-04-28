@@ -2,7 +2,6 @@
  * Document Validation Schemas for Secretary Portal
  * Zod schemas for validating document-related input
  * 
- * Requirements: 6.10-6.13
  */
 
 import { z } from 'zod';
@@ -38,7 +37,6 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
  * Validates title, category, and file metadata
  * Note: Actual file validation happens in multer middleware
  * 
- * Requirements: 6.10, 6.11, 6.12, 6.13
  */
 export const uploadDocumentSchema = z.object({
   title: z
@@ -60,7 +58,6 @@ export const uploadDocumentSchema = z.object({
  * Schema for validating uploaded file metadata
  * Used after multer processes the file
  * 
- * Requirements: 6.11, 6.12
  */
 export const fileMetadataSchema = z.object({
   originalname: z.string(),

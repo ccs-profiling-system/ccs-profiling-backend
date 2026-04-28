@@ -5,7 +5,6 @@
  * Handles faculty affiliations viewing and updates with faculty-scoped validation.
  * Ensures faculty members can only access and update their own affiliations.
  * 
- * Requirements: Phase 10 - Affiliations Management
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -26,7 +25,6 @@ export class AffiliationsController {
    * Returns all affiliations for the faculty member ordered by start_date descending.
    * Returns empty array if no affiliations found.
    * 
-   * Requirements:
    * - Extract faculty_id from authenticated user
    * - Return appropriate HTTP status codes (200, 403)
    */
@@ -58,7 +56,6 @@ export class AffiliationsController {
    * Uses transaction-based replace strategy for atomic updates.
    * Creates audit log entry for the update.
    * 
-   * Requirements:
    * - Extract faculty_id from authenticated user
    * - Validate request body using Zod schema
    * - Return HTTP 403 if attempting to update another faculty's affiliations

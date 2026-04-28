@@ -5,7 +5,6 @@
  * faculty access to resources. Ensures faculty members can only access their
  * own data and assigned resources.
  * 
- * Requirements: 13.1, 13.2, 13.5, 13.8
  */
 
 import { Request } from 'express';

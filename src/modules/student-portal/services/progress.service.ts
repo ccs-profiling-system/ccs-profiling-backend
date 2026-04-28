@@ -5,7 +5,6 @@
  * Calculates student academic progress including credits earned, academic standing,
  * and completed courses grouped by semester.
  * 
- * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5
  */
 
 import { eq, and, sql } from 'drizzle-orm';
@@ -29,7 +28,6 @@ export class ProgressService {
    * @param studentId - The student UUID (internal ID)
    * @returns Academic progress summary with metrics and course history
    * 
-   * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5
    */
   async getAcademicProgress(studentId: string): Promise<AcademicProgressDTO> {
     // Get student information for year level and degree requirements

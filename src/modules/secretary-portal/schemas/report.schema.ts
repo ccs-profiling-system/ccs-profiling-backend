@@ -2,7 +2,6 @@
  * Report Validation Schemas for Secretary Portal
  * Zod schemas for validating report generation requests
  * 
- * Requirements: 10.5-10.9
  */
 
 import { z } from 'zod';
@@ -12,7 +11,6 @@ import { reportFormatEnum, approvalStatusEnum } from './common.schemas';
  * Base schema for report generation
  * Contains common fields for all report types
  * 
- * Requirements: 10.5, 10.6
  */
 const baseReportSchema = z.object({
   format: reportFormatEnum,
@@ -30,7 +28,6 @@ const baseReportSchema = z.object({
  * Schema for generating student reports
  * Includes student-specific filters
  * 
- * Requirements: 10.5, 10.6, 10.7
  */
 export const generateStudentReportSchema = baseReportSchema.extend({
   year_level: z
@@ -53,7 +50,6 @@ export const generateStudentReportSchema = baseReportSchema.extend({
  * Schema for generating faculty reports
  * Includes faculty-specific filters
  * 
- * Requirements: 10.5, 10.6, 10.7
  */
 export const generateFacultyReportSchema = baseReportSchema.extend({
   department: z
@@ -74,7 +70,6 @@ export const generateFacultyReportSchema = baseReportSchema.extend({
  * Schema for generating event reports
  * Includes event-specific filters
  * 
- * Requirements: 10.5, 10.6, 10.7
  */
 export const generateEventReportSchema = baseReportSchema.extend({
   event_type: z
@@ -87,7 +82,6 @@ export const generateEventReportSchema = baseReportSchema.extend({
  * Schema for generating research reports
  * Includes research-specific filters
  * 
- * Requirements: 10.5, 10.6, 10.7
  */
 export const generateResearchReportSchema = baseReportSchema.extend({
   research_type: z
@@ -100,7 +94,6 @@ export const generateResearchReportSchema = baseReportSchema.extend({
  * Schema for generating schedule reports
  * Includes schedule-specific filters
  * 
- * Requirements: 10.5, 10.6, 10.7
  */
 export const generateScheduleReportSchema = baseReportSchema.extend({
   semester: z
@@ -124,7 +117,6 @@ export const generateScheduleReportSchema = baseReportSchema.extend({
  * Schema for generating document reports
  * Includes document-specific filters
  * 
- * Requirements: 10.5, 10.6, 10.7
  */
 export const generateDocumentReportSchema = baseReportSchema.extend({
   category: z
@@ -136,7 +128,6 @@ export const generateDocumentReportSchema = baseReportSchema.extend({
  * Schema for generating pending changes reports
  * Includes pending changes-specific filters
  * 
- * Requirements: 10.5, 10.6, 10.7
  */
 export const generatePendingChangesReportSchema = baseReportSchema.extend({
   entity_type: z
@@ -149,7 +140,6 @@ export const generatePendingChangesReportSchema = baseReportSchema.extend({
  * Generic report generation schema
  * Used when report type is not specified
  * 
- * Requirements: 10.5, 10.6
  */
 export const generateReportSchema = baseReportSchema.extend({
   report_type: z

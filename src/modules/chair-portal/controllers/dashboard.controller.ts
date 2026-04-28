@@ -4,7 +4,6 @@
  * HTTP request/response handling for department chair dashboard operations.
  * Extracts department ID from authenticated user and returns aggregated statistics.
  * 
- * Requirements: 2.1, 2.2
  */
 
 import { Request, Response, NextFunction } from 'express';

@@ -2,7 +2,6 @@
  * Student Portal - Course Service Tests
  * Unit tests for course management service
  * 
- * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 7.1, 7.2, 7.3, 8.1, 8.2, 8.3, 8.4, 8.5
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

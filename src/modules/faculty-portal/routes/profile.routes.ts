@@ -5,7 +5,6 @@
  * Provides endpoints for faculty members to view and update their own profiles.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 3.1, 3.5, 14.1, 16.1, 16.3
  */
 
 import { Router } from 'express';
@@ -40,7 +39,6 @@ export function createProfileRoutes(profileController: ProfileController): Route
    * - 403: Forbidden (missing permission or not a faculty member)
    * - 404: Not Found (faculty profile not found)
    * 
-   * Requirements: 3.1, 3.2, 3.4, 14.1, 16.1, 16.3
    */
   router.get(
     '/',
@@ -73,7 +71,6 @@ export function createProfileRoutes(profileController: ProfileController): Route
    * - 403: Forbidden (missing permission or not a faculty member)
    * - 404: Not Found (faculty profile not found)
    * 
-   * Requirements: 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 14.1, 16.1, 16.3
    */
   router.put(
     '/',

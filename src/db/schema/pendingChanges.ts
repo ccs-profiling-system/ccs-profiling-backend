@@ -8,7 +8,6 @@ import { users } from './users';
  * Stores pending changes that require approval before being applied.
  * Tracks entity changes with old and new values for audit trail.
  * 
- * Requirements: 9.1-9.13, 17.8
  */
 export const pendingChanges = pgTable('pending_changes', {
   id: uuidPrimaryKey(),

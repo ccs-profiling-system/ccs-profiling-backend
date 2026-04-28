@@ -6,7 +6,6 @@
  * All routes require authentication and RBAC permission checks.
  * File uploads are handled using multer middleware with memory storage.
  * 
- * Requirements: 9.1, 9.12, 9.16, 14.1
  */
 
 import { Router } from 'express';
@@ -66,7 +65,6 @@ export function createMaterialRoutes(materialController: MaterialController): Ro
    * - 403: Permission denied or course not assigned to faculty
    * - 404: Course not found
    * 
-   * Requirements: 9.1, 14.1
    */
   router.post(
     '/courses/:courseId/materials',
@@ -90,7 +88,6 @@ export function createMaterialRoutes(materialController: MaterialController): Ro
    * - 403: Permission denied or course not assigned to faculty
    * - 404: Course not found
    * 
-   * Requirements: 9.12, 14.1
    */
   router.get(
     '/courses/:courseId/materials',
@@ -114,7 +111,6 @@ export function createMaterialRoutes(materialController: MaterialController): Ro
    * - 403: Permission denied or course not assigned to faculty
    * - 404: Material not found or doesn't belong to course
    * 
-   * Requirements: 9.16, 14.1
    */
   router.delete(
     '/courses/:courseId/materials/:materialId',

@@ -1,7 +1,6 @@
 /**
  * Pending Changes Service Tests
  * 
- * Requirements: 9.1-9.13, 17.8
  */
 
 import { describe, it, expect } from 'vitest';

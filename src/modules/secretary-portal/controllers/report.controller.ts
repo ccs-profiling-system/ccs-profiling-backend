@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal report generation.
  * Provides report generation for students, faculty, and events in multiple formats.
  * 
- * Requirements: 10.1-10.3, 10.10-10.11, 10.13-10.14, 15.1
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -40,7 +39,6 @@ import {
  * @returns HTTP 400 for validation errors
  * @throws Error if report generation fails
  * 
- * Requirements: 10.1, 10.10-10.11, 10.13-10.14, 15.1
  */
 export async function generateStudentReportController(
   req: Request,
@@ -118,7 +116,6 @@ export async function generateStudentReportController(
  * @returns HTTP 400 for validation errors
  * @throws Error if report generation fails
  * 
- * Requirements: 10.2, 10.10-10.11, 10.13-10.14, 15.1
  */
 export async function generateFacultyReportController(
   req: Request,
@@ -195,7 +192,6 @@ export async function generateFacultyReportController(
  * @returns HTTP 400 for validation errors
  * @throws Error if report generation fails
  * 
- * Requirements: 10.3, 10.10-10.11, 10.13-10.14, 15.1
  */
 export async function generateEventReportController(
   req: Request,

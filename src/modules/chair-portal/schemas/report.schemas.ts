@@ -2,7 +2,6 @@
  * Report Validation Schemas for Chair Portal
  * Zod schemas for validating report generation and export parameters
  * 
- * Requirements: 8.9, 8.10
  */
 
 import { z } from 'zod';

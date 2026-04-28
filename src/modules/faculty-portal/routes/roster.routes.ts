@@ -6,7 +6,6 @@
  * assigned courses. All routes require authentication and RBAC permission checks.
  * Course ownership is validated before returning roster data.
  * 
- * Requirements: 5.1, 14.1
  */
 
 import { Router } from 'express';
@@ -62,7 +61,6 @@ export function createRosterRoutes(rosterController: RosterController): Router {
    *   ]
    * }
    * 
-   * Requirements:
    * - 5.1: Endpoint protected by faculty.roster.read permission
    * - 5.2: Validate courseId is assigned to authenticated faculty
    * - 5.3: Return HTTP 403 if course not assigned to faculty

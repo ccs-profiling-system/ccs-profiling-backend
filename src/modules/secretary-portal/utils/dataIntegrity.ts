@@ -2,7 +2,6 @@
  * Data Integrity Utilities
  * Centralized utilities for enforcing data integrity constraints
  * 
- * Requirements: 17.1-17.8
  */
 
 import { ValidationError } from '../../../shared/errors';
@@ -11,7 +10,6 @@ import { ApprovalStatus } from '../types';
 /**
  * Valid state transitions for approval workflows
  * 
- * Requirements: 17.8
  */
 const APPROVAL_STATE_TRANSITIONS: Record<ApprovalStatus, ApprovalStatus[]> = {
   draft: ['pending_approval', 'withdrawn'],
@@ -28,7 +26,6 @@ const APPROVAL_STATE_TRANSITIONS: Record<ApprovalStatus, ApprovalStatus[]> = {
  * @param newStatus - Desired new status
  * @throws ValidationError if transition is invalid
  * 
- * Requirements: 17.8
  */
 export function validateStateTransition(
   currentStatus: ApprovalStatus,
@@ -50,7 +47,6 @@ export function validateStateTransition(
  * @param status - Current approval status
  * @returns true if entity can be updated
  * 
- * Requirements: 17.8
  */
 export function canUpdate(status: ApprovalStatus): boolean {
   // Only draft and rejected entities can be updated
@@ -63,7 +59,6 @@ export function canUpdate(status: ApprovalStatus): boolean {
  * @param status - Current approval status
  * @returns true if entity can be deleted
  * 
- * Requirements: 17.8
  */
 export function canDelete(status: ApprovalStatus): boolean {
   // Only draft and withdrawn entities can be deleted
@@ -76,7 +71,6 @@ export function canDelete(status: ApprovalStatus): boolean {
  * @param status - Current approval status
  * @returns true if entity can be submitted
  * 
- * Requirements: 17.8
  */
 export function canSubmit(status: ApprovalStatus): boolean {
   // Only draft and rejected entities can be submitted
@@ -89,7 +83,6 @@ export function canSubmit(status: ApprovalStatus): boolean {
  * @param status - Current approval status
  * @returns true if entity can be withdrawn
  * 
- * Requirements: 17.8
  */
 export function canWithdraw(status: ApprovalStatus): boolean {
   // Only pending_approval entities can be withdrawn
@@ -103,7 +96,6 @@ export function canWithdraw(status: ApprovalStatus): boolean {
  * @param entityType - Type of entity for error message
  * @throws ValidationError if entity does not exist
  * 
- * Requirements: 17.5
  */
 export function validateEntityExists<T>(
   entity: T | null | undefined,
@@ -121,7 +113,6 @@ export function validateEntityExists<T>(
  * @param fieldName - Name of the field for error message
  * @throws ValidationError if duplicate exists
  * 
- * Requirements: 17.2
  */
 export function validateUnique(exists: boolean, fieldName: string): void {
   if (exists) {
@@ -194,7 +185,6 @@ export function validatePositiveInteger(
  * This is a type helper for documenting transaction usage.
  * Drizzle ORM automatically handles rollback on errors.
  * 
- * Requirements: 17.3, 17.4
  */
 export type TransactionCallback<T> = () => Promise<T>;
 
@@ -203,7 +193,6 @@ export type TransactionCallback<T> = () => Promise<T>;
  * 
  * Returns the current timestamp for marking records as deleted
  * 
- * Requirements: 17.7
  */
 export function softDeleteTimestamp(): Date {
   return new Date();

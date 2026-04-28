@@ -6,7 +6,6 @@
  * All operations validate course ownership to ensure faculty can only manage attendance
  * for their assigned courses.
  * 
- * Requirements: 6.1, 6.6, 6.7, 6.9, 6.14, 6.15, 6.16
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -57,7 +56,6 @@ export class AttendanceController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If course doesn't exist
    * 
-   * Requirements: 6.1, 6.6, 6.7
    */
   getAttendance = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -123,7 +121,6 @@ export class AttendanceController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If course doesn't exist
    * 
-   * Requirements: 6.9, 6.14, 6.15, 6.16
    */
   submitAttendance = async (req: Request, res: Response, next: NextFunction) => {
     try {

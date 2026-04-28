@@ -7,7 +7,6 @@
  * 
  * All routes require authentication but no specific role permissions.
  * 
- * Requirements: 13.1-13.7, 14.1-14.6
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -102,7 +101,6 @@ export function createSharedRoutes(): Router {
    * - 401: Authentication required
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 13.3-13.7
    */
   router.get(
     '/notifications',
@@ -161,7 +159,6 @@ export function createSharedRoutes(): Router {
    * - 404: Notification not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 13.6
    */
   router.patch(
     '/notifications/:id/read',
@@ -226,7 +223,6 @@ export function createSharedRoutes(): Router {
    * - 401: Authentication required
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 14.1-14.6
    */
   router.get(
     '/approvals/config',

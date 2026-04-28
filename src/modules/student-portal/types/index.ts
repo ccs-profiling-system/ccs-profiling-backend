@@ -4,7 +4,6 @@
  * This module defines all TypeScript types, interfaces, and DTOs used throughout
  * the student portal API system.
  * 
- * Requirements: 30.1, 30.2, 30.3, 30.4, 30.5
  */
 
 // ============================================================================
@@ -201,13 +200,12 @@ export interface CourseDetailsDTO extends CourseDTO {
  * Weekly schedule entry data transfer object
  */
 export interface ScheduleEntryDTO {
-  course_code: string;
-  course_name: string;
-  instructor_name: string;
-  room: string | null;
-  day: string;
+  subject_code: string;
+  subject_name: string;
   start_time: string;
   end_time: string;
+  room: string;
+  instructor: string;
 }
 
 /**

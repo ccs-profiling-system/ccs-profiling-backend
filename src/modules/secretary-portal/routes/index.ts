@@ -13,7 +13,6 @@
  * 1. auditContextMiddleware extracts IP address, user agent, and user ID
  * 2. Attaches audit context to req.auditContext for use in audit logging
  * 
- * Requirements: 1.1, 1.4, 18.2, 19.2, 14.1-14.10
  */
 
 import { Router } from 'express';
@@ -37,7 +36,6 @@ import { createFilterRoutes } from './filter.routes';
  * The authMiddleware is applied globally to all secretary portal routes.
  * The auditContextMiddleware is applied after authentication to capture audit context.
  * 
- * Authentication Requirements:
  * - Valid JWT token in Authorization header (Bearer <token>)
  * - Token must not be expired
  * - Token signature must be valid
@@ -55,17 +53,14 @@ export const secretaryPortalRouter = Router();
 
 // Apply authentication middleware to all secretary portal routes
 // This validates JWT tokens for all API requests
-// Requirements: 1.1, 1.4, 18.2
 secretaryPortalRouter.use(authMiddleware);
 
 // Apply audit context middleware after authentication
 // This captures IP address, user agent, and user ID for audit logging
-// Requirements: 14.1, 14.5, 14.6
 secretaryPortalRouter.use(auditContextMiddleware);
 
 // Register module routes with appropriate prefixes
 // All routes have requirePermission middleware applied at the route level
-// Requirements: 1.2, 1.3, 1.5
 
 // Dashboard routes - GET /api/secretary/dashboard
 secretaryPortalRouter.use('/dashboard', createDashboardRoutes());

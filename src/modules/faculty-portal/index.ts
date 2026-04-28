@@ -19,7 +19,6 @@
  * All endpoints require JWT authentication and RBAC authorization using
  * the faculty.* permission namespace.
  * 
- * Requirements: 1.6, 15.5
  */
 
 export { facultyPortalRouter } from './routes';

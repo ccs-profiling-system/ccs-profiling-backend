@@ -2,7 +2,6 @@
  * Event Service
  * Business logic for event management operations with approval workflow
  * 
- * Requirements: 7.1-7.25, 17.8
  */
 
 import { db } from '../../../db';
@@ -31,7 +30,6 @@ export interface EventFilters {
  * @param search - Search term for event_name
  * @returns Paginated list of events
  * 
- * Requirements: 7.1, 7.20-7.22
  */
 export async function getAllEvents(
   pagination: PaginationParams,
@@ -102,7 +100,6 @@ export async function getAllEvents(
  * @param id - Event UUID
  * @returns Event record or null if not found
  * 
- * Requirements: 7.2
  */
 export async function getEventById(id: string): Promise<EventDTO | null> {
   const result = await db
@@ -123,7 +120,6 @@ export async function getEventById(id: string): Promise<EventDTO | null> {
  * @param userAgent - User agent of the request
  * @returns Created event record
  * 
- * Requirements: 7.3, 7.12-7.17
  */
 export async function createEvent(
   data: {
@@ -208,7 +204,6 @@ export async function createEvent(
  * @param userAgent - User agent of the request
  * @returns Updated event record
  * 
- * Requirements: 7.4, 7.12-7.16, 7.19, 17.8
  */
 export async function updateEvent(
   id: string,
@@ -298,7 +293,6 @@ export async function updateEvent(
  * @param userAgent - User agent of the request
  * @returns Deleted event record
  * 
- * Requirements: 7.5, 7.23-7.24, 17.8
  */
 export async function deleteEvent(
   id: string,
@@ -363,7 +357,6 @@ export async function deleteEvent(
  * @param userAgent - User agent of the request
  * @returns Updated event record
  * 
- * Requirements: 7.6, 7.18, 17.8
  */
 export async function submitEvent(
   id: string,
@@ -422,7 +415,6 @@ export async function submitEvent(
  * @param id - Event UUID
  * @returns List of event participants
  * 
- * Requirements: 7.7
  */
 export async function getEventParticipants(id: string): Promise<EventParticipantDTO[]> {
   // Validate event exists

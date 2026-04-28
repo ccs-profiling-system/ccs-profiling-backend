@@ -6,7 +6,6 @@
  * view registered events, register for events, and unregister from events.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 17.6, 18.4, 19.8, 20.6, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -46,7 +45,6 @@ export function createEventRoutes(
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 17.1, 17.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/upcoming',
@@ -68,7 +66,6 @@ export function createEventRoutes(
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 18.1, 18.4, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/registered',

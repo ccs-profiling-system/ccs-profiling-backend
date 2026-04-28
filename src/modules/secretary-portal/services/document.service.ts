@@ -2,7 +2,6 @@
  * Document Service
  * Business logic for document management operations
  * 
- * Requirements: 6.1-6.22, 18.4-18.5, 18.9
  */
 
 import { db } from '../../../db';
@@ -56,7 +55,6 @@ export interface DocumentUploadData {
  * @param userAgent - User agent of the request
  * @returns Created document record
  * 
- * Requirements: 6.1, 6.9-6.16, 6.22, 18.4-18.5
  */
 export async function uploadDocument(
   file: Express.Multer.File,
@@ -151,7 +149,6 @@ export async function uploadDocument(
  * @param search - Search term for title
  * @returns Paginated list of documents
  * 
- * Requirements: 6.2, 6.17-6.19
  */
 export async function getAllDocuments(
   pagination: PaginationParams,
@@ -242,7 +239,6 @@ export async function getAllDocuments(
  * @param id - Document UUID
  * @returns Document record or null if not found
  * 
- * Requirements: 6.3
  */
 export async function getDocumentById(id: string): Promise<DocumentDTO | null> {
   const result = await db
@@ -284,7 +280,6 @@ export async function getDocumentById(id: string): Promise<DocumentDTO | null> {
  * @param id - Document UUID
  * @returns Document record with storage path
  * 
- * Requirements: 6.4
  */
 export async function downloadDocument(id: string): Promise<DocumentDTO> {
   const document = await getDocumentById(id);
@@ -307,7 +302,6 @@ export async function downloadDocument(id: string): Promise<DocumentDTO> {
  * @param userAgent - User agent of the request
  * @returns Deleted document record
  * 
- * Requirements: 6.5, 6.20-6.22, 18.9
  */
 export async function deleteDocument(
   id: string,

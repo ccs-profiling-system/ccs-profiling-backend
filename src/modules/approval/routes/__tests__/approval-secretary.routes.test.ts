@@ -8,7 +8,6 @@
  * - Rate limiting
  * - Edge cases
  * 
- * Requirements: 1.1-1.6, 2.1-2.7, 3.1-3.7
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';

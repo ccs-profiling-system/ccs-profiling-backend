@@ -6,7 +6,6 @@
  * apply to opportunities, and check application status.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 13.6, 14.4, 15.8, 16.4, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -46,7 +45,6 @@ export function createResearchRoutes(
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 13.1, 13.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/opportunities',
@@ -71,7 +69,6 @@ export function createResearchRoutes(
    * - 403: Forbidden (missing permission or not a student)
    * - 404: Not Found (opportunity not found or not available)
    * 
-   * Requirements: 14.1, 14.4, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/opportunities/:id',
@@ -105,7 +102,6 @@ export function createResearchRoutes(
    * - 403: Forbidden (missing permission, not a student, or application doesn't belong to student)
    * - 404: Not Found (application not found)
    * 
-   * Requirements: 16.1, 16.4, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/applications/:applicationId',

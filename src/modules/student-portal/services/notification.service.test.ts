@@ -2,7 +2,6 @@
  * Student Portal - Notification Service Tests
  * Unit tests for notification management service
  * 
- * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

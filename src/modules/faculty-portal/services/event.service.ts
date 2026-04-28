@@ -5,7 +5,6 @@
  * Handles event viewing, participation tracking, and event registration for faculty members.
  * Validates event access by department, registration deadlines, and capacity limits.
  * 
- * Requirements: 8.1-8.18
  */
 
 import { eq, and, isNull, sql, gte } from 'drizzle-orm';
@@ -124,7 +123,6 @@ export class EventService {
    * @param filters - Optional filters (type, upcoming)
    * @returns Paginated list of events
    * 
-   * Requirements:
    * - 8.1: Endpoint protected by faculty.event.read permission with pagination
    * - 8.2: Filter results by authenticated user's department
    * - 8.3: Accept page, limit, type, and upcoming query parameters
@@ -208,7 +206,6 @@ export class EventService {
    * @param facultyId - The faculty UUID
    * @returns List of event participation records
    * 
-   * Requirements:
    * - 8.6: Endpoint protected by faculty.event.read permission
    * - 8.7: Filter results by authenticated user's faculty_id
    * - 8.8: Return events the faculty member is registered for with participation status
@@ -264,7 +261,6 @@ export class EventService {
    * @throws RegistrationDeadlinePassedError if deadline passed (HTTP 400)
    * @throws EventFullError if event reached max_participants (HTTP 422)
    * 
-   * Requirements:
    * - 8.10: Endpoint protected by faculty.event.register permission
    * - 8.11: Validate eventId exists and belongs to faculty's department
    * - 8.12: Validate registration_deadline has not passed

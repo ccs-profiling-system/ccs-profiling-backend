@@ -2,7 +2,6 @@
  * Schedule Service
  * Business logic for schedule management operations
  * 
- * Requirements: 5.1-5.16, 17.3-17.4
  */
 
 import { db } from '../../../db';
@@ -29,7 +28,6 @@ export interface ScheduleFilters {
  * @param filters - Filter options (semester, academic_year, faculty_id, room)
  * @returns Paginated list of schedules
  * 
- * Requirements: 5.1, 5.14-5.16
  */
 export async function getAllSchedules(
   pagination: PaginationParams,
@@ -93,7 +91,6 @@ export async function getAllSchedules(
  * @param id - Schedule UUID
  * @returns Schedule record or null if not found
  * 
- * Requirements: 5.2
  */
 export async function getScheduleById(id: string): Promise<ScheduleDTO | null> {
   const result = await db
@@ -114,7 +111,6 @@ export async function getScheduleById(id: string): Promise<ScheduleDTO | null> {
  * @param userAgent - User agent of the request
  * @returns Created schedule record
  * 
- * Requirements: 5.3, 5.10-5.13, 17.3-17.4, 5.17
  */
 export async function createSchedule(
   data: {
@@ -185,7 +181,6 @@ export async function createSchedule(
  * @param userAgent - User agent of the request
  * @returns Updated schedule record
  * 
- * Requirements: 5.4, 5.10-5.13, 17.3-17.5, 5.17
  */
 export async function updateSchedule(
   id: string,
@@ -267,7 +262,6 @@ export async function updateSchedule(
  * @param userAgent - User agent of the request
  * @returns Deleted schedule record
  * 
- * Requirements: 5.5, 17.3-17.4, 17.7, 5.17
  */
 export async function deleteSchedule(
   id: string,

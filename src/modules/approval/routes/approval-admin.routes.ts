@@ -8,7 +8,6 @@
  * 
  * All routes require authentication and appropriate admin permissions.
  * 
- * Requirements: 4.1-4.6, 5.1-5.7, 6.1-6.6, 7.1-7.6, 8.1-8.7
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -78,7 +77,6 @@ export function createAdminRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 4.1-4.6
    */
   router.get(
     '/pending',
@@ -139,7 +137,6 @@ export function createAdminRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 7.1-7.6
    */
   router.get(
     '/history',
@@ -190,7 +187,6 @@ export function createAdminRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 6.1-6.6
    */
   router.get(
     '/stats',
@@ -230,7 +226,6 @@ export function createAdminRoutes(): Router {
    * - 404: Approval not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 4.5
    */
   router.get(
     '/:id',
@@ -287,7 +282,6 @@ export function createAdminRoutes(): Router {
    * - 409: Conflict detected (entity has changed)
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 5.1-5.7
    */
   router.patch(
     '/:id/approve',
@@ -338,7 +332,6 @@ export function createAdminRoutes(): Router {
    * - 404: Approval not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 5.1-5.7
    */
   router.patch(
     '/:id/reject',
@@ -388,7 +381,6 @@ export function createAdminRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 8.1-8.7
    */
   router.post(
     '/bulk-approve',
@@ -447,7 +439,6 @@ export function createAdminRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 8.1-8.7
    */
   router.post(
     '/bulk-reject',

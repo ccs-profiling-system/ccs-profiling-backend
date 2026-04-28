@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal faculty operations.
  * Provides CRUD operations for faculty and teaching load retrieval.
  * 
- * Requirements: 4.1-4.6, 4.20-4.23, 15.1, 15.4
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -44,7 +43,6 @@ import { paginationSchema, idParamSchema } from '../schemas/common.schemas';
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if faculty retrieval fails
  * 
- * Requirements: 4.1, 4.14-4.16, 4.20-4.23, 15.1
  */
 export async function getAllFacultyController(
   req: Request,
@@ -120,7 +118,6 @@ export async function getAllFacultyController(
  * @returns HTTP 404 when faculty not found with entity type
  * @throws Error if faculty retrieval fails
  * 
- * Requirements: 4.2, 4.20-4.23, 15.4
  */
 export async function getFacultyByIdController(
   req: Request,
@@ -184,7 +181,6 @@ export async function getFacultyByIdController(
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if faculty creation fails
  * 
- * Requirements: 4.3, 4.11-4.13, 4.20-4.23, 15.1
  */
 export async function createFacultyController(
   req: Request,
@@ -277,7 +273,6 @@ export async function createFacultyController(
  * @returns HTTP 404 when faculty not found with entity type
  * @throws Error if faculty update fails
  * 
- * Requirements: 4.4, 4.11-4.13, 4.20-4.23, 15.4
  */
 export async function updateFacultyController(
   req: Request,
@@ -388,7 +383,6 @@ export async function updateFacultyController(
  * @returns HTTP 404 when faculty not found with entity type
  * @throws Error if faculty deletion fails
  * 
- * Requirements: 4.5, 4.20-4.23, 15.4
  */
 export async function deleteFacultyController(
   req: Request,
@@ -459,7 +453,6 @@ export async function deleteFacultyController(
  * @returns HTTP 404 when faculty not found with entity type
  * @throws Error if teaching load retrieval fails
  * 
- * Requirements: 4.6, 4.20-4.23, 15.4
  */
 export async function getTeachingLoadController(
   req: Request,

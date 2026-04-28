@@ -2,7 +2,6 @@
  * Audit Logger Utility
  * Provides audit logging functionality for secretary portal actions
  * 
- * Requirements: 14.1-14.10
  */
 
 import { auditLogRepository } from '../../audit-logs';
@@ -57,7 +56,6 @@ export interface AuditLogData {
  * @param data - Audit log data
  * @returns Promise that resolves when log is created (or fails silently)
  * 
- * Requirements: 14.1-14.10
  */
 export async function logAction(data: AuditLogData): Promise<void> {
   try {
@@ -89,7 +87,6 @@ export async function logAction(data: AuditLogData): Promise<void> {
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logCreate(
   userId: string | undefined,
@@ -121,7 +118,6 @@ export async function logCreate(
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logUpdate(
   userId: string | undefined,
@@ -154,7 +150,6 @@ export async function logUpdate(
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logDelete(
   userId: string | undefined,
@@ -184,7 +179,6 @@ export async function logDelete(
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logSubmit(
   userId: string | undefined,
@@ -212,7 +206,6 @@ export async function logSubmit(
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logWithdraw(
   userId: string | undefined,
@@ -241,7 +234,6 @@ export async function logWithdraw(
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logUpload(
   userId: string | undefined,
@@ -271,7 +263,6 @@ export async function logUpload(
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logDownload(
   userId: string | undefined,
@@ -299,7 +290,6 @@ export async function logDownload(
  * @param ipAddress - IP address of the request
  * @param userAgent - User agent of the request
  * 
- * Requirements: 14.1-14.10
  */
 export async function logReportGeneration(
   userId: string | undefined,

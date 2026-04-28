@@ -4,7 +4,6 @@
  * HTTP request/response handling for filter options in secretary portal.
  * Provides dynamic filter options for dropdown menus.
  * 
- * Requirements: 11.1-11.3, 11.8
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -28,7 +27,6 @@ import {
  * @returns HTTP 200 with array of program names on success
  * @throws Error if program retrieval fails
  * 
- * Requirements: 11.1, 11.8
  */
 export async function getPrograms(
   _req: Request,
@@ -64,7 +62,6 @@ export async function getPrograms(
  * @returns HTTP 200 with array of department names on success
  * @throws Error if department retrieval fails
  * 
- * Requirements: 11.2, 11.8
  */
 export async function getDepartments(
   _req: Request,
@@ -100,7 +97,6 @@ export async function getDepartments(
  * @returns HTTP 200 with array of event type names on success
  * @throws Error if event type retrieval fails
  * 
- * Requirements: 11.3, 11.8
  */
 export async function getEventTypes(
   _req: Request,

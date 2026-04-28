@@ -4,7 +4,6 @@
  * Defines routes for secretary portal research operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 8.11-8.14
  */
 
 import { Router } from 'express';
@@ -53,7 +52,6 @@ export function createResearchRoutes(): Router {
    * 
    * Retrieve all research projects with pagination and filtering.
    * 
-   * Requirements: 8.1, 8.11
    */
   router.get(
     '/',
@@ -66,7 +64,6 @@ export function createResearchRoutes(): Router {
    * 
    * Retrieve a research project by ID.
    * 
-   * Requirements: 8.2, 8.11
    */
   router.get(
     '/:id',
@@ -79,7 +76,6 @@ export function createResearchRoutes(): Router {
    * 
    * Create a new research project.
    * 
-   * Requirements: 8.3, 8.12
    */
   router.post(
     '/',
@@ -92,7 +88,6 @@ export function createResearchRoutes(): Router {
    * 
    * Update an existing research project.
    * 
-   * Requirements: 8.4, 8.13
    */
   router.put(
     '/:id',
@@ -105,7 +100,6 @@ export function createResearchRoutes(): Router {
    * 
    * Delete a research project (soft delete).
    * 
-   * Requirements: 8.5, 8.14
    */
   router.delete(
     '/:id',
@@ -119,7 +113,6 @@ export function createResearchRoutes(): Router {
    * Submit a research project for approval.
    * Changes status from 'draft' to 'pending_approval'.
    * 
-   * Requirements: 8.6, 8.13
    */
   router.post(
     '/:id/submit',
@@ -134,7 +127,6 @@ export function createResearchRoutes(): Router {
    * Uses multer middleware for multipart/form-data handling.
    * Upload limiter prevents resource exhaustion from concurrent uploads.
    * 
-   * Requirements: 8.7, 8.13, 16.6
    */
   router.post(
     '/:id/files',
@@ -149,7 +141,6 @@ export function createResearchRoutes(): Router {
    * 
    * Retrieve files for a research project.
    * 
-   * Requirements: 8.8, 8.11
    */
   router.get(
     '/:id/files',
@@ -163,7 +154,6 @@ export function createResearchRoutes(): Router {
    * Download a research file.
    * Streams file to client to reduce memory usage.
    * 
-   * Requirements: 8.8, 8.11, 16.7
    */
   router.get(
     '/:id/files/:fileId/download',
@@ -176,7 +166,6 @@ export function createResearchRoutes(): Router {
    * 
    * Delete a research file.
    * 
-   * Requirements: 8.9, 8.14
    */
   router.delete(
     '/:id/files/:fileId',
@@ -189,7 +178,6 @@ export function createResearchRoutes(): Router {
    * 
    * Retrieve authors for a research project.
    * 
-   * Requirements: 8.10, 8.11
    */
   router.get(
     '/:id/authors',

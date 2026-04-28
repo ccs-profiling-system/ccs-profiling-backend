@@ -4,7 +4,6 @@
  * HTTP request/response handling for schedule management in the department chair portal.
  * Handles filtering, creation with conflict detection, approval workflows, and department-scoped access.
  * 
- * Requirements: 5.1, 5.4, 5.9, 5.11, 9.1, 9.4
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -47,7 +46,6 @@ export class ScheduleController {
    * @returns HTTP 200 with schedule list
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 5.1, 5.2, 5.3
    */
   listSchedules = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -98,7 +96,6 @@ export class ScheduleController {
    * @throws NotFoundError if user has no department affiliation
    * @throws ValidationError if request body is invalid
    * 
-   * Requirements: 5.4, 5.5, 5.6, 5.7, 5.8
    */
   createSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -186,7 +183,6 @@ export class ScheduleController {
    * @returns HTTP 404 if schedule not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 5.9, 5.10
    */
   approveSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -243,7 +239,6 @@ export class ScheduleController {
    * @throws NotFoundError if user has no department affiliation
    * @throws ValidationError if query parameters are invalid
    * 
-   * Requirements: 5.11, 5.12, 5.13
    */
   checkConflicts = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal document operations.
  * Provides document upload, retrieval, download, and deletion operations.
  * 
- * Requirements: 6.1-6.5, 6.23-6.26, 15.1, 15.4, 16.7
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -42,7 +41,6 @@ import { paginationSchema, idParamSchema } from '../schemas/common.schemas';
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if document upload fails
  * 
- * Requirements: 6.1, 6.23, 15.1
  */
 export async function uploadDocumentController(
   req: Request,
@@ -129,7 +127,6 @@ export async function uploadDocumentController(
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if document retrieval fails
  * 
- * Requirements: 6.2, 6.24, 15.1
  */
 export async function getAllDocumentsController(
   req: Request,
@@ -205,7 +202,6 @@ export async function getAllDocumentsController(
  * @returns HTTP 404 when document not found with entity type
  * @throws Error if document retrieval fails
  * 
- * Requirements: 6.3, 6.25, 15.4
  */
 export async function getDocumentByIdController(
   req: Request,
@@ -270,7 +266,6 @@ export async function getDocumentByIdController(
  * @returns HTTP 404 when document not found with entity type
  * @throws Error if document download fails
  * 
- * Requirements: 6.4, 6.26, 15.4, 16.7
  */
 export async function downloadDocumentController(
   req: Request,
@@ -360,7 +355,6 @@ export async function downloadDocumentController(
  * @returns HTTP 404 when document not found with entity type
  * @throws Error if document deletion fails
  * 
- * Requirements: 6.5, 6.26, 15.4
  */
 export async function deleteDocumentController(
   req: Request,

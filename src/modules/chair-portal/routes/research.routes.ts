@@ -10,7 +10,6 @@
  * - POST /api/chair/research/:id/approve - Approve a research project
  * - POST /api/chair/research/:id/reject - Reject a research project
  * 
- * Requirements: 7.1, 7.4, 7.7, 7.11, 14.1
  */
 
 import { Router } from 'express';

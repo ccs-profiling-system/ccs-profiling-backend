@@ -48,7 +48,6 @@ export class InvalidOperationError extends Error {
  * Handles the main business logic for the approval workflow system.
  * Integrates with state machine, department assignment, entity application, and notification services.
  * 
- * Requirements: 1.1-1.6, 2.1-2.7, 3.1-3.7, 5.1-5.7, 10.1-10.4
  */
 export class ApprovalService {
   /**
@@ -61,7 +60,6 @@ export class ApprovalService {
    * @param userId - ID of the submitting user (secretary)
    * @returns Created approval record
    * 
-   * Requirements: 1.1-1.6
    */
   async submitChangeRequest(
     data: SubmitChangeRequestData,
@@ -122,7 +120,6 @@ export class ApprovalService {
    * @param force - Force approval despite conflicts (skips conflict detection)
    * @returns Updated approval record
    * 
-   * Requirements: 5.1-5.7
    */
   async approveChangeRequest(
     approvalId: string,
@@ -186,7 +183,6 @@ export class ApprovalService {
    * @param comments - Required rejection comments
    * @returns Updated approval record
    * 
-   * Requirements: 5.1-5.7
    */
   async rejectChangeRequest(
     approvalId: string,
@@ -242,7 +238,6 @@ export class ApprovalService {
    * @param userId - ID of the user attempting to withdraw (must be submitter)
    * @returns Updated approval record
    * 
-   * Requirements: 2.6-2.7
    */
   async withdrawChangeRequest(approvalId: string, userId: string): Promise<Approval> {
     // Fetch the approval
@@ -288,7 +283,6 @@ export class ApprovalService {
    * @param pagination - Optional pagination options
    * @returns Paginated list of user's submissions
    * 
-   * Requirements: 2.1-2.5
    */
   async getMySubmissions(
     userId: string,
@@ -315,7 +309,6 @@ export class ApprovalService {
    * @param departmentId - Optional department ID for chair scope
    * @returns Paginated list of pending approvals
    * 
-   * Requirements: 4.1-4.6, 9.1-9.5
    */
   async getPendingApprovals(
     filters: Omit<ApprovalFilters, 'status'> = {},
@@ -342,7 +335,6 @@ export class ApprovalService {
    * @param departmentId - Optional department ID for chair scope
    * @returns Paginated list of processed approvals
    * 
-   * Requirements: 7.1-7.6, 11.1-11.4
    */
   async getApprovalHistory(
     filters: ApprovalFilters = {},

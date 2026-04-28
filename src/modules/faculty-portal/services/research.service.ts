@@ -5,7 +5,6 @@
  * Handles research project creation, updates, and retrieval for faculty members.
  * Validates faculty association with research projects and enforces status transitions.
  * 
- * Requirements: 7.1-7.22, 12.2, 12.3, 12.6, 12.7, 12.8
  */
 
 import { eq, and, or, isNull, sql, inArray } from 'drizzle-orm';
@@ -122,7 +121,6 @@ export class ResearchService {
    * @param filters - Optional filters (status)
    * @returns Paginated list of research projects
    * 
-   * Requirements:
    * - 7.1: Endpoint protected by faculty.research.read permission with pagination
    * - 7.2: Filter results by authenticated user's faculty_id as primary researcher or adviser
    * - 7.3: Accept page, limit, and status query parameters
@@ -199,7 +197,6 @@ export class ResearchService {
    * @throws ResearchNotFoundError if research doesn't exist (HTTP 404)
    * @throws ResearchAccessDeniedError if faculty not associated with research (HTTP 403)
    * 
-   * Requirements:
    * - 7.6: Endpoint protected by faculty.research.read permission
    * - 7.7: Validate research project is associated with authenticated faculty
    * - 7.8: Return HTTP 403 if faculty not associated with research
@@ -252,7 +249,6 @@ export class ResearchService {
    * @param userId - The user ID for audit logging
    * @returns Created research project details
    * 
-   * Requirements:
    * - 7.10: Endpoint protected by faculty.research.create permission
    * - 7.11: Require title, description, research_type, start_date
    * - 7.12: Accept optional fields: end_date, funding_source, budget, student_researchers
@@ -339,7 +335,6 @@ export class ResearchService {
    * @throws InvalidResearchStatusError if attempting to update approved/rejected research (HTTP 400)
    * @throws InvalidStatusTransitionError if status transition is invalid (HTTP 400)
    * 
-   * Requirements:
    * - 7.17: Endpoint protected by faculty.research.update permission
    * - 7.18: Validate research project is associated with authenticated faculty
    * - 7.19: Accept optional fields: title, description, status, end_date, funding_source, budget, student_researchers

@@ -5,7 +5,6 @@
  * Handles enrolled courses retrieval, course details, and weekly schedule.
  * Ensures students can only access courses they are enrolled in.
  * 
- * Requirements: 6.1, 7.1, 8.1
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -22,7 +21,6 @@ export class CourseController {
    * 
    * Extracts student_id from JWT token and returns enrolled courses.
    * 
-   * Requirements: 6.1
    */
   getEnrolledCourses = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -49,7 +47,6 @@ export class CourseController {
    * Extracts student_id from JWT token and returns course details.
    * Validates student is enrolled in the course.
    * 
-   * Requirements: 7.1
    */
   getCourseDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -78,7 +75,6 @@ export class CourseController {
    * 
    * Extracts student_id from JWT token and returns weekly schedule.
    * 
-   * Requirements: 8.1
    */
   getWeeklySchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {

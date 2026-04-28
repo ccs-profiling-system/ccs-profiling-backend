@@ -8,7 +8,6 @@
  * 
  * All routes require authentication and appropriate admin permissions.
  * 
- * Requirements: 26.1-26.7, 31.1-31.10, 34.5-34.10
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -114,7 +113,6 @@ export function createAdminAdvancedRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 26.1-26.7
    */
   router.get(
     '/audit-logs',
@@ -173,7 +171,6 @@ export function createAdminAdvancedRoutes(): Router {
    * - 409: Conflict detected (entity has changed)
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 31.1-31.10
    */
   router.patch(
     '/approvals/:id/retry',
@@ -300,7 +297,6 @@ export function createAdminAdvancedRoutes(): Router {
    * - 404: Background job not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 34.5-34.10
    */
   router.get(
     '/background-jobs/:id',

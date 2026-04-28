@@ -2,7 +2,6 @@
  * Student Portal - Research Schemas
  * Zod validation schemas for research opportunity endpoints
  * 
- * Requirements: 15.3, 15.4
  */
 
 import { z } from 'zod';
@@ -12,7 +11,6 @@ import { z } from 'zod';
  * 
  * Validates statement of interest field.
  * 
- * Requirements: 15.3, 15.4
  */
 export const applyToOpportunitySchema = z.object({
   statement_of_interest: z

@@ -4,7 +4,6 @@
  * Utilities for extracting student_id from authenticated users and validating
  * student access to resources. Ensures students can only access their own data.
  * 
- * Requirements: 28.1, 28.2, 28.3, 28.4, 28.5
  */
 
 import { Request } from 'express';

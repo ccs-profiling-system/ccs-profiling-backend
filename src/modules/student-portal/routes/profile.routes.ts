@@ -5,7 +5,6 @@
  * Provides endpoints for students to view and update their own profiles.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 1.6, 1.7, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -40,7 +39,6 @@ export function createProfileRoutes(profileController: ProfileController): Route
    * - 403: Forbidden (missing permission or not a student)
    * - 404: Not Found (student profile not found)
    * 
-   * Requirements: 1.1, 1.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/',
@@ -69,7 +67,6 @@ export function createProfileRoutes(profileController: ProfileController): Route
    * - 403: Forbidden (missing permission or not a student)
    * - 404: Not Found (student profile not found)
    * 
-   * Requirements: 1.2, 1.3, 1.4, 1.7, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.put(
     '/',

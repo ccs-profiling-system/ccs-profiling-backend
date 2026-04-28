@@ -2,7 +2,6 @@
  * Schedule Validation Schemas for Secretary Portal
  * Zod schemas for validating schedule-related input
  * 
- * Requirements: 5.10-5.13
  */
 
 import { z } from 'zod';
@@ -13,7 +12,6 @@ import { dayEnum, semesterEnum } from './common.schemas';
  * Validates all required fields for schedule creation
  * Includes validation for start_time before end_time
  * 
- * Requirements: 5.10, 5.11, 5.12, 5.13
  */
 export const createScheduleSchema = z
   .object({
@@ -62,7 +60,6 @@ export const createScheduleSchema = z
  * All fields are optional for partial updates
  * Includes validation for start_time before end_time when both are provided
  * 
- * Requirements: 5.10, 5.11, 5.12, 5.13
  */
 export const updateScheduleSchema = z
   .object({

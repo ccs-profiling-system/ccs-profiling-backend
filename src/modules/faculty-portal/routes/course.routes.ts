@@ -6,7 +6,6 @@
  * teaching load summary. All routes require authentication and RBAC permission checks.
  * All queries are filtered by the authenticated user's faculty_id.
  * 
- * Requirements: 4.1, 4.6, 14.1, 16.2, 16.4
  */
 
 import { Router } from 'express';
@@ -64,7 +63,6 @@ export function createCourseRoutes(courseController: CourseController): Router {
    *   ]
    * }
    * 
-   * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 14.1, 16.2, 16.4
    */
   router.get(
     '/courses',
@@ -111,7 +109,6 @@ export function createCourseRoutes(courseController: CourseController): Router {
    *   }
    * }
    * 
-   * Requirements: 4.6, 4.7, 4.8, 4.9, 4.10, 4.11, 14.1, 16.2, 16.4
    */
   router.get(
     '/teaching-load',

@@ -43,7 +43,6 @@ export class JobHandlerError extends Error {
  * - bulk_approve: Approve multiple change requests
  * - bulk_reject: Reject multiple change requests
  * 
- * Requirements: 8.1-8.7, 34.1-34.10
  */
 export class BulkOperationsHandler {
   /**
@@ -56,7 +55,6 @@ export class BulkOperationsHandler {
    * @returns Operation summary with successful and failed results
    * @throws JobHandlerError if payload is invalid or processing fails
    * 
-   * Requirements: 8.1-8.7, 34.1-34.10
    */
   async handleBulkApprove(payload: Record<string, any>): Promise<BulkOperationSummary> {
     // Validate payload structure
@@ -100,7 +98,6 @@ export class BulkOperationsHandler {
    * @returns Operation summary with successful and failed results
    * @throws JobHandlerError if payload is invalid or processing fails
    * 
-   * Requirements: 8.1-8.7, 34.1-34.10
    */
   async handleBulkReject(payload: Record<string, any>): Promise<BulkOperationSummary> {
     // Validate payload structure

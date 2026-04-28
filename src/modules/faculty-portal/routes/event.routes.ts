@@ -6,7 +6,6 @@
  * and register for events. All routes require authentication and RBAC permission checks.
  * Event access is validated by department membership.
  * 
- * Requirements: 8.1, 8.6, 8.10, 14.1
  */
 
 import { Router } from 'express';
@@ -73,7 +72,6 @@ export function createEventRoutes(eventController: EventController): Router {
    *   }
    * }
    * 
-   * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 14.1
    */
   router.get(
     '/events',
@@ -112,7 +110,6 @@ export function createEventRoutes(eventController: EventController): Router {
    *   ]
    * }
    * 
-   * Requirements: 8.6, 8.7, 8.8, 8.9, 14.1
    */
   router.get(
     '/events/my-participation',
@@ -187,7 +184,6 @@ export function createEventRoutes(eventController: EventController): Router {
    *   }
    * }
    * 
-   * Requirements: 8.10, 8.11, 8.12, 8.13, 8.14, 8.15, 8.16, 8.17, 8.18, 14.1
    */
   router.post(
     '/events/:eventId/register',

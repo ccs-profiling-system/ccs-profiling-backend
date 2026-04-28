@@ -2,7 +2,6 @@
  * Filter Builder Utility
  * Provides dynamic filter building for Drizzle ORM queries
  * 
- * Requirements: 3.14-3.15, 4.14-4.15, 5.14, 6.17-6.18, 7.20-7.21, 8.28-8.29
  */
 
 import { SQL, and, eq, gte, lte, ilike, or, sql } from 'drizzle-orm';
@@ -45,7 +44,6 @@ export interface FilterOptions {
  * @param columnMap - Map of filter keys to database columns
  * @returns SQL condition for WHERE clause, or undefined if no filters
  * 
- * Requirements: 3.14-3.15, 4.14-4.15, 5.14, 6.17-6.18, 7.20-7.21, 8.28-8.29
  */
 export function buildWhereClause(
   filters: Record<string, any>,
@@ -89,7 +87,6 @@ export function buildWhereClause(
  * @param endDate - End date (ISO 8601 string)
  * @returns SQL condition for date range, or undefined if no dates provided
  * 
- * Requirements: 6.17, 7.20, 8.28
  */
 export function buildDateRangeFilter(
   column: PgColumn,
@@ -118,7 +115,6 @@ export function buildDateRangeFilter(
  * @param searchTerm - Search term to match
  * @returns SQL condition for search, or undefined if no search term
  * 
- * Requirements: 3.15, 4.15, 6.18, 7.21, 8.29
  */
 export function buildSearchFilter(
   columns: PgColumn[],
@@ -151,7 +147,6 @@ export function combineFilters(...conditions: (SQL | undefined)[]): SQL | undefi
  * @param options - Filter options
  * @returns SQL condition for WHERE clause, or undefined if no filters
  * 
- * Requirements: 3.14-3.15, 4.14-4.15, 5.14, 6.17-6.18, 7.20-7.21, 8.28-8.29
  */
 export function buildAdvancedFilter(options: FilterOptions): SQL | undefined {
   const conditions: SQL[] = [];

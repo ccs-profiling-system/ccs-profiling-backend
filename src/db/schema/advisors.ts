@@ -10,7 +10,6 @@ import { users } from './users';
  * Stores student-advisor assignments linking students to their assigned faculty advisors.
  * Each student can have one advisor at a time.
  * 
- * Requirements: 21.1-21.3
  */
 export const studentAdvisors = pgTable('student_advisors', {
   id: uuidPrimaryKey(),
@@ -31,7 +30,6 @@ export const studentAdvisors = pgTable('student_advisors', {
  * Stores message history between students and their advisors.
  * Tracks sender role and read status for message management.
  * 
- * Requirements: 22.1-22.5, 23.1-23.6
  */
 export const advisorMessages = pgTable('advisor_messages', {
   id: uuidPrimaryKey(),
@@ -58,7 +56,6 @@ export const advisorMessages = pgTable('advisor_messages', {
  * Stores available time slots for advisor appointments.
  * Faculty create slots that students can book for appointments.
  * 
- * Requirements: 24.1-24.5
  */
 export const advisorSlots = pgTable('advisor_slots', {
   id: uuidPrimaryKey(),
@@ -85,7 +82,6 @@ export const advisorSlots = pgTable('advisor_slots', {
  * Links to advisor_slots to track which slot was booked.
  * Tracks appointment status and advisor notes.
  * 
- * Requirements: 25.1-25.5, 26.1-26.8
  */
 export const advisorAppointments = pgTable('advisor_appointments', {
   id: uuidPrimaryKey(),

@@ -2,7 +2,6 @@
  * Event Validation Schemas for Secretary Portal
  * Zod schemas for validating event-related input
  * 
- * Requirements: 7.12-7.16
  */
 
 import { z } from 'zod';
@@ -13,7 +12,6 @@ import { eventTypeEnum, approvalStatusEnum } from './common.schemas';
  * Validates all required fields for event creation
  * Includes validation for event_date not in past and registration_deadline before event_date
  * 
- * Requirements: 7.12, 7.13, 7.14, 7.15, 7.16
  */
 export const createEventSchema = z
   .object({
@@ -89,7 +87,6 @@ export const createEventSchema = z
  * All fields are optional for partial updates
  * Includes same validations as create schema when fields are provided
  * 
- * Requirements: 7.12, 7.13, 7.14, 7.15, 7.16
  */
 export const updateEventSchema = z
   .object({

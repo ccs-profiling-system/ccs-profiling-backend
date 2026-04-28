@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal schedule operations.
  * Provides CRUD operations for schedules.
  * 
- * Requirements: 5.1-5.5, 5.18-5.21, 15.1, 15.4
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -43,7 +42,6 @@ import { paginationSchema, idParamSchema } from '../schemas/common.schemas';
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if schedule retrieval fails
  * 
- * Requirements: 5.1, 5.14-5.16, 5.18-5.21, 15.1
  */
 export async function getAllSchedulesController(
   req: Request,
@@ -118,7 +116,6 @@ export async function getAllSchedulesController(
  * @returns HTTP 404 when schedule not found with entity type
  * @throws Error if schedule retrieval fails
  * 
- * Requirements: 5.2, 5.18-5.21, 15.4
  */
 export async function getScheduleByIdController(
   req: Request,
@@ -182,7 +179,6 @@ export async function getScheduleByIdController(
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if schedule creation fails
  * 
- * Requirements: 5.3, 5.10-5.13, 5.18-5.21, 15.1
  */
 export async function createScheduleController(
   req: Request,
@@ -213,16 +209,7 @@ export async function createScheduleController(
 
     // Create schedule via service
     const schedule = await createSchedule(
-      bodyResult.data as {
-        instruction_id: string;
-        faculty_id: string;
-        room: string;
-        day: string;
-        start_time: string;
-        end_time: string;
-        semester: string;
-        academic_year: string;
-      },
+      bodyResult.data,
       userId,
       ipAddress,
       userAgent
@@ -253,7 +240,6 @@ export async function createScheduleController(
  * @returns HTTP 404 when schedule not found with entity type
  * @throws Error if schedule update fails
  * 
- * Requirements: 5.4, 5.10-5.13, 5.18-5.21, 15.4
  */
 export async function updateScheduleController(
   req: Request,
@@ -346,7 +332,6 @@ export async function updateScheduleController(
  * @returns HTTP 404 when schedule not found with entity type
  * @throws Error if schedule deletion fails
  * 
- * Requirements: 5.5, 5.18-5.21, 15.4
  */
 export async function deleteScheduleController(
   req: Request,

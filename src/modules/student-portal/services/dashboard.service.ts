@@ -5,7 +5,6 @@
  * Aggregates data from multiple sources to provide a comprehensive
  * dashboard view including current courses, GPA, notifications, and events.
  * 
- * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
  */
 
 import { eq, and, isNull, gte, sql } from 'drizzle-orm';
@@ -35,7 +34,6 @@ export class DashboardService {
    * @param studentId - The student UUID (internal ID)
    * @returns Dashboard summary with aggregated data
    * 
-   * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
    */
   async getDashboardSummary(studentId: string): Promise<DashboardSummaryDTO> {
     // Get current academic period (you may need to adjust this based on your system)
@@ -93,7 +91,6 @@ export class DashboardService {
    * @param academicYear - Current academic year (e.g., '2023-2024')
    * @returns Array of course DTOs
    * 
-   * Requirements: 2.1
    */
   private async getCurrentSemesterCourses(
     studentId: string,
@@ -147,7 +144,6 @@ export class DashboardService {
    * @param studentId - The student UUID
    * @returns Current GPA or null if no grades
    * 
-   * Requirements: 2.2
    */
   private async calculateCurrentGPA(studentId: string): Promise<number | null> {
     const result = await this.db
@@ -178,7 +174,6 @@ export class DashboardService {
    * @param studentId - The student UUID
    * @returns Count of unread notifications
    * 
-   * Requirements: 2.3
    */
   private async getUnreadNotificationCount(studentId: string): Promise<number> {
     const result = await this.db
@@ -205,7 +200,6 @@ export class DashboardService {
    * @param studentId - The student UUID
    * @returns Array of upcoming event DTOs (max 5)
    * 
-   * Requirements: 2.4, 2.5
    */
   private async getUpcomingRegisteredEvents(studentId: string) {
     const today = new Date();

@@ -5,7 +5,6 @@
  * Provides endpoint for students to view their dashboard summary.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 2.6, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -43,7 +42,6 @@ export function createDashboardRoutes(dashboardController: DashboardController):
    * - 403: Forbidden (missing permission or not a student)
    * - 500: Internal Server Error
    * 
-   * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/',

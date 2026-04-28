@@ -2,11 +2,10 @@
  * Faculty Service
  * Business logic for faculty management operations
  * 
- * Requirements: 4.1-4.18, 17.3-17.5
  */
 
 import { db } from '../../../db';
-import { faculty, schedules, instructions } from '../../../db/schema';
+import { faculty, schedules, instructions, subjects } from '../../../db/schema';
 import { eq, and, isNull, or, ilike, sql, SQL } from 'drizzle-orm';
 import { FacultyDTO, PaginationParams, PaginatedResponse } from '../types';
 import { buildPaginationMeta, applyPagination } from '../utils/pagination';
@@ -24,11 +23,11 @@ export interface FacultyFilters {
 }
 
 /**
- * Teaching load item with schedule and instruction details
+ * Teaching load item with schedule and subject details
  */
 export interface TeachingLoadItem {
   schedule_id: string;
-  instruction_id: string;
+  instruction_id: string | null;
   subject_code: string;
   subject_name: string;
   room: string;
@@ -47,7 +46,6 @@ export interface TeachingLoadItem {
  * @param search - Search term for name and faculty_id
  * @returns Paginated list of faculty
  * 
- * Requirements: 4.1, 4.14-4.16
  */
 export async function getAllFaculty(
   pagination: PaginationParams,
@@ -120,7 +118,6 @@ export async function getAllFaculty(
  * @param id - Faculty UUID
  * @returns Faculty record or null if not found
  * 
- * Requirements: 4.2
  */
 export async function getFacultyById(id: string): Promise<FacultyDTO | null> {
   const result = await db
@@ -142,7 +139,6 @@ export async function getFacultyById(id: string): Promise<FacultyDTO | null> {
  * @param userAgent - User agent of the request
  * @returns Created faculty record
  * 
- * Requirements: 4.3, 4.11-4.13, 17.3-17.4
  */
 export async function createFaculty(
   data: {
@@ -225,7 +221,6 @@ export async function createFaculty(
  * @param userAgent - User agent of the request
  * @returns Updated faculty record
  * 
- * Requirements: 4.4, 4.11-4.13, 17.3-17.5
  */
 export async function updateFaculty(
   id: string,
@@ -316,7 +311,6 @@ export async function updateFaculty(
  * @param userAgent - User agent of the request
  * @returns Deleted faculty record
  * 
- * Requirements: 4.5, 17.3-17.4, 17.7
  */
 export async function deleteFaculty(
   id: string,
@@ -371,7 +365,6 @@ export async function deleteFaculty(
  * @param id - Faculty UUID
  * @returns List of teaching load items with schedule and instruction details
  * 
- * Requirements: 4.6
  */
 export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
   // Validate faculty exists
@@ -381,13 +374,13 @@ export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
     throw new Error('Faculty not found');
   }
   
-  // Get teaching load by joining schedules with instructions
+  // Get teaching load by joining schedules with instructions and subjects
   const teachingLoad = await db
     .select({
       schedule_id: schedules.id,
       instruction_id: schedules.instruction_id,
-      subject_code: instructions.subject_code,
-      subject_name: instructions.subject_name,
+      subject_code: subjects.code,
+      subject_name: subjects.name,
       room: schedules.room,
       day: schedules.day,
       start_time: schedules.start_time,
@@ -397,11 +390,13 @@ export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
     })
     .from(schedules)
     .innerJoin(instructions, eq(schedules.instruction_id, instructions.id))
+    .innerJoin(subjects, eq(instructions.subject_code, subjects.code))
     .where(
       and(
         eq(schedules.faculty_id, id),
         isNull(schedules.deleted_at),
-        isNull(instructions.deleted_at)
+        isNull(instructions.deleted_at),
+        isNull(subjects.deleted_at)
       )
     )
     .orderBy(schedules.academic_year, schedules.semester, schedules.day, schedules.start_time);

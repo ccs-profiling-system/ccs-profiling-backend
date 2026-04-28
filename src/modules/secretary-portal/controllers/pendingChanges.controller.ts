@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal pending changes operations.
  * Provides operations to view and withdraw pending changes.
  * 
- * Requirements: 9.1-9.2, 9.11-9.13, 15.1, 15.4
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -46,7 +45,6 @@ const pendingChangesFilterSchema = z.object({
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if pending changes retrieval fails
  * 
- * Requirements: 9.1, 9.5-9.7, 9.11, 15.1
  */
 export async function getAllPendingChangesController(
   req: Request,
@@ -123,7 +121,6 @@ export async function getAllPendingChangesController(
  * @returns HTTP 404 when pending change not found
  * @throws Error if withdrawal fails
  * 
- * Requirements: 9.2, 9.8-9.10, 9.12-9.13, 15.1, 15.4, 17.8
  */
 export async function withdrawPendingChangeController(
   req: Request,

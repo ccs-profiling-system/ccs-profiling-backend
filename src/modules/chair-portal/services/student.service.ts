@@ -10,7 +10,6 @@
  * - Approve/reject students with workflow validation
  * - Audit logging for approval/rejection actions
  * 
- * Requirements: 3.1, 3.2, 3.5, 3.8, 3.9, 3.11, 3.12, 3.13, 3.15, 11.1, 11.5, 13.1, 13.6
  */
 
 import { db } from '../../../db';
@@ -85,7 +84,6 @@ export class StudentService {
    * @param filters - Pagination and filter parameters
    * @returns Paginated list of students
    * 
-   * Requirements: 3.1, 3.2, 3.3, 3.4, 13.1, 13.6
    */
   async listStudents(
     departmentId: string,
@@ -161,7 +159,6 @@ export class StudentService {
    * @param departmentId - Department ID to validate scope
    * @returns Student details or null if not found
    * 
-   * Requirements: 3.5, 3.6, 3.7, 13.2, 13.7
    */
   async getStudentById(id: string, departmentId: string): Promise<StudentDTO | null> {
     const result = await db
@@ -201,7 +198,6 @@ export class StudentService {
    * @returns Updated student or null if not found
    * @throws Error if student is not in valid state for approval
    * 
-   * Requirements: 3.8, 3.9, 3.10, 3.11, 11.1, 11.5
    */
   async approveStudent(
     id: string,
@@ -269,7 +265,6 @@ export class StudentService {
    * @returns Updated student or null if not found
    * @throws Error if student is not in valid state for rejection
    * 
-   * Requirements: 3.12, 3.13, 3.14, 3.15, 11.1, 11.5
    */
   async rejectStudent(
     id: string,

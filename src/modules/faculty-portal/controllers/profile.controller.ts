@@ -5,7 +5,6 @@
  * Handles faculty profile viewing and updates with faculty-scoped validation.
  * Ensures faculty members can only access and update their own profiles.
  * 
- * Requirements: 3.1, 3.2, 3.4, 3.5, 3.6, 3.10, 3.11
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -24,7 +23,6 @@ export class ProfileController {
    * 
    * Extracts faculty_id from JWT token and returns the profile.
    * 
-   * Requirements: 3.1, 3.2, 3.4
    */
   getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,7 +50,6 @@ export class ProfileController {
    * Extracts faculty_id from JWT token and updates the profile.
    * Validates request body using Zod schema for email and phone formats.
    * 
-   * Requirements: 3.5, 3.6, 3.10, 3.11
    */
   updateProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {

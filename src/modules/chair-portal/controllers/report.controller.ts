@@ -4,7 +4,6 @@
  * HTTP request/response handling for report generation and analytics operations.
  * Extracts department ID from authenticated user and returns department-scoped reports.
  * 
- * Requirements: 8.1, 8.5, 8.8, 9.1, 9.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -32,7 +31,6 @@ export class ReportController {
    * @returns HTTP 200 with student statistics
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 8.1, 8.2, 8.3, 8.4
    * 
    * @example
    * Response:
@@ -99,7 +97,6 @@ export class ReportController {
    * @returns HTTP 200 with faculty statistics
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 8.5, 8.6, 8.7
    * 
    * @example
    * Response:
@@ -155,7 +152,6 @@ export class ReportController {
    * @returns HTTP 400 if report_type or format is invalid
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 8.8, 8.9, 8.10, 8.11, 8.12, 8.13, 8.14, 8.15
    * 
    * @example
    * Request: GET /api/chair/reports/export?report_type=student_stats&format=pdf

@@ -10,11 +10,10 @@
  * - Approve schedules with workflow validation
  * - Check for faculty, room, and time conflicts
  * 
- * Requirements: 5.1, 5.2, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12, 5.13, 13.1
  */
 
 import { db } from '../../../db';
-import { schedules, instructions, faculty } from '../../../db/schema';
+import { schedules, instructions, subjects, faculty } from '../../../db/schema';
 import { eq, and, isNull, or, sql } from 'drizzle-orm';
 import { validateApprovalState } from '../utils/workflowValidation';
 
@@ -103,7 +102,6 @@ export class ScheduleService {
    * @param filters - Filter parameters
    * @returns List of schedules
    * 
-   * Requirements: 5.1, 5.2, 5.3, 13.1
    */
   async listSchedules(
     departmentId: string,
@@ -133,26 +131,28 @@ export class ScheduleService {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions))
       .orderBy(sql`${schedules.day}, ${schedules.start_time}`);
 
-    // Filter by department (via faculty affiliation) and subject_code
+    // Filter by department (via faculty affiliation) and subject code
     let filteredResults = results.filter(
       (r) => r.faculty?.department === departmentId
     );
 
     if (filters.subject_code) {
       filteredResults = filteredResults.filter(
-        (r) => r.instruction?.subject_code === filters.subject_code
+        (r) => r.subject?.code === filters.subject_code
       );
     }
 
-    return filteredResults.map((r) => this.toDTO(r.schedule, r.instruction, r.faculty));
+    return filteredResults.map((r) => this.toDTO(r.schedule, r.instruction, r.subject, r.faculty));
   }
 
   /**
@@ -167,7 +167,6 @@ export class ScheduleService {
    * @returns Created schedule
    * @throws Error if faculty not found or conflicts detected
    * 
-   * Requirements: 5.4, 5.5, 5.6, 5.7, 5.8, 13.1
    */
   async createSchedule(
     data: CreateScheduleData,
@@ -190,7 +189,8 @@ export class ScheduleService {
       throw new Error('Faculty not found or does not belong to your department');
     }
 
-    // Find or create instruction record for the subject
+    // TODO: Find instruction by subject_code
+    // For now, we'll use subject_code to find the instruction
     const academicYear = `${data.year}-${data.year + 1}`;
     
     let instructionRecord = await db
@@ -244,10 +244,13 @@ export class ScheduleService {
     const instructionData = instructionId
       ? await db.select().from(instructions).where(eq(instructions.id, instructionId)).limit(1)
       : [];
+    const subjectData = instructionData[0]
+      ? await db.select().from(subjects).where(eq(subjects.code, instructionData[0].subject_code)).limit(1)
+      : [];
     const facultyData = await db.select().from(faculty).where(eq(faculty.id, data.faculty_id)).limit(1);
 
     return {
-      schedule: this.toDTO(created, instructionData[0], facultyData[0]),
+      schedule: this.toDTO(created, instructionData[0], subjectData[0], facultyData[0]),
     };
   }
 
@@ -267,7 +270,6 @@ export class ScheduleService {
    * @param userId - ID of user performing the approval
    * @returns Updated schedule or null if not found
    * 
-   * Requirements: 5.9, 5.10
    */
   async approveSchedule(
     id: string,
@@ -279,10 +281,12 @@ export class ScheduleService {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
@@ -305,7 +309,7 @@ export class ScheduleService {
     // This is a placeholder for future workflow integration
     // For now, we just return the schedule as-is
 
-    return this.toDTO(result[0].schedule, result[0].instruction, result[0].faculty);
+    return this.toDTO(result[0].schedule, result[0].instruction, result[0].subject, result[0].faculty);
   }
 
   /**
@@ -319,7 +323,6 @@ export class ScheduleService {
    * @param departmentId - Department ID to scope the query
    * @returns Array of conflict details
    * 
-   * Requirements: 5.11, 5.12, 5.13
    */
   async checkConflicts(
     params: ConflictCheckParams,
@@ -351,10 +354,12 @@ export class ScheduleService {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
@@ -370,7 +375,7 @@ export class ScheduleService {
       if (result.faculty?.department === departmentId) {
         conflicts.push({
           type: 'faculty',
-          schedule: this.toDTO(result.schedule, result.instruction, result.faculty),
+          schedule: this.toDTO(result.schedule, result.instruction, result.subject, result.faculty),
           message: `Faculty member is already scheduled at this time`,
         });
       }
@@ -381,10 +386,12 @@ export class ScheduleService {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
@@ -400,7 +407,7 @@ export class ScheduleService {
       if (result.faculty?.department === departmentId) {
         conflicts.push({
           type: 'room',
-          schedule: this.toDTO(result.schedule, result.instruction, result.faculty),
+          schedule: this.toDTO(result.schedule, result.instruction, result.subject, result.faculty),
           message: `Room is already occupied at this time`,
         });
       }
@@ -412,7 +419,7 @@ export class ScheduleService {
   /**
    * Transform database entities to DTO
    */
-  private toDTO(schedule: any, instruction?: any, facultyMember?: any): ScheduleDTO {
+  private toDTO(schedule: any, instruction?: any, subject?: any, facultyMember?: any): ScheduleDTO {
     return {
       id: schedule.id,
       schedule_type: schedule.schedule_type,
@@ -424,8 +431,8 @@ export class ScheduleService {
       end_time: schedule.end_time,
       semester: schedule.semester,
       academic_year: schedule.academic_year,
-      subject_code: instruction?.subject_code,
-      subject_name: instruction?.subject_name,
+      subject_code: subject?.code,
+      subject_name: subject?.name,
       faculty_name: facultyMember
         ? `${facultyMember.first_name} ${facultyMember.last_name}`
         : undefined,

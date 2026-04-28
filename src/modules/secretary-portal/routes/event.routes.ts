@@ -4,7 +4,6 @@
  * Defines routes for secretary portal event operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 7.8-7.11
  */
 
 import { Router } from 'express';
@@ -43,7 +42,6 @@ export function createEventRoutes(): Router {
    * 
    * Retrieve all events with pagination and filtering.
    * 
-   * Requirements: 7.1, 7.8
    */
   router.get(
     '/',
@@ -56,7 +54,6 @@ export function createEventRoutes(): Router {
    * 
    * Retrieve an event by ID.
    * 
-   * Requirements: 7.2, 7.8
    */
   router.get(
     '/:id',
@@ -69,7 +66,6 @@ export function createEventRoutes(): Router {
    * 
    * Create a new event.
    * 
-   * Requirements: 7.3, 7.9
    */
   router.post(
     '/',
@@ -82,7 +78,6 @@ export function createEventRoutes(): Router {
    * 
    * Update an existing event.
    * 
-   * Requirements: 7.4, 7.10
    */
   router.put(
     '/:id',
@@ -95,7 +90,6 @@ export function createEventRoutes(): Router {
    * 
    * Delete an event (soft delete).
    * 
-   * Requirements: 7.5, 7.11
    */
   router.delete(
     '/:id',
@@ -109,7 +103,6 @@ export function createEventRoutes(): Router {
    * Submit an event for approval.
    * Changes status from 'draft' to 'pending_approval'.
    * 
-   * Requirements: 7.6, 7.10
    */
   router.post(
     '/:id/submit',
@@ -122,7 +115,6 @@ export function createEventRoutes(): Router {
    * 
    * Retrieve participants for an event.
    * 
-   * Requirements: 7.7, 7.8
    */
   router.get(
     '/:id/participants',

@@ -12,7 +12,6 @@
  * - Rate limiting
  * - Error handling
  * 
- * Requirements: 4.1-4.6, 5.1-5.7, 6.1-6.6, 7.1-7.6, 8.1-8.7
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';

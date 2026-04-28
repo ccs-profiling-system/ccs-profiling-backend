@@ -4,7 +4,6 @@
  * Defines routes for secretary portal faculty operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 4.7-4.10
  */
 
 import { Router } from 'express';
@@ -41,7 +40,6 @@ export function createFacultyRoutes(): Router {
    * 
    * Retrieve all faculty with pagination and filtering.
    * 
-   * Requirements: 4.1, 4.7
    */
   router.get(
     '/',
@@ -54,7 +52,6 @@ export function createFacultyRoutes(): Router {
    * 
    * Retrieve a faculty member by ID.
    * 
-   * Requirements: 4.2, 4.7
    */
   router.get(
     '/:id',
@@ -67,7 +64,6 @@ export function createFacultyRoutes(): Router {
    * 
    * Create a new faculty member.
    * 
-   * Requirements: 4.3, 4.8
    */
   router.post(
     '/',
@@ -80,7 +76,6 @@ export function createFacultyRoutes(): Router {
    * 
    * Update an existing faculty member.
    * 
-   * Requirements: 4.4, 4.9
    */
   router.put(
     '/:id',
@@ -93,7 +88,6 @@ export function createFacultyRoutes(): Router {
    * 
    * Delete a faculty member (soft delete).
    * 
-   * Requirements: 4.5, 4.10
    */
   router.delete(
     '/:id',
@@ -106,7 +100,6 @@ export function createFacultyRoutes(): Router {
    * 
    * Retrieve teaching load for a faculty member.
    * 
-   * Requirements: 4.6, 4.7
    */
   router.get(
     '/:id/teaching-load',

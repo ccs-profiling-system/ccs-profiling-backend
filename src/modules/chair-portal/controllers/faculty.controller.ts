@@ -4,7 +4,6 @@
  * HTTP request/response handling for faculty management operations.
  * Extracts department ID from authenticated user and delegates to FacultyService.
  * 
- * Requirements: 4.1, 4.5, 4.8, 4.10
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -33,7 +32,6 @@ export class FacultyController {
    * @returns HTTP 200 with paginated faculty list
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 4.1, 4.2
    */
   listFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -76,7 +74,6 @@ export class FacultyController {
    * @returns HTTP 200 with faculty details
    * @throws NotFoundError if faculty not found or outside department scope
    * 
-   * Requirements: 4.5, 4.6
    */
   getFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -112,7 +109,6 @@ export class FacultyController {
    * @returns HTTP 200 with teaching load data
    * @throws NotFoundError if faculty not found or outside department scope
    * 
-   * Requirements: 4.8, 4.9
    */
   getTeachingLoad = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -148,7 +144,6 @@ export class FacultyController {
    * @returns HTTP 200 with faculty statistics
    * @throws NotFoundError if faculty not found or outside department scope
    * 
-   * Requirements: 4.10, 4.11
    */
   getFacultyStats = async (req: Request, res: Response, next: NextFunction) => {
     try {

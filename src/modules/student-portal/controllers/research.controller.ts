@@ -5,7 +5,6 @@
  * Handles research opportunity browsing, application submission, and status tracking.
  * Extracts student_id from JWT token for data scoping.
  * 
- * Requirements: 13.1, 14.1, 15.1, 16.1
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -25,7 +24,6 @@ export class ResearchController {
    * - page: number (default 1)
    * - limit: number (default 10, max 50)
    * 
-   * Requirements: 13.1
    */
   listOpportunities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -53,7 +51,6 @@ export class ResearchController {
    * 
    * GET /api/student/research/opportunities/:id
    * 
-   * Requirements: 14.1
    */
   getOpportunityDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -79,7 +76,6 @@ export class ResearchController {
    * 
    * GET /api/student/research/applications/:applicationId
    * 
-   * Requirements: 16.1
    */
   getApplicationStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

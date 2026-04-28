@@ -5,7 +5,6 @@
  * Handles notification retrieval and read status updates with student-scoped validation.
  * Ensures students can only access and update their own notifications.
  * 
- * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -25,7 +24,6 @@ export class NotificationController {
    * Extracts student_id from JWT token and returns all notifications
    * ordered by creation date descending.
    * 
-   * Requirements: 5.1, 5.2
    */
   getNotifications = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -54,7 +52,6 @@ export class NotificationController {
    * Extracts student_id from JWT token and marks the specified notification as read.
    * Validates that the notification belongs to the authenticated student.
    * 
-   * Requirements: 5.3, 5.4, 5.5
    */
   markAsRead = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -91,7 +88,6 @@ export class NotificationController {
    * 
    * Extracts student_id from JWT token and marks all unread notifications as read.
    * 
-   * Requirements: 5.4, 5.5
    */
   markAllAsRead = async (req: Request, res: Response, next: NextFunction) => {
     try {

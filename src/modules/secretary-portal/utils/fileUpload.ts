@@ -2,7 +2,6 @@
  * File Upload Utility
  * Provides multer middleware configuration and file validation for secretary portal
  * 
- * Requirements: 6.9-6.16, 8.22-8.27, 18.4-18.5
  */
 
 import multer from 'multer';
@@ -12,13 +11,11 @@ import { ValidationError } from '../../../shared/errors';
 
 /**
  * Maximum file size: 10MB
- * Requirements: 6.11, 8.23
  */
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
 
 /**
  * Allowed file types for documents
- * Requirements: 6.12
  */
 export const ALLOWED_DOCUMENT_TYPES = [
   'application/pdf',
@@ -33,7 +30,6 @@ export const ALLOWED_DOCUMENT_TYPES = [
 
 /**
  * Allowed file types for research files
- * Requirements: 8.24
  */
 export const ALLOWED_RESEARCH_TYPES = [
   'application/pdf',
@@ -70,7 +66,6 @@ const EXTENSION_TO_MIME: Record<string, string> = {
  * @param filename - Original filename
  * @returns Sanitized filename
  * 
- * Requirements: 18.4
  */
 export function sanitizeFilename(filename: string): string {
   // Remove path separators and parent directory references
@@ -99,7 +94,6 @@ export function sanitizeFilename(filename: string): string {
  * @param originalFilename - Original filename
  * @returns Unique filename
  * 
- * Requirements: 6.14
  */
 export function generateUniqueFilename(originalFilename: string): string {
   const sanitized = sanitizeFilename(originalFilename);
@@ -116,7 +110,6 @@ export function generateUniqueFilename(originalFilename: string): string {
  * @param fileSize - File size in bytes
  * @throws ValidationError if file size exceeds maximum
  * 
- * Requirements: 6.11, 8.23
  */
 export function validateFileSize(fileSize: number): void {
   if (fileSize > MAX_FILE_SIZE) {
@@ -133,7 +126,6 @@ export function validateFileSize(fileSize: number): void {
  * @param allowedTypes - Array of allowed MIME types
  * @throws ValidationError if file type is not allowed
  * 
- * Requirements: 6.12, 8.24
  */
 export function validateFileType(mimeType: string, allowedTypes: string[]): void {
   if (!allowedTypes.includes(mimeType)) {
@@ -150,7 +142,6 @@ export function validateFileType(mimeType: string, allowedTypes: string[]): void
  * @param mimeType - File MIME type
  * @throws ValidationError if extension doesn't match MIME type
  * 
- * Requirements: 18.4
  */
 export function validateFileExtension(filename: string, mimeType: string): void {
   const ext = path.extname(filename).toLowerCase();
@@ -170,7 +161,6 @@ export function validateFileExtension(filename: string, mimeType: string): void 
  * @param allowedTypes - Array of allowed MIME types
  * @throws ValidationError if file is invalid
  * 
- * Requirements: 6.11-6.12, 8.23-8.24, 18.4
  */
 export function validateUploadedFile(
   file: Express.Multer.File | undefined,
@@ -196,7 +186,6 @@ export function validateUploadedFile(
  * Uses memory storage (files stored in memory as Buffer objects)
  * Files are processed by the storage service
  * 
- * Requirements: 6.9-6.16, 18.5
  */
 export const documentUpload = multer({
   storage: multer.memoryStorage(),
@@ -224,7 +213,6 @@ export const documentUpload = multer({
  * Uses memory storage (files stored in memory as Buffer objects)
  * Files are processed by the storage service
  * 
- * Requirements: 8.22-8.27, 18.5
  */
 export const researchUpload = multer({
   storage: multer.memoryStorage(),

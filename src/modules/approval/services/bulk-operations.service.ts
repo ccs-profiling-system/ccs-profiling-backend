@@ -50,7 +50,6 @@ export type BulkOperationMode = 'independent' | 'atomic';
  * - Atomic mode: All-or-nothing transaction (max 50 items)
  * - Background job queueing for large operations (>20 items)
  * 
- * Requirements: 8.1-8.7, 12.1-12.4, 33.1-33.8
  */
 export class BulkOperationsService {
   private readonly MAX_INDEPENDENT_ITEMS = 100;
@@ -66,7 +65,6 @@ export class BulkOperationsService {
    * @param departmentId - Optional department ID for chair scope
    * @returns Operation summary or queued job response
    * 
-   * Requirements: 8.1-8.7, 12.1-12.4
    */
   async bulkApprove(
     approvalIds: string[],
@@ -100,7 +98,6 @@ export class BulkOperationsService {
    * @param departmentId - Optional department ID for chair scope
    * @returns Operation summary or queued job response
    * 
-   * Requirements: 8.1-8.7, 12.1-12.4
    */
   async bulkReject(
     approvalIds: string[],

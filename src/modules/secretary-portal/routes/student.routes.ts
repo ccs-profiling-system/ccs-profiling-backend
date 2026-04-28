@@ -4,7 +4,6 @@
  * Defines routes for secretary portal student operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 3.1-3.10
  */
 
 import { Router } from 'express';
@@ -41,7 +40,6 @@ export function createStudentRoutes(): Router {
    * 
    * Retrieve all students with pagination and filtering.
    * 
-   * Requirements: 3.1, 3.7
    */
   router.get(
     '/',
@@ -54,7 +52,6 @@ export function createStudentRoutes(): Router {
    * 
    * Retrieve a student by ID.
    * 
-   * Requirements: 3.2, 3.7
    */
   router.get(
     '/:id',
@@ -67,7 +64,6 @@ export function createStudentRoutes(): Router {
    * 
    * Create a new student.
    * 
-   * Requirements: 3.3, 3.8
    */
   router.post(
     '/',
@@ -80,7 +76,6 @@ export function createStudentRoutes(): Router {
    * 
    * Update an existing student.
    * 
-   * Requirements: 3.4, 3.9
    */
   router.put(
     '/:id',
@@ -93,7 +88,6 @@ export function createStudentRoutes(): Router {
    * 
    * Delete a student (soft delete).
    * 
-   * Requirements: 3.5, 3.10
    */
   router.delete(
     '/:id',
@@ -106,7 +100,6 @@ export function createStudentRoutes(): Router {
    * 
    * Retrieve academic history for a student.
    * 
-   * Requirements: 3.6, 3.7
    */
   router.get(
     '/:id/academic-history',
