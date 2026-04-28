@@ -153,6 +153,10 @@ routes.use('/v1/auth', authRoutes);
 // User Management
 routes.use('/v1/admin/users', userRoutes);
 
+// Statistics routes MUST come FIRST before all module routes to avoid route conflicts
+// Routes like /instructions/statistics and /schedules/statistics would be caught by /:id otherwise
+routes.use('/v1/admin', statisticsRoutes);
+
 // Core Entities
 routes.use('/v1/admin/students', studentRoutes);
 routes.use('/v1/admin/students', studentEnrollmentRoutes);
@@ -166,6 +170,7 @@ routes.use('/v1/admin/subjects', subjectRoutes);
 routes.use('/v1/admin/subjects', syllabusRoutes);
 routes.use('/v1/admin/subjects', lessonRoutes);
 routes.use('/v1/admin/lessons', lessonDetailRoutes);
+
 routes.use('/v1/admin/instructions', instructionRoutes);
 routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 
@@ -193,8 +198,7 @@ routes.use('/v1/admin/analytics', analyticsRoutes);
 routes.use('/v1/admin/reports', reportRoutes);
 routes.use('/v1/admin/search', searchRoutes);
 
-// Statistics and Export
-routes.use('/v1/admin', statisticsRoutes);
+// Export routes
 routes.use('/v1/admin', exportRoutes);
 
 // ═══════════════════════════════════════════════════════════════════════════
