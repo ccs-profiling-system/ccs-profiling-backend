@@ -114,7 +114,7 @@ export async function getScheduleById(id: string): Promise<ScheduleDTO | null> {
  */
 export async function createSchedule(
   data: {
-    subject_id: string;
+    instruction_id: string;
     faculty_id: string;
     room: string;
     day: string;
@@ -144,7 +144,7 @@ export async function createSchedule(
       .insert(schedules)
       .values({
         schedule_type: 'class', // Default to 'class' type
-        subject_id: data.subject_id,
+        instruction_id: data.instruction_id,
         faculty_id: data.faculty_id,
         room: data.room,
         day: data.day,

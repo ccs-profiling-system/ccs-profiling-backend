@@ -1,6 +1,6 @@
 import { pgTable, varchar, time, uuid, index, boolean, date } from 'drizzle-orm/pg-core';
 import { uuidPrimaryKey, timestampsWithSoftDelete } from './utils';
-import { subjects } from './subjects';
+import { instructions } from './instructions';
 import { faculty } from './faculty';
 import { rooms } from './rooms';
 
@@ -8,14 +8,17 @@ import { rooms } from './rooms';
  * Schedules table schema
  * 
  * Stores class, exam, and consultation scheduling information.
- * Links to subjects, faculty, and rooms for schedule assignments.
+ * Links to instructions (which link to subjects), faculty, and rooms for schedule assignments.
  * Supports recurring schedules with pattern and end date.
  * Supports soft delete for audit trail preservation.
+ * 
+ * Uses instruction_id as single source of truth:
+ *   schedules.instruction_id → instructions.subject_code → subjects.code
  * 
  * @example
  * {
  *   schedule_type: "class",
- *   subject_id: "uuid",
+ *   instruction_id: "uuid",
  *   faculty_id: "uuid",
  *   room_id: "uuid",
  *   day: "monday",
@@ -29,7 +32,7 @@ import { rooms } from './rooms';
 export const schedules = pgTable('schedules', {
   id: uuidPrimaryKey(),
   schedule_type: varchar('schedule_type', { length: 50 }).notNull(), // 'class', 'exam', 'consultation'
-  subject_id: uuid('subject_id').references(() => subjects.id, { onDelete: 'set null' }),
+  instruction_id: uuid('instruction_id').references(() => instructions.id, { onDelete: 'set null' }),
   faculty_id: uuid('faculty_id').references(() => faculty.id, { onDelete: 'set null' }),
   room_id: uuid('room_id').references(() => rooms.id, { onDelete: 'set null' }),
   room: varchar('room', { length: 100 }).notNull(), // Keep for backward compatibility
@@ -50,6 +53,6 @@ export const schedules = pgTable('schedules', {
   dayIdx: index('schedules_day_idx').on(table.day),
   semesterAcademicYearIdx: index('schedules_semester_academic_year_idx')
     .on(table.semester, table.academic_year),
-  subjectIdIdx: index('schedules_subject_id_idx').on(table.subject_id),
+  instructionIdIdx: index('schedules_instruction_id_idx').on(table.instruction_id),
   isRecurringIdx: index('schedules_is_recurring_idx').on(table.is_recurring),
 }));

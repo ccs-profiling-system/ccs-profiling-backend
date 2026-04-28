@@ -81,12 +81,13 @@ export class ScheduleService {
    * Create a new schedule with conflict detection
    */
   async createSchedule(data: CreateScheduleDTO): Promise<ScheduleResponseDTO> {
-    // Verify subject exists if provided
-    if (data.subject_id) {
-      const subject = await this.subjectRepository.findById(data.subject_id);
-      if (!subject) {
-        throw new NotFoundError('Subject not found');
-      }
+    // Verify instruction exists if provided
+    if (data.instruction_id) {
+      // TODO: Add instruction repository and validation
+      // const instruction = await this.instructionRepository.findById(data.instruction_id);
+      // if (!instruction) {
+      //   throw new NotFoundError('Instruction not found');
+      // }
     }
 
     // Verify faculty exists if provided
@@ -128,7 +129,7 @@ export class ScheduleService {
     const schedule = await this.scheduleRepository.create({
       id,
       schedule_type: data.schedule_type,
-      subject_id: data.subject_id,
+      instruction_id: data.instruction_id,
       faculty_id: data.faculty_id,
       room: data.room,
       day: data.day,
@@ -138,7 +139,7 @@ export class ScheduleService {
       academic_year: data.academic_year,
     });
 
-    // Fetch with subject and faculty details for response
+    // Fetch with instruction and faculty details for response
     const result = await this.scheduleRepository.findById(schedule.id);
     if (!result) {
       throw new NotFoundError('Schedule not found after creation');
@@ -157,12 +158,13 @@ export class ScheduleService {
       throw new NotFoundError('Schedule not found');
     }
 
-    // Verify subject exists if being updated
-    if (data.subject_id) {
-      const subject = await this.subjectRepository.findById(data.subject_id);
-      if (!subject) {
-        throw new NotFoundError('Subject not found');
-      }
+    // Verify instruction exists if being updated
+    if (data.instruction_id) {
+      // TODO: Add instruction repository and validation
+      // const instruction = await this.instructionRepository.findById(data.instruction_id);
+      // if (!instruction) {
+      //   throw new NotFoundError('Instruction not found');
+      // }
     }
 
     // Verify faculty exists if being updated
@@ -230,13 +232,14 @@ export class ScheduleService {
    */
   private toResponseDTO(result: any): ScheduleResponseDTO {
     const schedule = result.schedule;
+    const instruction = result.instruction;
     const subject = result.subject;
     const facultyMember = result.faculty;
 
     return {
       id: schedule.id,
       schedule_type: schedule.schedule_type,
-      subject_id: schedule.subject_id || undefined,
+      instruction_id: schedule.instruction_id || undefined,
       subject_code: subject?.code || undefined,
       subject_name: subject?.name || undefined,
       faculty_id: schedule.faculty_id || undefined,

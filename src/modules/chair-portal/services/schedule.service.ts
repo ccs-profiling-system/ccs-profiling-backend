@@ -13,7 +13,7 @@
  */
 
 import { db } from '../../../db';
-import { schedules, subjects, faculty } from '../../../db/schema';
+import { schedules, instructions, subjects, faculty } from '../../../db/schema';
 import { eq, and, isNull, or, sql } from 'drizzle-orm';
 import { validateApprovalState } from '../utils/workflowValidation';
 
@@ -33,7 +33,7 @@ export interface ScheduleFilters {
 export interface ScheduleDTO {
   id: string;
   schedule_type: string;
-  subject_id: string | null;
+  instruction_id: string | null;
   faculty_id: string | null;
   room: string;
   day: string;
@@ -130,11 +130,13 @@ export class ScheduleService {
     const results = await db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions))
       .orderBy(sql`${schedules.day}, ${schedules.start_time}`);
@@ -150,7 +152,7 @@ export class ScheduleService {
       );
     }
 
-    return filteredResults.map((r) => this.toDTO(r.schedule, r.subject, r.faculty));
+    return filteredResults.map((r) => this.toDTO(r.schedule, r.instruction, r.subject, r.faculty));
   }
 
   /**
@@ -187,22 +189,22 @@ export class ScheduleService {
       throw new Error('Faculty not found or does not belong to your department');
     }
 
-    // TODO: This logic needs to be updated to work with subjects instead of instructions
-    // For now, we'll use subject_code to find the subject
+    // TODO: Find instruction by subject_code
+    // For now, we'll use subject_code to find the instruction
     const academicYear = `${data.year}-${data.year + 1}`;
     
-    let subjectRecord = await db
+    let instructionRecord = await db
       .select()
-      .from(subjects)
+      .from(instructions)
       .where(
         and(
-          eq(subjects.code, data.subject_code),
-          isNull(subjects.deleted_at)
+          eq(instructions.subject_code, data.subject_code),
+          isNull(instructions.deleted_at)
         )
       )
       .limit(1);
 
-    let subjectId: string | null = subjectRecord[0]?.id || null;
+    let instructionId: string | null = instructionRecord[0]?.id || null;
 
     // Check for conflicts
     const conflicts = await this.checkConflicts({
@@ -225,7 +227,7 @@ export class ScheduleService {
       .insert(schedules)
       .values({
         schedule_type: 'class',
-        subject_id: subjectId,
+        instruction_id: instructionId,
         faculty_id: data.faculty_id,
         room: data.room,
         day: data.day,
@@ -239,13 +241,16 @@ export class ScheduleService {
     const created = newSchedule[0];
 
     // Fetch related data for DTO
-    const subjectData = subjectId
-      ? await db.select().from(subjects).where(eq(subjects.id, subjectId)).limit(1)
+    const instructionData = instructionId
+      ? await db.select().from(instructions).where(eq(instructions.id, instructionId)).limit(1)
+      : [];
+    const subjectData = instructionData[0]
+      ? await db.select().from(subjects).where(eq(subjects.code, instructionData[0].subject_code)).limit(1)
       : [];
     const facultyData = await db.select().from(faculty).where(eq(faculty.id, data.faculty_id)).limit(1);
 
     return {
-      schedule: this.toDTO(created, subjectData[0], facultyData[0]),
+      schedule: this.toDTO(created, instructionData[0], subjectData[0], facultyData[0]),
     };
   }
 
@@ -275,11 +280,13 @@ export class ScheduleService {
     const result = await db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
@@ -302,7 +309,7 @@ export class ScheduleService {
     // This is a placeholder for future workflow integration
     // For now, we just return the schedule as-is
 
-    return this.toDTO(result[0].schedule, result[0].subject, result[0].faculty);
+    return this.toDTO(result[0].schedule, result[0].instruction, result[0].subject, result[0].faculty);
   }
 
   /**
@@ -346,11 +353,13 @@ export class ScheduleService {
     const facultyConflicts = await db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
@@ -366,7 +375,7 @@ export class ScheduleService {
       if (result.faculty?.department === departmentId) {
         conflicts.push({
           type: 'faculty',
-          schedule: this.toDTO(result.schedule, result.subject, result.faculty),
+          schedule: this.toDTO(result.schedule, result.instruction, result.subject, result.faculty),
           message: `Faculty member is already scheduled at this time`,
         });
       }
@@ -376,11 +385,13 @@ export class ScheduleService {
     const roomConflicts = await db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
@@ -396,7 +407,7 @@ export class ScheduleService {
       if (result.faculty?.department === departmentId) {
         conflicts.push({
           type: 'room',
-          schedule: this.toDTO(result.schedule, result.subject, result.faculty),
+          schedule: this.toDTO(result.schedule, result.instruction, result.subject, result.faculty),
           message: `Room is already occupied at this time`,
         });
       }
@@ -408,11 +419,11 @@ export class ScheduleService {
   /**
    * Transform database entities to DTO
    */
-  private toDTO(schedule: any, subject?: any, facultyMember?: any): ScheduleDTO {
+  private toDTO(schedule: any, instruction?: any, subject?: any, facultyMember?: any): ScheduleDTO {
     return {
       id: schedule.id,
       schedule_type: schedule.schedule_type,
-      subject_id: schedule.subject_id,
+      instruction_id: schedule.instruction_id,
       faculty_id: schedule.faculty_id,
       room: schedule.room,
       day: schedule.day,

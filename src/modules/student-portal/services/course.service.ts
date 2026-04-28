@@ -197,11 +197,42 @@ export class CourseService {
    * 
    */
   async getWeeklySchedule(studentId: string): Promise<WeeklyScheduleDTO> {
-    // TODO: This query has a data model mismatch
-    // enrollments use instruction_id, but schedules use subject_id
-    // This needs to be fixed at the schema level
-    
-    // Temporarily return empty schedule until data model is fixed
+    // Get current academic period
+    const { currentSemester, currentAcademicYear } = this.getCurrentAcademicPeriod();
+
+    // Query enrolled courses with schedule information
+    const enrolledSchedules = await this.db
+      .select({
+        subject_code: instructions.subject_code,
+        subject_name: instructions.subject_name,
+        day: schedules.day,
+        start_time: schedules.start_time,
+        end_time: schedules.end_time,
+        room: schedules.room,
+        faculty_first_name: faculty.first_name,
+        faculty_last_name: faculty.last_name,
+      })
+      .from(enrollments)
+      .innerJoin(instructions, eq(enrollments.instruction_id, instructions.id))
+      .innerJoin(schedules, and(
+        eq(schedules.instruction_id, instructions.id),
+        eq(schedules.semester, enrollments.semester),
+        eq(schedules.academic_year, enrollments.academic_year)
+      ))
+      .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
+      .where(
+        and(
+          eq(enrollments.student_id, studentId),
+          eq(enrollments.semester, currentSemester),
+          eq(enrollments.academic_year, currentAcademicYear),
+          eq(enrollments.enrollment_status, 'enrolled'),
+          isNull(instructions.deleted_at),
+          isNull(schedules.deleted_at)
+        )
+      )
+      .orderBy(schedules.start_time);
+
+    // Initialize weekly schedule
     const weeklySchedule: WeeklyScheduleDTO = {
       Monday: [],
       Tuesday: [],
@@ -211,7 +242,28 @@ export class CourseService {
       Saturday: [],
       Sunday: [],
     };
-    
+
+    // Group by day
+    for (const schedule of enrolledSchedules) {
+      const dayName = this.capitalizeDayName(schedule.day);
+      const instructor = schedule.faculty_first_name && schedule.faculty_last_name
+        ? `${schedule.faculty_first_name} ${schedule.faculty_last_name}`
+        : 'TBA';
+
+      const entry: ScheduleEntryDTO = {
+        subject_code: schedule.subject_code,
+        subject_name: schedule.subject_name,
+        start_time: schedule.start_time,
+        end_time: schedule.end_time,
+        room: schedule.room || 'TBA',
+        instructor,
+      };
+
+      if (dayName in weeklySchedule) {
+        weeklySchedule[dayName as keyof WeeklyScheduleDTO].push(entry);
+      }
+    }
+
     return weeklySchedule;
   }
 
@@ -236,14 +288,51 @@ export class CourseService {
     instructor_email: string | null;
     instructor_phone: string | null;
   }> {
-    // TODO: Data model mismatch - this function expects instruction_id but schedules use subject_id
-    // Temporarily return null values until data model is fixed
+    const scheduleResult = await this.db
+      .select({
+        day: schedules.day,
+        start_time: schedules.start_time,
+        end_time: schedules.end_time,
+        room: schedules.room,
+        first_name: faculty.first_name,
+        last_name: faculty.last_name,
+        email: faculty.email,
+        phone: faculty.phone,
+      })
+      .from(schedules)
+      .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
+      .where(
+        and(
+          eq(schedules.instruction_id, instructionId),
+          eq(schedules.semester, semester),
+          eq(schedules.academic_year, academicYear),
+          isNull(schedules.deleted_at)
+        )
+      )
+      .limit(1);
+
+    if (!scheduleResult[0]) {
+      return {
+        schedule: null,
+        room: null,
+        instructor_name: null,
+        instructor_email: null,
+        instructor_phone: null,
+      };
+    }
+
+    const s = scheduleResult[0];
+    const schedule = `${s.day} ${s.start_time}-${s.end_time}`;
+    const instructor_name = s.first_name && s.last_name
+      ? `${s.first_name} ${s.last_name}`
+      : null;
+
     return {
-      schedule: null,
-      room: null,
-      instructor_name: null,
-      instructor_email: null,
-      instructor_phone: null,
+      schedule,
+      room: s.room,
+      instructor_name,
+      instructor_email: s.email,
+      instructor_phone: s.phone,
     };
   }
 

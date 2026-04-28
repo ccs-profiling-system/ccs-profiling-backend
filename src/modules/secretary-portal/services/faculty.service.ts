@@ -5,7 +5,7 @@
  */
 
 import { db } from '../../../db';
-import { faculty, schedules, subjects } from '../../../db/schema';
+import { faculty, schedules, instructions, subjects } from '../../../db/schema';
 import { eq, and, isNull, or, ilike, sql, SQL } from 'drizzle-orm';
 import { FacultyDTO, PaginationParams, PaginatedResponse } from '../types';
 import { buildPaginationMeta, applyPagination } from '../utils/pagination';
@@ -27,7 +27,7 @@ export interface FacultyFilters {
  */
 export interface TeachingLoadItem {
   schedule_id: string;
-  subject_id: string | null;
+  instruction_id: string | null;
   subject_code: string;
   subject_name: string;
   room: string;
@@ -374,11 +374,11 @@ export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
     throw new Error('Faculty not found');
   }
   
-  // Get teaching load by joining schedules with subjects
+  // Get teaching load by joining schedules with instructions and subjects
   const teachingLoad = await db
     .select({
       schedule_id: schedules.id,
-      subject_id: schedules.subject_id,
+      instruction_id: schedules.instruction_id,
       subject_code: subjects.code,
       subject_name: subjects.name,
       room: schedules.room,
@@ -389,11 +389,13 @@ export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
       academic_year: schedules.academic_year,
     })
     .from(schedules)
-    .innerJoin(subjects, eq(schedules.subject_id, subjects.id))
+    .innerJoin(instructions, eq(schedules.instruction_id, instructions.id))
+    .innerJoin(subjects, eq(instructions.subject_code, subjects.code))
     .where(
       and(
         eq(schedules.faculty_id, id),
         isNull(schedules.deleted_at),
+        isNull(instructions.deleted_at),
         isNull(subjects.deleted_at)
       )
     )

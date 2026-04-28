@@ -7,7 +7,7 @@
 
 import { eq, and, isNull, sql, count } from 'drizzle-orm';
 import { Database } from '../../../db';
-import { schedules, subjects, enrollments } from '../../../db/schema';
+import { schedules, instructions, subjects, enrollments } from '../../../db/schema';
 import { CourseDTO, TeachingLoadDTO } from '../types';
 
 export class CourseService {
@@ -38,11 +38,10 @@ export class CourseService {
     // Academic year format: "2023-2024" (starts in August)
     const effectiveYear = year || this.getCurrentAcademicYear(currentMonth, currentYear);
 
-    // TODO: This query needs refactoring - enrollments use instruction_id but schedules use subject_id
-    // Temporarily simplified to work with current schema
+    // Query courses with enrollments
     const coursesWithEnrollments = await this.db
       .select({
-        id: schedules.subject_id,
+        id: schedules.instruction_id,
         subject_code: subjects.code,
         subject_name: subjects.name,
         section: sql<string>`COALESCE(${schedules.room}, 'N/A')`.as('section'),
@@ -51,20 +50,20 @@ export class CourseService {
         units: subjects.units,
         semester: schedules.semester,
         academic_year: schedules.academic_year,
-        enrolled_count: sql<number>`0`.as('enrolled_count'), // TODO: Fix enrollment count
+        enrolled_count: count(enrollments.id).as('enrolled_count'),
       })
       .from(schedules)
-      .innerJoin(subjects, eq(schedules.subject_id, subjects.id))
-      // TODO: Re-enable enrollment join after data model is fixed
-      // .leftJoin(
-      //   enrollments,
-      //   and(
-      //     eq(enrollments.instruction_id, schedules.subject_id), // MISMATCH
-      //     eq(enrollments.semester, schedules.semester),
-      //     eq(enrollments.academic_year, schedules.academic_year),
-      //     eq(enrollments.enrollment_status, 'enrolled')
-      //   )
-      // )
+      .innerJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .innerJoin(subjects, eq(instructions.subject_code, subjects.code))
+      .leftJoin(
+        enrollments,
+        and(
+          eq(enrollments.instruction_id, schedules.instruction_id),
+          eq(enrollments.semester, schedules.semester),
+          eq(enrollments.academic_year, schedules.academic_year),
+          eq(enrollments.enrollment_status, 'enrolled')
+        )
+      )
       .where(
         and(
           eq(schedules.faculty_id, facultyId),
@@ -75,7 +74,7 @@ export class CourseService {
         )
       )
       .groupBy(
-        schedules.subject_id,
+        schedules.instruction_id,
         subjects.code,
         subjects.name,
         schedules.room,

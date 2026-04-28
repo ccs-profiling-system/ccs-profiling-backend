@@ -6,13 +6,13 @@
 
 import { eq, and, isNull, sql, ne } from 'drizzle-orm';
 import { Database } from '../../../db';
-import { schedules, subjects, faculty } from '../../../db/schema';
+import { schedules, instructions, subjects, faculty } from '../../../db/schema';
 import { ScheduleFilters, ConflictCheckParams } from '../types';
 
 export interface CreateScheduleData {
   id?: string; // Optional UUID v7, generated if not provided
   schedule_type: string;
-  subject_id?: string;
+  instruction_id?: string;
   faculty_id?: string;
   room: string;
   day: string;
@@ -24,7 +24,7 @@ export interface CreateScheduleData {
 
 export interface UpdateScheduleData {
   schedule_type?: string;
-  subject_id?: string;
+  instruction_id?: string;
   faculty_id?: string;
   room?: string;
   day?: string;
@@ -38,18 +38,20 @@ export class ScheduleRepository {
   constructor(private db: Database) {}
 
   /**
-   * Find schedule by UUID with related subject and faculty data
+   * Find schedule by UUID with related instruction, subject, and faculty data
    * Automatically excludes soft-deleted records
    */
   async findById(id: string) {
     const result = await this.db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(
         eq(schedules.id, id),
@@ -67,11 +69,13 @@ export class ScheduleRepository {
     return await this.db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(
         eq(schedules.room, room),
@@ -87,11 +91,13 @@ export class ScheduleRepository {
     return await this.db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(
         eq(schedules.faculty_id, facultyId),
@@ -128,8 +134,8 @@ export class ScheduleRepository {
       conditions.push(eq(schedules.faculty_id, filters.faculty_id));
     }
 
-    if (filters?.subject_id) {
-      conditions.push(eq(schedules.subject_id, filters.subject_id));
+    if (filters?.instruction_id) {
+      conditions.push(eq(schedules.instruction_id, filters.instruction_id));
     }
 
     if (filters?.semester) {
@@ -148,15 +154,17 @@ export class ScheduleRepository {
 
     const total = Number(countResult[0]?.count || 0);
 
-    // Get paginated results with subject and faculty details
+    // Get paginated results with instruction, subject, and faculty details
     const results = await this.db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions))
       .limit(limit)
@@ -198,11 +206,13 @@ export class ScheduleRepository {
     return await this.db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions));
   }
@@ -303,15 +313,17 @@ export class ScheduleRepository {
 
     const total = Number(countResult[0]?.count || 0);
 
-    // Get paginated results with subject and faculty details
+    // Get paginated results with instruction, subject, and faculty details
     const results = await this.db
       .select({
         schedule: schedules,
+        instruction: instructions,
         subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
-      .leftJoin(subjects, eq(schedules.subject_id, subjects.id))
+      .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions))
       .limit(limit)
