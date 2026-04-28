@@ -119,6 +119,7 @@ export class ApprovalService {
    * @param approvalId - ID of the approval to approve
    * @param reviewerId - ID of the reviewing user (admin/chair)
    * @param comments - Optional approval comments
+   * @param force - Force approval despite conflicts (skips conflict detection)
    * @returns Updated approval record
    * 
    * Requirements: 5.1-5.7
@@ -126,7 +127,8 @@ export class ApprovalService {
   async approveChangeRequest(
     approvalId: string,
     reviewerId: string,
-    comments?: string
+    comments?: string,
+    force: boolean = false
   ): Promise<Approval> {
     // Fetch the approval
     const approval = await approvalRepository.findById(approvalId);
@@ -135,7 +137,7 @@ export class ApprovalService {
       throw new InvalidOperationError(`Approval with ID ${approvalId} not found`);
     }
 
-    // Validate state transition (must be pending)
+    // Validate state transition (must be pending or conflicted)
     approvalStateMachine.assertValidTransition(
       approval.status as ApprovalStatusType,
       ApprovalStatus.APPROVED
@@ -155,7 +157,7 @@ export class ApprovalService {
 
     // Apply changes to target entity
     try {
-      await entityApplicationService.applyChanges(approvalId);
+      await entityApplicationService.applyChanges(approvalId, force);
     } catch (error) {
       // Entity application service handles marking as failed/conflicted
       // Re-throw the error to inform the caller

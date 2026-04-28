@@ -205,6 +205,7 @@ export function createChairRoutes(): Router {
    * 
    * Request Body:
    * - comments: Optional approval comments
+   * - force: Optional boolean to force approval despite conflicts (default: false)
    * 
    * Response:
    * - 200: Approval approved successfully
@@ -212,7 +213,7 @@ export function createChairRoutes(): Router {
    * - 401: Authentication required
    * - 403: Permission denied or approval outside department
    * - 404: Approval not found
-   * - 409: Conflict detected (entity has changed)
+   * - 409: Conflict detected (entity has changed) - use force=true to override
    * - 429: Rate limit exceeded
    * 
    * Requirements: 10.1-10.6
@@ -229,7 +230,7 @@ export function createChairRoutes(): Router {
         const departmentInfo = await extractDepartmentFromRequest(req);
         const departmentId = departmentInfo.departmentId;
         const approvalId = req.params.id;
-        const { comments } = req.body;
+        const { comments, force } = req.body;
 
         // Verify the approval belongs to the chair's department
         const approval = await approvalService.getApprovalById(approvalId);
@@ -260,7 +261,8 @@ export function createChairRoutes(): Router {
         const updatedApproval = await approvalService.approveChangeRequest(
           approvalId,
           reviewerId,
-          comments
+          comments,
+          force
         );
 
         res.status(200).json({

@@ -1,15 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   EntityApplicationService,
-  ConflictError,
   EntityNotFoundError,
-  ValidationError,
 } from '../entity-application.service';
+import { ConflictError, ValidationError } from '../../../../shared/errors';
 import { approvalRepository } from '../../repositories/approval.repository';
 import { notificationRepository } from '../../repositories/notification.repository';
 import { db } from '../../../../db';
-import { ApprovalStatus, EntityType } from '../../db/schema/approvals';
-import { NotificationType, NotificationPriority } from '../../db/schema/approvalNotifications';
+import { ApprovalStatus, EntityType } from '../../../../db/schema/approvals';
+import { NotificationType, NotificationPriority } from '../../../../db/schema/approvalNotifications';
 
 // Mock dependencies
 vi.mock('../../repositories/approval.repository');

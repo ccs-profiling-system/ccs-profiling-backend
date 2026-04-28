@@ -87,6 +87,7 @@ export type SubmitChangeRequestInput = z.infer<typeof submitChangeRequestSchema>
  */
 export const approveRequestSchema = z.object({
   comments: z.string().max(2000).optional(),
+  force: z.boolean().optional().default(false), // Force approval despite conflicts
 });
 
 export type ApproveRequestInput = z.infer<typeof approveRequestSchema>;

@@ -1,4 +1,5 @@
 import { ApprovalStatus, ApprovalStatusType } from '../../../db/schema/approvals';
+import { UnprocessableEntityError } from '../../../shared/errors';
 
 /**
  * State Machine Service for Approval Workflow
@@ -9,7 +10,7 @@ import { ApprovalStatus, ApprovalStatusType } from '../../../db/schema/approvals
  * Allowed transitions:
  * - draft → pending
  * - pending → approved | rejected | withdrawn | conflicted | failed
- * - conflicted → pending
+ * - conflicted → pending | approved | rejected
  * - failed → pending
  * - approved, rejected, withdrawn → (final states, no transitions)
  */
@@ -26,7 +27,11 @@ const ALLOWED_TRANSITIONS: Record<ApprovalStatusType, ApprovalStatusType[]> = {
     ApprovalStatus.CONFLICTED,
     ApprovalStatus.FAILED,
   ],
-  [ApprovalStatus.CONFLICTED]: [ApprovalStatus.PENDING],
+  [ApprovalStatus.CONFLICTED]: [
+    ApprovalStatus.PENDING,
+    ApprovalStatus.APPROVED,  // Allow re-approval after reviewing conflict
+    ApprovalStatus.REJECTED,  // Allow rejection if conflict cannot be resolved
+  ],
   [ApprovalStatus.FAILED]: [ApprovalStatus.PENDING],
   [ApprovalStatus.APPROVED]: [],
   [ApprovalStatus.REJECTED]: [],
@@ -35,8 +40,9 @@ const ALLOWED_TRANSITIONS: Record<ApprovalStatusType, ApprovalStatusType[]> = {
 
 /**
  * Error thrown when an invalid state transition is attempted
+ * Returns 422 Unprocessable Entity status code
  */
-export class InvalidStateTransitionError extends Error {
+export class InvalidStateTransitionError extends UnprocessableEntityError {
   constructor(
     public readonly currentStatus: ApprovalStatusType,
     public readonly newStatus: ApprovalStatusType

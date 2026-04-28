@@ -9,34 +9,14 @@ import { notificationRepository } from '../repositories/notification.repository'
 import { NotificationType, NotificationPriority } from '../../../db/schema/approvalNotifications';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
-
-/**
- * Custom error for entity conflicts
- */
-export class ConflictError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'ConflictError';
-  }
-}
+import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors';
 
 /**
  * Custom error for entity not found
  */
-export class EntityNotFoundError extends Error {
+export class EntityNotFoundError extends NotFoundError {
   constructor(entityType: string, entityId: string) {
     super(`${entityType} with ID ${entityId} not found`);
-    this.name = 'EntityNotFoundError';
-  }
-}
-
-/**
- * Custom error for validation failures
- */
-export class ValidationError extends Error {
-  constructor(message: string, public readonly details?: any) {
-    super(message);
-    this.name = 'ValidationError';
   }
 }
 
@@ -55,20 +35,21 @@ export class EntityApplicationService {
    * This method:
    * 1. Fetches the approval record
    * 2. Fetches the target entity
-   * 3. Performs conflict detection via version comparison
+   * 3. Performs conflict detection via version comparison (unless force=true)
    * 4. Validates change_details against entity schema
    * 5. Applies changes in a transaction
    * 6. Increments entity version
    * 7. Records application timestamp
    * 
    * @param approvalId - The ID of the approval to apply
-   * @throws {ConflictError} If entity has been modified since submission
+   * @param force - Skip conflict detection if true (for forced approvals)
+   * @throws {ConflictError} If entity has been modified since submission (unless force=true)
    * @throws {EntityNotFoundError} If target entity doesn't exist
    * @throws {ValidationError} If change_details validation fails
    * 
    * Requirements: 21.1-21.7, 22.1-22.7
    */
-  async applyChanges(approvalId: string): Promise<void> {
+  async applyChanges(approvalId: string, force: boolean = false): Promise<void> {
     try {
       // Fetch the approval record
       const approval = await approvalRepository.findById(approvalId);
@@ -84,10 +65,12 @@ export class EntityApplicationService {
         throw new EntityNotFoundError(approval.entity_type, approval.entity_id);
       }
 
-      // Conflict detection: Compare entity_version
+      // Conflict detection: Compare entity_version (unless force=true)
       // If entity_version is stored in approval, compare it with current entity version
       // Otherwise, use updated_at timestamp as fallback (Requirement 22.6)
-      await this.detectConflict(approval, entity);
+      if (!force) {
+        await this.detectConflict(approval, entity);
+      }
 
       // Validate change_details against entity schema (Requirement 21.3)
       this.validateChangeDetails(approval.entity_type, approval.change_details as Record<string, any>);
