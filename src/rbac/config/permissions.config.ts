@@ -115,6 +115,9 @@ export const permissionConfig: PermissionConfig = {
       'student.read',
       'student.monitor',
       
+      // Faculty Profile Access
+      'faculty.read',
+      
       // Instruction Access
       'instruction.read',
       
@@ -343,6 +346,9 @@ export const permissionConfig: PermissionConfig = {
       
       // Student Management (legacy)
       'student.*',
+      
+      // Faculty Management
+      'faculty.read',
       
       // Schedule Management
       'schedule.create',
