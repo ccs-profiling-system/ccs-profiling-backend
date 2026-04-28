@@ -131,6 +131,8 @@ import { approvalRouter } from '../modules/approval/routes';
 import { curriculumRoutes } from '../modules/curriculum';
 import { subjectRoutes } from '../modules/subjects';
 import { roomRoutes } from '../modules/rooms';
+import { syllabusRoutes } from '../modules/syllabus';
+import { lessonRoutes, lessonDetailRoutes } from '../modules/lessons';
 
 export const routes = Router();
 
@@ -158,6 +160,9 @@ routes.use('/v1/admin/students', studentAffiliationRoutes);
 routes.use('/v1/admin/faculty', facultyRoutes);
 routes.use('/v1/admin/curriculum', curriculumRoutes);
 routes.use('/v1/admin/subjects', subjectRoutes);
+routes.use('/v1/admin/subjects', syllabusRoutes);
+routes.use('/v1/admin/subjects', lessonRoutes);
+routes.use('/v1/admin/lessons', lessonDetailRoutes);
 routes.use('/v1/admin/instructions', instructionRoutes);
 routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 
