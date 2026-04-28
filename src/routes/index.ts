@@ -128,6 +128,7 @@ import { facultyPortalRouter } from '../modules/faculty-portal';
 import { studentPortalRouter } from '../modules/student-portal/routes';
 import { secretaryPortalRouter } from '../modules/secretary-portal/routes';
 import { approvalRouter } from '../modules/approval/routes';
+import { curriculumRoutes } from '../modules/curriculum';
 
 export const routes = Router();
 
@@ -153,6 +154,7 @@ routes.use('/v1/admin/students', studentSkillRoutes);
 routes.use('/v1/admin/students', studentViolationRoutes);
 routes.use('/v1/admin/students', studentAffiliationRoutes);
 routes.use('/v1/admin/faculty', facultyRoutes);
+routes.use('/v1/admin/curriculum', curriculumRoutes);
 routes.use('/v1/admin/instructions', instructionRoutes);
 routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 
