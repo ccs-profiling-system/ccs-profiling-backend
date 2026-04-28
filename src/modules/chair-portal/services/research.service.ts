@@ -117,58 +117,63 @@ export class ResearchService {
     const limit = Math.min(filters.limit || 10, 100);
     const offset = (page - 1) * limit;
 
-    // First, get faculty IDs in the department
-    const departmentFaculty = await db
-      .select({ id: faculty.id })
-      .from(faculty)
-      .where(
-        and(
-          eq(faculty.department, departmentId),
-          isNull(faculty.deleted_at)
-        )
-      );
-
-    const facultyIds = departmentFaculty.map(f => f.id);
-
-    // If no faculty in department, return empty results
-    if (facultyIds.length === 0) {
-      return {
-        data: [],
-        meta: {
-          total: 0,
-          page,
-          limit,
-          totalPages: 0,
-        },
-      };
-    }
-
-    // Get research IDs that have advisers from this department
-    const departmentResearchQuery = db
-      .select({ research_id: researchAdvisers.research_id })
-      .from(researchAdvisers)
-      .where(inArray(researchAdvisers.faculty_id, facultyIds));
-
-    const departmentResearchIds = (await departmentResearchQuery).map(r => r.research_id);
-
-    // If no research in department, return empty results
-    if (departmentResearchIds.length === 0) {
-      return {
-        data: [],
-        meta: {
-          total: 0,
-          page,
-          limit,
-          totalPages: 0,
-        },
-      };
-    }
-
     // Build filter conditions
-    const conditions = [
-      inArray(research.id, departmentResearchIds),
+    const conditions: any[] = [
       isNull(research.deleted_at),
     ];
+
+    // Add department filter only if departmentId is provided (for department-scoped access)
+    if (departmentId) {
+      // Get faculty IDs in the department
+      const departmentFaculty = await db
+        .select({ id: faculty.id })
+        .from(faculty)
+        .where(
+          and(
+            eq(faculty.department, departmentId),
+            isNull(faculty.deleted_at)
+          )
+        );
+
+      const facultyIds = departmentFaculty.map(f => f.id);
+
+      // If no faculty in department, return empty results
+      if (facultyIds.length === 0) {
+        return {
+          data: [],
+          meta: {
+            total: 0,
+            page,
+            limit,
+            totalPages: 0,
+          },
+        };
+      }
+
+      // Get research IDs that have advisers from this department
+      const departmentResearchQuery = db
+        .select({ research_id: researchAdvisers.research_id })
+        .from(researchAdvisers)
+        .where(inArray(researchAdvisers.faculty_id, facultyIds));
+
+      const departmentResearchIds = (await departmentResearchQuery).map(r => r.research_id);
+
+      // If no research in department, return empty results
+      if (departmentResearchIds.length === 0) {
+        return {
+          data: [],
+          meta: {
+            total: 0,
+            page,
+            limit,
+            totalPages: 0,
+          },
+        };
+      }
+
+      // Add department research filter
+      conditions.push(inArray(research.id, departmentResearchIds));
+    }
 
     // Add status filter
     if (filters.status) {
@@ -294,10 +299,12 @@ export class ResearchService {
         )
       );
 
-    // Validate at least one adviser is from the department
-    const hasDepartmentAdviser = advisers.some(a => a.department === departmentId);
-    if (!hasDepartmentAdviser) {
-      return null;
+    // Validate at least one adviser is from the department (only if departmentId is provided)
+    if (departmentId) {
+      const hasDepartmentAdviser = advisers.some(a => a.department === departmentId);
+      if (!hasDepartmentAdviser) {
+        return null;
+      }
     }
 
     // Get student researchers

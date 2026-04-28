@@ -149,10 +149,14 @@ export class EventService {
     const offset = (page - 1) * limit;
 
     // Build filter conditions
-    const conditions = [
-      eq(events.department_id, departmentId),
+    const conditions: any[] = [
       isNull(events.deleted_at),
     ];
+
+    // Add department filter only if departmentId is provided (for department-scoped access)
+    if (departmentId) {
+      conditions.push(eq(events.department_id, departmentId));
+    }
 
     // Add type filter
     if (filters.type) {
@@ -256,16 +260,20 @@ export class EventService {
    * 
    */
   async getEventById(id: string, departmentId: string): Promise<EventDTO | null> {
+    // Build conditions - only filter by department if departmentId is provided
+    const conditions: any[] = [
+      eq(events.id, id),
+      isNull(events.deleted_at),
+    ];
+
+    if (departmentId) {
+      conditions.push(eq(events.department_id, departmentId));
+    }
+
     const result = await db
       .select()
       .from(events)
-      .where(
-        and(
-          eq(events.id, id),
-          eq(events.department_id, departmentId),
-          isNull(events.deleted_at)
-        )
-      )
+      .where(and(...conditions))
       .limit(1);
 
     if (!result[0]) {
