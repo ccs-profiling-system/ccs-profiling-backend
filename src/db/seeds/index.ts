@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors, pendingChanges, approvals } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors, pendingChanges, approvals, curriculum, subjects, rooms, syllabus, lessons } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -10,7 +10,7 @@ import { seedSkills } from './skills.seed';
 import { seedViolations } from './violations.seed';
 import { seedAffiliations } from './affiliations.seed';
 import { seedEvents } from './events.seed';
-// import { seedSchedules } from './schedules.seed'; // Disabled - needs schema update
+import { seedSchedules } from './schedules.seed';
 import { seedResearch } from './research.seed';
 import { seedUploads } from './uploads.seed';
 import { seedAuditLogs } from './auditLogs.seed';
@@ -23,6 +23,11 @@ import { seedResearchApplications } from './researchApplications.seed';
 import { seedAdvisors } from './advisors.seed';
 import { seedPendingChanges } from './pendingChanges.seed';
 import { seedApprovals } from './approvals.seed';
+import { seedCurriculum } from './curriculum.seed';
+import { seedSubjects } from './subjects.seed';
+import { seedRooms } from './rooms.seed';
+import { seedSyllabus } from './syllabus.seed';
+import { seedLessons } from './lessons.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -82,6 +87,51 @@ export async function runSeeders() {
     const existingFaculty = await db.select({ id: faculty.id }).from(faculty);
     const facultyIds = existingFaculty.map(f => f.id);
     console.log(`✅ Faculty seed sync complete (${createdFacultyIds.length} created, ${facultyIds.length} total)\n`);
+
+    // Check if curriculum table has data
+    const curriculumHasData = await hasData('curriculum');
+    let curriculumRecords: Array<{ id: string; code: string }> = [];
+
+    if (curriculumHasData) {
+      console.log('ℹ️  Curriculum table already has data, skipping curriculum seeding...');
+      const existing = await db.select({ id: curriculum.id, code: curriculum.code }).from(curriculum);
+      curriculumRecords = existing;
+      console.log(`📊 Found ${curriculumRecords.length} existing curriculum records\n`);
+    } else {
+      console.log('📝 Seeding curriculum...');
+      curriculumRecords = await seedCurriculum(db);
+      console.log(`✅ Created ${curriculumRecords.length} curriculum records\n`);
+    }
+
+    // Check if subjects table has data
+    const subjectsHasData = await hasData('subjects');
+    let subjectRecords: Array<{ id: string; code: string }> = [];
+
+    if (subjectsHasData) {
+      console.log('ℹ️  Subjects table already has data, skipping subjects seeding...');
+      const existing = await db.select({ id: subjects.id, code: subjects.code }).from(subjects);
+      subjectRecords = existing;
+      console.log(`📊 Found ${subjectRecords.length} existing subject records\n`);
+    } else {
+      console.log('📝 Seeding subjects...');
+      subjectRecords = await seedSubjects(db);
+      console.log(`✅ Created ${subjectRecords.length} subject records\n`);
+    }
+
+    // Check if rooms table has data
+    const roomsHasData = await hasData('rooms');
+    let roomRecords: Array<{ id: string; name: string }> = [];
+
+    if (roomsHasData) {
+      console.log('ℹ️  Rooms table already has data, skipping rooms seeding...');
+      const existing = await db.select({ id: rooms.id, name: rooms.name }).from(rooms);
+      roomRecords = existing;
+      console.log(`📊 Found ${roomRecords.length} existing room records\n`);
+    } else {
+      console.log('📝 Seeding rooms...');
+      roomRecords = await seedRooms(db);
+      console.log(`✅ Created ${roomRecords.length} room records\n`);
+    }
 
     // Check if instructions table has data
     const instructionsHasData = await hasData('instructions');
@@ -198,9 +248,39 @@ export async function runSeeders() {
       scheduleIds = existingSchedules.map(s => s.id);
       console.log(`📊 Found ${scheduleIds.length} existing schedule records\n`);
     } else {
-      console.log('⚠️  Schedules seeding is disabled - schema migration in progress');
-      // scheduleIds = await seedSchedules(db, instructionIds, facultyIds);
-      console.log(`⚠️  Skipped schedule seeding\n`);
+      console.log('📝 Seeding schedules...');
+      scheduleIds = await seedSchedules(db, instructionIds, facultyIds);
+      console.log(`✅ Created ${scheduleIds.length} schedule records\n`);
+    }
+
+    // Check if syllabus table has data
+    const syllabusHasData = await hasData('syllabus');
+    let syllabusRecords: Array<{ id: string; title: string }> = [];
+
+    if (syllabusHasData) {
+      console.log('ℹ️  Syllabus table already has data, skipping syllabus seeding...');
+      const existing = await db.select({ id: syllabus.id, title: syllabus.title }).from(syllabus);
+      syllabusRecords = existing;
+      console.log(`📊 Found ${syllabusRecords.length} existing syllabus records\n`);
+    } else {
+      console.log('📝 Seeding syllabus...');
+      syllabusRecords = await seedSyllabus(db);
+      console.log(`✅ Created ${syllabusRecords.length} syllabus records\n`);
+    }
+
+    // Check if lessons table has data
+    const lessonsHasData = await hasData('lessons');
+    let lessonRecords: Array<{ id: string; title: string }> = [];
+
+    if (lessonsHasData) {
+      console.log('ℹ️  Lessons table already has data, skipping lessons seeding...');
+      const existing = await db.select({ id: lessons.id, title: lessons.title }).from(lessons);
+      lessonRecords = existing;
+      console.log(`📊 Found ${lessonRecords.length} existing lesson records\n`);
+    } else {
+      console.log('📝 Seeding lessons...');
+      lessonRecords = await seedLessons(db);
+      console.log(`✅ Created ${lessonRecords.length} lesson records\n`);
     }
 
     // Check if research table has data
