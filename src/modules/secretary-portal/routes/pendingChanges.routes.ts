@@ -4,7 +4,6 @@
  * Defines routes for secretary portal pending changes operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 9.3-9.4
  */
 
 import { Router } from 'express';
@@ -33,7 +32,6 @@ export function createPendingChangesRoutes(): Router {
    * 
    * Retrieve all pending changes with pagination and filtering.
    * 
-   * Requirements: 9.1, 9.3
    */
   router.get(
     '/',
@@ -47,7 +45,6 @@ export function createPendingChangesRoutes(): Router {
    * Withdraw a pending change.
    * Changes status from 'pending_approval' to 'withdrawn'.
    * 
-   * Requirements: 9.2, 9.4
    */
   router.delete(
     '/:id',

@@ -20,7 +20,6 @@ interface NotificationTemplate {
 /**
  * Notification templates for different approval workflow events
  * 
- * Requirements: 13.1-13.7, 24.1-24.9
  */
 const NOTIFICATION_TEMPLATES: Record<NotificationTypeType, NotificationTemplate> = {
   [NotificationType.APPROVAL_APPROVED]: {
@@ -51,7 +50,6 @@ const NOTIFICATION_TEMPLATES: Record<NotificationTypeType, NotificationTemplate>
  * Handles creation and delivery of approval workflow notifications.
  * Supports multiple notification types with appropriate priority levels.
  * 
- * Requirements: 13.1-13.7, 24.1-24.9
  */
 export class NotificationService {
   /**
@@ -61,7 +59,6 @@ export class NotificationService {
    * @param type - The type of notification to create
    * @returns Created notification record
    * 
-   * Requirements: 13.1, 13.2, 24.5, 24.6
    */
   async createApprovalNotification(
     approval: Approval,
@@ -103,7 +100,6 @@ export class NotificationService {
    * @param notificationId - The ID of the notification to deliver
    * @returns The notification record
    * 
-   * Requirements: 24.1-24.9
    */
   async deliverNotification(notificationId: string): Promise<ApprovalNotification> {
     // Fetch the notification

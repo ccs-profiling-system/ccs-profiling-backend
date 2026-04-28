@@ -5,7 +5,6 @@
  * Handles event browsing, registration, and unregistration.
  * Ensures students can only access their own registrations.
  * 
- * Requirements: 17.1-17.6, 18.1-18.4, 19.1-19.8, 20.1-20.6
  */
 
 import { eq, and, gte, sql } from 'drizzle-orm';
@@ -34,7 +33,6 @@ export class EventService {
    * @param params - Pagination parameters (page, limit)
    * @returns Paginated list of upcoming events
    * 
-   * Requirements: 17.1, 17.2, 17.3, 17.4, 17.5
    */
   async listUpcomingEvents(params: PaginationParams): Promise<PaginatedResponse<EventDTO>> {
     const { page, limit } = params;
@@ -139,7 +137,6 @@ export class EventService {
    * @param studentId - The student UUID
    * @returns List of registered events
    * 
-   * Requirements: 18.1, 18.2, 18.3
    */
   async listRegisteredEvents(studentId: string): Promise<RegisteredEventDTO[]> {
     const registeredEvents = await this.db
@@ -223,7 +220,6 @@ export class EventService {
    * @throws UnprocessableEntityError if event is at maximum capacity
    * @throws ConflictError if student is already registered
    * 
-   * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6, 19.7
    */
   /**
    * REMOVED: registerForEvent

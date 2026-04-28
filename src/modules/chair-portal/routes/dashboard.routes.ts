@@ -4,7 +4,6 @@
  * Defines routes for department chair dashboard operations.
  * All routes require JWT authentication and chair.dashboard.read permission.
  * 
- * Requirements: 2.1, 14.1
  */
 
 import { Router } from 'express';

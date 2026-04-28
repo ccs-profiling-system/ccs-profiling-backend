@@ -2,7 +2,6 @@
  * Pending Changes Service
  * Business logic for pending changes management operations
  * 
- * Requirements: 9.1-9.13, 17.8
  */
 
 import { PendingChangeDTO, PaginationParams, PaginatedResponse, ApprovalStatus } from '../types';
@@ -28,7 +27,6 @@ export interface PendingChangesFilters {
  * @param filters - Filter options (entity_type, status)
  * @returns Paginated list of pending changes
  * 
- * Requirements: 9.1, 9.5-9.7, 9.11
  */
 export async function getAllPendingChanges(
   pagination: PaginationParams,
@@ -86,7 +84,6 @@ export async function getAllPendingChanges(
  * @param userAgent - User agent of the request
  * @returns Updated pending change record
  * 
- * Requirements: 9.2, 9.8-9.10, 9.12-9.13, 17.8
  */
 export async function withdrawPendingChange(
   id: string,

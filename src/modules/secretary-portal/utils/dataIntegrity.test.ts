@@ -1,7 +1,6 @@
 /**
  * Data Integrity Utilities Tests
  * 
- * Requirements: 17.1-17.8
  */
 
 import { describe, it, expect } from 'vitest';

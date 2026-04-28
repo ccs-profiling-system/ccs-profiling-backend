@@ -5,7 +5,6 @@
  * Handles dashboard summary retrieval with student-scoped validation.
  * Ensures students can only access their own dashboard data.
  * 
- * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -23,7 +22,6 @@ export class DashboardController {
    * Extracts student_id from JWT token and returns aggregated dashboard data
    * including current courses, GPA, unread notifications, and upcoming events.
    * 
-   * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
    */
   getDashboard = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal event operations.
  * Provides CRUD operations for events with approval workflow support.
  * 
- * Requirements: 7.1-7.7, 7.26-7.29, 15.1, 15.4, 15.6
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -46,7 +45,6 @@ import { paginationSchema, idParamSchema } from '../schemas/common.schemas';
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if event retrieval fails
  * 
- * Requirements: 7.1, 7.20-7.22, 7.26, 15.1
  */
 export async function getAllEventsController(
   req: Request,
@@ -122,7 +120,6 @@ export async function getAllEventsController(
  * @returns HTTP 404 when event not found
  * @throws Error if event retrieval fails
  * 
- * Requirements: 7.2, 7.26, 15.4
  */
 export async function getEventByIdController(
   req: Request,
@@ -185,7 +182,6 @@ export async function getEventByIdController(
  * @returns HTTP 400 for validation errors or invalid state transitions
  * @throws Error if event creation fails
  * 
- * Requirements: 7.3, 7.12-7.17, 7.27, 15.1
  */
 export async function createEventController(
   req: Request,
@@ -262,7 +258,6 @@ export async function createEventController(
  * @returns HTTP 422 for business logic errors (e.g., cannot update approved event)
  * @throws Error if event update fails
  * 
- * Requirements: 7.4, 7.12-7.16, 7.19, 7.27-7.28, 15.4, 15.6
  */
 export async function updateEventController(
   req: Request,
@@ -380,7 +375,6 @@ export async function updateEventController(
  * @returns HTTP 422 for business logic errors (e.g., cannot delete approved event)
  * @throws Error if event deletion fails
  * 
- * Requirements: 7.5, 7.23-7.24, 7.27-7.28, 15.4, 15.6
  */
 export async function deleteEventController(
   req: Request,
@@ -464,7 +458,6 @@ export async function deleteEventController(
  * @returns HTTP 404 when event not found
  * @throws Error if event submission fails
  * 
- * Requirements: 7.6, 7.18, 7.27-7.28, 15.4
  */
 export async function submitEventController(
   req: Request,
@@ -547,7 +540,6 @@ export async function submitEventController(
  * @returns HTTP 404 when event not found
  * @throws Error if participant retrieval fails
  * 
- * Requirements: 7.7, 7.26, 15.4
  */
 export async function getEventParticipantsController(
   req: Request,

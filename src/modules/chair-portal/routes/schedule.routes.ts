@@ -10,7 +10,6 @@
  * - POST /api/chair/schedules/:id/approve - Approve a schedule
  * - GET /api/chair/schedules/conflicts - Check for schedule conflicts
  * 
- * Requirements: 5.1, 5.4, 5.9, 5.11, 14.1
  */
 
 import { Router } from 'express';

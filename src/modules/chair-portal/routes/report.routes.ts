@@ -9,7 +9,6 @@
  * - GET /api/chair/reports/faculty/stats - Get faculty statistics
  * - GET /api/chair/reports/export - Export report in PDF or Excel format
  * 
- * Requirements: 8.1, 8.5, 8.8, 14.1
  */
 
 import { Router } from 'express';

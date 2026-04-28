@@ -5,7 +5,6 @@
  * Provides endpoint for students to view their academic progress.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 3.6, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -44,7 +43,6 @@ export function createProgressRoutes(progressController: ProgressController): Ro
    * - 403: Forbidden (missing permission or not a student)
    * - 500: Internal Server Error
    * 
-   * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/',

@@ -5,7 +5,6 @@
  * Handles student profile viewing and updates with validation.
  * Ensures students can only access their own profiles.
  * 
- * Requirements: 1.1, 1.2, 1.3, 1.4
  */
 
 import { eq, and, isNull } from 'drizzle-orm';
@@ -25,7 +24,6 @@ export class ProfileService {
    * @returns Student profile data
    * @throws NotFoundError if student not found
    * 
-   * Requirements: 1.1
    */
   async getProfileById(studentId: string): Promise<StudentProfileDTO> {
     const result = await this.db
@@ -54,7 +52,6 @@ export class ProfileService {
    * @returns Updated student profile data
    * @throws NotFoundError if student not found
    * 
-   * Requirements: 1.2, 1.3, 1.4
    */
   async updateProfile(
     studentId: string,

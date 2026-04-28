@@ -2,7 +2,6 @@
  * Student Validation Schemas for Secretary Portal
  * Zod schemas for validating student-related input
  * 
- * Requirements: 3.11-3.13
  */
 
 import { z } from 'zod';
@@ -13,7 +12,6 @@ import { emailSchema, optionalEmailSchema } from './common.schemas';
  * Validates all required fields for student creation
  * student_id is auto-generated and should NOT be included in the request
  * 
- * Requirements: 3.11, 3.12, 3.13
  */
 export const createStudentSchema = z.object({
   first_name: z
@@ -62,7 +60,6 @@ export const createStudentSchema = z.object({
  * Schema for updating an existing student
  * All fields are optional for partial updates
  * 
- * Requirements: 3.11, 3.12, 3.13
  */
 export const updateStudentSchema = z.object({
   student_id: z

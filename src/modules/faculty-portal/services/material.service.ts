@@ -6,7 +6,6 @@
  * Validates course ownership, file size, and file type before processing uploads.
  * Integrates with the storage system for file management and audit logging for tracking actions.
  * 
- * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 9.10, 9.11, 9.12, 9.13, 9.14, 9.15,
  *               9.16, 9.17, 9.18, 9.19, 9.20, 9.21, 9.22, 12.4, 12.5, 12.6, 12.7, 12.8
  */
 
@@ -96,7 +95,6 @@ export class MaterialService {
    * @throws CourseOwnershipError if course is not assigned to faculty (HTTP 403)
    * @throws FileValidationError if file validation fails (HTTP 400)
    * 
-   * Requirements:
    * - 9.1: Endpoint protected by faculty.material.upload permission
    * - 9.2: Validate courseId is assigned to authenticated faculty
    * - 9.3: Accept multipart/form-data with file field
@@ -219,7 +217,6 @@ export class MaterialService {
    * @throws CourseNotFoundError if course doesn't exist (HTTP 404)
    * @throws CourseOwnershipError if course is not assigned to faculty (HTTP 403)
    * 
-   * Requirements:
    * - 9.12: Endpoint protected by faculty.material.read permission
    * - 9.13: Validate courseId is assigned to authenticated faculty
    * - 9.14: Return all materials for the course with details
@@ -286,7 +283,6 @@ export class MaterialService {
    * @throws CourseOwnershipError if course is not assigned to faculty (HTTP 403)
    * @throws MaterialNotFoundError if material doesn't exist or doesn't belong to course (HTTP 404)
    * 
-   * Requirements:
    * - 9.16: Endpoint protected by faculty.material.delete permission
    * - 9.17: Validate courseId is assigned to authenticated faculty
    * - 9.18: Validate materialId belongs to specified courseId

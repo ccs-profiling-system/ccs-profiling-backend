@@ -49,7 +49,6 @@ export class JobNotFoundError extends Error {
  * - Job status tracking
  * - Notification creation on job completion
  * 
- * Requirements: 34.1-34.10
  */
 export class JobQueueService {
   private jobHandlers: Map<JobTypeType, JobHandler> = new Map();
@@ -80,7 +79,6 @@ export class JobQueueService {
    * @param initiatedBy - The user ID who initiated the job
    * @returns The created job record
    * 
-   * Requirements: 34.1, 34.4
    */
   async enqueue(
     jobType: JobTypeType,
@@ -114,7 +112,6 @@ export class JobQueueService {
    * @throws JobNotFoundError if the job doesn't exist
    * @throws JobProcessingError if the job handler is not registered
    * 
-   * Requirements: 34.5, 34.6, 34.7, 34.8
    */
   async processJob(jobId: string): Promise<BackgroundJob> {
     // Fetch the job
@@ -174,7 +171,6 @@ export class JobQueueService {
    * @returns The job record with current status
    * @throws JobNotFoundError if the job doesn't exist
    * 
-   * Requirements: 34.5
    */
   async getJobStatus(jobId: string): Promise<BackgroundJob> {
     const job = await backgroundJobRepository.findById(jobId);
@@ -200,7 +196,6 @@ export class JobQueueService {
    * @param error - The error that caused the failure
    * @returns The updated job record
    * 
-   * Requirements: 34.8
    */
   private async handleJobFailure(
     job: BackgroundJob,
@@ -270,7 +265,6 @@ export class JobQueueService {
    * @param job - The completed job
    * @param success - Whether the job completed successfully
    * 
-   * Requirements: 34.7
    */
   private async createJobCompletionNotification(
     job: BackgroundJob,

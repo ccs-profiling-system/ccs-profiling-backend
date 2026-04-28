@@ -4,7 +4,6 @@
  * Defines routes for secretary portal dashboard operations.
  * All routes require authentication and secretary.dashboard.read permission.
  * 
- * Requirements: 2.1, 2.2
  */
 
 import { Router } from 'express';
@@ -52,7 +51,6 @@ export function createDashboardRoutes(): Router {
    *   }
    * }
    * 
-   * Requirements: 2.1, 2.2
    */
   router.get(
     '/',

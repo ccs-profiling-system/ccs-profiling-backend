@@ -2,7 +2,6 @@
  * Student Portal - Progress Service Tests
  * Unit tests for academic progress tracking service
  * 
- * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

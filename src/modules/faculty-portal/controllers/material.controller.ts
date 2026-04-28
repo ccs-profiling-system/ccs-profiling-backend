@@ -7,7 +7,6 @@
  * for their assigned courses. File uploads are handled using multer middleware with
  * validation for file size and type.
  * 
- * Requirements: 9.1, 9.2, 9.3, 9.9, 9.11, 9.12, 9.16, 9.17, 9.20, 9.21, 9.22
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -61,7 +60,6 @@ export class MaterialController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If course doesn't exist
    * 
-   * Requirements: 9.1, 9.2, 9.3, 9.9, 9.11
    */
   uploadMaterial = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -135,7 +133,6 @@ export class MaterialController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If course doesn't exist
    * 
-   * Requirements: 9.12, 9.13, 9.14, 9.15
    */
   getMaterials = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -186,7 +183,6 @@ export class MaterialController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If material doesn't exist or doesn't belong to the course
    * 
-   * Requirements: 9.16, 9.17, 9.20, 9.21, 9.22
    */
   deleteMaterial = async (req: Request, res: Response, next: NextFunction) => {
     try {

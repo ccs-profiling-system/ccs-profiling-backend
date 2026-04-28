@@ -5,7 +5,6 @@
  * Provides endpoints for students to view and manage their notifications.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 5.6, 5.7, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -41,7 +40,6 @@ export function createNotificationRoutes(
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 5.1, 5.2, 5.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/',
@@ -68,7 +66,6 @@ export function createNotificationRoutes(
    * - 403: Forbidden (missing permission, not a student, or notification doesn't belong to student)
    * - 404: Not Found (notification not found)
    * 
-   * Requirements: 5.3, 5.4, 5.5, 5.7, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.patch(
     '/:id/read',
@@ -89,7 +86,6 @@ export function createNotificationRoutes(
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 5.4, 5.5, 5.7, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.patch(
     '/read-all',

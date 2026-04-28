@@ -2,7 +2,6 @@
  * Student Controller Unit Tests
  * Tests for student management HTTP request/response handling in chair portal
  * 
- * Requirements: 3.1, 3.5, 3.8, 3.12, 9.1
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

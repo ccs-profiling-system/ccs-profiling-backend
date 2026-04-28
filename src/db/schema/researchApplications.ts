@@ -10,7 +10,6 @@ import { students } from './students';
  * Tracks application status and faculty feedback.
  * Prevents duplicate applications with unique constraint on (research_id, student_id).
  * 
- * Requirements: 15.1-15.8, 16.1-16.3
  */
 export const researchApplications = pgTable('research_applications', {
   id: uuidPrimaryKey(),

@@ -3,7 +3,6 @@
  * 
  * Validates that all security measures from Requirement 18 are properly implemented
  * 
- * Requirements: 18.1-18.10
  */
 
 import { describe, it, expect } from 'vitest';

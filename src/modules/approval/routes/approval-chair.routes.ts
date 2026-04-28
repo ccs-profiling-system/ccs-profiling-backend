@@ -10,7 +10,6 @@
  * Department scope is strictly enforced - chairs can only access
  * approvals for their assigned department.
  * 
- * Requirements: 9.1-9.5, 10.1-10.5, 11.1-11.4, 12.1-12.4
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -84,7 +83,6 @@ export function createChairRoutes(): Router {
    * - 403: Permission denied or no department assigned
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 9.1-9.5
    */
   router.get(
     '/pending',
@@ -150,7 +148,6 @@ export function createChairRoutes(): Router {
    * - 403: Permission denied or no department assigned
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 11.1-11.4
    */
   router.get(
     '/history',
@@ -205,7 +202,6 @@ export function createChairRoutes(): Router {
    * - 403: Permission denied or no department assigned
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 11.1-11.4
    */
   router.get(
     '/stats',
@@ -248,7 +244,6 @@ export function createChairRoutes(): Router {
    * - 404: Approval not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 9.4
    */
   router.get(
     '/:id',
@@ -321,7 +316,6 @@ export function createChairRoutes(): Router {
    * - 409: Conflict detected (entity has changed) - use force=true to override
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 10.1-10.6
    */
   router.patch(
     '/:id/approve',
@@ -401,7 +395,6 @@ export function createChairRoutes(): Router {
    * - 404: Approval not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 10.1-10.6
    */
   router.patch(
     '/:id/reject',
@@ -480,7 +473,6 @@ export function createChairRoutes(): Router {
    * - 403: Permission denied or no department assigned
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 12.1-12.4
    */
   router.post(
     '/bulk-approve',
@@ -543,7 +535,6 @@ export function createChairRoutes(): Router {
    * - 403: Permission denied or no department assigned
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 12.1-12.4
    */
   router.post(
     '/bulk-reject',

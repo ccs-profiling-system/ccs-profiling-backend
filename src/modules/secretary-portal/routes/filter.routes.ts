@@ -4,7 +4,6 @@
  * Defines routes for filter options in secretary portal.
  * All routes require authentication and secretary.filter.read permission.
  * 
- * Requirements: 11.1-11.4
  */
 
 import { Router } from 'express';
@@ -43,7 +42,6 @@ export function createFilterRoutes(): Router {
    *   data: string[]
    * }
    * 
-   * Requirements: 11.1, 11.4
    */
   router.get(
     '/programs',
@@ -64,7 +62,6 @@ export function createFilterRoutes(): Router {
    *   data: string[]
    * }
    * 
-   * Requirements: 11.2, 11.4
    */
   router.get(
     '/departments',
@@ -85,7 +82,6 @@ export function createFilterRoutes(): Router {
    *   data: string[]
    * }
    * 
-   * Requirements: 11.3, 11.4
    */
   router.get(
     '/event-types',

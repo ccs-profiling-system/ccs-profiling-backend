@@ -17,7 +17,6 @@ import { config } from '../../config';
  *   }
  * }
  * 
- * Error Handling Requirements:
  * - HTTP 400: Validation errors with field-specific messages
  * - HTTP 401: Authentication failures with generic message
  * - HTTP 403: Authorization failures with permission name
@@ -76,7 +75,6 @@ export const errorHandler = (
  * Includes stack traces and request context
  * Only logs to console/logging service, never exposed to client
  * 
- * Requirements: 18.8 - Stack traces logged server-side only, never in responses
  */
 function logErrorDetails(err: Error, req: Request): void {
   const isProduction = config.nodeEnv === 'production';

@@ -5,7 +5,6 @@
  * Handles student roster viewing for courses assigned to faculty members.
  * Validates course ownership before returning roster data.
  * 
- * Requirements: 5.1, 5.2, 5.3, 5.6
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -41,7 +40,6 @@ export class RosterController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If course doesn't exist
    * 
-   * Requirements:
    * - 5.1: Endpoint protected by faculty.roster.read permission
    * - 5.2: Validate courseId is assigned to authenticated faculty
    * - 5.3: Return HTTP 403 if course not assigned to faculty

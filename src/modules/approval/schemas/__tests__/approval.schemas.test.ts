@@ -4,7 +4,6 @@
  * Tests all validation schemas for the approval system API.
  * Covers success cases, validation errors, edge cases, and boundary conditions.
  * 
- * Requirements: 17.1-17.7, 18.1-18.9, 35.1-35.12
  */
 
 import { describe, it, expect } from 'vitest';

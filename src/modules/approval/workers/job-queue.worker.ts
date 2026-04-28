@@ -44,7 +44,6 @@ export enum WorkerState {
  * await worker.stop();
  * ```
  * 
- * Requirements: 34.1-34.10
  */
 export class JobQueueWorker {
   private state: WorkerState = WorkerState.STOPPED;

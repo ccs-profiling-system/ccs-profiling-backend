@@ -2,7 +2,6 @@
  * Faculty Service
  * Business logic for faculty management operations
  * 
- * Requirements: 4.1-4.18, 17.3-17.5
  */
 
 import { db } from '../../../db';
@@ -47,7 +46,6 @@ export interface TeachingLoadItem {
  * @param search - Search term for name and faculty_id
  * @returns Paginated list of faculty
  * 
- * Requirements: 4.1, 4.14-4.16
  */
 export async function getAllFaculty(
   pagination: PaginationParams,
@@ -120,7 +118,6 @@ export async function getAllFaculty(
  * @param id - Faculty UUID
  * @returns Faculty record or null if not found
  * 
- * Requirements: 4.2
  */
 export async function getFacultyById(id: string): Promise<FacultyDTO | null> {
   const result = await db
@@ -142,7 +139,6 @@ export async function getFacultyById(id: string): Promise<FacultyDTO | null> {
  * @param userAgent - User agent of the request
  * @returns Created faculty record
  * 
- * Requirements: 4.3, 4.11-4.13, 17.3-17.4
  */
 export async function createFaculty(
   data: {
@@ -225,7 +221,6 @@ export async function createFaculty(
  * @param userAgent - User agent of the request
  * @returns Updated faculty record
  * 
- * Requirements: 4.4, 4.11-4.13, 17.3-17.5
  */
 export async function updateFaculty(
   id: string,
@@ -316,7 +311,6 @@ export async function updateFaculty(
  * @param userAgent - User agent of the request
  * @returns Deleted faculty record
  * 
- * Requirements: 4.5, 17.3-17.4, 17.7
  */
 export async function deleteFaculty(
   id: string,
@@ -371,7 +365,6 @@ export async function deleteFaculty(
  * @param id - Faculty UUID
  * @returns List of teaching load items with schedule and instruction details
  * 
- * Requirements: 4.6
  */
 export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
   // Validate faculty exists

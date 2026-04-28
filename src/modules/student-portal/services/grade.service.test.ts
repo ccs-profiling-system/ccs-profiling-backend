@@ -2,7 +2,6 @@
  * Student Portal - Grade Service Tests
  * Unit tests for grade management service
  * 
- * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1, 10.2, 10.3, 11.1, 11.2, 11.3, 11.4, 11.5, 12.1, 12.2, 12.3, 12.4, 12.5
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

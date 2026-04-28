@@ -2,7 +2,6 @@
  * Student Portal - Dashboard Service Tests
  * Unit tests for student dashboard summary service
  * 
- * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

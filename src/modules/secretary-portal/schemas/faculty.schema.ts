@@ -2,7 +2,6 @@
  * Faculty Validation Schemas for Secretary Portal
  * Zod schemas for validating faculty-related input
  * 
- * Requirements: 4.11-4.13
  */
 
 import { z } from 'zod';
@@ -13,7 +12,6 @@ import { emailSchema, optionalEmailSchema } from './common.schemas';
  * Validates all required fields for faculty creation
  * faculty_id is auto-generated and should NOT be included in the request
  * 
- * Requirements: 4.11, 4.12, 4.13
  */
 export const createFacultySchema = z.object({
   first_name: z
@@ -61,7 +59,6 @@ export const createFacultySchema = z.object({
  * Schema for updating an existing faculty member
  * All fields are optional for partial updates
  * 
- * Requirements: 4.11, 4.12, 4.13
  */
 export const updateFacultySchema = z.object({
   faculty_id: z

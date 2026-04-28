@@ -5,7 +5,6 @@
  * - Notification listing and management
  * - Approval system configuration
  * 
- * Requirements: 13.1-13.7, 14.1-14.6
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';

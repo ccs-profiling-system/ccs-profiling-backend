@@ -6,7 +6,6 @@
  * Uses the faculty_skills table (separate from student skills).
  * Implements transaction-based replace strategy for atomic updates.
  * 
- * Requirements: Phase 10 - Skills Management
  */
 
 import { eq, and, isNull } from 'drizzle-orm';
@@ -98,7 +97,6 @@ export class SkillsService {
    * @returns Updated skills list ordered by category, skillName
    * @throws NotFoundError if faculty doesn't exist
    * 
-   * Requirements:
    * - Uses faculty_skills table (separate from student skills)
    * - Replace strategy WITH transaction (atomic operation)
    * - Validate category: technical, soft, language, sports, other

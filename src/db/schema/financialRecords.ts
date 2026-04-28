@@ -8,7 +8,6 @@ import { students } from './students';
  * Stores student financial summary including tuition, fees, payments, and outstanding balance.
  * Each student has one financial record that is updated as payments are made.
  * 
- * Requirements: 4.1-4.5
  */
 export const financialRecords = pgTable('financial_records', {
   id: uuidPrimaryKey(),
@@ -29,7 +28,6 @@ export const financialRecords = pgTable('financial_records', {
  * Stores individual payment transactions made by students.
  * Tracks payment method and reference number for reconciliation.
  * 
- * Requirements: 4.1-4.5
  */
 export const payments = pgTable('payments', {
   id: uuidPrimaryKey(),

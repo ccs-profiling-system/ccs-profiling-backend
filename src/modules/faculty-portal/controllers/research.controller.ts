@@ -6,7 +6,6 @@
  * All operations validate faculty association with research projects to ensure
  * faculty can only manage their own research.
  * 
- * Requirements: 7.1, 7.6, 7.7, 7.8, 7.10, 7.17, 7.18, 7.21, 7.22
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -53,7 +52,6 @@ export class ResearchController {
    * - 200: Paginated list of research projects with metadata
    * - 400: If invalid query parameters provided
    * 
-   * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5
    */
   listResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -106,7 +104,6 @@ export class ResearchController {
    * - 403: If faculty is not associated with the research project
    * - 404: If research project doesn't exist
    * 
-   * Requirements: 7.6, 7.7, 7.8, 7.9
    */
   getResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -157,7 +154,6 @@ export class ResearchController {
    * - 200: Created research project details
    * - 400: If validation fails or dates are invalid
    * 
-   * Requirements: 7.10, 7.11, 7.12, 7.13, 7.14, 7.15, 7.16
    */
   createResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -212,7 +208,6 @@ export class ResearchController {
    * - 403: If faculty is not associated with the research project
    * - 404: If research project doesn't exist
    * 
-   * Requirements: 7.17, 7.18, 7.19, 7.20, 7.21, 7.22
    */
   updateResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {

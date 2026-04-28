@@ -4,7 +4,6 @@
  * HTTP request/response handling for student management in the department chair portal.
  * Handles pagination, filtering, approval/rejection workflows, and department-scoped access.
  * 
- * Requirements: 3.1, 3.5, 3.8, 3.12, 9.1, 9.2, 14.1
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -35,7 +34,6 @@ export class StudentController {
    * @returns HTTP 200 with paginated student list
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 3.1, 3.2, 3.3, 3.4
    */
   listStudents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -89,7 +87,6 @@ export class StudentController {
    * @returns HTTP 404 if student not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 3.5, 3.6, 3.7
    */
   getStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -132,7 +129,6 @@ export class StudentController {
    * @returns HTTP 404 if student not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 3.8, 3.9, 3.10, 3.11
    */
   approveStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -203,7 +199,6 @@ export class StudentController {
    * @returns HTTP 404 if student not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 3.12, 3.13, 3.14, 3.15
    */
   rejectStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {

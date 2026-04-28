@@ -50,7 +50,6 @@ export class JobHandlerError extends Error {
  * - Fallback to in-app storage on real-time delivery failure
  * - Detailed delivery status reporting
  * 
- * Requirements: 24.1-24.9, 34.1-34.10
  */
 export class NotificationDeliveryHandler {
   /**
@@ -63,7 +62,6 @@ export class NotificationDeliveryHandler {
    * @returns Delivery result with status for each channel
    * @throws JobHandlerError if payload is invalid or delivery fails completely
    * 
-   * Requirements: 24.1-24.9, 34.1-34.10
    */
   async handleNotificationDelivery(
     payload: Record<string, any>
@@ -148,7 +146,6 @@ export class NotificationDeliveryHandler {
    * @param channel - The delivery channel
    * @throws Error if delivery fails for this channel
    * 
-   * Requirements: 24.1-24.4, 24.8
    */
   private async deliverToChannel(notificationId: string, channel: string): Promise<void> {
     switch (channel) {

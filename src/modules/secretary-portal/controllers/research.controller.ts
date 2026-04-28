@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal research operations.
  * Provides CRUD operations for research with approval workflow and file upload support.
  * 
- * Requirements: 8.1-8.10, 8.35-8.38, 15.1, 15.4, 15.6
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -49,7 +48,6 @@ import { paginationSchema, idParamSchema } from '../schemas/common.schemas';
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if research retrieval fails
  * 
- * Requirements: 8.1, 8.28-8.30, 8.35, 15.1
  */
 export async function getAllResearchController(
   req: Request,
@@ -125,7 +123,6 @@ export async function getAllResearchController(
  * @returns HTTP 404 when research not found
  * @throws Error if research retrieval fails
  * 
- * Requirements: 8.2, 8.35, 15.4
  */
 export async function getResearchByIdController(
   req: Request,
@@ -188,7 +185,6 @@ export async function getResearchByIdController(
  * @returns HTTP 400 for validation errors or invalid state transitions
  * @throws Error if research creation fails
  * 
- * Requirements: 8.3, 8.15-8.19, 8.36, 15.1
  */
 export async function createResearchController(
   req: Request,
@@ -265,7 +261,6 @@ export async function createResearchController(
  * @returns HTTP 422 for business logic errors (e.g., cannot update approved research)
  * @throws Error if research update fails
  * 
- * Requirements: 8.4, 8.15-8.18, 8.21, 8.37, 15.4, 15.6
  */
 export async function updateResearchController(
   req: Request,
@@ -383,7 +378,6 @@ export async function updateResearchController(
  * @returns HTTP 422 for business logic errors (e.g., cannot delete approved research)
  * @throws Error if research deletion fails
  * 
- * Requirements: 8.5, 8.31-8.33, 8.38, 15.4, 15.6
  */
 export async function deleteResearchController(
   req: Request,
@@ -467,7 +461,6 @@ export async function deleteResearchController(
  * @returns HTTP 404 when research not found
  * @throws Error if research submission fails
  * 
- * Requirements: 8.6, 8.20, 8.37, 15.4
  */
 export async function submitResearchController(
   req: Request,
@@ -551,7 +544,6 @@ export async function submitResearchController(
  * @returns HTTP 404 when research not found
  * @throws Error if file upload fails
  * 
- * Requirements: 8.7, 8.22-8.27, 8.37, 15.1
  */
 export async function uploadResearchFileController(
   req: Request,
@@ -653,7 +645,6 @@ export async function uploadResearchFileController(
  * @returns HTTP 404 when research not found
  * @throws Error if file retrieval fails
  * 
- * Requirements: 8.8, 8.35, 15.4
  */
 export async function getResearchFilesController(
   req: Request,
@@ -718,7 +709,6 @@ export async function getResearchFilesController(
  * @returns HTTP 404 when research or file not found
  * @throws Error if file deletion fails
  * 
- * Requirements: 8.9, 8.38, 15.4
  */
 export async function deleteResearchFileController(
   req: Request,
@@ -808,7 +798,6 @@ export async function deleteResearchFileController(
  * @returns HTTP 404 when research or file not found
  * @throws Error if file download fails
  * 
- * Requirements: 8.8, 8.35, 15.4, 16.7
  */
 export async function downloadResearchFileController(
   req: Request,
@@ -928,7 +917,6 @@ export async function downloadResearchFileController(
  * @returns HTTP 404 when research not found
  * @throws Error if author retrieval fails
  * 
- * Requirements: 8.10, 8.35, 15.4
  */
 export async function getResearchAuthorsController(
   req: Request,

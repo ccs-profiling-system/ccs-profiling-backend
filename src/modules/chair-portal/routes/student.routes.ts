@@ -10,7 +10,6 @@
  * - POST /api/chair/students/:id/approve - Approve a student
  * - POST /api/chair/students/:id/reject - Reject a student
  * 
- * Requirements: 3.1, 3.5, 3.8, 3.12, 9.2, 14.1
  */
 
 import { Router } from 'express';

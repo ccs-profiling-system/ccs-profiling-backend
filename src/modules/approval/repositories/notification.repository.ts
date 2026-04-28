@@ -40,7 +40,6 @@ export interface PaginatedResult<T> {
  * Handles all database operations for the approval_notifications table.
  * Queries are ordered by created_at DESC by default.
  * 
- * Requirements: 13.1-13.7
  */
 export class NotificationRepository {
   /**

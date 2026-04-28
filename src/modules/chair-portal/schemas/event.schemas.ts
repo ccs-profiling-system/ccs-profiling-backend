@@ -2,7 +2,6 @@
  * Event Validation Schemas for Chair Portal
  * Zod schemas for validating event-related input
  * 
- * Requirements: 6.5, 6.6, 6.11
  */
 
 import { z } from 'zod';

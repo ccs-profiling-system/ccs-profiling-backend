@@ -8,7 +8,6 @@ import { students } from './students';
  * Stores system-generated notifications sent to students.
  * Tracks read status and read timestamp for notification management.
  * 
- * Requirements: 5.1-5.7
  */
 export const notifications = pgTable('notifications', {
   id: uuidPrimaryKey(),

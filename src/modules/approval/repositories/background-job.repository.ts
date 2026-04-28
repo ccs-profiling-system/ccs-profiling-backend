@@ -42,7 +42,6 @@ export interface PaginatedResult<T> {
  * Handles all database operations for the background_jobs table.
  * Supports job queue processing with FIFO ordering.
  * 
- * Requirements: 34.1-34.10
  */
 export class BackgroundJobRepository {
   /**

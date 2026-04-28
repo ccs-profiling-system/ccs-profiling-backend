@@ -34,7 +34,6 @@ export type NotificationPriorityType = typeof NotificationPriority[keyof typeof 
  * Stores system-generated notifications for approval workflow events.
  * Notifies users about approval decisions, conflicts, and application failures.
  * 
- * Requirements: 13.1-13.7, 24.1-24.9
  */
 export const approvalNotifications = pgTable('approval_notifications', {
   id: uuidPrimaryKey(),

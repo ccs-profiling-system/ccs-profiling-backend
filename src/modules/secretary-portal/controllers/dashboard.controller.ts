@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal dashboard operations.
  * Provides dashboard statistics and recent activities.
  * 
- * Requirements: 2.1, 2.7
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -27,7 +26,6 @@ import { getDashboardStats } from '../services/dashboard.service';
  * @returns HTTP 200 with dashboard data on success
  * @throws Error if dashboard data retrieval fails
  * 
- * Requirements: 2.1, 2.7
  */
 export async function getDashboard(
   _req: Request,

@@ -5,7 +5,6 @@
  * Runs asynchronously (non-blocking) to avoid impacting response times.
  * Logs both successful and failed operations.
  * 
- * Requirements: 16.1-16.7
  */
 
 import { Request, Response, NextFunction } from 'express';

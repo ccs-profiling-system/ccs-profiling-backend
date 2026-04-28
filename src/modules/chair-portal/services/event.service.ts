@@ -14,7 +14,6 @@
  * - Get event participants
  * - Audit logging for approval/rejection actions
  * 
- * Requirements: 6.1, 6.2, 6.4, 6.5, 6.7, 6.8, 6.9, 6.10, 6.11, 6.12, 6.13, 6.14, 6.15, 6.16, 6.17, 6.18, 6.20, 6.21, 6.23, 11.3, 11.5, 13.1
  */
 
 import { db } from '../../../db';
@@ -140,7 +139,6 @@ export class EventService {
    * @param filters - Pagination and filter parameters
    * @returns Paginated list of events
    * 
-   * Requirements: 6.1, 6.2, 6.3, 13.1, 13.6
    */
   async listEvents(
     departmentId: string,
@@ -220,7 +218,6 @@ export class EventService {
    * @param departmentId - Department ID to associate with event
    * @returns Created event
    * 
-   * Requirements: 6.4, 6.5, 6.6, 6.7, 13.1
    */
   async createEvent(
     data: CreateEventData,
@@ -257,7 +254,6 @@ export class EventService {
    * @param departmentId - Department ID to validate scope
    * @returns Event details with participant count or null if not found
    * 
-   * Requirements: 6.8, 6.9, 6.10, 13.2, 13.7
    */
   async getEventById(id: string, departmentId: string): Promise<EventDTO | null> {
     const result = await db
@@ -293,7 +289,6 @@ export class EventService {
    * @returns Updated event or null if not found
    * @throws Error if event is not in valid state for update
    * 
-   * Requirements: 6.11, 6.12, 13.2, 13.7
    */
   async updateEvent(
     id: string,
@@ -352,7 +347,6 @@ export class EventService {
    * @returns True if deleted, false if not found
    * @throws Error if event is not in valid state for deletion
    * 
-   * Requirements: 6.13, 6.14, 13.2, 13.7
    */
   async deleteEvent(id: string, departmentId: string): Promise<boolean> {
     // Get event and validate department scope
@@ -397,7 +391,6 @@ export class EventService {
    * @returns Updated event or null if not found
    * @throws Error if event is not in valid state for approval
    * 
-   * Requirements: 6.15, 6.16, 6.23, 11.3, 11.5
    */
   async approveEvent(
     id: string,
@@ -466,7 +459,6 @@ export class EventService {
    * @returns Updated event or null if not found
    * @throws Error if event is not in valid state for rejection
    * 
-   * Requirements: 6.17, 6.18, 6.19, 6.23, 11.3, 11.5
    */
   async rejectEvent(
     id: string,
@@ -527,7 +519,6 @@ export class EventService {
    * @param departmentId - Department ID to validate scope
    * @returns List of event participants or null if event not found
    * 
-   * Requirements: 6.20, 6.21, 13.2, 13.7
    */
   async getEventParticipants(
     id: string,

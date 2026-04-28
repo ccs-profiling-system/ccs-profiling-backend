@@ -26,7 +26,6 @@ export class EntityNotFoundError extends NotFoundError {
  * Handles applying approved changes to target entities with conflict detection.
  * Implements versioning via entity_version field and updated_at timestamp comparison.
  * 
- * Requirements: 21.1-21.7, 22.1-22.7
  */
 export class EntityApplicationService {
   /**
@@ -47,7 +46,6 @@ export class EntityApplicationService {
    * @throws {EntityNotFoundError} If target entity doesn't exist
    * @throws {ValidationError} If change_details validation fails
    * 
-   * Requirements: 21.1-21.7, 22.1-22.7
    */
   async applyChanges(approvalId: string, force: boolean = false): Promise<void> {
     try {

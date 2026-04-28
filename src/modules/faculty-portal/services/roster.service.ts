@@ -5,7 +5,6 @@
  * Handles student roster viewing for courses assigned to faculty members.
  * Validates course ownership before returning roster data.
  * 
- * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7
  */
 
 import { eq, and, isNull, asc } from 'drizzle-orm';
@@ -30,7 +29,6 @@ export class RosterService {
    * @throws CourseNotFoundError if course doesn't exist (HTTP 404)
    * @throws CourseOwnershipError if course is not assigned to faculty (HTTP 403)
    * 
-   * Requirements:
    * - 5.1: Endpoint protected by faculty.roster.read permission
    * - 5.2: Validate courseId is assigned to authenticated faculty
    * - 5.3: Return HTTP 403 if course not assigned to faculty

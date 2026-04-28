@@ -4,7 +4,6 @@
  * Defines routes for secretary portal report generation operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 10.1-10.4
  */
 
 import { Router } from 'express';
@@ -35,7 +34,6 @@ export function createReportRoutes(): Router {
    * 
    * Generate a student report in the specified format (pdf, excel, csv).
    * 
-   * Requirements: 10.1, 10.4
    */
   router.post(
     '/students',
@@ -48,7 +46,6 @@ export function createReportRoutes(): Router {
    * 
    * Generate a faculty report in the specified format (pdf, excel, csv).
    * 
-   * Requirements: 10.2, 10.4
    */
   router.post(
     '/faculty',
@@ -61,7 +58,6 @@ export function createReportRoutes(): Router {
    * 
    * Generate an event report in the specified format (pdf, excel, csv).
    * 
-   * Requirements: 10.3, 10.4
    */
   router.post(
     '/events',

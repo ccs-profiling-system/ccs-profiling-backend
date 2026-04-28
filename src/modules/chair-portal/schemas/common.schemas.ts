@@ -2,7 +2,6 @@
  * Common Validation Schemas for Chair Portal
  * Zod schemas for validating common input patterns across chair portal endpoints
  * 
- * Requirements: 3.4, 3.10, 3.14, 10.5
  */
 
 import { z } from 'zod';

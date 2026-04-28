@@ -4,7 +4,6 @@
  * HTTP request/response handling for secretary portal student operations.
  * Provides CRUD operations for students and academic history retrieval.
  * 
- * Requirements: 3.1-3.6, 3.20-3.23, 15.1, 15.4
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -44,7 +43,6 @@ import { paginationSchema, idParamSchema } from '../schemas/common.schemas';
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if student retrieval fails
  * 
- * Requirements: 3.1, 3.14-3.16, 3.20-3.23, 15.1
  */
 export async function getAllStudentsController(
   req: Request,
@@ -120,7 +118,6 @@ export async function getAllStudentsController(
  * @returns HTTP 404 when student not found with entity type
  * @throws Error if student retrieval fails
  * 
- * Requirements: 3.2, 3.20-3.23, 15.4
  */
 export async function getStudentByIdController(
   req: Request,
@@ -184,7 +181,6 @@ export async function getStudentByIdController(
  * @returns HTTP 400 for validation errors with field-specific messages
  * @throws Error if student creation fails
  * 
- * Requirements: 3.3, 3.11-3.13, 3.20-3.23, 15.1
  */
 export async function createStudentController(
   req: Request,
@@ -275,7 +271,6 @@ export async function createStudentController(
  * @returns HTTP 404 when student not found with entity type
  * @throws Error if student update fails
  * 
- * Requirements: 3.4, 3.11-3.13, 3.20-3.23, 15.4
  */
 export async function updateStudentController(
   req: Request,
@@ -386,7 +381,6 @@ export async function updateStudentController(
  * @returns HTTP 404 when student not found with entity type
  * @throws Error if student deletion fails
  * 
- * Requirements: 3.5, 3.20-3.23, 15.4
  */
 export async function deleteStudentController(
   req: Request,
@@ -457,7 +451,6 @@ export async function deleteStudentController(
  * @returns HTTP 404 when student not found with entity type
  * @throws Error if academic history retrieval fails
  * 
- * Requirements: 3.6, 3.20-3.23, 15.4
  */
 export async function getAcademicHistoryController(
   req: Request,

@@ -5,7 +5,6 @@
  * Handles attendance record viewing and submission for courses assigned to faculty members.
  * Validates course ownership and student enrollment before processing attendance records.
  * 
- * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10, 6.11, 6.12, 6.13, 6.14, 6.15, 6.16
  */
 
 import { eq, and, isNull, gte, lte, inArray, sql } from 'drizzle-orm';
@@ -83,7 +82,6 @@ export class AttendanceService {
    * @throws CourseNotFoundError if course doesn't exist (HTTP 404)
    * @throws CourseOwnershipError if course is not assigned to faculty (HTTP 403)
    * 
-   * Requirements:
    * - 6.1: Endpoint protected by faculty.attendance.read permission
    * - 6.2: Validate courseId is assigned to authenticated faculty
    * - 6.3: Accept optional date_from and date_to query parameters
@@ -158,7 +156,6 @@ export class AttendanceService {
    * @throws InvalidStudentError if any student_id is not enrolled in the course (HTTP 400)
    * @throws InvalidAttendanceStatusError if any status is invalid (HTTP 400)
    * 
-   * Requirements:
    * - 6.7: Endpoint protected by faculty.attendance.submit permission
    * - 6.8: Validate courseId is assigned to authenticated faculty
    * - 6.9: Require date and attendance_records array in request body

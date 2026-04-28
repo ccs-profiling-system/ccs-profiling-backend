@@ -4,7 +4,6 @@
  * Limits concurrent file uploads to prevent resource exhaustion.
  * Uses a simple in-memory counter to track active uploads.
  * 
- * Requirements: 16.6
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -30,7 +29,6 @@ let activeUploads = 0;
  * @param res - Express response
  * @param next - Express next function
  * 
- * Requirements: 16.6
  */
 export function uploadLimiter(
   req: Request,

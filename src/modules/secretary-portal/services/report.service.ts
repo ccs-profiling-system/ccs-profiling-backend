@@ -2,7 +2,6 @@
  * Report Service
  * Handles report generation for students, faculty, and events
  * 
- * Requirements: 10.1-10.9, 10.12
  */
 
 import { db } from '../../../db';
@@ -42,7 +41,6 @@ export interface ReportResult {
  * @param req - Express request object for audit logging
  * @returns Report buffer with content type and filename
  * 
- * Requirements: 10.1, 10.5-10.9
  */
 export async function generateStudentReport(
   format: ReportFormat,
@@ -123,7 +121,6 @@ export async function generateStudentReport(
  * @param req - Express request object for audit logging
  * @returns Report buffer with content type and filename
  * 
- * Requirements: 10.2, 10.5-10.9
  */
 export async function generateFacultyReport(
   format: ReportFormat,
@@ -205,7 +202,6 @@ export async function generateFacultyReport(
  * @param req - Express request object for audit logging
  * @returns Report buffer with content type and filename
  * 
- * Requirements: 10.3, 10.5-10.9
  */
 export async function generateEventReport(
   format: ReportFormat,
@@ -281,7 +277,6 @@ export async function generateEventReport(
 /**
  * Generate student PDF report
  * 
- * Requirements: 10.7
  */
 function generateStudentPDF(data: any[]): Promise<ReportResult> {
   const doc = new PDFDocument({ margin: 50 });
@@ -349,7 +344,6 @@ function generateStudentPDF(data: any[]): Promise<ReportResult> {
 /**
  * Generate faculty PDF report
  * 
- * Requirements: 10.7
  */
 function generateFacultyPDF(data: any[]): Promise<ReportResult> {
   const doc = new PDFDocument({ margin: 50 });
@@ -415,7 +409,6 @@ function generateFacultyPDF(data: any[]): Promise<ReportResult> {
 /**
  * Generate event PDF report
  * 
- * Requirements: 10.7
  */
 function generateEventPDF(data: any[]): Promise<ReportResult> {
   const doc = new PDFDocument({ margin: 50 });
@@ -484,7 +477,6 @@ function generateEventPDF(data: any[]): Promise<ReportResult> {
 /**
  * Generate student Excel report
  * 
- * Requirements: 10.8
  */
 async function generateStudentExcel(data: any[]): Promise<ReportResult> {
   const workbook = new ExcelJS.Workbook();
@@ -539,7 +531,6 @@ async function generateStudentExcel(data: any[]): Promise<ReportResult> {
 /**
  * Generate faculty Excel report
  * 
- * Requirements: 10.8
  */
 async function generateFacultyExcel(data: any[]): Promise<ReportResult> {
   const workbook = new ExcelJS.Workbook();
@@ -596,7 +587,6 @@ async function generateFacultyExcel(data: any[]): Promise<ReportResult> {
 /**
  * Generate event Excel report
  * 
- * Requirements: 10.8
  */
 async function generateEventExcel(data: any[]): Promise<ReportResult> {
   const workbook = new ExcelJS.Workbook();
@@ -657,7 +647,6 @@ async function generateEventExcel(data: any[]): Promise<ReportResult> {
 /**
  * Generate student CSV report
  * 
- * Requirements: 10.9
  */
 function generateStudentCSV(data: any[]): ReportResult {
   const headers = [
@@ -696,7 +685,6 @@ function generateStudentCSV(data: any[]): ReportResult {
 /**
  * Generate faculty CSV report
  * 
- * Requirements: 10.9
  */
 function generateFacultyCSV(data: any[]): ReportResult {
   const headers = [
@@ -737,7 +725,6 @@ function generateFacultyCSV(data: any[]): ReportResult {
 /**
  * Generate event CSV report
  * 
- * Requirements: 10.9
  */
 function generateEventCSV(data: any[]): ReportResult {
   const headers = [
@@ -782,7 +769,6 @@ function generateEventCSV(data: any[]): ReportResult {
  * - Wraps fields containing commas, quotes, or newlines in double quotes
  * - Escapes double quotes by doubling them
  * 
- * Requirements: 10.9
  */
 function escapeCSV(value: any): string {
   if (value === null || value === undefined) {

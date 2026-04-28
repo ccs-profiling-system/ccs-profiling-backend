@@ -30,7 +30,6 @@ export class LocalStorage implements StorageProvider {
    * Directory structure: uploads/{entity_type}/{year}/{month}/
    * 
    * Security: Files stored with restricted permissions (0o640)
-   * Requirements: 18.9
    */
   async upload(options: UploadOptions): Promise<UploadResult> {
     const { entityType, originalFilename, buffer } = options;

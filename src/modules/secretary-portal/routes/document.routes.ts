@@ -4,7 +4,6 @@
  * Defines routes for secretary portal document operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 6.6-6.8
  */
 
 import { Router } from 'express';
@@ -43,7 +42,6 @@ export function createDocumentRoutes(): Router {
    * Uses multer middleware for multipart/form-data handling.
    * Upload limiter prevents resource exhaustion from concurrent uploads.
    * 
-   * Requirements: 6.6, 16.6
    */
   router.post(
     '/',
@@ -58,7 +56,6 @@ export function createDocumentRoutes(): Router {
    * 
    * Retrieve all documents with pagination and filtering.
    * 
-   * Requirements: 6.7
    */
   router.get(
     '/',
@@ -71,7 +68,6 @@ export function createDocumentRoutes(): Router {
    * 
    * Retrieve a document by ID.
    * 
-   * Requirements: 6.7
    */
   router.get(
     '/:id',
@@ -84,7 +80,6 @@ export function createDocumentRoutes(): Router {
    * 
    * Download a document file.
    * 
-   * Requirements: 6.7
    */
   router.get(
     '/:id/download',
@@ -97,7 +92,6 @@ export function createDocumentRoutes(): Router {
    * 
    * Delete a document (hard delete).
    * 
-   * Requirements: 6.8
    */
   router.delete(
     '/:id',

@@ -4,7 +4,6 @@
  * HTTP request/response handling for research project management in the department chair portal.
  * Handles pagination, filtering, approval/rejection workflows, and department-scoped access.
  * 
- * Requirements: 7.1, 7.4, 7.7, 7.11, 9.1, 9.2
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -35,7 +34,6 @@ export class ResearchController {
    * @returns HTTP 200 with paginated research list
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 7.1, 7.2, 7.3
    */
   listResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -89,7 +87,6 @@ export class ResearchController {
    * @returns HTTP 404 if research not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 7.4, 7.5, 7.6
    */
   getResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -132,7 +129,6 @@ export class ResearchController {
    * @returns HTTP 404 if research not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 7.7, 7.8, 7.9, 7.10
    */
   approveResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -203,7 +199,6 @@ export class ResearchController {
    * @returns HTTP 404 if research not found or outside department scope
    * @throws NotFoundError if user has no department affiliation
    * 
-   * Requirements: 7.11, 7.12, 7.13, 7.14
    */
   rejectResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {

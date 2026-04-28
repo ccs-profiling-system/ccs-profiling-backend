@@ -13,7 +13,6 @@
  * - /api/chair/research - Research project management
  * - /api/chair/reports - Report generation and analytics
  * 
- * Requirements: 1.6, 14.1
  */
 
 import { Router } from 'express';

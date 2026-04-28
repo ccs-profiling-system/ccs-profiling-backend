@@ -2,7 +2,6 @@
  * Student Portal - Event Service Tests
  * Unit tests for event management service
  * 
- * Requirements: 17.1-17.6, 18.1-18.4, 19.1-19.8, 20.1-20.6
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

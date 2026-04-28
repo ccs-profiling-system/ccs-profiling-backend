@@ -2,7 +2,6 @@
  * Pagination Utility
  * Provides pagination helper functions for list endpoints
  * 
- * Requirements: 12.1-12.9
  */
 
 import { SQL } from 'drizzle-orm';
@@ -32,7 +31,6 @@ export interface PaginatedResult<T> {
  * @param limit - Records per page (default: 10, max: 100)
  * @returns Pagination metadata object
  * 
- * Requirements: 12.1-12.9
  */
 export function buildPaginationMeta(
   total: number,
@@ -61,7 +59,6 @@ export function buildPaginationMeta(
  * @param limit - Records per page (default: 10, max: 100)
  * @returns Object with limit and offset for query
  * 
- * Requirements: 12.1-12.9
  */
 export function applyPagination(
   page: number = 1,

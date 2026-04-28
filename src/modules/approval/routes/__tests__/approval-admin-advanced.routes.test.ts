@@ -6,7 +6,6 @@
  * - Retry failed change requests
  * - Background job status retrieval
  * 
- * Requirements: 26.1-26.7, 31.1-31.10, 34.5-34.10
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';

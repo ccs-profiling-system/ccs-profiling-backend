@@ -2,7 +2,6 @@
  * Student Service
  * Business logic for student management operations
  * 
- * Requirements: 3.1-3.18, 17.3-17.5
  */
 
 import { db } from '../../../db';
@@ -31,7 +30,6 @@ export interface StudentFilters {
  * @param search - Search term for name and student_id
  * @returns Paginated list of students
  * 
- * Requirements: 3.1, 3.14-3.16
  */
 export async function getAllStudents(
   pagination: PaginationParams,
@@ -104,7 +102,6 @@ export async function getAllStudents(
  * @param id - Student UUID
  * @returns Student record or null if not found
  * 
- * Requirements: 3.2
  */
 export async function getStudentById(id: string): Promise<StudentDTO | null> {
   const result = await db
@@ -126,7 +123,6 @@ export async function getStudentById(id: string): Promise<StudentDTO | null> {
  * @param userAgent - User agent of the request
  * @returns Created student record
  * 
- * Requirements: 3.3, 3.11-3.13, 17.3-17.4
  */
 export async function createStudent(
   data: {
@@ -205,7 +201,6 @@ export async function createStudent(
  * @param userAgent - User agent of the request
  * @returns Updated student record
  * 
- * Requirements: 3.4, 3.11-3.13, 17.3-17.5
  */
 export async function updateStudent(
   id: string,
@@ -294,7 +289,6 @@ export async function updateStudent(
  * @param userAgent - User agent of the request
  * @returns Deleted student record
  * 
- * Requirements: 3.5, 17.3-17.4, 17.7
  */
 export async function deleteStudent(
   id: string,
@@ -349,7 +343,6 @@ export async function deleteStudent(
  * @param id - Student UUID
  * @returns List of academic history records
  * 
- * Requirements: 3.6
  */
 export async function getAcademicHistory(id: string): Promise<AcademicHistoryDTO[]> {
   // Validate student exists

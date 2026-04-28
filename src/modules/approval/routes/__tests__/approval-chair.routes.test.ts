@@ -9,7 +9,6 @@
  * - Department-scoped history and statistics
  * - Department scope enforcement (403 for out-of-department access)
  * 
- * Requirements: 9.1-9.5, 10.1-10.5, 11.1-11.4, 12.1-12.4
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';

@@ -9,7 +9,6 @@
  * - Missing JWT tokens are rejected with HTTP 401
  * - User context (user_id, role) is extracted from valid tokens
  * 
- * Requirements: 1.1, 1.4, 18.2
  */
 
 import request from 'supertest';

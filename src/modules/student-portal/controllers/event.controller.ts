@@ -5,7 +5,6 @@
  * Handles event browsing, registration, and unregistration.
  * Extracts student_id from JWT token for data scoping.
  * 
- * Requirements: 17.1, 18.1, 19.1, 20.1
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -25,7 +24,6 @@ export class EventController {
    * - page: number (default 1)
    * - limit: number (default 10, max 50)
    * 
-   * Requirements: 17.1
    */
   listUpcomingEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -53,7 +51,6 @@ export class EventController {
    * 
    * GET /api/student/events/registered
    * 
-   * Requirements: 18.1
    */
   listRegisteredEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

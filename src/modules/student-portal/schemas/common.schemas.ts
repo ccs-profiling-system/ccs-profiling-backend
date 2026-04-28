@@ -4,7 +4,6 @@
  * Shared validation schemas used across the student portal API.
  * Includes pagination, field validators, and enum validators.
  * 
- * Requirements: 30.1, 30.2, 30.3, 30.4, 30.5, 31.1, 31.2, 31.3, 31.4, 31.5, 31.6
  */
 
 import { z } from 'zod';
@@ -17,7 +16,6 @@ import { z } from 'zod';
  * Pagination schema for list endpoints
  * Default page: 1, default limit: 10, max limit: 100
  * 
- * Requirements: 31.1, 31.2, 31.3, 31.4
  */
 export const paginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
@@ -34,7 +32,6 @@ export type PaginationParams = z.infer<typeof paginationSchema>;
  * Email validation schema
  * Validates standard email format
  * 
- * Requirements: 30.2
  */
 export const emailSchema = z
   .string()
@@ -54,7 +51,6 @@ export const optionalEmailSchema = z
  * Validates phone number format (digits, spaces, dashes, plus, parentheses)
  * Length: 10-15 characters
  * 
- * Requirements: 30.2
  */
 export const phoneSchema = z
   .string()
@@ -76,7 +72,6 @@ export const optionalPhoneSchema = z
  * Date validation schema (ISO 8601 format)
  * Format: YYYY-MM-DD
  * 
- * Requirements: 30.3
  */
 export const dateSchema = z
   .string()
@@ -94,7 +89,6 @@ export const optionalDateSchema = z
  * DateTime validation schema (ISO 8601 format)
  * Format: YYYY-MM-DDTHH:mm:ss or YYYY-MM-DDTHH:mm:ss.sssZ
  * 
- * Requirements: 30.3
  */
 export const dateTimeSchema = z
   .string()
@@ -141,7 +135,6 @@ export const optionalNonEmptyStringSchema = z
  * Notification type enum validation
  * Valid values: academic, financial, event, system
  * 
- * Requirements: 30.4, 31.3
  */
 export const notificationTypeSchema = z.enum([
   'academic',
@@ -156,7 +149,6 @@ export type NotificationType = z.infer<typeof notificationTypeSchema>;
  * Enrollment status enum validation
  * Valid values: enrolled, dropped, completed
  * 
- * Requirements: 30.4, 31.3
  */
 export const enrollmentStatusSchema = z.enum([
   'enrolled',
@@ -170,7 +162,6 @@ export type EnrollmentStatus = z.infer<typeof enrollmentStatusSchema>;
  * Academic standing enum validation
  * Valid values: Good Standing, Probation
  * 
- * Requirements: 30.4, 31.3
  */
 export const academicStandingSchema = z.enum([
   'Good Standing',
@@ -183,7 +174,6 @@ export type AcademicStanding = z.infer<typeof academicStandingSchema>;
  * Research application status enum validation
  * Valid values: pending, accepted, rejected
  * 
- * Requirements: 30.4, 31.3
  */
 export const researchApplicationStatusSchema = z.enum([
   'pending',
@@ -197,7 +187,6 @@ export type ResearchApplicationStatus = z.infer<typeof researchApplicationStatus
  * Event registration status enum validation
  * Valid values: registered, cancelled, attended
  * 
- * Requirements: 30.4, 31.3
  */
 export const eventRegistrationStatusSchema = z.enum([
   'registered',
@@ -211,7 +200,6 @@ export type EventRegistrationStatus = z.infer<typeof eventRegistrationStatusSche
  * Appointment status enum validation
  * Valid values: scheduled, completed, cancelled
  * 
- * Requirements: 30.4, 31.3
  */
 export const appointmentStatusSchema = z.enum([
   'scheduled',
@@ -225,7 +213,6 @@ export type AppointmentStatus = z.infer<typeof appointmentStatusSchema>;
  * Message sender role enum validation
  * Valid values: student, faculty
  * 
- * Requirements: 30.4, 31.3
  */
 export const messageSenderRoleSchema = z.enum([
   'student',
@@ -265,7 +252,6 @@ export const studentIdParamSchema = z.object({
  * @param limit - Items per page
  * @returns Pagination metadata object
  * 
- * Requirements: 31.5, 31.6
  */
 export function calculatePaginationMeta(
   total: number,

@@ -5,7 +5,6 @@
  * Handles enrolled courses retrieval, course details, and weekly schedule.
  * Ensures students can only access courses they are enrolled in.
  * 
- * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 7.1, 7.2, 7.3, 8.1, 8.2, 8.3, 8.4, 8.5
  */
 
 import { eq, and, isNull } from 'drizzle-orm';
@@ -39,7 +38,6 @@ export class CourseService {
    * @param studentId - The student UUID (internal ID)
    * @returns Array of enrolled course DTOs
    * 
-   * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
    */
   async getEnrolledCourses(studentId: string): Promise<CourseDTO[]> {
     // Get current academic period
@@ -108,7 +106,6 @@ export class CourseService {
    * @returns Course details DTO
    * @throws NotFoundError if course not found or student not enrolled
    * 
-   * Requirements: 7.1, 7.2, 7.3
    */
   async getCourseDetails(studentId: string, courseId: string): Promise<CourseDetailsDTO> {
     // First, verify the student is enrolled in this course
@@ -198,7 +195,6 @@ export class CourseService {
    * @param studentId - The student UUID (internal ID)
    * @returns Weekly schedule grouped by day
    * 
-   * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5
    */
   async getWeeklySchedule(studentId: string): Promise<WeeklyScheduleDTO> {
     // Get current academic period

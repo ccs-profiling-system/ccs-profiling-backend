@@ -18,7 +18,6 @@
  * - /api/student/financial - REMOVED (belongs to Billing System)
  * - /api/student/advisor - REMOVED (belongs to LMS/Support System)
  * 
- * Requirements: 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';

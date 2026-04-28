@@ -4,7 +4,6 @@
  * This module defines all TypeScript types, interfaces, and DTOs used throughout
  * the student portal API system.
  * 
- * Requirements: 30.1, 30.2, 30.3, 30.4, 30.5
  */
 
 // ============================================================================

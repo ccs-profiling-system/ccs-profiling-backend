@@ -6,7 +6,6 @@
  * All queries are filtered by the authenticated user's faculty_id to ensure
  * faculty members can only access their own course assignments.
  * 
- * Requirements: 4.1, 4.6, 16.4
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -43,7 +42,6 @@ export class CourseController {
    * - 200: Array of courses with enrollment counts
    * - 403: If user is not authenticated as faculty
    * 
-   * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 16.4
    */
   getCourses = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -99,7 +97,6 @@ export class CourseController {
    * - 200: Teaching load summary with total units and courses breakdown
    * - 403: If user is not authenticated as faculty
    * 
-   * Requirements: 4.6, 4.7, 4.8, 4.9, 4.10, 4.11, 16.4
    */
   getTeachingLoad = async (req: Request, res: Response, next: NextFunction) => {
     try {

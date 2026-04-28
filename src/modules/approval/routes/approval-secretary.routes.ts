@@ -7,7 +7,6 @@
  * 
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 1.1-1.6, 2.1-2.7, 3.1-3.7
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -69,7 +68,6 @@ export function createSecretaryRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 1.1-1.6
    */
   router.post(
     '/',
@@ -114,7 +112,6 @@ export function createSecretaryRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 2.1-2.5
    */
   router.get(
     '/my-submissions',
@@ -171,7 +168,6 @@ export function createSecretaryRoutes(): Router {
    * - 404: Submission not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 2.5
    */
   router.get(
     '/my-submissions/:id',
@@ -238,7 +234,6 @@ export function createSecretaryRoutes(): Router {
    * - 404: Submission not found
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 2.6-2.7
    */
   router.patch(
     '/:id/withdraw',
@@ -274,7 +269,6 @@ export function createSecretaryRoutes(): Router {
    * - 403: Permission denied
    * - 429: Rate limit exceeded
    * 
-   * Requirements: 3.1-3.7
    */
   router.get(
     '/my-stats',

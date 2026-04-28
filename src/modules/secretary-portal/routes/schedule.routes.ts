@@ -4,7 +4,6 @@
  * Defines routes for secretary portal schedule operations.
  * All routes require authentication and appropriate permissions.
  * 
- * Requirements: 5.6-5.9
  */
 
 import { Router } from 'express';
@@ -39,7 +38,6 @@ export function createScheduleRoutes(): Router {
    * 
    * Retrieve all schedules with pagination and filtering.
    * 
-   * Requirements: 5.1, 5.6
    */
   router.get(
     '/',
@@ -52,7 +50,6 @@ export function createScheduleRoutes(): Router {
    * 
    * Retrieve a schedule by ID.
    * 
-   * Requirements: 5.2, 5.6
    */
   router.get(
     '/:id',
@@ -65,7 +62,6 @@ export function createScheduleRoutes(): Router {
    * 
    * Create a new schedule.
    * 
-   * Requirements: 5.3, 5.7
    */
   router.post(
     '/',
@@ -78,7 +74,6 @@ export function createScheduleRoutes(): Router {
    * 
    * Update an existing schedule.
    * 
-   * Requirements: 5.4, 5.8
    */
   router.put(
     '/:id',
@@ -91,7 +86,6 @@ export function createScheduleRoutes(): Router {
    * 
    * Delete a schedule (soft delete).
    * 
-   * Requirements: 5.5, 5.9
    */
   router.delete(
     '/:id',

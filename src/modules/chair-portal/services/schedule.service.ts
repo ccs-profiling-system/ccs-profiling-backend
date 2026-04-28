@@ -10,7 +10,6 @@
  * - Approve schedules with workflow validation
  * - Check for faculty, room, and time conflicts
  * 
- * Requirements: 5.1, 5.2, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12, 5.13, 13.1
  */
 
 import { db } from '../../../db';
@@ -103,7 +102,6 @@ export class ScheduleService {
    * @param filters - Filter parameters
    * @returns List of schedules
    * 
-   * Requirements: 5.1, 5.2, 5.3, 13.1
    */
   async listSchedules(
     departmentId: string,
@@ -167,7 +165,6 @@ export class ScheduleService {
    * @returns Created schedule
    * @throws Error if faculty not found or conflicts detected
    * 
-   * Requirements: 5.4, 5.5, 5.6, 5.7, 5.8, 13.1
    */
   async createSchedule(
     data: CreateScheduleData,
@@ -267,7 +264,6 @@ export class ScheduleService {
    * @param userId - ID of user performing the approval
    * @returns Updated schedule or null if not found
    * 
-   * Requirements: 5.9, 5.10
    */
   async approveSchedule(
     id: string,
@@ -319,7 +315,6 @@ export class ScheduleService {
    * @param departmentId - Department ID to scope the query
    * @returns Array of conflict details
    * 
-   * Requirements: 5.11, 5.12, 5.13
    */
   async checkConflicts(
     params: ConflictCheckParams,

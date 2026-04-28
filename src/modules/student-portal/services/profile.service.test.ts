@@ -2,7 +2,6 @@
  * Student Portal - Profile Service Tests
  * Unit tests for student profile management service
  * 
- * Requirements: 1.1, 1.2, 1.3, 1.4
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

@@ -2,7 +2,6 @@
  * Research Service
  * Business logic for research management operations with approval workflow and file uploads
  * 
- * Requirements: 8.1-8.34, 17.8, 18.4, 18.9
  */
 
 import { db } from '../../../db';
@@ -30,7 +29,6 @@ export interface ResearchFilters {
  * Storage path for research files
  * Files stored outside web root directory
  * 
- * Requirements: 18.5
  */
 const RESEARCH_FILES_PATH = process.env.RESEARCH_FILES_PATH || path.join(process.cwd(), 'storage', 'research');
 
@@ -54,7 +52,6 @@ async function ensureResearchFilesDirectory(): Promise<void> {
  * @param search - Search term for title
  * @returns Paginated list of research projects
  * 
- * Requirements: 8.1, 8.28-8.30
  */
 export async function getAllResearch(
   pagination: PaginationParams,
@@ -125,7 +122,6 @@ export async function getAllResearch(
  * @param id - Research UUID
  * @returns Research record or null if not found
  * 
- * Requirements: 8.2
  */
 export async function getResearchById(id: string): Promise<ResearchDTO | null> {
   const result = await db
@@ -146,7 +142,6 @@ export async function getResearchById(id: string): Promise<ResearchDTO | null> {
  * @param userAgent - User agent of the request
  * @returns Created research record
  * 
- * Requirements: 8.3, 8.15-8.19
  */
 export async function createResearch(
   data: {
@@ -229,7 +224,6 @@ export async function createResearch(
  * @param userAgent - User agent of the request
  * @returns Updated research record
  * 
- * Requirements: 8.4, 8.15-8.18, 8.21, 17.8
  */
 export async function updateResearch(
   id: string,
@@ -323,7 +317,6 @@ export async function updateResearch(
  * @param userAgent - User agent of the request
  * @returns Deleted research record
  * 
- * Requirements: 8.5, 8.31-8.33, 17.8
  */
 export async function deleteResearch(
   id: string,
@@ -419,7 +412,6 @@ export async function deleteResearch(
  * @param userAgent - User agent of the request
  * @returns Updated research record
  * 
- * Requirements: 8.6, 8.20, 17.8
  */
 export async function submitResearch(
   id: string,
@@ -482,7 +474,6 @@ export async function submitResearch(
  * @param userAgent - User agent of the request
  * @returns Created file record
  * 
- * Requirements: 8.7, 8.22-8.27, 18.4, 18.9
  */
 export async function uploadResearchFile(
   id: string,
@@ -562,7 +553,6 @@ export async function uploadResearchFile(
  * @param id - Research UUID
  * @returns List of research files
  * 
- * Requirements: 8.8
  */
 export async function getResearchFiles(id: string): Promise<ResearchFileDTO[]> {
   // Validate research exists
@@ -601,7 +591,6 @@ export async function getResearchFiles(id: string): Promise<ResearchFileDTO[]> {
  * @param userAgent - User agent of the request
  * @returns Deleted file record
  * 
- * Requirements: 8.9, 18.9
  */
 export async function deleteResearchFile(
   id: string,
@@ -677,7 +666,6 @@ export async function deleteResearchFile(
  * @param id - Research UUID
  * @returns List of research authors
  * 
- * Requirements: 8.10
  */
 export async function getResearchAuthors(id: string): Promise<ResearchAuthorDTO[]> {
   // Validate research exists

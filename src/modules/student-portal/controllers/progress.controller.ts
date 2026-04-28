@@ -5,7 +5,6 @@
  * Handles academic progress retrieval with student-scoped validation.
  * Ensures students can only access their own progress data.
  * 
- * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -23,7 +22,6 @@ export class ProgressController {
    * Extracts student_id from JWT token and returns academic progress data
    * including credits earned, academic standing, and completed courses by semester.
    * 
-   * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5
    */
   getProgress = async (req: Request, res: Response, next: NextFunction) => {
     try {

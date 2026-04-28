@@ -37,7 +37,6 @@
  * - npm run db:migrate - Apply migrations to database
  * - npm run db:push - Push schema changes directly (development only)
  * 
- * Requirements: 23.1, 23.2, 23.3
  */
 
 import type { Config } from 'drizzle-kit';

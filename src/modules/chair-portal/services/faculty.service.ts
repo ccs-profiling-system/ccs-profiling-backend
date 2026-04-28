@@ -10,7 +10,6 @@
  * - Get faculty teaching load with current semester schedules
  * - Get faculty statistics (students taught, courses, research count)
  * 
- * Requirements: 4.1, 4.2, 4.5, 4.6, 4.8, 4.9, 4.10, 4.11, 13.1
  */
 
 import { db } from '../../../db';
@@ -132,7 +131,6 @@ export class FacultyService {
    * @param filters - Pagination and filter parameters
    * @returns Paginated list of faculty
    * 
-   * Requirements: 4.1, 4.2, 13.1
    */
   async listFaculty(
     departmentId: string,
@@ -203,7 +201,6 @@ export class FacultyService {
    * @param departmentId - Department ID to validate scope
    * @returns Faculty details or null if not found
    * 
-   * Requirements: 4.5, 4.6, 13.1
    */
   async getFacultyById(id: string, departmentId: string): Promise<FacultyDTO | null> {
     const result = await db
@@ -235,7 +232,6 @@ export class FacultyService {
    * @param departmentId - Department ID to validate scope
    * @returns Teaching load data or null if faculty not found
    * 
-   * Requirements: 4.8, 4.9, 13.1
    */
   async getFacultyTeachingLoad(id: string, departmentId: string): Promise<TeachingLoadDTO | null> {
     // First validate faculty exists and belongs to department
@@ -292,7 +288,6 @@ export class FacultyService {
    * @param departmentId - Department ID to validate scope
    * @returns Faculty statistics or null if faculty not found
    * 
-   * Requirements: 4.10, 4.11, 13.1
    */
   async getFacultyStats(id: string, departmentId: string): Promise<FacultyStatsDTO | null> {
     // First validate faculty exists and belongs to department

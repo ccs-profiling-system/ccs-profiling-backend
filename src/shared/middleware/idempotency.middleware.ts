@@ -31,7 +31,6 @@ const idempotencyCache = new Map<string, IdempotencyCacheEntry>();
  * Provides idempotency protection for submission and bulk operation endpoints
  * to prevent duplicate processing from network retries.
  * 
- * **Requirements: 32.1-32.8**
  * 
  * Features:
  * - Checks Idempotency-Key header

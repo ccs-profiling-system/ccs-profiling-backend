@@ -5,7 +5,6 @@
  * Handles notification retrieval and read status updates.
  * Ensures students can only access their own notifications.
  * 
- * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
  */
 
 import { eq, and, desc } from 'drizzle-orm';
@@ -26,7 +25,6 @@ export class NotificationService {
    * @param studentId - The student UUID (internal ID)
    * @returns Array of notification DTOs
    * 
-   * Requirements: 5.1, 5.2
    */
   async getNotificationsByStudent(studentId: string): Promise<NotificationDTO[]> {
     const result = await this.db
@@ -50,7 +48,6 @@ export class NotificationService {
    * @throws NotFoundError if notification not found
    * @throws StudentAccessError if notification doesn't belong to student (403)
    * 
-   * Requirements: 5.3, 5.4, 5.5
    */
   async markNotificationAsRead(
     notificationId: string,
@@ -104,7 +101,6 @@ export class NotificationService {
    * @param studentId - The student UUID
    * @returns Number of notifications marked as read
    * 
-   * Requirements: 5.4, 5.5
    */
   async markAllNotificationsAsRead(studentId: string): Promise<number> {
     const result = await this.db

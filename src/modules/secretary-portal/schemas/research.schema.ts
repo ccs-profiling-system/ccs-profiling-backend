@@ -2,7 +2,6 @@
  * Research Validation Schemas for Secretary Portal
  * Zod schemas for validating research-related input
  * 
- * Requirements: 8.15-8.18, 8.23-8.24
  */
 
 import { z } from 'zod';
@@ -36,7 +35,6 @@ const MAX_RESEARCH_FILE_SIZE = 10 * 1024 * 1024; // 10MB
  * Validates all required fields for research creation
  * Includes validation for start_date not in past and completion_date after start_date
  * 
- * Requirements: 8.15, 8.16, 8.17, 8.18
  */
 export const createResearchSchema = z
   .object({
@@ -96,7 +94,6 @@ export const createResearchSchema = z
  * All fields are optional for partial updates
  * Includes same validations as create schema when fields are provided
  * 
- * Requirements: 8.15, 8.16, 8.17, 8.18
  */
 export const updateResearchSchema = z
   .object({
@@ -144,7 +141,6 @@ export const updateResearchSchema = z
  * Schema for uploading a research file
  * Validates file metadata
  * 
- * Requirements: 8.23, 8.24
  */
 export const uploadResearchFileSchema = z.object({
   file_type: z
@@ -161,7 +157,6 @@ export const uploadResearchFileSchema = z.object({
  * Schema for validating uploaded research file metadata
  * Used after multer processes the file
  * 
- * Requirements: 8.23, 8.24
  */
 export const researchFileMetadataSchema = z.object({
   originalname: z.string(),

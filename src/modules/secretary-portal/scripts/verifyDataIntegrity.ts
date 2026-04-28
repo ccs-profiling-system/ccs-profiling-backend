@@ -4,7 +4,6 @@
  * Verifies that all data integrity measures are properly configured
  * in the database schema and service layer.
  * 
- * Requirements: 17.1-17.8
  */
 
 import { db } from '../../../db';
@@ -47,7 +46,6 @@ function getQueryRows<T>(result: unknown): T[] {
 /**
  * Verify foreign key constraints exist
  * 
- * Requirements: 17.1, 17.6
  */
 async function verifyForeignKeyConstraints(): Promise<void> {
   console.log('\n=== Verifying Foreign Key Constraints ===\n');
@@ -122,7 +120,6 @@ async function verifyForeignKeyConstraints(): Promise<void> {
 /**
  * Verify unique constraints exist
  * 
- * Requirements: 17.2
  */
 async function verifyUniqueConstraints(): Promise<void> {
   console.log('\n=== Verifying Unique Constraints ===\n');
@@ -175,7 +172,6 @@ async function verifyUniqueConstraints(): Promise<void> {
 /**
  * Verify soft delete columns exist
  * 
- * Requirements: 17.7
  */
 async function verifySoftDeleteColumns(): Promise<void> {
   console.log('\n=== Verifying Soft Delete Columns ===\n');
@@ -230,7 +226,6 @@ async function verifySoftDeleteColumns(): Promise<void> {
 /**
  * Verify approval status columns exist
  * 
- * Requirements: 17.8
  */
 async function verifyApprovalStatusColumns(): Promise<void> {
   console.log('\n=== Verifying Approval Status Columns ===\n');
@@ -284,7 +279,6 @@ async function verifyApprovalStatusColumns(): Promise<void> {
 async function main(): Promise<void> {
   console.log('╔════════════════════════════════════════════════════════════╗');
   console.log('║       Data Integrity Verification Script                  ║');
-  console.log('║       Requirements: 17.1-17.8                              ║');
   console.log('╚════════════════════════════════════════════════════════════╝');
   
   try {
