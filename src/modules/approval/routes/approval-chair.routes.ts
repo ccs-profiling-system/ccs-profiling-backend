@@ -34,6 +34,7 @@ import {
 import { approvalService } from '../services/approval.service';
 import { approvalStatisticsService } from '../services/approval-statistics.service';
 import { bulkOperationsService } from '../services/bulk-operations.service';
+import { isDepartmentScopeMatch } from '../utils/departmentScope';
 
 /**
  * Create chair department router
@@ -170,7 +171,7 @@ export function createChairRoutes(): Router {
         }
 
         // Verify the approval belongs to the chair's department
-        if (approval.department_id !== departmentId) {
+        if (!isDepartmentScopeMatch(approval.department_id, departmentId)) {
           res.status(403).json({
             success: false,
             error: {
@@ -244,7 +245,7 @@ export function createChairRoutes(): Router {
           return;
         }
 
-        if (approval.department_id !== departmentId) {
+        if (!isDepartmentScopeMatch(approval.department_id, departmentId)) {
           res.status(403).json({
             success: false,
             error: {
@@ -323,7 +324,7 @@ export function createChairRoutes(): Router {
           return;
         }
 
-        if (approval.department_id !== departmentId) {
+        if (!isDepartmentScopeMatch(approval.department_id, departmentId)) {
           res.status(403).json({
             success: false,
             error: {

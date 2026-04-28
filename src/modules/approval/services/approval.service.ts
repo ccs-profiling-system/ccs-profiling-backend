@@ -19,6 +19,7 @@ import { faculty } from '../../../db/schema/faculty';
 import { events } from '../../../db/schema/events';
 import { research } from '../../../db/schema/research';
 import { eq } from 'drizzle-orm';
+import { getDepartmentScopeAliases } from '../utils/departmentScope';
 
 /**
  * Data for submitting a change request
@@ -321,7 +322,7 @@ export class ApprovalService {
   ) {
     // Add department filter if provided (for chair scope)
     const pendingFilters: Omit<ApprovalFilters, 'status'> = departmentId
-      ? { ...filters, department_id: departmentId }
+      ? { ...filters, department_id: getDepartmentScopeAliases(departmentId) }
       : filters;
 
     return approvalRepository.findPending(pendingFilters, pagination);
@@ -348,7 +349,7 @@ export class ApprovalService {
   ) {
     // Add department filter if provided (for chair scope)
     const historyFilters: ApprovalFilters = departmentId
-      ? { ...filters, department_id: departmentId }
+      ? { ...filters, department_id: getDepartmentScopeAliases(departmentId) }
       : filters;
 
     return approvalRepository.findHistory(historyFilters, pagination);

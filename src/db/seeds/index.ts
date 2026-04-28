@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors, pendingChanges } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors, pendingChanges, approvals } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -22,6 +22,7 @@ import { seedFinancialRecords } from './financialRecords.seed';
 import { seedResearchApplications } from './researchApplications.seed';
 import { seedAdvisors } from './advisors.seed';
 import { seedPendingChanges } from './pendingChanges.seed';
+import { seedApprovals } from './approvals.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -215,6 +216,21 @@ export async function runSeeders() {
       console.log('📝 Seeding research...');
       researchIds = await seedResearch(db, studentIds, facultyIds);
       console.log(`✅ Created ${researchIds.length} research records\n`);
+    }
+
+    // Check if approvals table has data
+    const approvalsHasData = await hasData('approvals');
+    let approvalIds: string[] = [];
+
+    if (approvalsHasData) {
+      console.log('ℹ️  Approvals table already has data, skipping approvals seeding...');
+      const existingApprovals = await db.select({ id: approvals.id }).from(approvals);
+      approvalIds = existingApprovals.map(a => a.id);
+      console.log(`📊 Found ${approvalIds.length} existing approval records\n`);
+    } else {
+      console.log('📝 Seeding approvals...');
+      approvalIds = await seedApprovals(db, studentIds, facultyIds, eventIds, researchIds, userIds);
+      console.log(`✅ Created ${approvalIds.length} approval records\n`);
     }
 
     // Check if uploads table has data

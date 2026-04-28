@@ -1,6 +1,7 @@
 import { db } from '../../../db';
 import { approvals, ApprovalStatus, EntityType, Category } from '../../../db/schema/approvals';
 import { eq, and, isNull, sql, gte, inArray } from 'drizzle-orm';
+import { getDepartmentScopeAliases } from '../utils/departmentScope';
 
 /**
  * Secretary Statistics Response
@@ -285,6 +286,8 @@ export class ApprovalStatisticsService {
    * @returns Chair statistics
    */
   async getChairStats(departmentId: string): Promise<ChairStats> {
+    const departmentScopeAliases = getDepartmentScopeAliases(departmentId);
+
     // Get counts by status
     const statusResults = await db
       .select({
@@ -294,7 +297,7 @@ export class ApprovalStatisticsService {
       .from(approvals)
       .where(
         and(
-          eq(approvals.department_id, departmentId),
+          inArray(approvals.department_id, departmentScopeAliases),
           isNull(approvals.deleted_at)
         )
       )
@@ -336,7 +339,7 @@ export class ApprovalStatisticsService {
       .from(approvals)
       .where(
         and(
-          eq(approvals.department_id, departmentId),
+          inArray(approvals.department_id, departmentScopeAliases),
           inArray(approvals.status, [ApprovalStatus.APPROVED, ApprovalStatus.REJECTED]),
           isNull(approvals.deleted_at)
         )
@@ -355,7 +358,7 @@ export class ApprovalStatisticsService {
       .from(approvals)
       .where(
         and(
-          eq(approvals.department_id, departmentId),
+          inArray(approvals.department_id, departmentScopeAliases),
           isNull(approvals.deleted_at)
         )
       )
@@ -375,7 +378,7 @@ export class ApprovalStatisticsService {
       .from(approvals)
       .where(
         and(
-          eq(approvals.department_id, departmentId),
+          inArray(approvals.department_id, departmentScopeAliases),
           isNull(approvals.deleted_at)
         )
       )
@@ -395,7 +398,7 @@ export class ApprovalStatisticsService {
       .from(approvals)
       .where(
         and(
-          eq(approvals.department_id, departmentId),
+          inArray(approvals.department_id, departmentScopeAliases),
           eq(approvals.status, ApprovalStatus.PENDING),
           isNull(approvals.deleted_at),
           sql`${approvals.submission_timestamp} < ${twentyFourHoursAgo}`
@@ -411,7 +414,7 @@ export class ApprovalStatisticsService {
       .from(approvals)
       .where(
         and(
-          eq(approvals.department_id, departmentId),
+          inArray(approvals.department_id, departmentScopeAliases),
           eq(approvals.status, ApprovalStatus.PENDING),
           isNull(approvals.deleted_at),
           sql`${approvals.submission_timestamp} < ${sevenDaysAgo}`

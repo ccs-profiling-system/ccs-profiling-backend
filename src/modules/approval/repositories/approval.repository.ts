@@ -11,7 +11,7 @@ export interface ApprovalFilters {
   category?: string;
   submitter_id?: string;
   reviewer_id?: string;
-  department_id?: string;
+  department_id?: string | string[];
   submission_date_from?: Date;
   submission_date_to?: Date;
   decision_date_from?: Date;
@@ -282,7 +282,11 @@ export class ApprovalRepository {
 
     // Department filter
     if (filters.department_id) {
-      conditions.push(eq(approvals.department_id, filters.department_id));
+      if (Array.isArray(filters.department_id)) {
+        conditions.push(inArray(approvals.department_id, filters.department_id));
+      } else {
+        conditions.push(eq(approvals.department_id, filters.department_id));
+      }
     }
 
     // Submission date range

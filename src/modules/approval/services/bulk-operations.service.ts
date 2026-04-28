@@ -6,6 +6,7 @@ import { db } from '../../../db';
 import { approvals, ApprovalStatus, type ApprovalStatusType } from '../../../db/schema/approvals';
 import { JobType, JobStatus } from '../../../db/schema/backgroundJobs';
 import { eq, and, isNull, inArray } from 'drizzle-orm';
+import { isDepartmentScopeMatch } from '../utils/departmentScope';
 
 /**
  * Result of a single approval operation in a bulk request
@@ -484,7 +485,7 @@ export class BulkOperationsService {
       throw new InvalidOperationError(`Approval with ID ${approvalId} not found`);
     }
 
-    if (approval.department_id !== departmentId) {
+    if (!isDepartmentScopeMatch(approval.department_id, departmentId)) {
       throw new InvalidOperationError(
         `Approval ${approvalId} does not belong to department ${departmentId}. Authorization denied.`
       );
