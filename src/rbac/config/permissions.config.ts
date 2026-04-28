@@ -97,6 +97,21 @@ export const permissionConfig: PermissionConfig = {
       'approval.bulk',
       'approval.stats',
       
+      // Curriculum Management
+      'curriculum.*',
+      
+      // Subjects Management
+      'subjects.*',
+      
+      // Syllabus Management
+      'syllabus.*',
+      
+      // Lessons Management
+      'lessons.*',
+      
+      // Rooms Management
+      'rooms.*',
+      
       // Schedule Management
       'schedule.*',
       
@@ -204,6 +219,23 @@ export const permissionConfig: PermissionConfig = {
     allow: [
       // Faculty Portal API (all faculty.* permissions)
       'faculty.*',
+      
+      // Curriculum Access
+      'curriculum.read',
+      
+      // Subjects Access
+      'subjects.read',
+      
+      // Syllabus Access
+      'syllabus.read',
+      
+      // Lessons Access
+      'lessons.read',
+      'lessons.create',
+      'lessons.update',
+      
+      // Rooms Access
+      'rooms.read',
       
       // Instruction Management (ownership validated separately)
       'instruction.*',
@@ -344,6 +376,31 @@ export const permissionConfig: PermissionConfig = {
       'approval.read',
       'approval.withdraw',
       
+      // Curriculum Management
+      'curriculum.read',
+      'curriculum.create',
+      'curriculum.update',
+      
+      // Subjects Management
+      'subjects.read',
+      'subjects.create',
+      'subjects.update',
+      
+      // Syllabus Management
+      'syllabus.read',
+      'syllabus.create',
+      'syllabus.update',
+      
+      // Lessons Management
+      'lessons.read',
+      'lessons.create',
+      'lessons.update',
+      
+      // Rooms Management
+      'rooms.read',
+      'rooms.create',
+      'rooms.update',
+      
       // Student Management (legacy)
       'student.*',
       
@@ -466,6 +523,21 @@ export const permissionConfig: PermissionConfig = {
       
       // Own Profile Access (legacy)
       'student.read_own',
+      
+      // Curriculum Access
+      'curriculum.read',
+      
+      // Subjects Access
+      'subjects.read',
+      
+      // Syllabus Access
+      'syllabus.read',
+      
+      // Lessons Access
+      'lessons.read',
+      
+      // Rooms Access
+      'rooms.read',
       
       // Schedule Access
       'schedule.read',

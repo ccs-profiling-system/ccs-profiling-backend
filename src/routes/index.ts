@@ -133,6 +133,9 @@ import { subjectRoutes } from '../modules/subjects';
 import { roomRoutes } from '../modules/rooms';
 import { syllabusRoutes } from '../modules/syllabus';
 import { lessonRoutes, lessonDetailRoutes } from '../modules/lessons';
+import { occurrenceRoutes } from '../modules/schedule-occurrences';
+import { statisticsRoutes } from '../modules/statistics';
+import { exportRoutes } from '../modules/export';
 
 export const routes = Router();
 
@@ -170,6 +173,7 @@ routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 routes.use('/v1/admin/enrollments', enrollmentRoutes);
 routes.use('/v1/admin/academic-history', academicHistoryRoutes);
 routes.use('/v1/admin/schedules', scheduleRoutes);
+routes.use('/v1/admin/schedules', occurrenceRoutes);
 routes.use('/v1/admin/rooms', roomRoutes);
 
 // Activity System
@@ -188,6 +192,10 @@ routes.use('/v1/admin/dashboard', dashboardRoutes);
 routes.use('/v1/admin/analytics', analyticsRoutes);
 routes.use('/v1/admin/reports', reportRoutes);
 routes.use('/v1/admin/search', searchRoutes);
+
+// Statistics and Export
+routes.use('/v1/admin', statisticsRoutes);
+routes.use('/v1/admin', exportRoutes);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DEPARTMENT CHAIR PORTAL ROUTES (Authentication + chair.* permissions required)
