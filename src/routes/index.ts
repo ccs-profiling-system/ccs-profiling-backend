@@ -247,7 +247,8 @@ routes.use('/', studentPortalRouter);
 // - Research project management with approval workflow
 // - Pending changes management
 // - Report generation (PDF, Excel, CSV)
-routes.use('/secretary', secretaryPortalRouter);
+// - Curriculum and subjects management (CRUD operations)
+routes.use('/v1/secretary', secretaryPortalRouter);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // APPROVAL SYSTEM ROUTES (Authentication required, role-based permissions)

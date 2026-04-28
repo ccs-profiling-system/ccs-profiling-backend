@@ -28,6 +28,9 @@ import { createResearchRoutes } from './research.routes';
 import { createPendingChangesRoutes } from './pendingChanges.routes';
 import { createReportRoutes } from './report.routes';
 import { createFilterRoutes } from './filter.routes';
+import { CurriculumController } from '../controllers/curriculum.controller';
+import { CurriculumService } from '../services/curriculum.service';
+import { createCurriculumRoutes, createSubjectsRoutes } from './curriculum.routes';
 
 /**
  * Secretary Portal Router
@@ -58,6 +61,14 @@ secretaryPortalRouter.use(authMiddleware);
 // Apply audit context middleware after authentication
 // This captures IP address, user agent, and user ID for audit logging
 secretaryPortalRouter.use(auditContextMiddleware);
+
+// Initialize curriculum service and controller
+const curriculumService = new CurriculumService();
+const curriculumController = new CurriculumController(curriculumService);
+
+// Create curriculum route modules
+const curriculumRoutes = createCurriculumRoutes(curriculumController);
+const subjectsRoutes = createSubjectsRoutes(curriculumController);
 
 // Register module routes with appropriate prefixes
 // All routes have requirePermission middleware applied at the route level
@@ -91,4 +102,10 @@ secretaryPortalRouter.use('/reports', createReportRoutes());
 
 // Filter options routes - /api/secretary/filters
 secretaryPortalRouter.use('/filters', createFilterRoutes());
+
+// Curriculum management routes - /api/secretary/curriculum
+secretaryPortalRouter.use('/curriculum', curriculumRoutes);
+
+// Subjects management routes - /api/secretary/subjects
+secretaryPortalRouter.use('/subjects', subjectsRoutes);
 
