@@ -6,7 +6,7 @@
 
 import multer from 'multer';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import { generateUUIDv7 } from '../../../shared/utils/uuid';
 import { ValidationError } from '../../../shared/errors';
 
 /**
@@ -99,7 +99,7 @@ export function generateUniqueFilename(originalFilename: string): string {
   const sanitized = sanitizeFilename(originalFilename);
   const ext = path.extname(sanitized);
   const nameWithoutExt = path.basename(sanitized, ext);
-  const uuid = uuidv4();
+  const uuid = generateUUIDv7();
   
   return `${uuid}_${nameWithoutExt}${ext}`;
 }
