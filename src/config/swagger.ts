@@ -330,7 +330,7 @@ Paginated responses include a \`meta\` object:
           },
           role: {
             type: 'string',
-            enum: ['admin', 'faculty', 'student'],
+            enum: ['admin', 'department_chair', 'faculty', 'secretary', 'student'],
             example: 'admin',
           },
           is_active: {

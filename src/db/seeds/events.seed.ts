@@ -152,8 +152,17 @@ export async function seedEvents(db: Database, studentIds: string[], facultyIds:
 
   console.log('  Creating events...');
 
-  for (const seed of eventSeeds) {
+  // Define status distribution: 5 approved, 5 rejected, 5 draft
+  const statuses: Array<'approved' | 'rejected' | 'draft'> = [
+    'approved', 'approved', 'approved', 'approved', 'approved',
+    'rejected', 'rejected', 'rejected', 'rejected', 'rejected',
+    'draft', 'draft', 'draft', 'draft', 'draft',
+  ];
+
+  for (let index = 0; index < eventSeeds.length; index++) {
+    const seed = eventSeeds[index];
     const id = generateUUIDv7();
+    const eventStatus = statuses[index] || 'draft'; // Default to draft if more events than statuses
 
     const [event] = await db
       .insert(events)
@@ -170,12 +179,12 @@ export async function seedEvents(db: Database, studentIds: string[], facultyIds:
         department_id: seed.departmentId,
         organizer: seed.organizer,
         registration_deadline: seed.registrationDeadline,
-        status: 'approved', // Set events as approved so they're visible
+        status: eventStatus,
       })
       .returning({ id: events.id, event_name: events.event_name });
 
     createdEventIds.push(event.id);
-    console.log(`  - Created event: ${seed.eventName}`);
+    console.log(`  - Created event: ${seed.eventName} (${eventStatus})`);
 
     // Add some participants to each event
     const participantCount = Math.min(

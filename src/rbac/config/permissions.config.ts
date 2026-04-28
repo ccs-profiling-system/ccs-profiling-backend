@@ -33,6 +33,14 @@ export const permissionConfig: PermissionConfig = {
    * 
    * Full system access with no restrictions.
    * Can perform all operations across all modules.
+   * 
+   * Approval System Permissions:
+   * - approval.review: Review all approval requests
+   * - approval.approve: Approve any request
+   * - approval.reject: Reject any request
+   * - approval.bulk: Perform bulk operations
+   * - approval.stats: View system-wide statistics
+   * - approval.retry: Retry failed operations
    */
   [Role.ADMIN]: {
     allow: ['*.*'],
@@ -82,6 +90,28 @@ export const permissionConfig: PermissionConfig = {
       // Department Chair Portal API (all chair.* permissions)
       'chair.*',
       
+      // Approval System Permissions
+      'approval.review',
+      'approval.approve',
+      'approval.reject',
+      'approval.bulk',
+      'approval.stats',
+      
+      // Curriculum Management
+      'curriculum.*',
+      
+      // Subjects Management
+      'subjects.*',
+      
+      // Syllabus Management
+      'syllabus.*',
+      
+      // Lessons Management
+      'lessons.*',
+      
+      // Rooms Management
+      'rooms.*',
+      
       // Schedule Management
       'schedule.*',
       
@@ -99,6 +129,9 @@ export const permissionConfig: PermissionConfig = {
       // Student Profile Access
       'student.read',
       'student.monitor',
+      
+      // Faculty Profile Access
+      'faculty.read',
       
       // Instruction Access
       'instruction.read',
@@ -187,6 +220,23 @@ export const permissionConfig: PermissionConfig = {
       // Faculty Portal API (all faculty.* permissions)
       'faculty.*',
       
+      // Curriculum Access
+      'curriculum.read',
+      
+      // Subjects Access
+      'subjects.read',
+      
+      // Syllabus Access
+      'syllabus.read',
+      
+      // Lessons Access
+      'lessons.read',
+      'lessons.create',
+      'lessons.update',
+      
+      // Rooms Access
+      'rooms.read',
+      
       // Instruction Management (ownership validated separately)
       'instruction.*',
       
@@ -264,11 +314,98 @@ export const permissionConfig: PermissionConfig = {
    * - Affiliations management
    * - Upload management
    * - Operational dashboard and search
+   * - Secretary Portal API access (secretary.* namespace)
+   * 
+   * Secretary Portal Permissions (secretary.* namespace):
+   * 
+   * Dashboard:
+   * - secretary.dashboard.read: Access to secretary dashboard statistics and recent activities
+   * 
+   * Student Management:
+   * - secretary.student.read: View student records with pagination, filtering, and search
+   * - secretary.student.create: Create new student records
+   * - secretary.student.update: Update existing student records (creates pending change)
+   * - secretary.student.delete: Soft delete student records
+   * 
+   * Faculty Management:
+   * - secretary.faculty.read: View faculty records with pagination, filtering, and search
+   * - secretary.faculty.create: Create new faculty records
+   * - secretary.faculty.update: Update existing faculty records (creates pending change)
+   * - secretary.faculty.delete: Soft delete faculty records
+   * 
+   * Schedule Management:
+   * - secretary.schedule.read: View class schedules with pagination and filtering
+   * - secretary.schedule.create: Create new class schedules
+   * - secretary.schedule.update: Update existing class schedules
+   * - secretary.schedule.delete: Soft delete class schedules
+   * 
+   * Document Management:
+   * - secretary.document.upload: Upload documents with file validation (max 10MB)
+   * - secretary.document.read: View and download documents with pagination and filtering
+   * - secretary.document.delete: Delete documents and associated files
+   * 
+   * Event Management (with Approval Workflow):
+   * - secretary.event.read: View events with pagination, filtering, and search
+   * - secretary.event.create: Create new events (initial status: draft)
+   * - secretary.event.update: Update events (draft status only, creates pending approval)
+   * - secretary.event.delete: Soft delete events (draft status only)
+   * 
+   * Research Management (with Approval Workflow):
+   * - secretary.research.read: View research projects with pagination, filtering, and search
+   * - secretary.research.create: Create new research projects (initial status: draft)
+   * - secretary.research.update: Update research projects (draft status only, creates pending approval)
+   * - secretary.research.delete: Soft delete research projects (draft status only)
+   * 
+   * Pending Changes Management:
+   * - secretary.pending.read: View pending changes with pagination and filtering
+   * - secretary.pending.withdraw: Withdraw pending changes (pending_approval status only)
+   * 
+   * Report Generation:
+   * - secretary.report.generate: Generate reports in PDF, Excel, or CSV formats
+   * 
+   * Filter Options:
+   * - secretary.filter.read: Access dynamic filter options for dropdown menus
    */
   [Role.SECRETARY]: {
     allow: [
-      // Student Management
+      // Secretary Portal API (all secretary.* permissions)
+      'secretary.*',
+      
+      // Approval System Permissions
+      'approval.submit',
+      'approval.read',
+      'approval.withdraw',
+      
+      // Curriculum Management
+      'curriculum.read',
+      'curriculum.create',
+      'curriculum.update',
+      
+      // Subjects Management
+      'subjects.read',
+      'subjects.create',
+      'subjects.update',
+      
+      // Syllabus Management
+      'syllabus.read',
+      'syllabus.create',
+      'syllabus.update',
+      
+      // Lessons Management
+      'lessons.read',
+      'lessons.create',
+      'lessons.update',
+      
+      // Rooms Management
+      'rooms.read',
+      'rooms.create',
+      'rooms.update',
+      
+      // Student Management (legacy)
       'student.*',
+      
+      // Faculty Management
+      'faculty.read',
       
       // Schedule Management
       'schedule.create',
@@ -333,7 +470,7 @@ export const permissionConfig: PermissionConfig = {
       'event.reject',
       'enrollment.approve',
       
-      // Prevent deletion of critical data
+      // Prevent deletion of critical data (legacy - secretary.* allows these)
       'student.delete',
       'schedule.delete',
       'enrollment.delete',
@@ -386,6 +523,21 @@ export const permissionConfig: PermissionConfig = {
       
       // Own Profile Access (legacy)
       'student.read_own',
+      
+      // Curriculum Access
+      'curriculum.read',
+      
+      // Subjects Access
+      'subjects.read',
+      
+      // Syllabus Access
+      'syllabus.read',
+      
+      // Lessons Access
+      'lessons.read',
+      
+      // Rooms Access
+      'rooms.read',
       
       // Schedule Access
       'schedule.read',

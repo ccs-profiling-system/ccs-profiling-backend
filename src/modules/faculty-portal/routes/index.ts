@@ -15,7 +15,6 @@
  * - /api/faculty/events - Event viewing and registration (GET, POST)
  * - /api/faculty/courses/:courseId/materials - Course material management (GET, POST, DELETE)
  * 
- * Requirements: 1.6, 15.5
  */
 
 import { Router } from 'express';

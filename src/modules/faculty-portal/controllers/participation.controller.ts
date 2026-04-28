@@ -6,7 +6,6 @@
  * All operations validate course ownership to ensure faculty can only manage participation
  * for their assigned courses.
  * 
- * Requirements: 10.1, 10.6, 10.7, 10.9, 10.14, 10.15, 10.16, 10.17
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -49,7 +48,6 @@ export class ParticipationController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If course doesn't exist
    * 
-   * Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
    */
   getParticipation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -114,7 +112,6 @@ export class ParticipationController {
    * - 403: If course is not assigned to the authenticated faculty member
    * - 404: If course doesn't exist
    * 
-   * Requirements: 10.7, 10.8, 10.9, 10.10, 10.11, 10.12, 10.13, 10.14, 10.15, 10.16, 10.17
    */
   submitParticipation = async (req: Request, res: Response, next: NextFunction) => {
     try {

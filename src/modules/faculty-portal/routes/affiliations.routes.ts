@@ -5,7 +5,6 @@
  * Provides endpoints for faculty members to view and update their own affiliations.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: Phase 10 - Affiliations Management
  */
 
 import { Router } from 'express';

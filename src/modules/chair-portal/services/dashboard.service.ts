@@ -4,7 +4,6 @@
  * Provides aggregated statistics for the department chair dashboard.
  * All queries are department-scoped to ensure multi-tenant data isolation.
  * 
- * Requirements: 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 13.8
  */
 
 import { db } from '../../../db';

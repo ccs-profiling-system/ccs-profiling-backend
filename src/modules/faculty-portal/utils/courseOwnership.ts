@@ -5,7 +5,6 @@
  * to courses before allowing operations on course-related resources such as
  * rosters, attendance records, and course materials.
  * 
- * Requirements: 5.2, 6.2, 9.2, 13.6
  */
 
 import { eq, and, isNull } from 'drizzle-orm';

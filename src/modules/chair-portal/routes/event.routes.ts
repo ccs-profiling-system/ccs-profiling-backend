@@ -16,7 +16,6 @@
  * - POST   /:id/reject            - Reject event
  * - GET    /:id/participants      - Get event participants
  * 
- * Requirements: 6.1, 6.4, 6.8, 6.11, 6.13, 6.15, 6.17, 6.20, 14.1
  */
 
 import { Router } from 'express';

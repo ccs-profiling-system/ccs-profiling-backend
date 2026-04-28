@@ -2,7 +2,6 @@
  * Student Portal - Research Service Tests
  * Unit tests for research opportunity management service
  * 
- * Requirements: 13.1-13.6, 14.1-14.4, 15.1-15.8, 16.1-16.4
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

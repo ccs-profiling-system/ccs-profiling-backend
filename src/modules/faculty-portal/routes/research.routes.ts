@@ -6,7 +6,6 @@
  * All routes require authentication and RBAC permission checks.
  * Faculty association with research projects is validated before allowing operations.
  * 
- * Requirements: 7.1, 7.6, 7.10, 7.17, 14.1
  */
 
 import { Router } from 'express';
@@ -74,7 +73,6 @@ export function createResearchRoutes(researchController: ResearchController): Ro
    *   }
    * }
    * 
-   * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 14.1
    */
   router.get(
     '/research',
@@ -133,7 +131,6 @@ export function createResearchRoutes(researchController: ResearchController): Ro
    *   }
    * }
    * 
-   * Requirements: 7.6, 7.7, 7.8, 7.9, 14.1
    */
   router.get(
     '/research/:id',
@@ -189,7 +186,6 @@ export function createResearchRoutes(researchController: ResearchController): Ro
    *   }
    * }
    * 
-   * Requirements: 7.10, 7.11, 7.12, 7.13, 7.14, 7.15, 7.16, 14.1
    */
   router.post(
     '/research',
@@ -247,7 +243,6 @@ export function createResearchRoutes(researchController: ResearchController): Ro
    *   }
    * }
    * 
-   * Requirements: 7.17, 7.18, 7.19, 7.20, 7.21, 7.22, 14.1
    */
   router.put(
     '/research/:id',

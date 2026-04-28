@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 interface UserSeed {
   email: string;
   password: string;
-  role: 'admin' | 'faculty' | 'student';
+  role: 'admin' | 'department_chair' | 'faculty' | 'student' | 'secretary';
   is_active: boolean;
 }
 
@@ -48,7 +48,20 @@ function generateUserSeeds(): UserSeed[] {
     {
       email: 'chair.cs@ccs.edu',
       password: 'pass1234',
-      role: 'faculty',
+      role: 'department_chair',
+      is_active: true,
+    },
+    // Secretary users
+    {
+      email: 'secretary@ccs.edu',
+      password: 'pass1234',
+      role: 'secretary',
+      is_active: true,
+    },
+    {
+      email: 'secretary.main@ccs.edu',
+      password: 'pass1234',
+      role: 'secretary',
       is_active: true,
     },
   ];
@@ -69,7 +82,7 @@ function generateUserSeeds(): UserSeed[] {
 const userSeeds: UserSeed[] = generateUserSeeds();
 
 export async function seedUsers(db: Database) {
-  const createdUsers: Array<{ id: string; role: string }> = [];
+  const createdUsers: Array<{ id: string; role: string; email: string }> = [];
 
   for (const userSeed of userSeeds) {
     // Generate UUID v7 for primary key
@@ -85,7 +98,7 @@ export async function seedUsers(db: Database) {
         role: userSeed.role,
         is_active: userSeed.is_active,
       })
-      .returning({ id: users.id, role: users.role });
+      .returning({ id: users.id, role: users.role, email: users.email });
 
     createdUsers.push(user);
     console.log(`  - Created ${userSeed.role}: ${userSeed.email}`);

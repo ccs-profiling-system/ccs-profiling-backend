@@ -91,7 +91,7 @@ export class ReportRepository {
 
   async delete(id: string): Promise<boolean> {
     const result = await this.db.delete(reports).where(eq(reports.id, id));
-    return result.rowCount > 0;
+    return Array.isArray(result) ? result.length > 0 : true;
   }
 
   async getStatistics(): Promise<ReportStatistics> {

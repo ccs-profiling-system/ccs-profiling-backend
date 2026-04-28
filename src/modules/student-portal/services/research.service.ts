@@ -5,7 +5,6 @@
  * Handles research opportunity browsing, application submission, and status tracking.
  * Ensures students can only access their own applications.
  * 
- * Requirements: 13.1-13.6, 14.1-14.4, 15.1-15.8, 16.1-16.4, 29.1-29.5
  */
 
 import { eq, asc, sql, inArray } from 'drizzle-orm';
@@ -41,7 +40,6 @@ export class ResearchService {
    * @param params - Pagination parameters (page, limit)
    * @returns Paginated list of research opportunities
    * 
-   * Requirements: 13.1, 13.2, 13.3, 13.4, 13.5
    */
   async listOpportunities(params: PaginationParams): Promise<PaginatedResponse<ResearchOpportunityDTO>> {
     const { page, limit } = params;
@@ -131,7 +129,6 @@ export class ResearchService {
    * @returns Detailed research opportunity information
    * @throws NotFoundError if opportunity not found or not available
    * 
-   * Requirements: 14.1, 14.2, 14.3
    */
   async getOpportunityById(opportunityId: string): Promise<ResearchOpportunityDetailsDTO> {
     const result = await this.db
@@ -210,7 +207,6 @@ export class ResearchService {
    * @throws NotFoundError if application not found
    * @throws StudentAccessError if application doesn't belong to student
    * 
-   * Requirements: 16.1, 16.2, 16.3
    */
   async getApplicationStatus(
     applicationId: string,

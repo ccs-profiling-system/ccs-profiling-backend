@@ -2,7 +2,6 @@
  * Faculty Controller Unit Tests
  * Tests for faculty management HTTP request/response handling in chair portal
  * 
- * Requirements: 4.1, 4.5, 4.8, 4.10, 9.1
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

@@ -2,7 +2,6 @@
  * Schedule Validation Schemas for Chair Portal
  * Zod schemas for validating schedule-related input
  * 
- * Requirements: 5.5, 5.11
  */
 
 import { z } from 'zod';

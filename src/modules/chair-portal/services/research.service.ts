@@ -10,7 +10,6 @@
  * - Approve/reject research projects with workflow validation
  * - Audit logging for approval/rejection actions
  * 
- * Requirements: 7.1, 7.2, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 7.11, 7.12, 7.13, 7.14, 11.2, 11.5, 13.1
  */
 
 import { db } from '../../../db';
@@ -109,7 +108,6 @@ export class ResearchService {
    * @param filters - Pagination and filter parameters
    * @returns Paginated list of research projects
    * 
-   * Requirements: 7.1, 7.2, 7.3, 13.1, 13.6
    */
   async listResearch(
     departmentId: string,
@@ -256,7 +254,6 @@ export class ResearchService {
    * @param departmentId - Department ID to validate scope
    * @returns Research project details with advisers and researchers or null if not found
    * 
-   * Requirements: 7.4, 7.5, 7.6, 13.2, 13.7
    */
   async getResearchById(id: string, departmentId: string): Promise<ResearchDTO | null> {
     // Get research project
@@ -363,7 +360,6 @@ export class ResearchService {
    * @returns Updated research project or null if not found
    * @throws Error if research is not in valid state for approval
    * 
-   * Requirements: 7.7, 7.8, 7.9, 7.10, 11.2, 11.5
    */
   async approveResearch(
     id: string,
@@ -402,7 +398,7 @@ export class ResearchService {
       before_state: { status: researchProject.status },
       after_state: { 
         status: 'approved',
-        approver_notes: approvalData.approver_notes,
+        approval_notes: approvalData.approver_notes,
       },
     };
 
@@ -430,7 +426,6 @@ export class ResearchService {
    * @returns Updated research project or null if not found
    * @throws Error if research is not in valid state for rejection
    * 
-   * Requirements: 7.11, 7.12, 7.13, 7.14, 11.2, 11.5
    */
   async rejectResearch(
     id: string,

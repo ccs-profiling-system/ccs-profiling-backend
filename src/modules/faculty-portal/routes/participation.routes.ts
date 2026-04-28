@@ -6,7 +6,6 @@
  * for their assigned courses. All routes require authentication and RBAC permission checks.
  * Course ownership is validated before allowing participation operations.
  * 
- * Requirements: 10.1, 10.7, 14.1
  */
 
 import { Router } from 'express';
@@ -65,7 +64,6 @@ export function createParticipationRoutes(participationController: Participation
    *   ]
    * }
    * 
-   * Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 14.1
    */
   router.get(
     '/courses/:subjectId/participation',
@@ -116,7 +114,6 @@ export function createParticipationRoutes(participationController: Participation
    *   }
    * }
    * 
-   * Requirements: 10.7, 10.8, 10.9, 10.10, 10.11, 10.12, 10.13, 10.14, 10.15, 10.16, 10.17, 14.1
    */
   router.post(
     '/courses/:subjectId/participation',

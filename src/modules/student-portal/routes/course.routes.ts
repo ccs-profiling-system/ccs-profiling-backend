@@ -5,7 +5,6 @@
  * Provides endpoints for students to view enrolled courses, course details,
  * and weekly schedule. All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 6.6, 7.4, 8.6, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -39,7 +38,6 @@ export function createCourseRoutes(courseController: CourseController): Router {
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/enrolled',
@@ -61,7 +59,6 @@ export function createCourseRoutes(courseController: CourseController): Router {
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/schedule',
@@ -85,7 +82,6 @@ export function createCourseRoutes(courseController: CourseController): Router {
    * - 403: Forbidden (missing permission, not a student, or not enrolled in course)
    * - 404: Not Found (course not found)
    * 
-   * Requirements: 7.1, 7.2, 7.3, 7.4, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/:courseId',

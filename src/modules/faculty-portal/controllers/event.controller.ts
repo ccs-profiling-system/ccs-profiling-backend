@@ -5,7 +5,6 @@
  * Handles event viewing, participation tracking, and event registration for faculty members.
  * All operations validate event access by department and enforce registration rules.
  * 
- * Requirements: 8.1, 8.6, 8.10, 8.11, 8.15, 8.17, 8.18
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -53,7 +52,6 @@ export class EventController {
    * - 200: Paginated list of events with metadata
    * - 400: If invalid query parameters provided
    * 
-   * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5
    */
   listEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -102,7 +100,6 @@ export class EventController {
    * Returns:
    * - 200: List of event participation records
    * 
-   * Requirements: 8.6, 8.7, 8.8, 8.9
    */
   getMyParticipation = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -140,7 +137,6 @@ export class EventController {
    * - 404: If event doesn't exist
    * - 422: If event is full (reached max_participants)
    * 
-   * Requirements: 8.10, 8.11, 8.12, 8.13, 8.14, 8.15, 8.16, 8.17, 8.18
    */
   registerForEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {

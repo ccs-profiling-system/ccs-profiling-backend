@@ -5,7 +5,6 @@
  * Provides endpoints for students to view grades, grade history, and GPA.
  * All routes require authentication and RBAC permission checks.
  * 
- * Requirements: 9.6, 10.4, 11.6, 12.6, 27.1, 27.2, 27.3, 27.4, 27.5
  */
 
 import { Router } from 'express';
@@ -40,7 +39,6 @@ export function createGradeRoutes(gradeController: GradeController): Router {
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/current',
@@ -63,7 +61,6 @@ export function createGradeRoutes(gradeController: GradeController): Router {
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/history',
@@ -87,7 +84,6 @@ export function createGradeRoutes(gradeController: GradeController): Router {
    * - 401: Unauthorized (missing or invalid JWT token)
    * - 403: Forbidden (missing permission or not a student)
    * 
-   * Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/gpa',
@@ -112,7 +108,6 @@ export function createGradeRoutes(gradeController: GradeController): Router {
    * - 403: Forbidden (missing permission, not a student, or grade belongs to another student)
    * - 404: Not Found (grade not found)
    * 
-   * Requirements: 10.1, 10.2, 10.3, 10.4, 27.1, 27.2, 27.3, 27.4, 27.5
    */
   router.get(
     '/:gradeId',

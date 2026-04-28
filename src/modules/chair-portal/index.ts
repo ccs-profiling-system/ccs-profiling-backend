@@ -13,7 +13,6 @@
  * All endpoints are protected by RBAC permissions using the chair.* namespace
  * and filtered by department scope for multi-tenant data isolation.
  * 
- * Requirements: 1.6
  */
 
 // Export combined router for all chair portal routes

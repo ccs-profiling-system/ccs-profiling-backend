@@ -5,7 +5,6 @@
  * Handles student profile viewing and updates with student-scoped validation.
  * Ensures students can only access and update their own profiles.
  * 
- * Requirements: 1.1, 1.2, 1.3, 1.4, 1.5
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -24,7 +23,6 @@ export class ProfileController {
    * 
    * Extracts student_id from JWT token and returns the profile.
    * 
-   * Requirements: 1.1, 1.5
    */
   getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,7 +50,6 @@ export class ProfileController {
    * Extracts student_id from JWT token and updates the profile.
    * Validates request body using Zod schema for email and phone formats.
    * 
-   * Requirements: 1.2, 1.3, 1.4, 1.5
    */
   updateProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {

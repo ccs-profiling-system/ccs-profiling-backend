@@ -4,7 +4,6 @@
  * Defines routes for faculty management operations in the department chair portal.
  * All routes require JWT authentication and appropriate chair.faculty.* permissions.
  * 
- * Requirements: 4.1, 4.5, 4.8, 4.10, 14.1
  */
 
 import { Router } from 'express';

@@ -5,7 +5,7 @@
  */
 
 import { ScheduleRepository } from '../repositories/schedule.repository';
-import { InstructionRepository } from '../../instructions/repositories/instruction.repository';
+import { SubjectRepository } from '../../subjects/repositories/subject.repository';
 import { FacultyRepository } from '../../faculty/repositories/faculty.repository';
 import { NotFoundError, ConflictError } from '../../../shared/errors';
 import { generateUUIDv7 } from '../../../shared/utils/uuid';
@@ -21,7 +21,7 @@ import {
 export class ScheduleService {
   constructor(
     private scheduleRepository: ScheduleRepository,
-    private instructionRepository: InstructionRepository,
+    private subjectRepository: SubjectRepository,
     private facultyRepository: FacultyRepository
   ) {}
 
@@ -83,10 +83,11 @@ export class ScheduleService {
   async createSchedule(data: CreateScheduleDTO): Promise<ScheduleResponseDTO> {
     // Verify instruction exists if provided
     if (data.instruction_id) {
-      const instruction = await this.instructionRepository.findById(data.instruction_id);
-      if (!instruction) {
-        throw new NotFoundError('Instruction not found');
-      }
+      // TODO: Add instruction repository and validation
+      // const instruction = await this.instructionRepository.findById(data.instruction_id);
+      // if (!instruction) {
+      //   throw new NotFoundError('Instruction not found');
+      // }
     }
 
     // Verify faculty exists if provided
@@ -109,8 +110,8 @@ export class ScheduleService {
     if (conflicts.length > 0) {
       const conflictDetails = conflicts.map((c) => {
         const schedule = c.schedule;
-        const instruction = c.instruction;
-        const subjectInfo = instruction?.subject_code || 'Event';
+        const subject = c.subject;
+        const subjectInfo = subject?.code || 'Event';
         return `${subjectInfo} (${schedule.start_time}-${schedule.end_time})`;
       }).join(', ');
 
@@ -159,10 +160,11 @@ export class ScheduleService {
 
     // Verify instruction exists if being updated
     if (data.instruction_id) {
-      const instruction = await this.instructionRepository.findById(data.instruction_id);
-      if (!instruction) {
-        throw new NotFoundError('Instruction not found');
-      }
+      // TODO: Add instruction repository and validation
+      // const instruction = await this.instructionRepository.findById(data.instruction_id);
+      // if (!instruction) {
+      //   throw new NotFoundError('Instruction not found');
+      // }
     }
 
     // Verify faculty exists if being updated
@@ -189,8 +191,8 @@ export class ScheduleService {
       if (conflicts.length > 0) {
         const conflictDetails = conflicts.map((c) => {
           const schedule = c.schedule;
-          const instruction = c.instruction;
-          const subjectInfo = instruction?.subject_code || 'Event';
+          const subject = c.subject;
+          const subjectInfo = subject?.code || 'Event';
           return `${subjectInfo} (${schedule.start_time}-${schedule.end_time})`;
         }).join(', ');
 
@@ -231,14 +233,15 @@ export class ScheduleService {
   private toResponseDTO(result: any): ScheduleResponseDTO {
     const schedule = result.schedule;
     const instruction = result.instruction;
+    const subject = result.subject;
     const facultyMember = result.faculty;
 
     return {
       id: schedule.id,
       schedule_type: schedule.schedule_type,
       instruction_id: schedule.instruction_id || undefined,
-      subject_code: instruction?.subject_code || undefined,
-      subject_name: instruction?.subject_name || undefined,
+      subject_code: subject?.code || undefined,
+      subject_name: subject?.name || undefined,
       faculty_id: schedule.faculty_id || undefined,
       faculty_name: facultyMember 
         ? `${facultyMember.first_name} ${facultyMember.last_name}`.trim()

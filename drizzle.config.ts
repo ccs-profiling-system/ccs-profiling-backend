@@ -13,10 +13,16 @@
  * - students: Student profiles
  * - faculty: Faculty profiles
  * - entityCounters: Auto-incrementing ID counters
- * - instructions: Curriculum and subjects
+ * - instructions: Curriculum and subjects (legacy)
+ * - curriculum: Curriculum programs and years (NEW - Instructions Module)
+ * - subjects: Enhanced subject/course information (NEW - Instructions Module)
+ * - syllabus: Subject syllabus files and links (NEW - Instructions Module)
+ * - lessons: Weekly lesson content (NEW - Instructions Module)
+ * - rooms: Room management with capacity (NEW - Scheduling Module)
+ * - scheduleOccurrences: Individual schedule occurrences (NEW - Scheduling Module)
  * - enrollments: Student course enrollments
  * - academicHistory: Student grades and academic records
- * - schedules: Class and exam schedules
+ * - schedules: Class and exam schedules (UPDATED with recurring fields)
  * - skills: Student skills and competencies
  * - violations: Student disciplinary records
  * - affiliations: Student organization memberships
@@ -28,13 +34,15 @@
  * - financialRecords: Student financial records and payments (Student Portal API)
  * - researchApplications: Student research applications (Student Portal API)
  * - advisors: Student-advisor relationships, messages, slots, and appointments (Student Portal API)
+ * - approvals: Change request workflow for entity modifications (Approval System API)
+ * - approvalNotifications: Notifications for approval workflow events (Approval System API)
+ * - backgroundJobs: Background job processing for async operations (Approval System API)
  * 
  * MIGRATION COMMANDS:
  * - npm run db:generate - Generate migration files from schema changes
  * - npm run db:migrate - Apply migrations to database
  * - npm run db:push - Push schema changes directly (development only)
  * 
- * Requirements: 23.1, 23.2, 23.3
  */
 
 import type { Config } from 'drizzle-kit';
@@ -49,6 +57,12 @@ export default {
     './src/db/schema/faculty.ts',
     './src/db/schema/entityCounters.ts',
     './src/db/schema/instructions.ts',
+    './src/db/schema/curriculum.ts',
+    './src/db/schema/subjects.ts',
+    './src/db/schema/syllabus.ts',
+    './src/db/schema/lessons.ts',
+    './src/db/schema/rooms.ts',
+    './src/db/schema/scheduleOccurrences.ts',
     './src/db/schema/enrollments.ts',
     './src/db/schema/academicHistory.ts',
     './src/db/schema/schedules.ts',
@@ -68,6 +82,10 @@ export default {
     './src/db/schema/financialRecords.ts',
     './src/db/schema/researchApplications.ts',
     './src/db/schema/advisors.ts',
+    './src/db/schema/pendingChanges.ts',
+    './src/db/schema/approvals.ts',
+    './src/db/schema/approvalNotifications.ts',
+    './src/db/schema/backgroundJobs.ts',
   ],
   out: './drizzle',
   driver: 'pg',

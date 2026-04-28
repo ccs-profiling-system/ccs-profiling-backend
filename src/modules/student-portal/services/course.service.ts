@@ -5,7 +5,6 @@
  * Handles enrolled courses retrieval, course details, and weekly schedule.
  * Ensures students can only access courses they are enrolled in.
  * 
- * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 7.1, 7.2, 7.3, 8.1, 8.2, 8.3, 8.4, 8.5
  */
 
 import { eq, and, isNull } from 'drizzle-orm';
@@ -39,7 +38,6 @@ export class CourseService {
    * @param studentId - The student UUID (internal ID)
    * @returns Array of enrolled course DTOs
    * 
-   * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
    */
   async getEnrolledCourses(studentId: string): Promise<CourseDTO[]> {
     // Get current academic period
@@ -108,7 +106,6 @@ export class CourseService {
    * @returns Course details DTO
    * @throws NotFoundError if course not found or student not enrolled
    * 
-   * Requirements: 7.1, 7.2, 7.3
    */
   async getCourseDetails(studentId: string, courseId: string): Promise<CourseDetailsDTO> {
     // First, verify the student is enrolled in this course
@@ -198,90 +195,44 @@ export class CourseService {
    * @param studentId - The student UUID (internal ID)
    * @returns Weekly schedule grouped by day
    * 
-   * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5
    */
   async getWeeklySchedule(studentId: string): Promise<WeeklyScheduleDTO> {
     // Get current academic period
     const { currentSemester, currentAcademicYear } = this.getCurrentAcademicPeriod();
 
-    // Get all enrolled courses for current semester
-    const enrolledCourses = await this.db
+    // Query enrolled courses with schedule information
+    const enrolledSchedules = await this.db
       .select({
-        instruction_id: enrollments.instruction_id,
-        course_code: instructions.subject_code,
-        course_name: instructions.subject_name,
+        subject_code: instructions.subject_code,
+        subject_name: instructions.subject_name,
+        day: schedules.day,
+        start_time: schedules.start_time,
+        end_time: schedules.end_time,
+        room: schedules.room,
+        faculty_first_name: faculty.first_name,
+        faculty_last_name: faculty.last_name,
       })
       .from(enrollments)
       .innerJoin(instructions, eq(enrollments.instruction_id, instructions.id))
+      .innerJoin(schedules, and(
+        eq(schedules.instruction_id, instructions.id),
+        eq(schedules.semester, enrollments.semester),
+        eq(schedules.academic_year, enrollments.academic_year)
+      ))
+      .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
           eq(enrollments.student_id, studentId),
           eq(enrollments.semester, currentSemester),
           eq(enrollments.academic_year, currentAcademicYear),
           eq(enrollments.enrollment_status, 'enrolled'),
-          isNull(instructions.deleted_at)
+          isNull(instructions.deleted_at),
+          isNull(schedules.deleted_at)
         )
-      );
+      )
+      .orderBy(schedules.start_time);
 
-    // Get schedule entries for all enrolled courses
-    const scheduleEntries: ScheduleEntryDTO[] = [];
-
-    for (const course of enrolledCourses) {
-      const courseSchedules = await this.db
-        .select({
-          day: schedules.day,
-          start_time: schedules.start_time,
-          end_time: schedules.end_time,
-          room: schedules.room,
-          faculty_id: schedules.faculty_id,
-        })
-        .from(schedules)
-        .where(
-          and(
-            eq(schedules.instruction_id, course.instruction_id),
-            eq(schedules.semester, currentSemester),
-            eq(schedules.academic_year, currentAcademicYear),
-            eq(schedules.schedule_type, 'class'),
-            isNull(schedules.deleted_at)
-          )
-        );
-
-      for (const schedule of courseSchedules) {
-        // Get faculty name if faculty_id exists
-        let instructorName = 'TBA';
-        if (schedule.faculty_id) {
-          const facultyResult = await this.db
-            .select({
-              first_name: faculty.first_name,
-              last_name: faculty.last_name,
-            })
-            .from(faculty)
-            .where(
-              and(
-                eq(faculty.id, schedule.faculty_id),
-                isNull(faculty.deleted_at)
-              )
-            )
-            .limit(1);
-
-          if (facultyResult[0]) {
-            instructorName = `${facultyResult[0].first_name} ${facultyResult[0].last_name}`;
-          }
-        }
-
-        scheduleEntries.push({
-          course_code: course.course_code,
-          course_name: course.course_name,
-          instructor_name: instructorName,
-          room: schedule.room,
-          day: this.capitalizeDayName(schedule.day),
-          start_time: schedule.start_time,
-          end_time: schedule.end_time,
-        });
-      }
-    }
-
-    // Group by day of week
+    // Initialize weekly schedule
     const weeklySchedule: WeeklyScheduleDTO = {
       Monday: [],
       Tuesday: [],
@@ -292,18 +243,25 @@ export class CourseService {
       Sunday: [],
     };
 
-    for (const entry of scheduleEntries) {
-      const day = entry.day;
-      if (weeklySchedule[day]) {
-        weeklySchedule[day].push(entry);
-      }
-    }
+    // Group by day
+    for (const schedule of enrolledSchedules) {
+      const dayName = this.capitalizeDayName(schedule.day);
+      const instructor = schedule.faculty_first_name && schedule.faculty_last_name
+        ? `${schedule.faculty_first_name} ${schedule.faculty_last_name}`
+        : 'TBA';
 
-    // Sort entries within each day by start_time
-    for (const day in weeklySchedule) {
-      weeklySchedule[day].sort((a, b) => {
-        return a.start_time.localeCompare(b.start_time);
-      });
+      const entry: ScheduleEntryDTO = {
+        subject_code: schedule.subject_code,
+        subject_name: schedule.subject_name,
+        start_time: schedule.start_time,
+        end_time: schedule.end_time,
+        room: schedule.room || 'TBA',
+        instructor,
+      };
+
+      if (dayName in weeklySchedule) {
+        weeklySchedule[dayName as keyof WeeklyScheduleDTO].push(entry);
+      }
     }
 
     return weeklySchedule;
@@ -330,28 +288,30 @@ export class CourseService {
     instructor_email: string | null;
     instructor_phone: string | null;
   }> {
-    // Get schedule information
     const scheduleResult = await this.db
       .select({
         day: schedules.day,
         start_time: schedules.start_time,
         end_time: schedules.end_time,
         room: schedules.room,
-        faculty_id: schedules.faculty_id,
+        first_name: faculty.first_name,
+        last_name: faculty.last_name,
+        email: faculty.email,
+        phone: faculty.phone,
       })
       .from(schedules)
+      .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(
         and(
           eq(schedules.instruction_id, instructionId),
           eq(schedules.semester, semester),
           eq(schedules.academic_year, academicYear),
-          eq(schedules.schedule_type, 'class'),
           isNull(schedules.deleted_at)
         )
       )
       .limit(1);
 
-    if (scheduleResult.length === 0) {
+    if (!scheduleResult[0]) {
       return {
         schedule: null,
         room: null,
@@ -361,46 +321,18 @@ export class CourseService {
       };
     }
 
-    const scheduleData = scheduleResult[0];
-
-    // Format schedule string
-    const scheduleString = `${this.capitalizeDayName(scheduleData.day)} ${scheduleData.start_time}-${scheduleData.end_time}`;
-
-    // Get faculty information if faculty_id exists
-    let instructorName: string | null = null;
-    let instructorEmail: string | null = null;
-    let instructorPhone: string | null = null;
-
-    if (scheduleData.faculty_id) {
-      const facultyResult = await this.db
-        .select({
-          first_name: faculty.first_name,
-          last_name: faculty.last_name,
-          email: faculty.email,
-          phone: faculty.phone,
-        })
-        .from(faculty)
-        .where(
-          and(
-            eq(faculty.id, scheduleData.faculty_id),
-            isNull(faculty.deleted_at)
-          )
-        )
-        .limit(1);
-
-      if (facultyResult[0]) {
-        instructorName = `${facultyResult[0].first_name} ${facultyResult[0].last_name}`;
-        instructorEmail = facultyResult[0].email;
-        instructorPhone = facultyResult[0].phone;
-      }
-    }
+    const s = scheduleResult[0];
+    const schedule = `${s.day} ${s.start_time}-${s.end_time}`;
+    const instructor_name = s.first_name && s.last_name
+      ? `${s.first_name} ${s.last_name}`
+      : null;
 
     return {
-      schedule: scheduleString,
-      room: scheduleData.room,
-      instructor_name: instructorName,
-      instructor_email: instructorEmail,
-      instructor_phone: instructorPhone,
+      schedule,
+      room: s.room,
+      instructor_name,
+      instructor_email: s.email,
+      instructor_phone: s.phone,
     };
   }
 

@@ -6,7 +6,7 @@
 
 import { eq, and, isNull, sql, ne } from 'drizzle-orm';
 import { Database } from '../../../db';
-import { schedules, instructions, faculty } from '../../../db/schema';
+import { schedules, instructions, subjects, faculty } from '../../../db/schema';
 import { ScheduleFilters, ConflictCheckParams } from '../types';
 
 export interface CreateScheduleData {
@@ -38,7 +38,7 @@ export class ScheduleRepository {
   constructor(private db: Database) {}
 
   /**
-   * Find schedule by UUID with related instruction and faculty data
+   * Find schedule by UUID with related instruction, subject, and faculty data
    * Automatically excludes soft-deleted records
    */
   async findById(id: string) {
@@ -46,10 +46,12 @@ export class ScheduleRepository {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(
         eq(schedules.id, id),
@@ -68,10 +70,12 @@ export class ScheduleRepository {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(
         eq(schedules.room, room),
@@ -88,10 +92,12 @@ export class ScheduleRepository {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(
         eq(schedules.faculty_id, facultyId),
@@ -148,15 +154,17 @@ export class ScheduleRepository {
 
     const total = Number(countResult[0]?.count || 0);
 
-    // Get paginated results with instruction and faculty details
+    // Get paginated results with instruction, subject, and faculty details
     const results = await this.db
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions))
       .limit(limit)
@@ -199,10 +207,12 @@ export class ScheduleRepository {
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions));
   }
@@ -303,15 +313,17 @@ export class ScheduleRepository {
 
     const total = Number(countResult[0]?.count || 0);
 
-    // Get paginated results with instruction and faculty details
+    // Get paginated results with instruction, subject, and faculty details
     const results = await this.db
       .select({
         schedule: schedules,
         instruction: instructions,
+        subject: subjects,
         faculty: faculty,
       })
       .from(schedules)
       .leftJoin(instructions, eq(schedules.instruction_id, instructions.id))
+      .leftJoin(subjects, eq(instructions.subject_code, subjects.code))
       .leftJoin(faculty, eq(schedules.faculty_id, faculty.id))
       .where(and(...conditions))
       .limit(limit)

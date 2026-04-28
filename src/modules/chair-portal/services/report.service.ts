@@ -9,7 +9,6 @@
  * - Faculty statistics (department distribution, teaching load analysis, research supervision)
  * - Report export in PDF and Excel formats
  * 
- * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.9, 8.10, 8.11, 8.12, 8.13, 13.9, 13.11
  */
 
 import { db } from '../../../db';
@@ -96,7 +95,6 @@ export class ReportService {
    * @param filters - Optional filters for year_level and status
    * @returns Student statistics
    * 
-   * Requirements: 8.1, 8.2, 8.3, 8.4, 13.9
    */
   async getStudentStats(
     departmentId: string,
@@ -187,7 +185,6 @@ export class ReportService {
    * @param departmentId - Department ID to scope the statistics
    * @returns Faculty statistics
    * 
-   * Requirements: 8.5, 8.6, 8.7, 13.9
    */
   async getFacultyStats(departmentId: string): Promise<FacultyStats> {
     // Query 1: Total faculty in department
@@ -307,7 +304,6 @@ export class ReportService {
    * @returns Report generation result with buffer, filename, and mime type
    * @throws Error if report type or format is unsupported
    * 
-   * Requirements: 8.8, 8.9, 8.10, 8.11, 8.12, 8.13, 13.11
    */
   async exportReport(
     reportType: string,

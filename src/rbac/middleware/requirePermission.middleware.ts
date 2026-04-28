@@ -36,6 +36,16 @@ import { UnauthorizedError, ForbiddenError } from '../../shared/errors';
 import { PermissionChecker } from '../services/permissionChecker.service';
 import { Permission, Role } from '../types';
 
+// Lazy import to avoid circular dependency issues
+let auditLogRepository: any;
+async function getAuditLogRepository() {
+  if (!auditLogRepository) {
+    const module = await import('../../modules/audit-logs');
+    auditLogRepository = module.auditLogRepository;
+  }
+  return auditLogRepository;
+}
+
 /**
  * Sensitive operations that should be logged when permitted
  * These operations modify data or perform critical actions
@@ -64,7 +74,7 @@ function isSensitiveOperation(permission: Permission): boolean {
  * Log authorization decision for audit purposes
  * 
  * Selective logging strategy:
- * - Always log denials (WARNING level)
+ * - Always log denials (WARNING level + database)
  * - Log sensitive operations when permitted (INFO level)
  * - Don't log successful non-sensitive operations (e.g., read, list, search)
  * 
@@ -73,12 +83,12 @@ function isSensitiveOperation(permission: Permission): boolean {
  * @param granted - Whether the permission was granted
  * @param reason - Reason for the decision (from PermissionChecker)
  */
-function logAuthorizationDecision(
+async function logAuthorizationDecision(
   req: Request,
   permission: Permission,
   granted: boolean,
   reason: string
-): void {
+): Promise<void> {
   const user = req.user!;
   const [resource, action] = permission.split('.');
   
@@ -88,6 +98,37 @@ function logAuthorizationDecision(
       `[RBAC] Permission denied: user=${user.userId} role=${user.role} ` +
       `resource=${resource} action=${action} reason="${reason}"`
     );
+    
+    // Log to database asynchronously (non-blocking)
+    try {
+      const ip_address =
+        (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+        req.socket.remoteAddress ||
+        undefined;
+
+      const user_agent = req.headers['user-agent'] || undefined;
+
+      const repository = await getAuditLogRepository();
+      await repository.create({
+        user_id: user.userId === '00000000-0000-0000-0000-000000000000' ? undefined : user.userId,
+        action_type: 'authz_failure',
+        entity_type: 'authorization',
+        ip_address,
+        user_agent,
+        after_state: {
+          permission,
+          resource,
+          action,
+          reason,
+          path: req.path,
+          method: req.method,
+        },
+      });
+    } catch (error) {
+      // Log to console but don't throw - audit logging should not block authorization
+      console.error('Failed to log authorization failure:', error);
+    }
+    
     return;
   }
   
@@ -138,7 +179,7 @@ export function requirePermission(permissions: Permission | Permission[]) {
     throw new Error('requirePermission: At least one permission must be specified');
   }
   
-  return (req: Request, _res: Response, next: NextFunction): void => {
+  return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     const startTime = performance.now();
     
     try {
@@ -172,7 +213,7 @@ export function requirePermission(permissions: Permission | Permission[]) {
       if (!granted) {
         // Log denial for audit
         const deniedPermission = permissionList[0]; // Log first permission for simplicity
-        logAuthorizationDecision(req, deniedPermission, false, lastDenialReason);
+        await logAuthorizationDecision(req, deniedPermission, false, lastDenialReason);
         
         // Return detailed error response
         const errorMessage = permissionList.length === 1
@@ -184,7 +225,7 @@ export function requirePermission(permissions: Permission | Permission[]) {
       
       // Step 4: Permission granted - log if sensitive operation
       if (grantedPermission) {
-        logAuthorizationDecision(req, grantedPermission, true, lastDenialReason);
+        await logAuthorizationDecision(req, grantedPermission, true, lastDenialReason);
       }
       
       // Step 5: Check performance target (sub-2ms)

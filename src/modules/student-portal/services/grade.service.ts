@@ -5,7 +5,6 @@
  * Handles grade retrieval, GPA calculation, and grade history.
  * Ensures students can only access their own grades.
  * 
- * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1, 10.2, 10.3, 11.1, 11.2, 11.3, 11.4, 11.5, 12.1, 12.2, 12.3, 12.4, 12.5
  */
 
 import { eq, and, desc } from 'drizzle-orm';
@@ -29,7 +28,6 @@ export class GradeService {
    * @param studentId - The student UUID (internal ID)
    * @returns Object with grades array and semester GPA
    * 
-   * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5
    */
   async getCurrentSemesterGrades(
     studentId: string
@@ -94,7 +92,6 @@ export class GradeService {
    * @throws NotFoundError if grade not found
    * @throws StudentAccessError if grade belongs to another student
    * 
-   * Requirements: 10.1, 10.2, 10.3
    */
   async getGradeById(studentId: string, gradeId: string): Promise<GradeDTO> {
     // Query grade by ID
@@ -151,7 +148,6 @@ export class GradeService {
    * @param studentId - The student UUID (internal ID)
    * @returns Grade history grouped by semester
    * 
-   * Requirements: 11.1, 11.2, 11.3, 11.4, 11.5
    */
   async getGradeHistory(studentId: string): Promise<GradeHistoryDTO> {
     // Query all grades for student
@@ -229,7 +225,6 @@ export class GradeService {
    * @param studentId - The student UUID (internal ID)
    * @returns GPA calculation DTO
    * 
-   * Requirements: 12.1, 12.2, 12.3, 12.4, 12.5
    */
   async calculateGPA(studentId: string): Promise<GPADTO> {
     // Get all grades for student

@@ -29,6 +29,7 @@ export class LocalStorage implements StorageProvider {
    * File naming convention: {timestamp}_{uuid}_{original_filename}
    * Directory structure: uploads/{entity_type}/{year}/{month}/
    * 
+   * Security: Files stored with restricted permissions (0o640)
    */
   async upload(options: UploadOptions): Promise<UploadResult> {
     const { entityType, originalFilename, buffer } = options;
@@ -47,11 +48,13 @@ export class LocalStorage implements StorageProvider {
     const relativePath = join(entityType, String(year), month, fileName);
     const storagePath = join(this.baseDir, relativePath);
 
-    // Ensure directory exists
-    await fs.mkdir(dirname(storagePath), { recursive: true });
+    // Ensure directory exists with restricted permissions
+    // 0o750 = rwxr-x--- (owner: rwx, group: rx, others: none)
+    await fs.mkdir(dirname(storagePath), { recursive: true, mode: 0o750 });
 
-    // Write file to disk
-    await fs.writeFile(storagePath, buffer);
+    // Write file to disk with restricted permissions
+    // 0o640 = rw-r----- (owner: rw, group: r, others: none)
+    await fs.writeFile(storagePath, buffer, { mode: 0o640 });
 
     return {
       fileName,

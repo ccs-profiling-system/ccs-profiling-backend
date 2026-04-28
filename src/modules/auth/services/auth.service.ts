@@ -61,7 +61,7 @@ export class AuthService {
     let facultyId: string | undefined;
     let studentId: string | undefined;
 
-    if (user.role === 'faculty') {
+    if (user.role === 'faculty' || user.role === 'department_chair') {
       const facultyRecord = await db
         .select({ id: faculty.id })
         .from(faculty)

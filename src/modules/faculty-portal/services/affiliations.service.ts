@@ -6,7 +6,6 @@
  * Uses the faculty_affiliations table (separate from student affiliations).
  * Implements transaction-based replace strategy for atomic updates.
  * 
- * Requirements: Phase 10 - Affiliations Management
  */
 
 import { eq, and, isNull, desc } from 'drizzle-orm';
@@ -111,7 +110,6 @@ export class AffiliationsService {
    * @returns Updated affiliations list ordered by start_date descending
    * @throws NotFoundError if faculty doesn't exist
    * 
-   * Requirements:
    * - Uses faculty_affiliations table (separate from student affiliations)
    * - Replace strategy WITH transaction (atomic operation)
    * - Map API joinDate -> DB start_date

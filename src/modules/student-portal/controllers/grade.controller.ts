@@ -5,7 +5,6 @@
  * Handles grade retrieval, GPA calculation, and grade history.
  * Ensures students can only access their own grades.
  * 
- * Requirements: 9.1, 10.1, 11.1, 12.1
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -22,7 +21,6 @@ export class GradeController {
    * 
    * Extracts student_id from JWT token and returns current semester grades with GPA.
    * 
-   * Requirements: 9.1
    */
   getCurrentGrades = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,7 +50,6 @@ export class GradeController {
    * Extracts student_id from JWT token and returns grade details.
    * Validates grade belongs to student.
    * 
-   * Requirements: 10.1
    */
   getGradeDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -81,7 +78,6 @@ export class GradeController {
    * 
    * Extracts student_id from JWT token and returns grade history grouped by semester.
    * 
-   * Requirements: 11.1
    */
   getGradeHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -107,7 +103,6 @@ export class GradeController {
    * 
    * Extracts student_id from JWT token and returns cumulative and current semester GPA.
    * 
-   * Requirements: 12.1
    */
   getGPA = async (req: Request, res: Response, next: NextFunction) => {
     try {

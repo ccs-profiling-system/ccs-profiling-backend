@@ -126,6 +126,16 @@ import { searchRoutes } from '../modules/search';
 import { chairPortalRouter } from '../modules/chair-portal';
 import { facultyPortalRouter } from '../modules/faculty-portal';
 import { studentPortalRouter } from '../modules/student-portal/routes';
+import { secretaryPortalRouter } from '../modules/secretary-portal/routes';
+import { approvalRouter } from '../modules/approval/routes';
+import { curriculumRoutes } from '../modules/curriculum';
+import { subjectRoutes } from '../modules/subjects';
+import { roomRoutes } from '../modules/rooms';
+import { syllabusRoutes } from '../modules/syllabus';
+import { lessonRoutes, lessonDetailRoutes } from '../modules/lessons';
+import { occurrenceRoutes } from '../modules/schedule-occurrences';
+import { statisticsRoutes } from '../modules/statistics';
+import { exportRoutes } from '../modules/export';
 
 export const routes = Router();
 
@@ -143,6 +153,10 @@ routes.use('/v1/auth', authRoutes);
 // User Management
 routes.use('/v1/admin/users', userRoutes);
 
+// Statistics routes MUST come FIRST before all module routes to avoid route conflicts
+// Routes like /instructions/statistics and /schedules/statistics would be caught by /:id otherwise
+routes.use('/v1/admin', statisticsRoutes);
+
 // Core Entities
 routes.use('/v1/admin/students', studentRoutes);
 routes.use('/v1/admin/students', studentEnrollmentRoutes);
@@ -151,6 +165,12 @@ routes.use('/v1/admin/students', studentSkillRoutes);
 routes.use('/v1/admin/students', studentViolationRoutes);
 routes.use('/v1/admin/students', studentAffiliationRoutes);
 routes.use('/v1/admin/faculty', facultyRoutes);
+routes.use('/v1/admin/curriculum', curriculumRoutes);
+routes.use('/v1/admin/subjects', subjectRoutes);
+routes.use('/v1/admin/subjects', syllabusRoutes);
+routes.use('/v1/admin/subjects', lessonRoutes);
+routes.use('/v1/admin/lessons', lessonDetailRoutes);
+
 routes.use('/v1/admin/instructions', instructionRoutes);
 routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 
@@ -158,6 +178,8 @@ routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 routes.use('/v1/admin/enrollments', enrollmentRoutes);
 routes.use('/v1/admin/academic-history', academicHistoryRoutes);
 routes.use('/v1/admin/schedules', scheduleRoutes);
+routes.use('/v1/admin/schedules', occurrenceRoutes);
+routes.use('/v1/admin/rooms', roomRoutes);
 
 // Activity System
 routes.use('/v1/admin/skills', skillRoutes);
@@ -176,12 +198,15 @@ routes.use('/v1/admin/analytics', analyticsRoutes);
 routes.use('/v1/admin/reports', reportRoutes);
 routes.use('/v1/admin/search', searchRoutes);
 
+// Export routes
+routes.use('/v1/admin', exportRoutes);
+
 // ═══════════════════════════════════════════════════════════════════════════
 // DEPARTMENT CHAIR PORTAL ROUTES (Authentication + chair.* permissions required)
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Department Chair Portal
-routes.use('/chair', chairPortalRouter);
+routes.use('/v1/chair', chairPortalRouter);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FACULTY PORTAL ROUTES (Authentication + faculty.* permissions required)
@@ -206,3 +231,33 @@ routes.use('/', facultyPortalRouter);
 // Provides endpoints for students to manage:
 // - Profile management (view and update own profile)
 routes.use('/', studentPortalRouter);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SECRETARY PORTAL ROUTES (Authentication + secretary.* permissions required)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Secretary Portal
+// Provides endpoints for department secretaries to manage:
+// - Dashboard statistics and recent activities
+// - Student records (CRUD operations)
+// - Faculty records (CRUD operations)
+// - Class schedules (CRUD operations)
+// - Document management with file uploads
+// - Event management with approval workflow
+// - Research project management with approval workflow
+// - Pending changes management
+// - Report generation (PDF, Excel, CSV)
+// - Curriculum and subjects management (CRUD operations)
+routes.use('/v1/secretary', secretaryPortalRouter);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// APPROVAL SYSTEM ROUTES (Authentication required, role-based permissions)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Approval System
+// Provides comprehensive approval workflow for change requests:
+// - Secretary: Submit and manage change requests
+// - Admin: Review and approve/reject all change requests
+// - Chair: Review and approve/reject department change requests
+// - Shared: Notifications and system configuration
+routes.use('/v1', approvalRouter);
