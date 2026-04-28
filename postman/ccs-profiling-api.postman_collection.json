@@ -4815,6 +4815,604 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Approval System (Admin)",
+      "description": "Admin approval system endpoints for managing all approval requests across the system",
+      "item": [
+        {
+          "name": "Get Pending Approvals",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/pending?page=1&limit=10&entityType=&priority=&submitterId=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                "pending"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (default: 10, max: 100)"
+                },
+                {
+                  "key": "entityType",
+                  "value": "",
+                  "description": "Filter by entity type: event, research, document, schedule (optional)"
+                },
+                {
+                  "key": "priority",
+                  "value": "",
+                  "description": "Filter by priority: low, medium, high, urgent (optional)"
+                },
+                {
+                  "key": "submitterId",
+                  "value": "",
+                  "description": "Filter by submitter user ID (optional)"
+                }
+              ]
+            },
+            "description": "Get all pending approval requests across the system. Admins can see all pending approvals regardless of department."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Approval Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "approval-uuid-here",
+                  "description": "Approval ID"
+                }
+              ]
+            },
+            "description": "Get detailed information about a specific approval request including full audit trail and change history"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comments\": \"Approved by admin. All requirements met.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/:id/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "approval-uuid-here",
+                  "description": "Approval ID"
+                }
+              ]
+            },
+            "description": "Approve a pending approval request. Optionally provide comments for the submitter."
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Does not meet system requirements\",\n  \"comments\": \"Please review the system guidelines and resubmit with proper documentation.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/:id/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                ":id",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "approval-uuid-here",
+                  "description": "Approval ID"
+                }
+              ]
+            },
+            "description": "Reject a pending approval request. Reason is required, comments are optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk Approve",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approvalIds\": [\n    \"approval-uuid-1\",\n    \"approval-uuid-2\",\n    \"approval-uuid-3\"\n  ],\n  \"comments\": \"Batch approval for routine administrative requests\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/bulk-approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                "bulk-approve"
+              ]
+            },
+            "description": "Approve multiple approval requests at once. Useful for batch processing of routine approvals."
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk Reject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approvalIds\": [\n    \"approval-uuid-4\",\n    \"approval-uuid-5\"\n  ],\n  \"reason\": \"Incomplete documentation\",\n  \"comments\": \"All requests missing required supporting documents\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/bulk-reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                "bulk-reject"
+              ]
+            },
+            "description": "Reject multiple approval requests at once with a common reason."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Approval History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/history?page=1&limit=10&status=&entityType=&reviewerId=&startDate=&endDate=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status: approved, rejected (optional)"
+                },
+                {
+                  "key": "entityType",
+                  "value": "",
+                  "description": "Filter by entity type (optional)"
+                },
+                {
+                  "key": "reviewerId",
+                  "value": "",
+                  "description": "Filter by reviewer user ID (optional)"
+                },
+                {
+                  "key": "startDate",
+                  "value": "",
+                  "description": "Filter by start date (YYYY-MM-DD) (optional)"
+                },
+                {
+                  "key": "endDate",
+                  "value": "",
+                  "description": "Filter by end date (YYYY-MM-DD) (optional)"
+                }
+              ]
+            },
+            "description": "Get complete history of all approval decisions across the system"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Approval Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                "stats"
+              ]
+            },
+            "description": "Get comprehensive approval statistics including pending count, approval rate, average processing time, breakdown by entity type, and reviewer performance metrics"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/audit-logs?page=1&limit=10&approvalId=&userId=&action=&startDate=&endDate=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "approvalId",
+                  "value": "",
+                  "description": "Filter by approval ID (optional)"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "Filter by user ID (optional)"
+                },
+                {
+                  "key": "action",
+                  "value": "",
+                  "description": "Filter by action: submit, approve, reject, withdraw (optional)"
+                },
+                {
+                  "key": "startDate",
+                  "value": "",
+                  "description": "Filter by start date (YYYY-MM-DD) (optional)"
+                },
+                {
+                  "key": "endDate",
+                  "value": "",
+                  "description": "Filter by end date (YYYY-MM-DD) (optional)"
+                }
+              ]
+            },
+            "description": "Get detailed audit logs for all approval system activities including who did what and when"
+          },
+          "response": []
+        },
+        {
+          "name": "Retry Failed Approval",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/:id/retry",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                ":id",
+                "retry"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "approval-uuid-here",
+                  "description": "Approval ID"
+                }
+              ]
+            },
+            "description": "Retry a failed approval operation. Useful for handling transient errors or system issues."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Background Job Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/background-jobs/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "background-jobs",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "job-uuid-here",
+                  "description": "Background job ID"
+                }
+              ]
+            },
+            "description": "Get status of background approval processing jobs (bulk operations, notifications, etc.)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Approval Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications?page=1&limit=10&read=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "read",
+                  "value": "",
+                  "description": "Filter by read status: true, false (optional)"
+                }
+              ]
+            },
+            "description": "Get approval-related notifications for the admin"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/:id/read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                ":id",
+                "read"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "notification-uuid-here",
+                  "description": "Notification ID"
+                }
+              ]
+            },
+            "description": "Mark a specific approval notification as read"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Approval Config",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/approvals/config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "approvals",
+                "config"
+              ]
+            },
+            "description": "Get approval system configuration including entity types, change types, approval workflows, and system settings"
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }

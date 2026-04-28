@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors, pendingChanges } from '../schema';
+import { users, students, faculty, instructions, enrollments, academicHistory, skills, violations, affiliations, events, schedules, research, uploads, auditLogs, facultySkills, facultyAffiliations, attendance, notifications, financialRecords, researchApplications, studentAdvisors, pendingChanges, approvals } from '../schema';
 import { seedUsers } from './users.seed';
 import { seedStudents } from './students.seed';
 import { seedFaculty } from './faculty.seed';
@@ -22,6 +22,7 @@ import { seedFinancialRecords } from './financialRecords.seed';
 import { seedResearchApplications } from './researchApplications.seed';
 import { seedAdvisors } from './advisors.seed';
 import { seedPendingChanges } from './pendingChanges.seed';
+import { seedApprovals } from './approvals.seed';
 import { sql } from 'drizzle-orm';
 
 /**
@@ -44,12 +45,12 @@ export async function runSeeders() {
   try {
     // Check if users table has data
     const usersHasData = await hasData('users');
-    let userIds: Array<{ id: string; role: string }> = [];
+    let userIds: Array<{ id: string; role: string; email: string }> = [];
 
     if (usersHasData) {
       console.log('ℹ️  Users table already has data, skipping user seeding...');
       // Get existing user IDs for reference
-      const existingUsers = await db.select({ id: users.id, role: users.role }).from(users);
+      const existingUsers = await db.select({ id: users.id, role: users.role, email: users.email }).from(users);
       userIds = existingUsers;
       console.log(`📊 Found ${userIds.length} existing users\n`);
     } else {
@@ -73,20 +74,14 @@ export async function runSeeders() {
       console.log(`✅ Created ${studentIds.length} students\n`);
     }
 
-    // Check if faculty table has data
-    const facultyHasData = await hasData('faculty');
-    let facultyIds: string[] = [];
-
-    if (facultyHasData) {
-      console.log('ℹ️  Faculty table already has data, skipping faculty seeding...');
-      const existingFaculty = await db.select({ id: faculty.id }).from(faculty);
-      facultyIds = existingFaculty.map(f => f.id);
-      console.log(`📊 Found ${facultyIds.length} existing faculty members\n`);
-    } else {
-      console.log('📝 Seeding faculty...');
-      facultyIds = await seedFaculty(db, userIds.filter(u => u.role === 'faculty'));
-      console.log(`✅ Created ${facultyIds.length} faculty members\n`);
-    }
+    console.log('📝 Ensuring faculty seed records exist...');
+    const createdFacultyIds = await seedFaculty(
+      db,
+      userIds.filter(u => u.role === 'faculty' || u.role === 'department_chair')
+    );
+    const existingFaculty = await db.select({ id: faculty.id }).from(faculty);
+    const facultyIds = existingFaculty.map(f => f.id);
+    console.log(`✅ Faculty seed sync complete (${createdFacultyIds.length} created, ${facultyIds.length} total)\n`);
 
     // Check if instructions table has data
     const instructionsHasData = await hasData('instructions');
@@ -221,6 +216,21 @@ export async function runSeeders() {
       console.log('📝 Seeding research...');
       researchIds = await seedResearch(db, studentIds, facultyIds);
       console.log(`✅ Created ${researchIds.length} research records\n`);
+    }
+
+    // Check if approvals table has data
+    const approvalsHasData = await hasData('approvals');
+    let approvalIds: string[] = [];
+
+    if (approvalsHasData) {
+      console.log('ℹ️  Approvals table already has data, skipping approvals seeding...');
+      const existingApprovals = await db.select({ id: approvals.id }).from(approvals);
+      approvalIds = existingApprovals.map(a => a.id);
+      console.log(`📊 Found ${approvalIds.length} existing approval records\n`);
+    } else {
+      console.log('📝 Seeding approvals...');
+      approvalIds = await seedApprovals(db, studentIds, facultyIds, eventIds, researchIds, userIds);
+      console.log(`✅ Created ${approvalIds.length} approval records\n`);
     }
 
     // Check if uploads table has data
@@ -395,7 +405,8 @@ export async function runSeeders() {
       console.log(`ℹ️  Found ${pendingChangeIds.length} existing pending changes\n`);
     } else {
       console.log('📝 Seeding pending changes...');
-      pendingChangeIds = await seedPendingChanges(db, studentIds, facultyIds, eventIds, researchIds, userIds);
+      const userIdStrings = userIds.map(u => u.id);
+      pendingChangeIds = await seedPendingChanges(db, studentIds, facultyIds, eventIds, researchIds, userIdStrings);
       console.log(`✅ Created ${pendingChangeIds.length} pending changes\n`);
     }
 

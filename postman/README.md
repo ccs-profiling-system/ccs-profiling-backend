@@ -5,12 +5,15 @@ This directory contains Postman collections for testing the CCS Profiling Backen
 ## Collections
 
 ### 1. **ccs-profiling-api.postman_collection.json**
-Main API collection for general endpoints.
+Main API collection for general endpoints including admin approval system.
 
 ### 2. **faculty-portal-api.postman_collection.json**
-Complete API collection for Faculty Portal endpoints with automatic authentication.
+Complete API collection for Faculty Portal endpoints with automatic authentication. Includes department chair approval review endpoints.
 
-### 3. **student-portal-api.postman_collection.json**
+### 3. **secretary-portal-api.postman_collection.json**
+Complete API collection for Secretary Portal endpoints with automatic authentication. Includes approval submission and tracking endpoints.
+
+### 4. **student-portal-api.postman_collection.json**
 Complete API collection for Student Portal endpoints with automatic authentication.
 
 ## Test Credentials
@@ -35,6 +38,17 @@ All seeded users have the password: `pass1234`
 - `superadmin@ccs.edu`
 - Role: `admin`
 - Permissions: All permissions (`*.*`)
+
+### Secretary Accounts (1 account)
+- `secretary@ccs.edu`
+- Role: `secretary`
+- Permissions: All `secretary.*` permissions including approval submission
+
+### Department Chair Accounts
+- `chair.cs@ccs.edu` - Department Chair (Computer Science)
+- Role: `department_chair` (NOT `faculty`)
+- Permissions: All `chair.*` permissions including approval review
+- Password: `pass1234`
 
 ## RBAC Permissions
 
@@ -61,6 +75,26 @@ Students have access to the following permissions via the `student.*` wildcard:
 - `student.advisor.message` - Send messages to advisor
 - `student.advisor.appointment` - Book appointments with advisor
 
+### Approval System Permissions
+
+The approval system has role-specific permissions:
+
+**Secretary Permissions:**
+- `secretary.approval.submit` - Submit approval requests
+- `secretary.approval.view_own` - View own submissions
+- `secretary.approval.withdraw` - Withdraw pending submissions
+
+**Department Chair Permissions:**
+- `chair.approval.review` - Review approval requests
+- `chair.approval.approve` - Approve requests
+- `chair.approval.reject` - Reject requests
+- `chair.approval.bulk_action` - Perform bulk approve/reject
+
+**Admin Permissions:**
+- `admin.approval.*` - Full approval system access
+- Can view, approve, reject all requests system-wide
+- Access to audit logs and advanced features
+
 ## How to Use
 
 1. **Import Collection**: Import the desired collection into Postman
@@ -68,6 +102,47 @@ Students have access to the following permissions via the `student.*` wildcard:
 3. **Login**: Use the Login endpoint with test credentials
 4. **Auto-Authentication**: The collection automatically captures and uses the access token
 5. **Test Endpoints**: All subsequent requests will use the captured token
+
+## Using the Approval System
+
+The approval system allows secretaries to submit requests that require department chair or admin approval.
+
+### Workflow:
+
+1. **Secretary Submits Request** (Secretary Portal)
+   - Use `POST /secretary/approvals` to submit a new approval request
+   - Specify entity type (event, research, document, schedule)
+   - Provide change data and reason
+   - System auto-captures approval ID
+
+2. **Chair Reviews Request** (Faculty Portal - Chair)
+   - Use `GET /chair/approvals/pending` to see pending requests
+   - Use `GET /chair/approvals/:id` to view details
+   - Use `PATCH /chair/approvals/:id/approve` to approve
+   - Use `PATCH /chair/approvals/:id/reject` to reject with reason
+
+3. **Secretary Tracks Status** (Secretary Portal)
+   - Use `GET /secretary/approvals/my-submissions` to view all submissions
+   - Use `GET /secretary/approvals/my-submissions/:id` for details
+   - Use `PATCH /secretary/approvals/:id/withdraw` to withdraw if needed
+
+4. **Admin Oversight** (Main CCS API)
+   - Use `GET /api/admin/approvals/pending` to see all pending requests
+   - Use `GET /api/admin/approvals/stats` for system-wide statistics
+   - Use `GET /api/admin/approvals/audit-logs` for audit trail
+   - Can approve/reject any request with override capability
+
+### Approval Entity Types:
+- `event` - Event creation/modification
+- `research` - Research project changes
+- `document` - Document uploads
+- `schedule` - Schedule modifications
+
+### Approval Statuses:
+- `pending` - Awaiting review
+- `approved` - Approved by reviewer
+- `rejected` - Rejected with reason
+- `withdrawn` - Withdrawn by submitter
 
 ## Auto-Capture Features
 

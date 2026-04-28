@@ -390,7 +390,7 @@ export class ResearchService {
 
     // Validate status transition if status is being updated
     if (data.status && data.status !== existingResearch.status) {
-      this.validateStatusTransition(existingResearch.status, data.status);
+      this.validateStatusTransition(existingResearch.status || 'draft', data.status);
     }
 
     // Build update object

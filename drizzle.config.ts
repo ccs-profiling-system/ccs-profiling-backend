@@ -28,6 +28,9 @@
  * - financialRecords: Student financial records and payments (Student Portal API)
  * - researchApplications: Student research applications (Student Portal API)
  * - advisors: Student-advisor relationships, messages, slots, and appointments (Student Portal API)
+ * - approvals: Change request workflow for entity modifications (Approval System API)
+ * - approvalNotifications: Notifications for approval workflow events (Approval System API)
+ * - backgroundJobs: Background job processing for async operations (Approval System API)
  * 
  * MIGRATION COMMANDS:
  * - npm run db:generate - Generate migration files from schema changes
@@ -69,6 +72,9 @@ export default {
     './src/db/schema/researchApplications.ts',
     './src/db/schema/advisors.ts',
     './src/db/schema/pendingChanges.ts',
+    './src/db/schema/approvals.ts',
+    './src/db/schema/approvalNotifications.ts',
+    './src/db/schema/backgroundJobs.ts',
   ],
   out: './drizzle',
   driver: 'pg',

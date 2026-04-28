@@ -7,8 +7,26 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { requirePermission, checkOwnership, CheckOwnershipOptions } from '../middleware';
+import { requirePermission, checkOwnership } from '../middleware';
 import { Permission } from '../types';
+
+/**
+ * Options for checkOwnership middleware
+ * Re-exported from checkOwnership.middleware.ts
+ */
+export interface CheckOwnershipOptions {
+  /**
+   * Name of the request parameter containing the resource ID
+   * @default 'id'
+   */
+  paramName?: string;
+
+  /**
+   * Name of the ownership field in the resource
+   * If not provided, uses the default from RESOURCE_CONFIG
+   */
+  ownerField?: string;
+}
 
 /**
  * Middleware function type

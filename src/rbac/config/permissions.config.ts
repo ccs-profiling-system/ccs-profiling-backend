@@ -33,6 +33,14 @@ export const permissionConfig: PermissionConfig = {
    * 
    * Full system access with no restrictions.
    * Can perform all operations across all modules.
+   * 
+   * Approval System Permissions:
+   * - approval.review: Review all approval requests
+   * - approval.approve: Approve any request
+   * - approval.reject: Reject any request
+   * - approval.bulk: Perform bulk operations
+   * - approval.stats: View system-wide statistics
+   * - approval.retry: Retry failed operations
    */
   [Role.ADMIN]: {
     allow: ['*.*'],
@@ -81,6 +89,13 @@ export const permissionConfig: PermissionConfig = {
     allow: [
       // Department Chair Portal API (all chair.* permissions)
       'chair.*',
+      
+      // Approval System Permissions
+      'approval.review',
+      'approval.approve',
+      'approval.reject',
+      'approval.bulk',
+      'approval.stats',
       
       // Schedule Management
       'schedule.*',
@@ -320,6 +335,11 @@ export const permissionConfig: PermissionConfig = {
     allow: [
       // Secretary Portal API (all secretary.* permissions)
       'secretary.*',
+      
+      // Approval System Permissions
+      'approval.submit',
+      'approval.read',
+      'approval.withdraw',
       
       // Student Management (legacy)
       'student.*',

@@ -134,14 +134,14 @@ export class MaterialService {
 
     // Validate file extension
     const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
-    if (!fileExtension || !FILE_VALIDATION.ALLOWED_TYPES.includes(fileExtension)) {
+    if (!fileExtension || !FILE_VALIDATION.ALLOWED_TYPES.includes(fileExtension as any)) {
       throw new FileValidationError(
         `File type not allowed. Allowed types: ${FILE_VALIDATION.ALLOWED_TYPES.join(', ')}`
       );
     }
 
     // Validate MIME type
-    if (!FILE_VALIDATION.ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+    if (!FILE_VALIDATION.ALLOWED_MIME_TYPES.includes(file.mimetype as any)) {
       throw new FileValidationError(
         `Invalid file MIME type. Allowed types: ${FILE_VALIDATION.ALLOWED_TYPES.join(', ')}`
       );
