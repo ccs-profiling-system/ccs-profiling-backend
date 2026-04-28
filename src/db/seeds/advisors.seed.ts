@@ -2,13 +2,6 @@ import { Database } from '../index';
 import { studentAdvisors, advisorMessages, advisorSlots, advisorAppointments } from '../schema/advisors';
 import { generateUUIDv7 } from '../../shared/utils/uuid';
 
-interface MessageSeed {
-  sender_role: 'student' | 'faculty';
-  message_content: string;
-  is_read: boolean;
-  daysAgo: number;
-}
-
 const studentMessages = [
   'Good day Professor! I would like to schedule a meeting to discuss my academic progress and course selection for next semester.',
   'Hello Sir/Ma\'am, I need guidance on choosing my elective courses. When would be a good time to meet?',
@@ -25,7 +18,7 @@ const facultyMessages = [
   'Hello! I\'ve noted your concerns. Let\'s schedule a meeting to address them properly.',
 ];
 
-function generateTimeSlots(baseDate: Date, facultyId: string): Array<{
+function generateTimeSlots(baseDate: Date, _facultyId: string): Array<{
   slot_date: string;
   start_time: string;
   end_time: string;
@@ -173,13 +166,13 @@ export async function seedAdvisors(
       // If slot is booked, create an appointment
       if (slotData.is_booked) {
         const appointmentId = generateUUIDv7();
-        // Find a student assigned to this faculty
-        const assignedStudents = createdAdvisors.filter(async (advisorId) => {
-          const advisor = await db.query.studentAdvisors.findFirst({
-            where: (advisors, { eq }) => eq(advisors.faculty_id, facultyId),
-          });
-          return advisor !== undefined;
-        });
+        // Find a student assigned to this faculty (unused for now, using random selection)
+        // const assignedStudents = createdAdvisors.filter(async (advisorId) => {
+        //   const advisor = await db.query.studentAdvisors.findFirst({
+        //     where: (advisors, { eq }) => eq(advisors.faculty_id, facultyId),
+        //   });
+        //   return advisor !== undefined;
+        // });
 
         const randomStudentId = studentIds[Math.floor(Math.random() * studentIds.length)];
 

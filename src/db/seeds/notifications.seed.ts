@@ -88,9 +88,9 @@ const notificationTemplates: NotificationSeed[] = [
 ];
 
 export async function seedNotifications(db: Database, studentIds: string[]) {
-  const createdNotifications: string[] = [];
-
   console.log('  Creating notifications...');
+
+  const notificationsToInsert = [];
 
   // Create notifications for each student
   for (const studentId of studentIds) {
@@ -104,7 +104,7 @@ export async function seedNotifications(db: Database, studentIds: string[]) {
       const id = generateUUIDv7();
       const createdAt = new Date(Date.now() - template.daysAgo * 24 * 60 * 60 * 1000);
 
-      await db.insert(notifications).values({
+      notificationsToInsert.push({
         id,
         student_id: studentId,
         title: template.title,
@@ -115,12 +115,21 @@ export async function seedNotifications(db: Database, studentIds: string[]) {
         created_at: createdAt,
         updated_at: template.read_at || createdAt,
       });
-
-      createdNotifications.push(id);
     }
   }
 
-  console.log(`  - Created ${createdNotifications.length} notifications for ${studentIds.length} students`);
+  // Batch insert in chunks of 500 to avoid query size limits
+  const chunkSize = 500;
+  const createdNotifications: string[] = [];
+  
+  for (let i = 0; i < notificationsToInsert.length; i += chunkSize) {
+    const chunk = notificationsToInsert.slice(i, i + chunkSize);
+    const inserted = await db.insert(notifications).values(chunk).returning({ id: notifications.id });
+    createdNotifications.push(...inserted.map(n => n.id));
+    console.log(`  - Inserted ${inserted.length} notifications (${i + inserted.length}/${notificationsToInsert.length})`);
+  }
+
+  console.log(`  ✅ Created ${createdNotifications.length} notifications for ${studentIds.length} students`);
 
   return createdNotifications;
 }

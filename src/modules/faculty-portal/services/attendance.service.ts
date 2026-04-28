@@ -7,7 +7,7 @@
  * 
  */
 
-import { eq, and, isNull, gte, lte, inArray, sql } from 'drizzle-orm';
+import { eq, and, isNull, gte, lte, inArray } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { attendance, students, enrollments } from '../../../db/schema';
 import { AttendanceRecordDTO, AttendanceStatus } from '../types';

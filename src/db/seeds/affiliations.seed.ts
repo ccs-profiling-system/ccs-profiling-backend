@@ -106,50 +106,72 @@ const affiliationSeeds: AffiliationSeed[] = [
   },
 ];
 
+const organizationTemplates = [
+  'Computer Science Society',
+  'ACM Student Chapter',
+  'Programming Club',
+  'Robotics Club',
+  'Game Development Club',
+  'Women in Tech',
+  'Debate Club',
+  'Chess Club',
+  'Math Club',
+  'Cybersecurity Club',
+  'AI Research Group',
+  'Mobile App Developers',
+];
+
+const roles = ['President', 'Vice President', 'Secretary', 'Treasurer', 'Member', 'Lead Developer', 'Project Manager'];
+
 export async function seedAffiliations(
   db: Database,
   studentIds: string[]
 ) {
-  const createdRecords: string[] = [];
-
   console.log('  Creating affiliation records...');
 
-  for (const seed of affiliationSeeds) {
-    if (seed.studentIndex >= studentIds.length) {
-      console.warn(`  ⚠️  Skipping affiliation: student index ${seed.studentIndex} out of range`);
-      continue;
-    }
+  const affiliationsToInsert = [];
 
-    const studentId = studentIds[seed.studentIndex];
-    const id = generateUUIDv7();
+  for (const studentId of studentIds) {
+    // 60% of students have 1-3 affiliations, 40% have none
+    if (Math.random() < 0.6) {
+      const affiliationCount = Math.floor(Math.random() * 3) + 1;
+      const selectedOrgs = [...organizationTemplates]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, affiliationCount);
 
-    try {
-      const [record] = await db
-        .insert(affiliations)
-        .values({
+      for (const org of selectedOrgs) {
+        const id = generateUUIDv7();
+        const role = roles[Math.floor(Math.random() * roles.length)];
+        const isActive = Math.random() > 0.3; // 70% active
+        const startYear = 2023 + Math.floor(Math.random() * 3);
+        const startDate = `${startYear}-08-01`;
+        const endDate = isActive ? undefined : `${startYear + 1}-05-31`;
+
+        affiliationsToInsert.push({
           id,
           student_id: studentId,
-          organization_name: seed.organizationName,
-          role: seed.role,
-          start_date: seed.startDate,
-          end_date: seed.endDate,
-          is_active: seed.isActive,
-        })
-        .returning({ id: affiliations.id });
-
-      createdRecords.push(record.id);
-      console.log(
-        `  - Created: Student ${seed.studentIndex} → ${seed.organizationName} ` +
-        `(${seed.role || 'Member'}, ${seed.isActive ? 'Active' : 'Ended'})`
-      );
-    } catch (error: any) {
-      console.error(
-        `  ❌ Error creating affiliation for Student ${seed.studentIndex} → ${seed.organizationName}:`,
-        error.message
-      );
-      throw error;
+          organization_name: org,
+          role,
+          start_date: startDate,
+          end_date: endDate,
+          is_active: isActive,
+        });
+      }
     }
   }
+
+  // Batch insert in chunks of 500
+  const chunkSize = 500;
+  const createdRecords: string[] = [];
+  
+  for (let i = 0; i < affiliationsToInsert.length; i += chunkSize) {
+    const chunk = affiliationsToInsert.slice(i, i + chunkSize);
+    const inserted = await db.insert(affiliations).values(chunk).returning({ id: affiliations.id });
+    createdRecords.push(...inserted.map(a => a.id));
+    console.log(`  - Inserted ${inserted.length} affiliations (${i + inserted.length}/${affiliationsToInsert.length})`);
+  }
+
+  console.log(`  ✅ Created ${createdRecords.length} affiliation records for ${studentIds.length} students`);
 
   return createdRecords;
 }

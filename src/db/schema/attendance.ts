@@ -1,4 +1,4 @@
-import { pgTable, varchar, timestamp, date, text, index, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, date, text, index, uuid } from 'drizzle-orm/pg-core';
 import { uuidPrimaryKey, timestamps } from './utils';
 import { students } from './students';
 import { instructions } from './instructions';

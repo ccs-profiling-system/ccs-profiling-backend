@@ -76,8 +76,10 @@ export class RosterController {
         success: true,
         data: roster,
       });
+      return;
     } catch (error) {
       next(error);
+      return;
     }
   };
 }

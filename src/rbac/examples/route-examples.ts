@@ -31,11 +31,12 @@ const emptyResource: Record<string, never> = {};
  */
 router.get('/students',
   requirePermission('student.read'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch all students
       const students: unknown[] = emptyList; // await studentService.findAll();
       res.json(students);
+      return;
     } catch (error) {
       next(error);
     }
@@ -49,11 +50,12 @@ router.get('/students',
  */
 router.get('/schedules',
   requirePermission('schedule.read'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch all schedules
       const schedules: unknown[] = emptyList; // await scheduleService.findAll();
       res.json(schedules);
+      return;
     } catch (error) {
       next(error);
     }
@@ -67,7 +69,7 @@ router.get('/schedules',
  */
 router.post('/students',
   requirePermission('student.create'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: create student
       const student = emptyResource; // await studentService.create(req.body);
@@ -85,7 +87,7 @@ router.post('/students',
  */
 router.post('/research',
   requirePermission(['research.create', 'research.submit']),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: create research
       const research = emptyResource; // await researchService.create(req.body);
@@ -103,7 +105,7 @@ router.post('/research',
  */
 router.get('/analytics/dashboard',
   requirePermission('analytics.read'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch analytics
       const analytics = emptyResource; // await analyticsService.getDashboard();
@@ -128,7 +130,7 @@ router.get('/analytics/dashboard',
 router.put('/instructions/:id',
   requirePermission('instruction.update'),
   checkOwnership('instruction'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update instruction
       const instruction = emptyResource; // await instructionService.update(req.params.id, req.body);
@@ -148,7 +150,7 @@ router.put('/instructions/:id',
 router.delete('/research/:id',
   requirePermission('research.delete'),
   checkOwnership('research'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: delete research
       // await researchService.delete(req.params.id);
@@ -168,7 +170,7 @@ router.delete('/research/:id',
 router.put('/students/:id/profile',
   requirePermission('student.update'),
   checkOwnership('student'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update student profile
       const student = emptyResource; // await studentService.updateProfile(req.params.id, req.body);
@@ -187,7 +189,7 @@ router.put('/students/:id/profile',
 router.put('/students/:studentId/academic-history',
   requirePermission('academic_history.update'),
   checkOwnership('student', { paramName: 'studentId' }),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update academic history
       const history = emptyResource; // await academicHistoryService.update(req.params.studentId, req.body);
@@ -206,7 +208,7 @@ router.put('/students/:studentId/academic-history',
 router.put('/enrollments/:id',
   requirePermission('enrollment.update'),
   checkOwnership('enrollment', { ownerField: 'student_id' }),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update enrollment
       const enrollment = emptyResource; // await enrollmentService.update(req.params.id, req.body);
@@ -225,7 +227,7 @@ router.put('/enrollments/:id',
 router.get('/students/:id/profile',
   requirePermission('student.read_own'),
   checkOwnership('student'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: fetch student profile
       const student = emptyResource; // await studentService.findById(req.params.id);
@@ -250,7 +252,7 @@ router.get('/students/:id/profile',
 router.post('/schedules/:id/approve',
   requirePermission('schedule.approve'),
   // checkWorkflow('schedule'), // Future: validates pending_approval state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: approve schedule
       const schedule = emptyResource; // await scheduleService.approve(req.params.id);
@@ -270,7 +272,7 @@ router.post('/schedules/:id/approve',
 router.post('/research/:id/submit',
   requirePermission('research.submit'),
   // checkWorkflow('research'), // Future: validates draft state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: submit research
       const research = emptyResource; // await researchService.submit(req.params.id);
@@ -290,7 +292,7 @@ router.post('/research/:id/submit',
 router.post('/events/:id/reject',
   requirePermission('event.reject'),
   // checkWorkflow('event'), // Future: validates pending_approval state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: reject event
       const event = emptyResource; // await eventService.reject(req.params.id, req.body.reason);
@@ -310,7 +312,7 @@ router.post('/events/:id/reject',
 router.post('/schedules/:id/publish',
   requirePermission('schedule.publish'),
   // checkWorkflow('schedule'), // Future: validates approved state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: publish schedule
       const schedule = emptyResource; // await scheduleService.publish(req.params.id);
@@ -330,7 +332,7 @@ router.post('/schedules/:id/publish',
 router.post('/enrollments/:id/approve',
   requirePermission('enrollment.approve'),
   // checkWorkflow('enrollment'), // Future: validates pending_approval state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: approve enrollment
       const enrollment = emptyResource; // await enrollmentService.approve(req.params.id);
@@ -356,7 +358,7 @@ router.post('/research/:id/submit',
   requirePermission('research.submit'),
   checkOwnership('research'),
   // checkWorkflow('research'), // Future: validates draft state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: submit research
       const research = emptyResource; // await researchService.submit(req.params.id);
@@ -377,7 +379,7 @@ router.put('/instructions/:id/draft',
   requirePermission('instruction.update'),
   checkOwnership('instruction'),
   // checkWorkflow('instruction'), // Future: validates draft state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update instruction
       const instruction = emptyResource; // await instructionService.update(req.params.id, req.body);
@@ -398,7 +400,7 @@ router.post('/events/:id/withdraw',
   requirePermission('event.withdraw'),
   checkOwnership('event'),
   // checkWorkflow('event'), // Future: validates pending_approval state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: withdraw event
       const event = emptyResource; // await eventService.withdraw(req.params.id);
@@ -419,7 +421,7 @@ router.post('/research/:id/resubmit',
   requirePermission('research.resubmit'),
   checkOwnership('research'),
   // checkWorkflow('research'), // Future: validates rejected state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: resubmit research
       const research = emptyResource; // await researchService.resubmit(req.params.id, req.body);
@@ -440,7 +442,7 @@ router.put('/schedules/:id/draft',
   requirePermission('schedule.update'),
   checkOwnership('schedule'),
   // checkWorkflow('schedule'), // Future: validates draft state
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update schedule
       const schedule = emptyResource; // await scheduleService.update(req.params.id, req.body);
@@ -467,12 +469,14 @@ router.put('/students/:id',
       return checkOwnership('student')(req, res, next);
     }
     next();
+    return;
   },
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: update student
       const student = emptyResource; // await studentService.update(req.params.id, req.body);
       res.json(student);
+      return;
     } catch (error) {
       next(error);
     }
@@ -487,7 +491,7 @@ router.post('/students/:studentId/enrollments/:enrollmentId/approve',
   requirePermission('enrollment.approve'),
   checkOwnership('student', { paramName: 'studentId' }),
   checkOwnership('enrollment', { paramName: 'enrollmentId' }),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic: approve enrollment
       const enrollment = emptyResource; // await enrollmentService.approve(req.params.enrollmentId);
@@ -513,10 +517,11 @@ const PERMISSIONS = {
 
 router.get('/students',
   requirePermission(PERMISSIONS.STUDENT_READ),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const students: unknown[] = emptyList; // await studentService.findAll();
       res.json(students);
+      return;
     } catch (error) {
       next(error);
     }
@@ -557,7 +562,7 @@ router.put('/instructions/:id',
     ownership: { resourceType: 'instruction' },
     // workflow: { resourceType: 'instruction' }
   }),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const instruction = emptyResource; // await instructionService.update(req.params.id, req.body);
       res.json(instruction);
@@ -574,7 +579,7 @@ router.put('/instructions/:id',
 router.post('/research/:id/approve',
   requirePermission('research.approve'),
   // checkWorkflow('research'),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, next: NextFunction) => {
     try {
       // Business logic with error handling
       const research = emptyResource; // await researchService.approve(req.params.id);
@@ -584,9 +589,11 @@ router.post('/research/:id/approve',
       }
       
       res.json(research);
+      return;
     } catch (error) {
       // Pass errors to error handler middleware
       next(error);
+      return;
     }
   }
 );

@@ -13,7 +13,7 @@ import {
   events, 
   eventParticipants,
 } from '../../../db/schema';
-import { NotFoundError } from '../../../shared/errors';
+// import { NotFoundError } from '../../../shared/errors';
 import { 
   EventDTO, 
   RegisteredEventDTO,

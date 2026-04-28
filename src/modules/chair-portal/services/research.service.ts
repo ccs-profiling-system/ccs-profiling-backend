@@ -380,7 +380,7 @@ export class ResearchService {
     }
 
     // Update research status
-    const updateResult = await db
+    await db
       .update(research)
       .set({
         status: 'approved',
@@ -388,8 +388,6 @@ export class ResearchService {
       })
       .where(eq(research.id, id))
       .returning();
-
-    const updatedResearch = updateResult[0];
 
     // Create audit log entry
     const auditLogData: CreateAuditLogData = {
@@ -448,7 +446,7 @@ export class ResearchService {
     }
 
     // Update research status
-    const updateResult = await db
+    await db
       .update(research)
       .set({
         status: 'rejected',
@@ -456,8 +454,6 @@ export class ResearchService {
       })
       .where(eq(research.id, id))
       .returning();
-
-    const updatedResearch = updateResult[0];
 
     // Create audit log entry
     const auditLogData: CreateAuditLogData = {

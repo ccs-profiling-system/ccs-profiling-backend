@@ -274,7 +274,7 @@ export class ScheduleService {
   async approveSchedule(
     id: string,
     departmentId: string,
-    userId: string
+    _userId: string
   ): Promise<ScheduleDTO | null> {
     // Get schedule with related data
     const result = await db

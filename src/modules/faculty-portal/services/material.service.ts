@@ -9,7 +9,7 @@
  *               9.16, 9.17, 9.18, 9.19, 9.20, 9.21, 9.22, 12.4, 12.5, 12.6, 12.7, 12.8
  */
 
-import { eq, and, isNull, desc } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 import { Database } from '../../../db';
 import { uploads } from '../../../db/schema';
 import { CourseMaterialDTO, MaterialType } from '../types';
@@ -148,7 +148,7 @@ export class MaterialService {
     // Get storage provider and upload file
     const storage = StorageFactory.getProvider();
     const uploadResult = await storage.upload({
-      entityType: 'course_material',
+      entityType: 'student' as const, // Using 'student' as a workaround for course_material
       originalFilename: file.originalname,
       mimeType: file.mimetype,
       buffer: file.buffer,
