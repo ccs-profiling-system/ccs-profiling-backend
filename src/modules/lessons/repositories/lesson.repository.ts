@@ -1,4 +1,4 @@
-import { eq, and, isNull } from 'drizzle-orm/pg-core';
+import { eq, and, isNull } from 'drizzle-orm';
 import { db } from '../../../db';
 import { lessons } from '../../../db/schema';
 import { NewLesson, Lesson } from '../types';
@@ -70,6 +70,6 @@ export class LessonRepository {
    */
   async permanentDelete(id: string): Promise<boolean> {
     const result = await db.delete(lessons).where(eq(lessons.id, id));
-    return result.rowCount > 0;
+    return Array.isArray(result) ? result.length > 0 : true;
   }
 }

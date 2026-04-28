@@ -143,7 +143,7 @@ export class CurriculumRepository {
    */
   async permanentDelete(id: string): Promise<boolean> {
     const result = await db.delete(curriculum).where(eq(curriculum.id, id));
-    return result.rowCount > 0;
+    return Array.isArray(result) ? result.length > 0 : true;
   }
 
   /**

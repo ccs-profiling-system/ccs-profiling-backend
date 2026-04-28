@@ -13,18 +13,18 @@ import { ScheduleRepository } from './repositories/schedule.repository';
 import { ScheduleService } from './services/schedule.service';
 import { ScheduleController } from './controllers/schedule.controller';
 import { createScheduleRoutes } from './routes/schedule.routes';
-import { InstructionRepository } from '../instructions/repositories/instruction.repository';
+import { SubjectRepository } from '../subjects/repositories/subject.repository';
 import { FacultyRepository } from '../faculty/repositories/faculty.repository';
 
 // Initialize repositories
 const scheduleRepository = new ScheduleRepository(db);
-const instructionRepository = new InstructionRepository(db);
+const subjectRepository = new SubjectRepository();
 const facultyRepository = new FacultyRepository(db);
 
 // Initialize service
 const scheduleService = new ScheduleService(
   scheduleRepository,
-  instructionRepository,
+  subjectRepository,
   facultyRepository
 );
 

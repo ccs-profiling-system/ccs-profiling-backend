@@ -15,10 +15,10 @@ import { dayEnum, semesterEnum } from './common.schemas';
  */
 export const createScheduleSchema = z
   .object({
-    instruction_id: z
+    subject_id: z
       .string()
-      .uuid('Instruction ID must be a valid UUID')
-      .min(1, 'Instruction ID is required'),
+      .uuid('Subject ID must be a valid UUID')
+      .min(1, 'Subject ID is required'),
     faculty_id: z
       .string()
       .uuid('Faculty ID must be a valid UUID')

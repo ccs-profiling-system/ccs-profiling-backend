@@ -45,7 +45,7 @@ export class PdfExportService {
     // Finalize PDF
     doc.end();
 
-    return doc;
+    return doc as unknown as Readable;
   }
 
   /**
@@ -89,6 +89,6 @@ export class PdfExportService {
     // Finalize PDF
     doc.end();
 
-    return doc;
+    return doc as unknown as Readable;
   }
 }

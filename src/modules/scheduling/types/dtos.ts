@@ -9,7 +9,7 @@
  */
 export interface CreateScheduleDTO {
   schedule_type: 'class' | 'exam' | 'consultation';
-  instruction_id?: string;
+  subject_id?: string;
   faculty_id?: string;
   room: string;
   day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -24,7 +24,7 @@ export interface CreateScheduleDTO {
  */
 export interface UpdateScheduleDTO {
   schedule_type?: 'class' | 'exam' | 'consultation';
-  instruction_id?: string;
+  subject_id?: string;
   faculty_id?: string;
   room?: string;
   day?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -40,7 +40,7 @@ export interface UpdateScheduleDTO {
 export interface ScheduleResponseDTO {
   id: string;
   schedule_type: string;
-  instruction_id?: string;
+  subject_id?: string;
   subject_code?: string;
   subject_name?: string;
   faculty_id?: string;
@@ -89,7 +89,7 @@ export interface ScheduleFilters {
   day?: string;
   schedule_type?: string;
   faculty_id?: string;
-  instruction_id?: string;
+  subject_id?: string;
   semester?: string;
   academic_year?: string;
   page?: number;

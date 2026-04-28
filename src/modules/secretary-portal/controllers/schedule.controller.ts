@@ -209,16 +209,7 @@ export async function createScheduleController(
 
     // Create schedule via service
     const schedule = await createSchedule(
-      bodyResult.data as {
-        instruction_id: string;
-        faculty_id: string;
-        room: string;
-        day: string;
-        start_time: string;
-        end_time: string;
-        semester: string;
-        academic_year: string;
-      },
+      bodyResult.data,
       userId,
       ipAddress,
       userAgent

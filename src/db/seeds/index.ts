@@ -10,7 +10,7 @@ import { seedSkills } from './skills.seed';
 import { seedViolations } from './violations.seed';
 import { seedAffiliations } from './affiliations.seed';
 import { seedEvents } from './events.seed';
-import { seedSchedules } from './schedules.seed';
+// import { seedSchedules } from './schedules.seed'; // Disabled - needs schema update
 import { seedResearch } from './research.seed';
 import { seedUploads } from './uploads.seed';
 import { seedAuditLogs } from './auditLogs.seed';
@@ -198,9 +198,9 @@ export async function runSeeders() {
       scheduleIds = existingSchedules.map(s => s.id);
       console.log(`📊 Found ${scheduleIds.length} existing schedule records\n`);
     } else {
-      console.log('📝 Seeding schedules...');
-      scheduleIds = await seedSchedules(db, instructionIds, facultyIds);
-      console.log(`✅ Created ${scheduleIds.length} schedule records\n`);
+      console.log('⚠️  Schedules seeding is disabled - schema migration in progress');
+      // scheduleIds = await seedSchedules(db, instructionIds, facultyIds);
+      console.log(`⚠️  Skipped schedule seeding\n`);
     }
 
     // Check if research table has data

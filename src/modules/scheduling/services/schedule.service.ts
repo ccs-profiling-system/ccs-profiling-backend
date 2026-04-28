@@ -5,7 +5,7 @@
  */
 
 import { ScheduleRepository } from '../repositories/schedule.repository';
-import { InstructionRepository } from '../../instructions/repositories/instruction.repository';
+import { SubjectRepository } from '../../subjects/repositories/subject.repository';
 import { FacultyRepository } from '../../faculty/repositories/faculty.repository';
 import { NotFoundError, ConflictError } from '../../../shared/errors';
 import { generateUUIDv7 } from '../../../shared/utils/uuid';
@@ -21,7 +21,7 @@ import {
 export class ScheduleService {
   constructor(
     private scheduleRepository: ScheduleRepository,
-    private instructionRepository: InstructionRepository,
+    private subjectRepository: SubjectRepository,
     private facultyRepository: FacultyRepository
   ) {}
 
@@ -81,11 +81,11 @@ export class ScheduleService {
    * Create a new schedule with conflict detection
    */
   async createSchedule(data: CreateScheduleDTO): Promise<ScheduleResponseDTO> {
-    // Verify instruction exists if provided
-    if (data.instruction_id) {
-      const instruction = await this.instructionRepository.findById(data.instruction_id);
-      if (!instruction) {
-        throw new NotFoundError('Instruction not found');
+    // Verify subject exists if provided
+    if (data.subject_id) {
+      const subject = await this.subjectRepository.findById(data.subject_id);
+      if (!subject) {
+        throw new NotFoundError('Subject not found');
       }
     }
 
@@ -109,8 +109,8 @@ export class ScheduleService {
     if (conflicts.length > 0) {
       const conflictDetails = conflicts.map((c) => {
         const schedule = c.schedule;
-        const instruction = c.instruction;
-        const subjectInfo = instruction?.subject_code || 'Event';
+        const subject = c.subject;
+        const subjectInfo = subject?.code || 'Event';
         return `${subjectInfo} (${schedule.start_time}-${schedule.end_time})`;
       }).join(', ');
 
@@ -128,7 +128,7 @@ export class ScheduleService {
     const schedule = await this.scheduleRepository.create({
       id,
       schedule_type: data.schedule_type,
-      instruction_id: data.instruction_id,
+      subject_id: data.subject_id,
       faculty_id: data.faculty_id,
       room: data.room,
       day: data.day,
@@ -138,7 +138,7 @@ export class ScheduleService {
       academic_year: data.academic_year,
     });
 
-    // Fetch with instruction and faculty details for response
+    // Fetch with subject and faculty details for response
     const result = await this.scheduleRepository.findById(schedule.id);
     if (!result) {
       throw new NotFoundError('Schedule not found after creation');
@@ -157,11 +157,11 @@ export class ScheduleService {
       throw new NotFoundError('Schedule not found');
     }
 
-    // Verify instruction exists if being updated
-    if (data.instruction_id) {
-      const instruction = await this.instructionRepository.findById(data.instruction_id);
-      if (!instruction) {
-        throw new NotFoundError('Instruction not found');
+    // Verify subject exists if being updated
+    if (data.subject_id) {
+      const subject = await this.subjectRepository.findById(data.subject_id);
+      if (!subject) {
+        throw new NotFoundError('Subject not found');
       }
     }
 
@@ -189,8 +189,8 @@ export class ScheduleService {
       if (conflicts.length > 0) {
         const conflictDetails = conflicts.map((c) => {
           const schedule = c.schedule;
-          const instruction = c.instruction;
-          const subjectInfo = instruction?.subject_code || 'Event';
+          const subject = c.subject;
+          const subjectInfo = subject?.code || 'Event';
           return `${subjectInfo} (${schedule.start_time}-${schedule.end_time})`;
         }).join(', ');
 
@@ -230,15 +230,15 @@ export class ScheduleService {
    */
   private toResponseDTO(result: any): ScheduleResponseDTO {
     const schedule = result.schedule;
-    const instruction = result.instruction;
+    const subject = result.subject;
     const facultyMember = result.faculty;
 
     return {
       id: schedule.id,
       schedule_type: schedule.schedule_type,
-      instruction_id: schedule.instruction_id || undefined,
-      subject_code: instruction?.subject_code || undefined,
-      subject_name: instruction?.subject_name || undefined,
+      subject_id: schedule.subject_id || undefined,
+      subject_code: subject?.code || undefined,
+      subject_name: subject?.name || undefined,
       faculty_id: schedule.faculty_id || undefined,
       faculty_name: facultyMember 
         ? `${facultyMember.first_name} ${facultyMember.last_name}`.trim()

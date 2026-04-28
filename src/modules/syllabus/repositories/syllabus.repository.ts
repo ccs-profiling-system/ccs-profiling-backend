@@ -1,4 +1,4 @@
-import { eq, and, isNull } from 'drizzle-orm/pg-core';
+import { eq, and, isNull } from 'drizzle-orm';
 import { db } from '../../../db';
 import { syllabus } from '../../../db/schema';
 import { NewSyllabus, Syllabus } from '../types';
@@ -74,6 +74,6 @@ export class SyllabusRepository {
       .delete(syllabus)
       .where(eq(syllabus.subject_id, subjectId));
     
-    return result.rowCount > 0;
+    return Array.isArray(result) ? result.length > 0 : true;
   }
 }

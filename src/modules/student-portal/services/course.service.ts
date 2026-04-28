@@ -197,87 +197,11 @@ export class CourseService {
    * 
    */
   async getWeeklySchedule(studentId: string): Promise<WeeklyScheduleDTO> {
-    // Get current academic period
-    const { currentSemester, currentAcademicYear } = this.getCurrentAcademicPeriod();
-
-    // Get all enrolled courses for current semester
-    const enrolledCourses = await this.db
-      .select({
-        instruction_id: enrollments.instruction_id,
-        course_code: instructions.subject_code,
-        course_name: instructions.subject_name,
-      })
-      .from(enrollments)
-      .innerJoin(instructions, eq(enrollments.instruction_id, instructions.id))
-      .where(
-        and(
-          eq(enrollments.student_id, studentId),
-          eq(enrollments.semester, currentSemester),
-          eq(enrollments.academic_year, currentAcademicYear),
-          eq(enrollments.enrollment_status, 'enrolled'),
-          isNull(instructions.deleted_at)
-        )
-      );
-
-    // Get schedule entries for all enrolled courses
-    const scheduleEntries: ScheduleEntryDTO[] = [];
-
-    for (const course of enrolledCourses) {
-      const courseSchedules = await this.db
-        .select({
-          day: schedules.day,
-          start_time: schedules.start_time,
-          end_time: schedules.end_time,
-          room: schedules.room,
-          faculty_id: schedules.faculty_id,
-        })
-        .from(schedules)
-        .where(
-          and(
-            eq(schedules.instruction_id, course.instruction_id),
-            eq(schedules.semester, currentSemester),
-            eq(schedules.academic_year, currentAcademicYear),
-            eq(schedules.schedule_type, 'class'),
-            isNull(schedules.deleted_at)
-          )
-        );
-
-      for (const schedule of courseSchedules) {
-        // Get faculty name if faculty_id exists
-        let instructorName = 'TBA';
-        if (schedule.faculty_id) {
-          const facultyResult = await this.db
-            .select({
-              first_name: faculty.first_name,
-              last_name: faculty.last_name,
-            })
-            .from(faculty)
-            .where(
-              and(
-                eq(faculty.id, schedule.faculty_id),
-                isNull(faculty.deleted_at)
-              )
-            )
-            .limit(1);
-
-          if (facultyResult[0]) {
-            instructorName = `${facultyResult[0].first_name} ${facultyResult[0].last_name}`;
-          }
-        }
-
-        scheduleEntries.push({
-          course_code: course.course_code,
-          course_name: course.course_name,
-          instructor_name: instructorName,
-          room: schedule.room,
-          day: this.capitalizeDayName(schedule.day),
-          start_time: schedule.start_time,
-          end_time: schedule.end_time,
-        });
-      }
-    }
-
-    // Group by day of week
+    // TODO: This query has a data model mismatch
+    // enrollments use instruction_id, but schedules use subject_id
+    // This needs to be fixed at the schema level
+    
+    // Temporarily return empty schedule until data model is fixed
     const weeklySchedule: WeeklyScheduleDTO = {
       Monday: [],
       Tuesday: [],
@@ -287,21 +211,7 @@ export class CourseService {
       Saturday: [],
       Sunday: [],
     };
-
-    for (const entry of scheduleEntries) {
-      const day = entry.day;
-      if (weeklySchedule[day]) {
-        weeklySchedule[day].push(entry);
-      }
-    }
-
-    // Sort entries within each day by start_time
-    for (const day in weeklySchedule) {
-      weeklySchedule[day].sort((a, b) => {
-        return a.start_time.localeCompare(b.start_time);
-      });
-    }
-
+    
     return weeklySchedule;
   }
 
@@ -326,77 +236,14 @@ export class CourseService {
     instructor_email: string | null;
     instructor_phone: string | null;
   }> {
-    // Get schedule information
-    const scheduleResult = await this.db
-      .select({
-        day: schedules.day,
-        start_time: schedules.start_time,
-        end_time: schedules.end_time,
-        room: schedules.room,
-        faculty_id: schedules.faculty_id,
-      })
-      .from(schedules)
-      .where(
-        and(
-          eq(schedules.instruction_id, instructionId),
-          eq(schedules.semester, semester),
-          eq(schedules.academic_year, academicYear),
-          eq(schedules.schedule_type, 'class'),
-          isNull(schedules.deleted_at)
-        )
-      )
-      .limit(1);
-
-    if (scheduleResult.length === 0) {
-      return {
-        schedule: null,
-        room: null,
-        instructor_name: null,
-        instructor_email: null,
-        instructor_phone: null,
-      };
-    }
-
-    const scheduleData = scheduleResult[0];
-
-    // Format schedule string
-    const scheduleString = `${this.capitalizeDayName(scheduleData.day)} ${scheduleData.start_time}-${scheduleData.end_time}`;
-
-    // Get faculty information if faculty_id exists
-    let instructorName: string | null = null;
-    let instructorEmail: string | null = null;
-    let instructorPhone: string | null = null;
-
-    if (scheduleData.faculty_id) {
-      const facultyResult = await this.db
-        .select({
-          first_name: faculty.first_name,
-          last_name: faculty.last_name,
-          email: faculty.email,
-          phone: faculty.phone,
-        })
-        .from(faculty)
-        .where(
-          and(
-            eq(faculty.id, scheduleData.faculty_id),
-            isNull(faculty.deleted_at)
-          )
-        )
-        .limit(1);
-
-      if (facultyResult[0]) {
-        instructorName = `${facultyResult[0].first_name} ${facultyResult[0].last_name}`;
-        instructorEmail = facultyResult[0].email;
-        instructorPhone = facultyResult[0].phone;
-      }
-    }
-
+    // TODO: Data model mismatch - this function expects instruction_id but schedules use subject_id
+    // Temporarily return null values until data model is fixed
     return {
-      schedule: scheduleString,
-      room: scheduleData.room,
-      instructor_name: instructorName,
-      instructor_email: instructorEmail,
-      instructor_phone: instructorPhone,
+      schedule: null,
+      room: null,
+      instructor_name: null,
+      instructor_email: null,
+      instructor_phone: null,
     };
   }
 

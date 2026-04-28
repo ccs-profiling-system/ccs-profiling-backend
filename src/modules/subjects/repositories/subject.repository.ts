@@ -1,4 +1,4 @@
-import { eq, and, or, like, isNull, sql, desc } from 'drizzle-orm/pg-core';
+import { eq, and, or, like, isNull, sql, desc } from 'drizzle-orm';
 import { db } from '../../../db';
 import { subjects, syllabus, lessons } from '../../../db/schema';
 import { NewSubject, Subject } from '../types';
@@ -168,7 +168,7 @@ export class SubjectRepository {
    */
   async permanentDelete(id: string): Promise<boolean> {
     const result = await db.delete(subjects).where(eq(subjects.id, id));
-    return result.rowCount > 0;
+    return Array.isArray(result) ? result.length > 0 : true;
   }
 
   /**

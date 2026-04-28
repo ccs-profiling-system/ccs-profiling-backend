@@ -5,7 +5,7 @@
  */
 
 import { db } from '../../../db';
-import { faculty, schedules, instructions } from '../../../db/schema';
+import { faculty, schedules, subjects } from '../../../db/schema';
 import { eq, and, isNull, or, ilike, sql, SQL } from 'drizzle-orm';
 import { FacultyDTO, PaginationParams, PaginatedResponse } from '../types';
 import { buildPaginationMeta, applyPagination } from '../utils/pagination';
@@ -23,11 +23,11 @@ export interface FacultyFilters {
 }
 
 /**
- * Teaching load item with schedule and instruction details
+ * Teaching load item with schedule and subject details
  */
 export interface TeachingLoadItem {
   schedule_id: string;
-  instruction_id: string;
+  subject_id: string | null;
   subject_code: string;
   subject_name: string;
   room: string;
@@ -374,13 +374,13 @@ export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
     throw new Error('Faculty not found');
   }
   
-  // Get teaching load by joining schedules with instructions
+  // Get teaching load by joining schedules with subjects
   const teachingLoad = await db
     .select({
       schedule_id: schedules.id,
-      instruction_id: schedules.instruction_id,
-      subject_code: instructions.subject_code,
-      subject_name: instructions.subject_name,
+      subject_id: schedules.subject_id,
+      subject_code: subjects.code,
+      subject_name: subjects.name,
       room: schedules.room,
       day: schedules.day,
       start_time: schedules.start_time,
@@ -389,12 +389,12 @@ export async function getTeachingLoad(id: string): Promise<TeachingLoadItem[]> {
       academic_year: schedules.academic_year,
     })
     .from(schedules)
-    .innerJoin(instructions, eq(schedules.instruction_id, instructions.id))
+    .innerJoin(subjects, eq(schedules.subject_id, subjects.id))
     .where(
       and(
         eq(schedules.faculty_id, id),
         isNull(schedules.deleted_at),
-        isNull(instructions.deleted_at)
+        isNull(subjects.deleted_at)
       )
     )
     .orderBy(schedules.academic_year, schedules.semester, schedules.day, schedules.start_time);

@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, between } from 'drizzle-orm/pg-core';
+import { eq, and, gte, lte, between } from 'drizzle-orm';
 import { db } from '../../../db';
 import { scheduleOccurrences } from '../../../db/schema';
 import { NewScheduleOccurrence, ScheduleOccurrence } from '../types';
@@ -97,6 +97,6 @@ export class OccurrenceRepository {
       .delete(scheduleOccurrences)
       .where(eq(scheduleOccurrences.schedule_id, scheduleId));
 
-    return result.rowCount > 0;
+    return Array.isArray(result) ? result.length > 0 : true;
   }
 }

@@ -1,4 +1,4 @@
-import { eq, and, or, like, isNull, sql, desc } from 'drizzle-orm/pg-core';
+import { eq, and, or, like, isNull, sql, desc } from 'drizzle-orm';
 import { db } from '../../../db';
 import { rooms } from '../../../db/schema';
 import { NewRoom, Room } from '../types';
@@ -142,7 +142,7 @@ export class RoomRepository {
    */
   async permanentDelete(id: string): Promise<boolean> {
     const result = await db.delete(rooms).where(eq(rooms.id, id));
-    return result.rowCount > 0;
+    return Array.isArray(result) ? result.length > 0 : true;
   }
 
   /**

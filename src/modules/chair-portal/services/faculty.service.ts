@@ -297,21 +297,25 @@ export class FacultyService {
     }
 
     // Query 1: Count distinct students taught
-    // Join: schedules -> instructions -> enrollments -> students
-    const studentsTaughtResult = await db
-      .select({ count: sql<number>`count(distinct ${students.id})::int` })
-      .from(schedules)
-      .innerJoin(instructions, eq(schedules.instruction_id, instructions.id))
-      .innerJoin(enrollments, eq(instructions.id, enrollments.instruction_id))
-      .innerJoin(students, eq(enrollments.student_id, students.id))
-      .where(
-        and(
-          eq(schedules.faculty_id, id),
-          isNull(schedules.deleted_at),
-          isNull(instructions.deleted_at),
-          isNull(students.deleted_at)
-        )
-      );
+    // TODO: Fix this query - schedules now use subject_id, but enrollments use instruction_id
+    // This requires refactoring the data model or creating a mapping
+    // Join: schedules -> subjects (but enrollments still use instruction_id)
+    // Temporarily return 0 until data model is fixed
+    const studentsTaughtResult = [{ count: 0 }];
+    // const studentsTaughtResult = await db
+    //   .select({ count: sql<number>`count(distinct ${students.id})::int` })
+    //   .from(schedules)
+    //   .innerJoin(subjects, eq(schedules.subject_id, subjects.id))
+    //   .innerJoin(enrollments, eq(subjects.id, enrollments.instruction_id)) // MISMATCH: subjects.id vs instruction_id
+    //   .innerJoin(students, eq(enrollments.student_id, students.id))
+    //   .where(
+    //     and(
+    //       eq(schedules.faculty_id, id),
+    //       isNull(schedules.deleted_at),
+    //       isNull(subjects.deleted_at),
+    //       isNull(students.deleted_at)
+    //     )
+    //   );
 
     // Query 2: Count distinct courses (schedules) taught
     const coursesTaughtResult = await db

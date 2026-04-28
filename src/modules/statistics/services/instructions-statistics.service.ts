@@ -1,6 +1,6 @@
 import { db } from '../../../db';
 import { curriculum, subjects } from '../../../db/schema';
-import { isNull, sql, eq } from 'drizzle-orm/pg-core';
+import { isNull, sql, eq } from 'drizzle-orm';
 
 /**
  * Instructions Statistics Service

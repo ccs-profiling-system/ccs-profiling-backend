@@ -1,6 +1,6 @@
 import { db } from '../../../db';
 import { schedules, rooms, faculty } from '../../../db/schema';
-import { isNull, sql, eq, and } from 'drizzle-orm/pg-core';
+import { isNull, sql, eq, and } from 'drizzle-orm';
 
 /**
  * Schedules Statistics Service

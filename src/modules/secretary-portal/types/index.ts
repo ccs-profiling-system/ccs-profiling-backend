@@ -131,7 +131,7 @@ export interface FacultyDTO {
 export interface ScheduleDTO {
   id: string;
   schedule_type: string;
-  instruction_id: string | null;
+  subject_id: string | null;
   faculty_id: string | null;
   room: string;
   day: DayOfWeek;

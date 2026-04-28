@@ -97,7 +97,7 @@ export async function validateCourseOwnership(
     .from(schedules)
     .where(
       and(
-        eq(schedules.instruction_id, courseId),
+        eq(schedules.subject_id, courseId),
         eq(schedules.faculty_id, facultyId),
         isNull(schedules.deleted_at)
       )
