@@ -206,7 +206,7 @@ routes.use('/v1/admin', exportRoutes);
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Department Chair Portal
-routes.use('/chair', chairPortalRouter);
+routes.use('/v1/chair', chairPortalRouter);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FACULTY PORTAL ROUTES (Authentication + faculty.* permissions required)

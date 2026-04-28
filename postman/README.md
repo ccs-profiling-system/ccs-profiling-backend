@@ -7,13 +7,16 @@ This directory contains Postman collections for testing the CCS Profiling Backen
 ### 1. **ccs-profiling-api.postman_collection.json**
 Main API collection for general endpoints including admin approval system.
 
-### 2. **faculty-portal-api.postman_collection.json**
+### 2. **chair-portal-api.postman_collection.json**
+Complete API collection for Chair Portal endpoints with automatic authentication. Includes read-only access to curriculum and subjects data with export functionality.
+
+### 3. **faculty-portal-api.postman_collection.json**
 Complete API collection for Faculty Portal endpoints with automatic authentication. Includes department chair approval review endpoints.
 
-### 3. **secretary-portal-api.postman_collection.json**
+### 4. **secretary-portal-api.postman_collection.json**
 Complete API collection for Secretary Portal endpoints with automatic authentication. Includes approval submission and tracking endpoints.
 
-### 4. **student-portal-api.postman_collection.json**
+### 5. **student-portal-api.postman_collection.json**
 Complete API collection for Student Portal endpoints with automatic authentication.
 
 ## Test Credentials
@@ -47,8 +50,36 @@ All seeded users have the password: `pass1234`
 ### Department Chair Accounts
 - `chair.cs@ccs.edu` - Department Chair (Computer Science)
 - Role: `department_chair` (NOT `faculty`)
-- Permissions: All `chair.*` permissions including approval review
+- Permissions: All `chair.*` permissions including approval review and curriculum read access
 - Password: `pass1234`
+
+### Chair Portal Permissions
+
+Department chairs have access to the following permissions:
+
+**Curriculum & Subjects (Read-Only):**
+- `chair.curriculum.read` - View curriculum and subjects data
+  - List curriculum with pagination and filters
+  - View curriculum details
+  - List subjects with pagination and filters
+  - View subject details
+  - Export curriculum to PDF and Excel
+  - View curriculum statistics
+
+**Approval Review:**
+- `chair.approval.review` - Review approval requests
+- `chair.approval.approve` - Approve requests
+- `chair.approval.reject` - Reject requests
+- `chair.approval.bulk_action` - Perform bulk approve/reject
+
+**Dashboard & Reports:**
+- `chair.dashboard.read` - View dashboard statistics
+- `chair.students.read` - View student records
+- `chair.faculty.read` - View faculty records
+- `chair.schedules.read` - View schedules
+- `chair.events.read` - View events
+- `chair.research.read` - View research projects
+- `chair.reports.read` - View reports
 
 ## RBAC Permissions
 

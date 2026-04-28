@@ -1,0 +1,932 @@
+{
+  "info": {
+    "name": "Chair Portal API",
+    "description": "API endpoints for Department Chair Portal - Read-only access to curriculum and subjects data.\n\n## Quick Start\n1. Set the {{base_url}} variable to your server URL (default: http://localhost:3000)\n2. Run the 'Login as Chair' request to authenticate\n3. Access token is automatically saved and used for all subsequent requests\n\n## Environment Variables\n- base_url: http://localhost:3000 (local) or your production URL\n- token: Auto-populated after login\n- curriculum_id: Sample curriculum UUID for testing\n- subject_id: Sample subject UUID for testing\n\n## Authentication\nAll chair endpoints require:\n- Bearer token authentication\n- User must have 'chair' role\n- User must have 'chair.curriculum.read' permission\n\n## Features\n- View curriculum list with pagination and filters\n- View subjects list with pagination and filters\n- Export curriculum to PDF and Excel\n- View curriculum statistics",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "curriculum_id",
+      "value": "",
+      "type": "string",
+      "description": "Sample curriculum UUID for testing"
+    },
+    {
+      "key": "subject_id",
+      "value": "",
+      "type": "string",
+      "description": "Sample subject UUID for testing"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Automatically add Authorization header",
+          "const token = pm.collectionVariables.get('token');",
+          "if (token) {",
+          "    pm.request.headers.add({",
+          "        key: 'Authorization',",
+          "        value: `Bearer ${token}`",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints for chair users",
+      "item": [
+        {
+          "name": "Login as Chair",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.tokens) {",
+                  "        pm.collectionVariables.set('token', response.data.tokens.access.token);",
+                  "        console.log('Access token saved to collection variables');",
+                  "        console.log('User role:', response.data.user.role);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"chair@ccs.edu\",\n  \"password\": \"pass1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login as a department chair user. User must have 'chair' role and 'chair.curriculum.read' permission."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Curriculum",
+      "description": "Curriculum management endpoints - Read-only access for chairs",
+      "item": [
+        {
+          "name": "Get Curriculum List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.length > 0) {",
+                  "        // Save first curriculum ID for other requests",
+                  "        pm.collectionVariables.set('curriculum_id', response.data[0].id);",
+                  "        console.log('Curriculum ID saved:', response.data[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (max: 100, default: 10)"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search in name, code, program",
+                  "disabled": true
+                },
+                {
+                  "key": "program",
+                  "value": "",
+                  "description": "Filter by program name",
+                  "disabled": true
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Filter by year",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status (draft, active, inactive)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of curriculum with optional filters.\n\nQuery Parameters:\n- page: Page number (positive integer, default: 1)\n- limit: Items per page (1-100, default: 10)\n- search: Search in name, code, program\n- program: Filter by program name\n- year: Filter by year\n- status: Filter by status (draft, active, inactive)\n\nResponse includes:\n- Curriculum details (code, name, description, program, year)\n- Total units\n- Status and effective date\n- Subject count\n- Pagination metadata"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Curriculum by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum/{{curriculum_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum",
+                "{{curriculum_id}}"
+              ]
+            },
+            "description": "Get detailed information about a specific curriculum by UUID.\n\nPath Parameters:\n- id: Curriculum UUID (required)\n\nResponse includes:\n- Complete curriculum details\n- Subject count\n- Created and updated timestamps"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Curriculum",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum?search=Computer Science&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Computer Science",
+                  "description": "Search term"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Search curriculum by name, code, or program.\n\nSearches in:\n- Curriculum name\n- Curriculum code\n- Program name\n\nCase-insensitive partial matching."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Program",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum?program=Computer Science&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum"
+              ],
+              "query": [
+                {
+                  "key": "program",
+                  "value": "Computer Science",
+                  "description": "Program name"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter curriculum by program name.\n\nExact match on program field."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Year",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum?year=2024&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum"
+              ],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024",
+                  "description": "Year"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter curriculum by year.\n\nExact match on year field."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum?status=active&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active",
+                  "description": "Status (draft, active, inactive)"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter curriculum by status.\n\nValid values:\n- draft\n- active\n- inactive"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Curriculum Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum",
+                "stats"
+              ]
+            },
+            "description": "Get aggregated statistics about curriculum and subjects.\n\nReturns:\n- Total curriculum count\n- Total subjects count\n- Total units across all curriculum\n- Breakdown by program (with counts)\n- Breakdown by year (with counts)\n- Breakdown by status (with counts)"
+          },
+          "response": []
+        },
+        {
+          "name": "Export Curriculum to PDF",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum/export/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum",
+                "export",
+                "pdf"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional: Search filter",
+                  "disabled": true
+                },
+                {
+                  "key": "program",
+                  "value": "",
+                  "description": "Optional: Program filter",
+                  "disabled": true
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Optional: Year filter",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Optional: Status filter",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Export curriculum list to PDF file.\n\nSupports same filters as Get Curriculum List:\n- search: Search term\n- program: Program filter\n- year: Year filter\n- status: Status filter\n\nResponse:\n- Content-Type: application/pdf\n- Content-Disposition: attachment with filename\n- Binary PDF data"
+          },
+          "response": []
+        },
+        {
+          "name": "Export Curriculum to Excel",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/curriculum/export/excel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "curriculum",
+                "export",
+                "excel"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional: Search filter",
+                  "disabled": true
+                },
+                {
+                  "key": "program",
+                  "value": "",
+                  "description": "Optional: Program filter",
+                  "disabled": true
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Optional: Year filter",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Optional: Status filter",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Export curriculum list to Excel file.\n\nSupports same filters as Get Curriculum List:\n- search: Search term\n- program: Program filter\n- year: Year filter\n- status: Status filter\n\nResponse:\n- Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\n- Content-Disposition: attachment with filename\n- Binary Excel data"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subjects",
+      "description": "Subjects management endpoints - Read-only access for chairs",
+      "item": [
+        {
+          "name": "Get Subjects List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.length > 0) {",
+                  "        // Save first subject ID for other requests",
+                  "        pm.collectionVariables.set('subject_id', response.data[0].id);",
+                  "        console.log('Subject ID saved:', response.data[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (max: 100, default: 10)"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search in name, code",
+                  "disabled": true
+                },
+                {
+                  "key": "curriculum_id",
+                  "value": "",
+                  "description": "Filter by curriculum UUID",
+                  "disabled": true
+                },
+                {
+                  "key": "year_level",
+                  "value": "",
+                  "description": "Filter by year level (1-4)",
+                  "disabled": true
+                },
+                {
+                  "key": "semester",
+                  "value": "",
+                  "description": "Filter by semester (1-2)",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "description": "Filter by type (core, elective, major, minor, general_education)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of subjects with optional filters.\n\nQuery Parameters:\n- page: Page number (positive integer, default: 1)\n- limit: Items per page (1-100, default: 10)\n- search: Search in name, code\n- curriculum_id: Filter by curriculum UUID\n- year_level: Filter by year level (1-4)\n- semester: Filter by semester (1-2)\n- type: Filter by type (core, elective, major, minor, general_education)\n\nResponse includes:\n- Subject details (code, name, description)\n- Units, semester, year level\n- Prerequisites and corequisites\n- Type, lecture/lab hours\n- Learning objectives and topics\n- Curriculum information\n- Pagination metadata"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Subject by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects/{{subject_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects",
+                "{{subject_id}}"
+              ]
+            },
+            "description": "Get detailed information about a specific subject by UUID.\n\nPath Parameters:\n- id: Subject UUID (required)\n\nResponse includes:\n- Complete subject details\n- Prerequisites and corequisites arrays\n- Learning objectives and topics arrays\n- Curriculum information\n- Created and updated timestamps"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Subjects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects?search=Programming&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Programming",
+                  "description": "Search term"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Search subjects by name or code.\n\nSearches in:\n- Subject name\n- Subject code\n\nCase-insensitive partial matching."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Curriculum",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects?curriculum_id={{curriculum_id}}&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "curriculum_id",
+                  "value": "{{curriculum_id}}",
+                  "description": "Curriculum UUID"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter subjects by curriculum UUID.\n\nShows all subjects belonging to a specific curriculum."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Year Level",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects?year_level=1&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "year_level",
+                  "value": "1",
+                  "description": "Year level (1-4)"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter subjects by year level.\n\nValid values: 1, 2, 3, 4"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Semester",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects?semester=1&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "semester",
+                  "value": "1",
+                  "description": "Semester (1-2)"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter subjects by semester.\n\nValid values: 1, 2"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Type",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects?type=core&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "core",
+                  "description": "Subject type"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter subjects by type.\n\nValid values:\n- core\n- elective\n- major\n- minor\n- general_education"
+          },
+          "response": []
+        },
+        {
+          "name": "Combined Filters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chair/subjects?curriculum_id={{curriculum_id}}&year_level=1&semester=1&type=core&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chair",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "curriculum_id",
+                  "value": "{{curriculum_id}}",
+                  "description": "Curriculum UUID"
+                },
+                {
+                  "key": "year_level",
+                  "value": "1",
+                  "description": "Year level"
+                },
+                {
+                  "key": "semester",
+                  "value": "1",
+                  "description": "Semester"
+                },
+                {
+                  "key": "type",
+                  "value": "core",
+                  "description": "Subject type"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Example of using multiple filters together.\n\nAll filters can be combined:\n- curriculum_id\n- year_level\n- semester\n- type\n- search"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
