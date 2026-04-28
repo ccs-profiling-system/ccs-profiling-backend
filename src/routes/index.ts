@@ -129,6 +129,8 @@ import { studentPortalRouter } from '../modules/student-portal/routes';
 import { secretaryPortalRouter } from '../modules/secretary-portal/routes';
 import { approvalRouter } from '../modules/approval/routes';
 import { curriculumRoutes } from '../modules/curriculum';
+import { subjectRoutes } from '../modules/subjects';
+import { roomRoutes } from '../modules/rooms';
 
 export const routes = Router();
 
@@ -155,6 +157,7 @@ routes.use('/v1/admin/students', studentViolationRoutes);
 routes.use('/v1/admin/students', studentAffiliationRoutes);
 routes.use('/v1/admin/faculty', facultyRoutes);
 routes.use('/v1/admin/curriculum', curriculumRoutes);
+routes.use('/v1/admin/subjects', subjectRoutes);
 routes.use('/v1/admin/instructions', instructionRoutes);
 routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 
@@ -162,6 +165,7 @@ routes.use('/v1/admin/instructions', instructionEnrollmentRoutes);
 routes.use('/v1/admin/enrollments', enrollmentRoutes);
 routes.use('/v1/admin/academic-history', academicHistoryRoutes);
 routes.use('/v1/admin/schedules', scheduleRoutes);
+routes.use('/v1/admin/rooms', roomRoutes);
 
 // Activity System
 routes.use('/v1/admin/skills', skillRoutes);
