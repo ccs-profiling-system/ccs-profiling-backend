@@ -127,10 +127,115 @@ export function createChairRoutes(): Router {
   );
 
   /**
+   * GET /api/v1/approvals/department/history
+   * 
+   * List processed approvals within the chair's department.
+   * Includes approved, rejected, withdrawn, failed, and conflicted approvals.
+   * 
+   * Query Parameters:
+   * - page: Page number (default: 1)
+   * - pageSize: Items per page (default: 20, max: 100)
+   * - status: Filter by status (optional)
+   * - entity_type: Filter by entity type (optional)
+   * - category: Filter by category (optional)
+   * - submitter_id: Filter by submitter (optional)
+   * - reviewer_id: Filter by reviewer (optional)
+   * - start_date: Filter by submission date start (YYYY-MM-DD) (optional)
+   * - end_date: Filter by submission date end (YYYY-MM-DD) (optional)
+   * 
+   * Response:
+   * - 200: List of processed approvals with pagination metadata
+   * - 400: Validation error
+   * - 401: Authentication required
+   * - 403: Permission denied or no department assigned
+   * - 429: Rate limit exceeded
+   * 
+   * Requirements: 11.1-11.4
+   */
+  router.get(
+    '/history',
+    readOperationRateLimiter,
+    requirePermission('approval.review'),
+    validate(listQuerySchema, 'query'),
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const departmentInfo = await extractDepartmentFromRequest(req);
+        const departmentId = departmentInfo.departmentId;
+
+        const { page, pageSize, ...filters } = req.query;
+
+        const pagination = {
+          page: Number(page) || 1,
+          pageSize: Number(pageSize) || 20,
+        };
+
+        const result = await approvalService.getApprovalHistory(
+          filters,
+          pagination,
+          departmentId
+        );
+
+        const paginationMeta = calculatePaginationMeta(
+          result.pagination.total,
+          pagination.page,
+          pagination.pageSize
+        );
+
+        res.status(200).json({
+          success: true,
+          data: result.data,
+          pagination: paginationMeta,
+        });
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  /**
+   * GET /api/v1/approvals/department/stats
+   * 
+   * Get approval statistics for the chair's department.
+   * Includes counts by status, approval/rejection rates,
+   * average approval time, and pending approval metrics.
+   * 
+   * Response:
+   * - 200: Statistics object
+   * - 401: Authentication required
+   * - 403: Permission denied or no department assigned
+   * - 429: Rate limit exceeded
+   * 
+   * Requirements: 11.1-11.4
+   */
+  router.get(
+    '/stats',
+    readOperationRateLimiter,
+    requirePermission('approval.stats'),
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const departmentInfo = await extractDepartmentFromRequest(req);
+        const departmentId = departmentInfo.departmentId;
+
+        const stats = await approvalStatisticsService.getChairStats(departmentId);
+
+        res.status(200).json({
+          success: true,
+          data: stats,
+        });
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  /**
    * GET /api/v1/approvals/department/:id
    * 
    * Get details of a specific approval within the chair's department.
    * Access is denied if the approval belongs to a different department.
+   * 
+   * IMPORTANT: This route must be defined AFTER all specific routes
+   * (like /pending, /history, /stats) to avoid matching them as :id parameter.
    * 
    * Path Parameters:
    * - id: UUID of the approval
@@ -473,108 +578,6 @@ export function createChairRoutes(): Router {
         res.status(200).json({
           success: true,
           data: result,
-        });
-      } catch (error) {
-        next(error);
-      }
-    }
-  );
-
-  /**
-   * GET /api/v1/approvals/department/history
-   * 
-   * List processed approvals within the chair's department.
-   * Includes approved, rejected, withdrawn, failed, and conflicted approvals.
-   * 
-   * Query Parameters:
-   * - page: Page number (default: 1)
-   * - pageSize: Items per page (default: 20, max: 100)
-   * - status: Filter by status (optional)
-   * - entity_type: Filter by entity type (optional)
-   * - category: Filter by category (optional)
-   * - submitter_id: Filter by submitter (optional)
-   * - reviewer_id: Filter by reviewer (optional)
-   * - start_date: Filter by submission date start (YYYY-MM-DD) (optional)
-   * - end_date: Filter by submission date end (YYYY-MM-DD) (optional)
-   * 
-   * Response:
-   * - 200: List of processed approvals with pagination metadata
-   * - 400: Validation error
-   * - 401: Authentication required
-   * - 403: Permission denied or no department assigned
-   * - 429: Rate limit exceeded
-   * 
-   * Requirements: 11.1-11.4
-   */
-  router.get(
-    '/history',
-    readOperationRateLimiter,
-    requirePermission('approval.review'),
-    validate(listQuerySchema, 'query'),
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      try {
-        const departmentInfo = await extractDepartmentFromRequest(req);
-        const departmentId = departmentInfo.departmentId;
-
-        const { page, pageSize, ...filters } = req.query;
-
-        const pagination = {
-          page: Number(page) || 1,
-          pageSize: Number(pageSize) || 20,
-        };
-
-        const result = await approvalService.getApprovalHistory(
-          filters,
-          pagination,
-          departmentId
-        );
-
-        const paginationMeta = calculatePaginationMeta(
-          result.pagination.total,
-          pagination.page,
-          pagination.pageSize
-        );
-
-        res.status(200).json({
-          success: true,
-          data: result.data,
-          pagination: paginationMeta,
-        });
-      } catch (error) {
-        next(error);
-      }
-    }
-  );
-
-  /**
-   * GET /api/v1/approvals/department/stats
-   * 
-   * Get approval statistics for the chair's department.
-   * Includes counts by status, approval/rejection rates,
-   * average approval time, and pending approval metrics.
-   * 
-   * Response:
-   * - 200: Statistics object
-   * - 401: Authentication required
-   * - 403: Permission denied or no department assigned
-   * - 429: Rate limit exceeded
-   * 
-   * Requirements: 11.1-11.4
-   */
-  router.get(
-    '/stats',
-    readOperationRateLimiter,
-    requirePermission('approval.stats'),
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      try {
-        const departmentInfo = await extractDepartmentFromRequest(req);
-        const departmentId = departmentInfo.departmentId;
-
-        const stats = await approvalStatisticsService.getChairStats(departmentId);
-
-        res.status(200).json({
-          success: true,
-          data: stats,
         });
       } catch (error) {
         next(error);

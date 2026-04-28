@@ -117,10 +117,107 @@ export function createAdminRoutes(): Router {
   );
 
   /**
+   * GET /api/v1/approvals/history
+   * 
+   * List processed approvals (approved, rejected, withdrawn, failed, conflicted).
+   * 
+   * Query Parameters:
+   * - page: Page number (default: 1)
+   * - pageSize: Items per page (default: 20, max: 100)
+   * - status: Filter by status (optional)
+   * - entity_type: Filter by entity type (optional)
+   * - category: Filter by category (optional)
+   * - submitter_id: Filter by submitter (optional)
+   * - reviewer_id: Filter by reviewer (optional)
+   * - start_date: Filter by submission date start (YYYY-MM-DD) (optional)
+   * - end_date: Filter by submission date end (YYYY-MM-DD) (optional)
+   * 
+   * Response:
+   * - 200: List of processed approvals with pagination metadata
+   * - 400: Validation error
+   * - 401: Authentication required
+   * - 403: Permission denied
+   * - 429: Rate limit exceeded
+   * 
+   * Requirements: 7.1-7.6
+   */
+  router.get(
+    '/history',
+    readOperationRateLimiter,
+    requirePermission('approval.review'),
+    validate(listQuerySchema, 'query'),
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const { page, pageSize, ...filters } = req.query;
+
+        const pagination = {
+          page: Number(page) || 1,
+          pageSize: Number(pageSize) || 20,
+        };
+
+        const result = await approvalService.getApprovalHistory(
+          filters,
+          pagination
+        );
+
+        const paginationMeta = calculatePaginationMeta(
+          result.pagination.total,
+          pagination.page,
+          pagination.pageSize
+        );
+
+        res.status(200).json({
+          success: true,
+          data: result.data,
+          pagination: paginationMeta,
+        });
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  /**
+   * GET /api/v1/approvals/stats
+   * 
+   * Get system-wide approval statistics.
+   * Includes counts by status, approval/rejection rates,
+   * average approval time, and pending approval metrics.
+   * 
+   * Response:
+   * - 200: Statistics object
+   * - 401: Authentication required
+   * - 403: Permission denied
+   * - 429: Rate limit exceeded
+   * 
+   * Requirements: 6.1-6.6
+   */
+  router.get(
+    '/stats',
+    readOperationRateLimiter,
+    requirePermission('approval.stats'),
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const stats = await approvalStatisticsService.getAdminStats();
+
+        res.status(200).json({
+          success: true,
+          data: stats,
+        });
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  /**
    * GET /api/v1/approvals/:id
    * 
    * Get details of a specific approval.
    * Admins can view any approval across all departments.
+   * 
+   * IMPORTANT: This route must be defined AFTER all specific routes
+   * (like /pending, /history, /stats) to avoid matching them as :id parameter.
    * 
    * Path Parameters:
    * - id: UUID of the approval
@@ -382,100 +479,6 @@ export function createAdminRoutes(): Router {
         res.status(200).json({
           success: true,
           data: result,
-        });
-      } catch (error) {
-        next(error);
-      }
-    }
-  );
-
-  /**
-   * GET /api/v1/approvals/history
-   * 
-   * List processed approvals (approved, rejected, withdrawn, failed, conflicted).
-   * 
-   * Query Parameters:
-   * - page: Page number (default: 1)
-   * - pageSize: Items per page (default: 20, max: 100)
-   * - status: Filter by status (optional)
-   * - entity_type: Filter by entity type (optional)
-   * - category: Filter by category (optional)
-   * - submitter_id: Filter by submitter (optional)
-   * - reviewer_id: Filter by reviewer (optional)
-   * - start_date: Filter by submission date start (YYYY-MM-DD) (optional)
-   * - end_date: Filter by submission date end (YYYY-MM-DD) (optional)
-   * 
-   * Response:
-   * - 200: List of processed approvals with pagination metadata
-   * - 400: Validation error
-   * - 401: Authentication required
-   * - 403: Permission denied
-   * - 429: Rate limit exceeded
-   * 
-   * Requirements: 7.1-7.6
-   */
-  router.get(
-    '/history',
-    readOperationRateLimiter,
-    requirePermission('approval.review'),
-    validate(listQuerySchema, 'query'),
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      try {
-        const { page, pageSize, ...filters } = req.query;
-
-        const pagination = {
-          page: Number(page) || 1,
-          pageSize: Number(pageSize) || 20,
-        };
-
-        const result = await approvalService.getApprovalHistory(
-          filters,
-          pagination
-        );
-
-        const paginationMeta = calculatePaginationMeta(
-          result.pagination.total,
-          pagination.page,
-          pagination.pageSize
-        );
-
-        res.status(200).json({
-          success: true,
-          data: result.data,
-          pagination: paginationMeta,
-        });
-      } catch (error) {
-        next(error);
-      }
-    }
-  );
-
-  /**
-   * GET /api/v1/approvals/stats
-   * 
-   * Get system-wide approval statistics.
-   * Includes counts by status, approval/rejection rates,
-   * average approval time, and pending approval metrics.
-   * 
-   * Response:
-   * - 200: Statistics object
-   * - 401: Authentication required
-   * - 403: Permission denied
-   * - 429: Rate limit exceeded
-   * 
-   * Requirements: 6.1-6.6
-   */
-  router.get(
-    '/stats',
-    readOperationRateLimiter,
-    requirePermission('approval.stats'),
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      try {
-        const stats = await approvalStatisticsService.getAdminStats();
-
-        res.status(200).json({
-          success: true,
-          data: stats,
         });
       } catch (error) {
         next(error);
