@@ -78,9 +78,9 @@ export class StudentService {
    * - year_level: Filter by year level
    * - search: Search by name or email (case-insensitive)
    * 
-   * All results are scoped to the specified department.
+   * If departmentId is empty, returns students from all programs.
    * 
-   * @param departmentId - Department ID to scope the query
+   * @param departmentId - Department ID to scope the query (empty string for all)
    * @param filters - Pagination and filter parameters
    * @returns Paginated list of students
    * 
@@ -94,10 +94,12 @@ export class StudentService {
     const offset = (page - 1) * limit;
 
     // Build filter conditions
-    const conditions = [
-      eq(students.program, departmentId),
-      isNull(students.deleted_at),
-    ];
+    const conditions = [isNull(students.deleted_at)];
+    
+    // Add department filter only if departmentId is provided
+    if (departmentId) {
+      conditions.push(eq(students.program, departmentId));
+    }
 
     // Add status filter
     if (filters.status) {
@@ -150,27 +152,32 @@ export class StudentService {
   }
 
   /**
-   * Get student by ID with department validation
+   * Get student by ID with optional department validation
    * 
-   * Validates that the student belongs to the specified department.
+   * If departmentId is provided, validates that the student belongs to that department.
+   * If departmentId is empty, returns student without department validation.
    * Returns null if student doesn't exist or is outside department scope.
    * 
    * @param id - Student ID
-   * @param departmentId - Department ID to validate scope
+   * @param departmentId - Department ID to validate scope (empty string to skip validation)
    * @returns Student details or null if not found
    * 
    */
   async getStudentById(id: string, departmentId: string): Promise<StudentDTO | null> {
+    const conditions = [
+      eq(students.id, id),
+      isNull(students.deleted_at)
+    ];
+    
+    // Add department filter only if departmentId is provided
+    if (departmentId) {
+      conditions.push(eq(students.program, departmentId));
+    }
+    
     const result = await db
       .select()
       .from(students)
-      .where(
-        and(
-          eq(students.id, id),
-          eq(students.program, departmentId),
-          isNull(students.deleted_at)
-        )
-      )
+      .where(and(...conditions))
       .limit(1);
 
     if (!result[0]) {

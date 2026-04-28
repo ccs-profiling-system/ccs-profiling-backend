@@ -8,7 +8,6 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { FacultyService } from '../services/faculty.service';
-import { extractDepartmentFromRequest } from '../utils/departmentScope';
 import { NotFoundError } from '../../../shared/errors';
 
 export class FacultyController {
@@ -17,7 +16,7 @@ export class FacultyController {
   /**
    * GET /api/chair/faculty
    * 
-   * List faculty members with pagination and filtering.
+   * List faculty members with pagination and filtering across all programs (college-wide).
    * 
    * Query parameters:
    * - page: Page number (default: 1)
@@ -30,22 +29,18 @@ export class FacultyController {
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with paginated faculty list
-   * @throws NotFoundError if user has no department affiliation
    * 
    */
   listFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Parse query parameters
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const status = req.query.status as string | undefined;
       const search = req.query.search as string | undefined;
 
-      // Get paginated faculty list
-      const result = await this.facultyService.listFaculty(departmentInfo.departmentId, {
+      // Get paginated faculty list (college-wide scope)
+      const result = await this.facultyService.listFaculty('', {
         page,
         limit,
         status,
@@ -65,24 +60,22 @@ export class FacultyController {
   /**
    * GET /api/chair/faculty/:id
    * 
-   * Get individual faculty member details.
+   * Get individual faculty member details (college-wide access).
    * 
    * @param req - Express request with faculty ID parameter
    * @param res - Express response
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with faculty details
-   * @throws NotFoundError if faculty not found or outside department scope
+   * @throws NotFoundError if faculty not found
    * 
    */
   getFaculty = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
       const facultyId = req.params.id;
 
-      // Get faculty details
-      const facultyMember = await this.facultyService.getFacultyById(facultyId, departmentInfo.departmentId);
+      // Get faculty details (college-wide scope)
+      const facultyMember = await this.facultyService.getFacultyById(facultyId, '');
 
       if (!facultyMember) {
         throw new NotFoundError('Faculty member not found');
@@ -100,24 +93,22 @@ export class FacultyController {
   /**
    * GET /api/chair/faculty/:id/teaching-load
    * 
-   * Get faculty teaching load with current semester schedules.
+   * Get faculty teaching load with current semester schedules (college-wide access).
    * 
    * @param req - Express request with faculty ID parameter
    * @param res - Express response
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with teaching load data
-   * @throws NotFoundError if faculty not found or outside department scope
+   * @throws NotFoundError if faculty not found
    * 
    */
   getTeachingLoad = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
       const facultyId = req.params.id;
 
-      // Get teaching load
-      const teachingLoad = await this.facultyService.getFacultyTeachingLoad(facultyId, departmentInfo.departmentId);
+      // Get teaching load (college-wide scope)
+      const teachingLoad = await this.facultyService.getFacultyTeachingLoad(facultyId, '');
 
       if (!teachingLoad) {
         throw new NotFoundError('Faculty member not found');
@@ -135,24 +126,22 @@ export class FacultyController {
   /**
    * GET /api/chair/faculty/:id/stats
    * 
-   * Get faculty statistics including students taught, courses, and research count.
+   * Get faculty statistics including students taught, courses, and research count (college-wide access).
    * 
    * @param req - Express request with faculty ID parameter
    * @param res - Express response
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with faculty statistics
-   * @throws NotFoundError if faculty not found or outside department scope
+   * @throws NotFoundError if faculty not found
    * 
    */
   getFacultyStats = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
       const facultyId = req.params.id;
 
-      // Get faculty stats
-      const stats = await this.facultyService.getFacultyStats(facultyId, departmentInfo.departmentId);
+      // Get faculty stats (college-wide scope)
+      const stats = await this.facultyService.getFacultyStats(facultyId, '');
 
       if (!stats) {
         throw new NotFoundError('Faculty member not found');

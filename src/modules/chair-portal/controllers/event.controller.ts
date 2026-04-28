@@ -3,13 +3,12 @@
  * 
  * HTTP request/response handling for event management in the department chair portal.
  * Handles full CRUD operations, pagination, filtering, approval/rejection workflows,
- * and department-scoped access.
+ * and college-wide access (no department filtering).
  * 
  */
 
 import { Request, Response, NextFunction } from 'express';
 import { EventService } from '../services/event.service';
-import { extractDepartmentFromRequest } from '../utils/departmentScope';
 import { NotFoundError, ValidationError } from '../../../shared/errors';
 import { 
   createEventSchema, 
@@ -24,7 +23,7 @@ export class EventController {
   /**
    * GET /api/chair/events
    * 
-   * List events with pagination and filtering.
+   * List events with pagination and filtering across all programs (college-wide).
    * 
    * Query Parameters:
    * - page: Page number (default: 1)
@@ -39,14 +38,10 @@ export class EventController {
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with paginated event list
-   * @throws NotFoundError if user has no department affiliation
    * 
    */
   listEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Parse and validate query parameters
       const page = parseInt(req.query.page as string) || 1;
       const limit = Math.min(parseInt(req.query.limit as string) || 10, 100);
@@ -73,8 +68,8 @@ export class EventController {
 
       const filters = filterValidation.data;
 
-      // Get events from service
-      const result = await this.eventService.listEvents(departmentInfo.departmentId, {
+      // Get events from service (college-wide scope)
+      const result = await this.eventService.listEvents('', {
         page,
         limit,
         ...filters,
@@ -93,7 +88,7 @@ export class EventController {
   /**
    * POST /api/chair/events
    * 
-   * Create a new event.
+   * Create a new event (college-wide access).
    * 
    * Request Body:
    * - title: Event title (required)
@@ -111,14 +106,10 @@ export class EventController {
    * 
    * @returns HTTP 200 with created event details
    * @throws ValidationError if request body is invalid
-   * @throws NotFoundError if user has no department affiliation
    * 
    */
   createEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Validate request body
       const validationResult = createEventSchema.safeParse(req.body);
       if (!validationResult.success) {
@@ -127,8 +118,8 @@ export class EventController {
 
       const eventData = validationResult.data;
 
-      // Create event
-      const event = await this.eventService.createEvent(eventData, departmentInfo.departmentId);
+      // Create event (college-wide scope)
+      const event = await this.eventService.createEvent(eventData, '');
 
       res.json({
         success: true,
@@ -143,27 +134,23 @@ export class EventController {
   /**
    * GET /api/chair/events/:id
    * 
-   * Get event details by ID with department validation.
+   * Get event details by ID (college-wide access).
    * 
    * @param req - Express request with event ID parameter
    * @param res - Express response
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with event details including participant count
-   * @returns HTTP 404 if event not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if event not found
    * 
    */
   getEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get event ID from route parameter
       const eventId = req.params.id;
 
-      // Get event from service
-      const event = await this.eventService.getEventById(eventId, departmentInfo.departmentId);
+      // Get event from service (college-wide scope)
+      const event = await this.eventService.getEventById(eventId, '');
 
       if (!event) {
         throw new NotFoundError('Event not found');
@@ -181,7 +168,7 @@ export class EventController {
   /**
    * PUT /api/chair/events/:id
    * 
-   * Update an event.
+   * Update an event (college-wide access).
    * 
    * Request Body: (all fields optional)
    * - title: Event title
@@ -199,15 +186,11 @@ export class EventController {
    * 
    * @returns HTTP 200 with updated event details
    * @returns HTTP 400 if event is not in valid state for update (must be draft or pending_approval)
-   * @returns HTTP 404 if event not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if event not found
    * 
    */
   updateEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get event ID from route parameter
       const eventId = req.params.id;
 
@@ -219,12 +202,12 @@ export class EventController {
 
       const updateData = validationResult.data;
 
-      // Update event
+      // Update event (college-wide scope)
       try {
         const event = await this.eventService.updateEvent(
           eventId,
           updateData,
-          departmentInfo.departmentId
+          ''
         );
 
         if (!event) {
@@ -251,7 +234,7 @@ export class EventController {
   /**
    * DELETE /api/chair/events/:id
    * 
-   * Delete an event.
+   * Delete an event (college-wide access).
    * 
    * Allows deletion of draft events or cancellation of approved events.
    * Performs soft delete by setting deleted_at timestamp.
@@ -262,21 +245,17 @@ export class EventController {
    * 
    * @returns HTTP 200 with success message
    * @returns HTTP 400 if event is not in valid state for deletion
-   * @returns HTTP 404 if event not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if event not found
    * 
    */
   deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get event ID from route parameter
       const eventId = req.params.id;
 
-      // Delete event
+      // Delete event (college-wide scope)
       try {
-        const deleted = await this.eventService.deleteEvent(eventId, departmentInfo.departmentId);
+        const deleted = await this.eventService.deleteEvent(eventId, '');
 
         if (!deleted) {
           throw new NotFoundError('Event not found');
@@ -301,7 +280,7 @@ export class EventController {
   /**
    * POST /api/chair/events/:id/approve
    * 
-   * Approve an event.
+   * Approve an event (college-wide access).
    * 
    * Request Body:
    * - approver_notes: Optional notes from the approver
@@ -312,15 +291,11 @@ export class EventController {
    * 
    * @returns HTTP 200 with updated event details
    * @returns HTTP 400 if event is not in valid state for approval (must be pending_approval)
-   * @returns HTTP 404 if event not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if event not found
    * 
    */
   approveEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get event ID from route parameter
       const eventId = req.params.id;
 
@@ -338,11 +313,11 @@ export class EventController {
         throw new ValidationError('User ID not found in request');
       }
 
-      // Approve event
+      // Approve event (college-wide scope)
       try {
         const event = await this.eventService.approveEvent(
           eventId,
-          departmentInfo.departmentId,
+          '',
           approvalData,
           userId
         );
@@ -371,7 +346,7 @@ export class EventController {
   /**
    * POST /api/chair/events/:id/reject
    * 
-   * Reject an event.
+   * Reject an event (college-wide access).
    * 
    * Request Body:
    * - rejection_reason: Required reason for rejection (10-1000 characters)
@@ -382,15 +357,11 @@ export class EventController {
    * 
    * @returns HTTP 200 with updated event details
    * @returns HTTP 400 if event is not in valid state for rejection or missing rejection_reason
-   * @returns HTTP 404 if event not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if event not found
    * 
    */
   rejectEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get event ID from route parameter
       const eventId = req.params.id;
 
@@ -408,11 +379,11 @@ export class EventController {
         throw new ValidationError('User ID not found in request');
       }
 
-      // Reject event
+      // Reject event (college-wide scope)
       try {
         const event = await this.eventService.rejectEvent(
           eventId,
-          departmentInfo.departmentId,
+          '',
           rejectionData,
           userId
         );
@@ -441,7 +412,7 @@ export class EventController {
   /**
    * GET /api/chair/events/:id/participants
    * 
-   * Get event participants.
+   * Get event participants (college-wide access).
    * 
    * Returns list of participants (students and faculty) for an event.
    * Includes participant details and registration information.
@@ -451,22 +422,18 @@ export class EventController {
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with list of event participants
-   * @returns HTTP 404 if event not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if event not found
    * 
    */
   getParticipants = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get event ID from route parameter
       const eventId = req.params.id;
 
-      // Get participants from service
+      // Get participants from service (college-wide scope)
       const participants = await this.eventService.getEventParticipants(
         eventId,
-        departmentInfo.departmentId
+        ''
       );
 
       if (participants === null) {

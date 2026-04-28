@@ -8,7 +8,6 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { ResearchService } from '../services/research.service';
-import { extractDepartmentFromRequest } from '../utils/departmentScope';
 import { NotFoundError, ValidationError } from '../../../shared/errors';
 import { approvalSchema, rejectionSchema } from '../schemas/common.schemas';
 
@@ -18,7 +17,7 @@ export class ResearchController {
   /**
    * GET /api/chair/research
    * 
-   * List research projects with pagination and filtering.
+   * List research projects with pagination and filtering across all programs (college-wide).
    * 
    * Query Parameters:
    * - page: Page number (default: 1)
@@ -32,14 +31,10 @@ export class ResearchController {
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with paginated research list
-   * @throws NotFoundError if user has no department affiliation
    * 
    */
   listResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Parse and validate query parameters
       const page = parseInt(req.query.page as string) || 1;
       const limit = Math.min(parseInt(req.query.limit as string) || 10, 100);
@@ -55,8 +50,8 @@ export class ResearchController {
         throw new ValidationError('Limit must be between 1 and 100');
       }
 
-      // Get research projects from service
-      const result = await this.researchService.listResearch(departmentInfo.departmentId, {
+      // Get research projects from service (college-wide scope)
+      const result = await this.researchService.listResearch('', {
         page,
         limit,
         status,
@@ -77,27 +72,23 @@ export class ResearchController {
   /**
    * GET /api/chair/research/:id
    * 
-   * Get research project details by ID with department validation.
+   * Get research project details by ID (college-wide access).
    * 
    * @param req - Express request with research ID parameter
    * @param res - Express response
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with research project details
-   * @returns HTTP 404 if research not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if research not found
    * 
    */
   getResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get research ID from route parameter
       const researchId = req.params.id;
 
-      // Get research from service
-      const research = await this.researchService.getResearchById(researchId, departmentInfo.departmentId);
+      // Get research from service (college-wide scope)
+      const research = await this.researchService.getResearchById(researchId, '');
 
       if (!research) {
         throw new NotFoundError('Research project not found');
@@ -115,7 +106,7 @@ export class ResearchController {
   /**
    * POST /api/chair/research/:id/approve
    * 
-   * Approve a research project.
+   * Approve a research project (college-wide access).
    * 
    * Request Body:
    * - approver_notes: Optional notes from the approver
@@ -126,15 +117,11 @@ export class ResearchController {
    * 
    * @returns HTTP 200 with updated research details
    * @returns HTTP 400 if research is not in valid state for approval
-   * @returns HTTP 404 if research not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if research not found
    * 
    */
   approveResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get research ID from route parameter
       const researchId = req.params.id;
 
@@ -152,11 +139,11 @@ export class ResearchController {
         throw new ValidationError('User ID not found in request');
       }
 
-      // Approve research
+      // Approve research (college-wide scope)
       try {
         const research = await this.researchService.approveResearch(
           researchId,
-          departmentInfo.departmentId,
+          '',
           approvalData,
           userId
         );
@@ -185,7 +172,7 @@ export class ResearchController {
   /**
    * POST /api/chair/research/:id/reject
    * 
-   * Reject a research project.
+   * Reject a research project (college-wide access).
    * 
    * Request Body:
    * - rejection_reason: Required reason for rejection (10-1000 characters)
@@ -196,15 +183,11 @@ export class ResearchController {
    * 
    * @returns HTTP 200 with updated research details
    * @returns HTTP 400 if research is not in valid state for rejection or missing rejection_reason
-   * @returns HTTP 404 if research not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if research not found
    * 
    */
   rejectResearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get research ID from route parameter
       const researchId = req.params.id;
 
@@ -222,11 +205,11 @@ export class ResearchController {
         throw new ValidationError('User ID not found in request');
       }
 
-      // Reject research
+      // Reject research (college-wide scope)
       try {
         const research = await this.researchService.rejectResearch(
           researchId,
-          departmentInfo.departmentId,
+          '',
           rejectionData,
           userId
         );

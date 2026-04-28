@@ -8,7 +8,6 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { DashboardService } from '../services/dashboard.service';
-import { extractDepartmentFromRequest } from '../utils/departmentScope';
 
 export class DashboardController {
   constructor(private dashboardService: DashboardService) {}
@@ -18,8 +17,7 @@ export class DashboardController {
    * 
    * Get aggregated dashboard statistics for the authenticated department chair.
    * 
-   * Extracts department ID from the authenticated user's faculty record and
-   * returns department-scoped statistics including:
+   * Returns college-wide statistics across all programs (BSCS, BSIT, BSIS) including:
    * - Total counts for students, faculty, schedules, events, research
    * - Pending approvals for students and research
    * - Upcoming events (next 30 days)
@@ -30,7 +28,6 @@ export class DashboardController {
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with dashboard statistics
-   * @throws NotFoundError if user has no department affiliation
    * 
    * @example
    * Response:
@@ -53,11 +50,9 @@ export class DashboardController {
    */
   getDashboard = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
-      // Get dashboard statistics for the department
-      const stats = await this.dashboardService.getDashboardStats(departmentInfo.departmentId);
+      // Get dashboard statistics for all programs (college-wide scope)
+      // Pass empty string to indicate no department filtering
+      const stats = await this.dashboardService.getDashboardStats('');
 
       res.json({
         success: true,

@@ -35,9 +35,9 @@ export class DashboardService {
    * - Upcoming events (next 30 days)
    * - Active research projects
    * 
-   * All queries are filtered by department scope to ensure data isolation.
+   * If departmentId is empty, returns college-wide statistics (all departments).
    * 
-   * @param departmentId - Department ID to scope the statistics
+   * @param departmentId - Department ID to scope the statistics (empty string for all)
    * @returns Aggregated dashboard statistics
    * 
    * @example
@@ -55,91 +55,95 @@ export class DashboardService {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // Query 1: Total students in department (active, not deleted)
+    // Query 1: Total students (active, not deleted)
+    const studentConditions = [isNull(students.deleted_at)];
+    if (departmentId) {
+      studentConditions.push(eq(students.program, departmentId));
+    }
+    
     const totalStudentsResult = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(students)
-      .where(
-        and(
-          eq(students.program, departmentId),
-          isNull(students.deleted_at)
-        )
-      );
+      .where(and(...studentConditions));
 
-    // Query 2: Total faculty in department (active, not deleted)
+    // Query 2: Total faculty (active, not deleted)
+    const facultyConditions = [isNull(faculty.deleted_at)];
+    if (departmentId) {
+      facultyConditions.push(eq(faculty.department, departmentId));
+    }
+    
     const totalFacultyResult = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(faculty)
-      .where(
-        and(
-          eq(faculty.department, departmentId),
-          isNull(faculty.deleted_at)
-        )
-      );
+      .where(and(...facultyConditions));
 
-    // Query 3: Total schedules for department faculty (not deleted)
-    // Join with faculty to filter by department
+    // Query 3: Total schedules (not deleted)
+    const scheduleConditions = [
+      isNull(schedules.deleted_at),
+      isNull(faculty.deleted_at)
+    ];
+    if (departmentId) {
+      scheduleConditions.push(eq(faculty.department, departmentId));
+    }
+    
     const totalSchedulesResult = await db
       .select({ count: sql<number>`count(distinct ${schedules.id})::int` })
       .from(schedules)
       .innerJoin(faculty, eq(schedules.faculty_id, faculty.id))
-      .where(
-        and(
-          eq(faculty.department, departmentId),
-          isNull(schedules.deleted_at),
-          isNull(faculty.deleted_at)
-        )
-      );
+      .where(and(...scheduleConditions));
 
-    // Query 4: Total events in department (not deleted)
-    // Note: Events table doesn't have department field, so we count all events
-    // In a real implementation, events should have department_id or organizer_id linking to faculty
+    // Query 4: Total events (not deleted)
     const totalEventsResult = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(events)
       .where(isNull(events.deleted_at));
 
-    // Query 5: Total research projects in department (not deleted)
-    // Join with research_advisers and faculty to filter by department
+    // Query 5: Total research projects (not deleted)
+    const researchConditions = [
+      isNull(research.deleted_at),
+      isNull(faculty.deleted_at)
+    ];
+    if (departmentId) {
+      researchConditions.push(eq(faculty.department, departmentId));
+    }
+    
     const totalResearchResult = await db
       .select({ count: sql<number>`count(distinct ${research.id})::int` })
       .from(research)
       .innerJoin(researchAdvisers, eq(research.id, researchAdvisers.research_id))
       .innerJoin(faculty, eq(researchAdvisers.faculty_id, faculty.id))
-      .where(
-        and(
-          eq(faculty.department, departmentId),
-          isNull(research.deleted_at),
-          isNull(faculty.deleted_at)
-        )
-      );
+      .where(and(...researchConditions));
 
     // Query 6: Pending student approvals (status = 'pending_approval')
+    const pendingStudentConditions = [
+      eq(students.status, 'pending_approval'),
+      isNull(students.deleted_at)
+    ];
+    if (departmentId) {
+      pendingStudentConditions.push(eq(students.program, departmentId));
+    }
+    
     const pendingStudentsResult = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(students)
-      .where(
-        and(
-          eq(students.program, departmentId),
-          eq(students.status, 'pending_approval'),
-          isNull(students.deleted_at)
-        )
-      );
+      .where(and(...pendingStudentConditions));
 
     // Query 7: Pending research approvals (status = 'pending_approval')
+    const pendingResearchConditions = [
+      eq(research.status, 'pending_approval'),
+      isNull(research.deleted_at),
+      isNull(faculty.deleted_at)
+    ];
+    if (departmentId) {
+      pendingResearchConditions.push(eq(faculty.department, departmentId));
+    }
+    
     const pendingResearchResult = await db
       .select({ count: sql<number>`count(distinct ${research.id})::int` })
       .from(research)
       .innerJoin(researchAdvisers, eq(research.id, researchAdvisers.research_id))
       .innerJoin(faculty, eq(researchAdvisers.faculty_id, faculty.id))
-      .where(
-        and(
-          eq(faculty.department, departmentId),
-          eq(research.status, 'pending_approval'),
-          isNull(research.deleted_at),
-          isNull(faculty.deleted_at)
-        )
-      );
+      .where(and(...pendingResearchConditions));
 
     // Query 8: Upcoming events (next 30 days, not deleted)
     const upcomingEventsResult = await db
@@ -154,19 +158,21 @@ export class DashboardService {
       );
 
     // Query 9: Active research projects (status = 'ongoing')
+    const activeResearchConditions = [
+      eq(research.status, 'ongoing'),
+      isNull(research.deleted_at),
+      isNull(faculty.deleted_at)
+    ];
+    if (departmentId) {
+      activeResearchConditions.push(eq(faculty.department, departmentId));
+    }
+    
     const activeResearchResult = await db
       .select({ count: sql<number>`count(distinct ${research.id})::int` })
       .from(research)
       .innerJoin(researchAdvisers, eq(research.id, researchAdvisers.research_id))
       .innerJoin(faculty, eq(researchAdvisers.faculty_id, faculty.id))
-      .where(
-        and(
-          eq(faculty.department, departmentId),
-          eq(research.status, 'ongoing'),
-          isNull(research.deleted_at),
-          isNull(faculty.deleted_at)
-        )
-      );
+      .where(and(...activeResearchConditions));
 
     // Aggregate results
     return {

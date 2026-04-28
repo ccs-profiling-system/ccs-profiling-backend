@@ -125,9 +125,9 @@ export class FacultyService {
    * - status: Filter by faculty status (active, inactive)
    * - search: Search by name or email (case-insensitive)
    * 
-   * All results are scoped to the specified department.
+   * If departmentId is empty, returns faculty from all departments.
    * 
-   * @param departmentId - Department ID to scope the query
+   * @param departmentId - Department ID to scope the query (empty string for all)
    * @param filters - Pagination and filter parameters
    * @returns Paginated list of faculty
    * 
@@ -141,10 +141,12 @@ export class FacultyService {
     const offset = (page - 1) * limit;
 
     // Build filter conditions
-    const conditions = [
-      eq(faculty.department, departmentId),
-      isNull(faculty.deleted_at),
-    ];
+    const conditions = [isNull(faculty.deleted_at)];
+    
+    // Add department filter only if departmentId is provided
+    if (departmentId) {
+      conditions.push(eq(faculty.department, departmentId));
+    }
 
     // Add status filter
     if (filters.status) {
@@ -192,27 +194,32 @@ export class FacultyService {
   }
 
   /**
-   * Get faculty by ID with department validation
+   * Get faculty by ID with optional department validation
    * 
-   * Validates that the faculty member belongs to the specified department.
+   * If departmentId is provided, validates that the faculty member belongs to that department.
+   * If departmentId is empty, returns faculty without department validation.
    * Returns null if faculty doesn't exist or is outside department scope.
    * 
    * @param id - Faculty ID
-   * @param departmentId - Department ID to validate scope
+   * @param departmentId - Department ID to validate scope (empty string to skip validation)
    * @returns Faculty details or null if not found
    * 
    */
   async getFacultyById(id: string, departmentId: string): Promise<FacultyDTO | null> {
+    const conditions = [
+      eq(faculty.id, id),
+      isNull(faculty.deleted_at)
+    ];
+    
+    // Add department filter only if departmentId is provided
+    if (departmentId) {
+      conditions.push(eq(faculty.department, departmentId));
+    }
+    
     const result = await db
       .select()
       .from(faculty)
-      .where(
-        and(
-          eq(faculty.id, id),
-          eq(faculty.department, departmentId),
-          isNull(faculty.deleted_at)
-        )
-      )
+      .where(and(...conditions))
       .limit(1);
 
     if (!result[0]) {

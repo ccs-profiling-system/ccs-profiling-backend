@@ -8,7 +8,6 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { StudentService } from '../services/student.service';
-import { extractDepartmentFromRequest } from '../utils/departmentScope';
 import { NotFoundError, ValidationError } from '../../../shared/errors';
 import { approvalSchema, rejectionSchema } from '../schemas/common.schemas';
 
@@ -18,7 +17,7 @@ export class StudentController {
   /**
    * GET /api/chair/students
    * 
-   * List students with pagination and filtering.
+   * List students with pagination and filtering across all programs (college-wide).
    * 
    * Query Parameters:
    * - page: Page number (default: 1)
@@ -32,14 +31,10 @@ export class StudentController {
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with paginated student list
-   * @throws NotFoundError if user has no department affiliation
    * 
    */
   listStudents = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Parse and validate query parameters
       const page = parseInt(req.query.page as string) || 1;
       const limit = Math.min(parseInt(req.query.limit as string) || 10, 100);
@@ -55,8 +50,8 @@ export class StudentController {
         throw new ValidationError('Limit must be between 1 and 100');
       }
 
-      // Get students from service
-      const result = await this.studentService.listStudents(departmentInfo.departmentId, {
+      // Get students from service (college-wide scope - empty string for no department filter)
+      const result = await this.studentService.listStudents('', {
         page,
         limit,
         status,
@@ -77,27 +72,23 @@ export class StudentController {
   /**
    * GET /api/chair/students/:id
    * 
-   * Get student details by ID with department validation.
+   * Get student details by ID (college-wide access).
    * 
    * @param req - Express request with student ID parameter
    * @param res - Express response
    * @param next - Express next function for error handling
    * 
    * @returns HTTP 200 with student details
-   * @returns HTTP 404 if student not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if student not found
    * 
    */
   getStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get student ID from route parameter
       const studentId = req.params.id;
 
-      // Get student from service
-      const student = await this.studentService.getStudentById(studentId, departmentInfo.departmentId);
+      // Get student from service (college-wide scope)
+      const student = await this.studentService.getStudentById(studentId, '');
 
       if (!student) {
         throw new NotFoundError('Student not found');
@@ -115,7 +106,7 @@ export class StudentController {
   /**
    * POST /api/chair/students/:id/approve
    * 
-   * Approve a student.
+   * Approve a student (college-wide access).
    * 
    * Request Body:
    * - approver_notes: Optional notes from the approver
@@ -126,15 +117,11 @@ export class StudentController {
    * 
    * @returns HTTP 200 with updated student details
    * @returns HTTP 400 if student is not in valid state for approval
-   * @returns HTTP 404 if student not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if student not found
    * 
    */
   approveStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get student ID from route parameter
       const studentId = req.params.id;
 
@@ -152,11 +139,11 @@ export class StudentController {
         throw new ValidationError('User ID not found in request');
       }
 
-      // Approve student
+      // Approve student (college-wide scope)
       try {
         const student = await this.studentService.approveStudent(
           studentId,
-          departmentInfo.departmentId,
+          '',
           approvalData,
           userId
         );
@@ -185,7 +172,7 @@ export class StudentController {
   /**
    * POST /api/chair/students/:id/reject
    * 
-   * Reject a student.
+   * Reject a student (college-wide access).
    * 
    * Request Body:
    * - rejection_reason: Required reason for rejection (10-1000 characters)
@@ -196,15 +183,11 @@ export class StudentController {
    * 
    * @returns HTTP 200 with updated student details
    * @returns HTTP 400 if student is not in valid state for rejection or missing rejection_reason
-   * @returns HTTP 404 if student not found or outside department scope
-   * @throws NotFoundError if user has no department affiliation
+   * @returns HTTP 404 if student not found
    * 
    */
   rejectStudent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Extract department ID from authenticated user
-      const departmentInfo = await extractDepartmentFromRequest(req);
-
       // Get student ID from route parameter
       const studentId = req.params.id;
 
@@ -222,11 +205,11 @@ export class StudentController {
         throw new ValidationError('User ID not found in request');
       }
 
-      // Reject student
+      // Reject student (college-wide scope)
       try {
         const student = await this.studentService.rejectStudent(
           studentId,
-          departmentInfo.departmentId,
+          '',
           rejectionData,
           userId
         );
