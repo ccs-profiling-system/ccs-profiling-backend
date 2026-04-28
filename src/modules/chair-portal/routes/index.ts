@@ -12,6 +12,8 @@
  * - /api/chair/events - Event management
  * - /api/chair/research - Research project management
  * - /api/chair/reports - Report generation and analytics
+ * - /api/chair/curriculum - Curriculum read-only access
+ * - /api/chair/subjects - Subjects read-only access
  * 
  */
 
@@ -35,6 +37,9 @@ import { createResearchRoutes } from './research.routes';
 import { ReportController } from '../controllers/report.controller';
 import { ReportService } from '../services/report.service';
 import { createReportRoutes } from './report.routes';
+import { CurriculumController } from '../controllers/curriculum.controller';
+import { CurriculumService } from '../services/curriculum.service';
+import { createCurriculumRoutes, createSubjectsRoutes } from './curriculum.routes';
 
 // Initialize services
 const dashboardService = new DashboardService();
@@ -43,6 +48,7 @@ const facultyService = new FacultyService();
 const scheduleService = new ScheduleService();
 const researchService = new ResearchService();
 const reportService = new ReportService();
+const curriculumService = new CurriculumService();
 
 // Initialize controllers
 const dashboardController = new DashboardController(dashboardService);
@@ -51,6 +57,7 @@ const facultyController = new FacultyController(facultyService);
 const scheduleController = new ScheduleController(scheduleService);
 const researchController = new ResearchController(researchService);
 const reportController = new ReportController(reportService);
+const curriculumController = new CurriculumController(curriculumService);
 
 // Create route modules
 const dashboardRoutes = createDashboardRoutes(dashboardController);
@@ -60,6 +67,8 @@ const scheduleRoutes = createScheduleRoutes(scheduleController);
 const eventRoutes = createEventRoutes();
 const researchRoutes = createResearchRoutes(researchController);
 const reportRoutes = createReportRoutes(reportController);
+const curriculumRoutes = createCurriculumRoutes(curriculumController);
+const subjectsRoutes = createSubjectsRoutes(curriculumController);
 
 // Aggregate all chair portal routes
 export const chairPortalRouter = Router();
@@ -72,3 +81,5 @@ chairPortalRouter.use('/schedules', scheduleRoutes);
 chairPortalRouter.use('/events', eventRoutes);
 chairPortalRouter.use('/research', researchRoutes);
 chairPortalRouter.use('/reports', reportRoutes);
+chairPortalRouter.use('/curriculum', curriculumRoutes);
+chairPortalRouter.use('/subjects', subjectsRoutes);
