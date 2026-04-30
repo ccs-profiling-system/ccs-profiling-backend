@@ -5,6 +5,7 @@ import {
   updateSubjectSchema, 
   listSubjectsQuerySchema 
 } from '../schemas/subject.schema';
+import { serializeSubject, serializeSubjects } from '../serializers/subject.serializer';
 
 /**
  * Subject Controller
@@ -24,7 +25,7 @@ export class SubjectController {
 
       res.status(200).json({
         success: true,
-        data: result.data,
+        data: serializeSubjects(result.data),
         meta: result.meta,
       });
     } catch (error) {
@@ -43,7 +44,7 @@ export class SubjectController {
 
       res.status(200).json({
         success: true,
-        data: subject,
+        data: serializeSubject(subject),
       });
     } catch (error) {
       next(error);
@@ -61,7 +62,7 @@ export class SubjectController {
 
       res.status(201).json({
         success: true,
-        data: subject,
+        data: serializeSubject(subject),
       });
     } catch (error) {
       next(error);
@@ -80,7 +81,7 @@ export class SubjectController {
 
       res.status(200).json({
         success: true,
-        data: subject,
+        data: serializeSubject(subject),
       });
     } catch (error) {
       next(error);
@@ -116,7 +117,7 @@ export class SubjectController {
 
       res.status(200).json({
         success: true,
-        data: subject,
+        data: serializeSubject(subject),
       });
     } catch (error) {
       next(error);
@@ -151,7 +152,7 @@ export class SubjectController {
 
       res.status(200).json({
         success: true,
-        data: subjects,
+        data: serializeSubjects(subjects),
       });
     } catch (error) {
       next(error);

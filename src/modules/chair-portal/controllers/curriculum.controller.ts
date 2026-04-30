@@ -10,6 +10,7 @@ import { Request, Response, NextFunction } from 'express';
 import { CurriculumService } from '../services/curriculum.service';
 import { ValidationError } from '../../../shared/errors';
 import { z } from 'zod';
+import { serializeSubject, serializeSubjects } from '../../subjects/serializers/subject.serializer';
 
 /**
  * Query schema for curriculum list
@@ -127,7 +128,7 @@ export class CurriculumController {
 
       res.json({
         success: true,
-        data: result.data,
+        data: serializeSubjects(result.data),
         meta: result.meta,
       });
     } catch (error) {
@@ -157,7 +158,7 @@ export class CurriculumController {
 
       res.json({
         success: true,
-        data: subject,
+        data: serializeSubject(subject),
       });
     } catch (error) {
       next(error);
