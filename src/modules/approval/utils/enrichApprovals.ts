@@ -73,11 +73,11 @@ export async function enrichApprovalWithName(approval: Approval): Promise<Enrich
           const event = await db.query.events.findFirst({
             where: eq(events.id, approval.entity_id),
             columns: {
-              title: true,
+              event_name: true,
             },
           });
-          if (event && event.title) {
-            entityName = event.title;
+          if (event && event.event_name) {
+            entityName = event.event_name;
           }
           break;
         }
