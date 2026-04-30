@@ -3,6 +3,7 @@ import { approvalStateMachine } from './approval-state-machine.service';
 import { departmentAssignmentService } from './department-assignment.service';
 import { entityApplicationService } from './entity-application.service';
 import { notificationService } from './notification.service';
+import { enrichApprovalsWithNames } from '../utils/enrichApprovals';
 import {
   type Approval,
   type InsertApproval,
@@ -303,11 +304,12 @@ export class ApprovalService {
    * 
    * Returns all pending change requests, optionally scoped to a department (for chairs).
    * Supports filtering and pagination.
+   * Enriches approvals with entity names from respective tables.
    * 
    * @param filters - Optional filter criteria
    * @param pagination - Optional pagination options
    * @param departmentId - Optional department ID for chair scope
-   * @returns Paginated list of pending approvals
+   * @returns Paginated list of pending approvals with entity names
    * 
    */
   async getPendingApprovals(
@@ -320,7 +322,15 @@ export class ApprovalService {
       ? { ...filters, department_id: getDepartmentScopeAliases(departmentId) }
       : filters;
 
-    return approvalRepository.findPending(pendingFilters, pagination);
+    const result = await approvalRepository.findPending(pendingFilters, pagination);
+    
+    // Enrich approvals with entity names
+    const enrichedData = await enrichApprovalsWithNames(result.data);
+    
+    return {
+      ...result,
+      data: enrichedData,
+    };
   }
 
   /**
